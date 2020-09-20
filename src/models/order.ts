@@ -1,17 +1,32 @@
-import { createSchema, Type, typedModel } from "ts-mongoose";
-import { AddressSchema } from "./address";
-import { ContactPersonSchema } from "./contactPerson";
+import { AutoIncrement } from '../utils'
+import { createSchema, Type, typedModel } from 'ts-mongoose'
+
+const statuses = ['Новый', 'На уточнении', 'В работе', 'Готов'] as const
 
 const OrderSchema = createSchema({
-	restaurant: Type.string(),
-	contactPerson: Type.schema().of(ContactPersonSchema),
-	address: Type.schema().of(AddressSchema),
-	phoneNumber: Type.number(),
-	mobilePhoneNumber: Type.optionalNumber(),
-	email: Type.string(),
-	vat: Type.string(),
-	orderNumber: Type.number(),
-	orderCreationDate: Type.date()
-});
+  customer: Type.string({ required: true }),
+  customerPhone: Type.string({ required: true }),
+  branchOffice: Type.string({ required: true }),
+  phoneModel: Type.string(),
+  serialNumber: Type.string(),
+  declaredDefect: Type.string(),
+  overallKit: Type.string(),
+  masterComments: Type.array().of({
+    body: Type.string({ required: true }),
+    date: Type.date({ required: true }),
+  }),
+  managerComments: Type.array().of({
+    body: Type.string({ required: true }),
+    date: Type.date({ required: true }),
+  }),
+  status: Type.string({ required: true, enum: statuses }),
+  statusTiming: Type.array().of({
+    status: Type.string({ enum: statuses }),
+    who: Type.string(),
+    date: Type.date(),
+  }),
+})
 
-export const OrderModel = typedModel("Order", OrderSchema);
+OrderSchema.plugin(AutoIncrement, { inc_field: 'identifier', start_seq: 30000 })
+
+export const OrderModel = typedModel('Order', OrderSchema)

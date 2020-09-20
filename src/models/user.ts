@@ -1,13 +1,13 @@
-import { createSchema, Type, typedModel } from "ts-mongoose";
-import { AddressSchema } from "./address";
+import { createSchema, Type, typedModel } from 'ts-mongoose'
+
+export const roles = ['Administrator', 'Master', 'Manager']
 
 const UserSchema = createSchema({
-	username: Type.string(),
-	password: Type.string(),
-	firstname: Type.optionalString(),
-	lastname: Type.optionalString(),
-	email: Type.string(),
-	address: Type.optionalSchema().of(AddressSchema)
-});
+  username: Type.string({ unique: true }),
+  password: Type.string(),
+  credentials: Type.string(),
+  branchOffice: Type.string({ required: true }),
+  role: Type.string({ required: true, enum: roles }),
+})
 
-export const UserModel = typedModel("User", UserSchema);
+export const UserModel = typedModel('User', UserSchema)

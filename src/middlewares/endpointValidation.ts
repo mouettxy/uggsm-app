@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express'
 
 export function endpointValidationMiddleware(
-	request: Request,
-	response: Response
+  request: Request,
+  response: Response,
 ): void {
-	response.status(404).send({
-		status: 404,
-		message: `${request.method} on endpoint ${request.url} not found`
-	});
+  response.status(404).send({
+    status: 404,
+    message: `${request.method} on endpoint ${request.url} not found`,
+  })
 }

@@ -1,28 +1,38 @@
-import "dotenv/config";
-import * as mongoose from "mongoose";
+import 'dotenv/config'
+import * as mongoose from 'mongoose'
+import * as mongooseSequencePlugin from 'mongoose-sequence'
+export const AutoIncrement = mongooseSequencePlugin(mongoose)
 
-mongoose.set("useNewUrlParser", true);
-mongoose.set("useFindAndModify", false);
-mongoose.set("useCreateIndex", true);
+mongoose.set('useNewUrlParser', true)
+mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
 const {
-	MONGO_USER,
-	MONGO_PASSWORD,
-	DB_CONNECTION_STRING,
-	DB_SERVER
-} = process.env;
+  MONGO_USER,
+  MONGO_PASSWORD,
+  DB_CONNECTION_STRING,
+  DB_SERVER,
+} = process.env
+
+export function initializePlugins(_connection): void {
+  // do nothing right now
+}
 
 export function connectToDatabase(): void {
-	const DB_URL = `${DB_CONNECTION_STRING}${MONGO_USER}:${MONGO_PASSWORD}${DB_SERVER}`;
+  const DB_URL = `${DB_CONNECTION_STRING}${MONGO_USER}:${MONGO_PASSWORD}${DB_SERVER}`
 
-	mongoose
-		.connect(DB_URL)
-		.then(() => {
-			// tslint:disable-next-line: no-console
-			console.log("Database connected successfully");
-		})
-		.catch((error: Error) => {
-			// tslint:disable-next-line: no-console
-			console.log("Database connection error: " + error.message);
-		});
+  mongoose
+    .connect(DB_URL)
+    .then(() => {
+      // tslint:disable-next-line: no-console
+      console.log('Database connected successfully')
+
+      initializePlugins(mongoose.connection)
+
+      console.log('Database plugins initialized')
+    })
+    .catch((error: Error) => {
+      // tslint:disable-next-line: no-console
+      console.log('Database connection error: ' + error.message)
+    })
 }

@@ -1,6 +1,6 @@
 {
-  "name": "rest-api",
-  "version": "1.0.0",
+  "name": "uggsm-app",
+  "version": "1.1.0",
   "description": "",
   "private": true,
   "scripts": {
@@ -14,12 +14,10 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm test && npm run lint",
-      "...": "..."
+      "pre-commit": "npm test && npm run lint"
     }
   },
-  "keywords": [],
-  "author": "",
+  "author": "newfox79",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -31,6 +29,7 @@
     "express-validator": "^5.3.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.6.13",
+    "mongoose-sequence": "^5.2.2",
     "ts-mongoose": "0.0.19"
   },
   "devDependencies": {

@@ -1,72 +1,47 @@
-import { NextFunction } from "connect";
-import * as express from "express";
-import { RequestHandlerParams } from "express-serve-static-core";
-import { body, validationResult } from "express-validator/check";
+import { NextFunction } from 'connect'
+import * as express from 'express'
+import { RequestHandlerParams } from 'express-serve-static-core'
+import { body, validationResult } from 'express-validator/check'
+import { roles } from '../models/user'
 
 export const userValidationMiddleware: RequestHandlerParams = [
-	body("username")
-		.exists()
-		.withMessage("value is required")
-		.isAlphanumeric()
-		.withMessage("value should be alphanumeric"),
+  body('username')
+    .not()
+    .isEmpty()
+    .withMessage('Необходимое поле'),
 
-	body("password")
-		.exists()
-		.withMessage("value is required")
-		.isString()
-		.withMessage("value should be a string"),
+  body('password')
+    .not()
+    .isEmpty()
+    .withMessage('Необходимое поле'),
 
-	body("email")
-		.exists()
-		.withMessage("value is required")
-		.isEmail()
-		.withMessage("value should be a valid email"),
+  body('credentials')
+    .not()
+    .isEmpty()
+    .withMessage('Необходимое поле'),
 
-	body("firstname")
-		.optional()
-		.isString()
-		.withMessage("value should be a string"),
+  body('branchOffice')
+    .not()
+    .isEmpty()
+    .withMessage('Необходимое поле'),
 
-	body("lastname")
-		.optional()
-		.isString()
-		.withMessage("value should be a string"),
+  body('role')
+    .not()
+    .isEmpty()
+    .withMessage('Необходимое поле')
+    .isIn(roles)
+    .withMessage('Должно соответствовать значениям: ' + roles),
 
-	body("address.city")
-		.optional()
-		.isString()
-		.withMessage("value should be a string"),
-
-	body("address.country")
-		.optional()
-		.isString()
-		.withMessage("value should be a string"),
-
-	body("address.houseNumber")
-		.optional()
-		.isAlphanumeric()
-		.withMessage("value should be a alphanumeric"),
-
-	body("address.street")
-		.optional()
-		.isString()
-		.withMessage("value should be a string"),
-
-	body("address.postNumber")
-		.optional()
-		.isPostalCode("DE")
-		.withMessage("value should be a german postal code"),
-
-	(req: express.Request, res: express.Response, next: NextFunction): void => {
-		const validationErrors = validationResult(req);
-		if (!validationErrors.isEmpty()) {
-			res.status(400).json({
-				status: 400,
-				message: "Bad Request",
-				errors: validationErrors.array()
-			});
-		} else {
-			next();
-		}
-	}
-];
+  (req: express.Request, res: express.Response, next: NextFunction): void => {
+    const validationErrors = validationResult(req)
+    if (!validationErrors.isEmpty()) {
+      res.status(400).json({
+        status: 400,
+        message: 'Bad Request',
+        errors: validationErrors.array(),
+      })
+    } else {
+      next()
+    }
+  },
+]

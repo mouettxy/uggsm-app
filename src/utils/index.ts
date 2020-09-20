@@ -1,2 +1,2 @@
-export * from "./databaseConnector";
-export * from "./validateEnv";
+export * from './databaseConnector'
+export * from './validateEnv'
