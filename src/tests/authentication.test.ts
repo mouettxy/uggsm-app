@@ -3,8 +3,8 @@ import { AuthenticationController } from '../controllers/authentication'
 import { UserModel } from '../models'
 import mockingoose from 'mockingoose'
 import { mockRequest, mockResponse } from 'mock-req-res'
-import * as sinon from 'sinon'
-import * as bcrypt from 'bcrypt'
+import sinon from 'sinon'
+import bcrypt from 'bcrypt'
 
 const authenticationController: AuthenticationController = new AuthenticationController()
 let req
@@ -21,7 +21,6 @@ const testPreConfig = (): void => {
       password: 'testPassword',
       username: 'testUsername',
       role: 'Master',
-      branchOffice: 'М1 Гоголя 79/1',
       credentials: 'testCredentials',
     },
   })

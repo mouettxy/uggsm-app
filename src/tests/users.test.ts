@@ -1,7 +1,7 @@
 import { mockRequest, mockResponse } from 'mock-req-res'
 import mockingoose from 'mockingoose'
 import { Error } from 'mongoose'
-import * as sinon from 'sinon'
+import sinon from 'sinon'
 import { UserModel } from '../models'
 import { UsersController } from '../controllers/users'
 
@@ -17,6 +17,7 @@ const testPreConfig = (): void => {
     body: {
       email: 'testEmail@email.com',
       password: 'testPassword',
+      office: 'M1',
     },
   })
   res = mockResponse()
@@ -53,10 +54,7 @@ describe("Users controller 'getById' method", () => {
   })
 
   it("should set status code 422 (Unprocessable Entity) 'findById' method gets rejected with Error", async () => {
-    mockingoose(UserModel).toReturn(
-      new Error("'findById' method Error"),
-      'findOne',
-    )
+    mockingoose(UserModel).toReturn(new Error("'findById' method Error"), 'findOne')
     await usersController.getById(req, res, next)
     expect(next.args[0][0].status).toBe(422)
   })
@@ -101,15 +99,13 @@ describe("Users controller 'updateById' method", () => {
 describe("Users controller 'create' method", () => {
   beforeEach(testPreConfig)
   it('should set a status code of 200 when it creates new document', async () => {
-    jest
-      .spyOn(UserModel.prototype, 'save')
-      .mockImplementationOnce(() => Promise.resolve())
+    jest.spyOn(UserModel.prototype, 'save').mockImplementationOnce(() => Promise.resolve())
     await usersController.create(req, res, next)
   })
 
-  it("should set a status code of 500 (Internal Server Error) when 'save' method gets rejected with error", async () => {
+  it("should set a status code of 401 (Office incorrect error) when 'save' method cannot find office", async () => {
     mockingoose(UserModel).toReturn(new Error("'save' method Error"), 'save')
     await usersController.create(req, res, next)
-    expect(next.args[0][0].status).toBe(500)
+    expect(next.args[0][0].status).toBe(401)
   })
 })
