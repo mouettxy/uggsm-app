@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import { NextFunction } from 'connect'
-import * as jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { DataStoredInToken } from 'src/interfaces'
 import {
   AuthenticationTokenMissingException,

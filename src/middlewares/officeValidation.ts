@@ -2,35 +2,32 @@ import { NextFunction } from 'connect'
 import express from 'express'
 import { RequestHandlerParams } from 'express-serve-static-core'
 import { body, validationResult } from 'express-validator/check'
-import { roles } from '../models/user'
 
-export const userValidationMiddleware: RequestHandlerParams = [
-  body('username')
+export const officeValidationMiddleware: RequestHandlerParams = [
+  body('code')
     .not()
     .isEmpty()
     .withMessage('Необходимое поле'),
 
-  body('password')
+  body('name')
     .not()
     .isEmpty()
     .withMessage('Необходимое поле'),
 
-  body('credentials')
+  body('address')
     .not()
     .isEmpty()
     .withMessage('Необходимое поле'),
 
-  body('office')
+  body('ordersTemplate')
     .not()
     .isEmpty()
     .withMessage('Необходимое поле'),
 
-  body('role')
+  body('docsTemplate')
     .not()
     .isEmpty()
-    .withMessage('Необходимое поле')
-    .isIn(roles)
-    .withMessage('Должно соответствовать значениям: ' + roles),
+    .withMessage('Необходимое поле'),
 
   (req: express.Request, res: express.Response, next: NextFunction): void => {
     const validationErrors = validationResult(req)

@@ -1,5 +1,5 @@
 import { NextFunction } from 'connect'
-import * as express from 'express'
+import express from 'express'
 import { RequestHandlerParams } from 'express-serve-static-core'
 import { body, validationResult } from 'express-validator/check'
 
