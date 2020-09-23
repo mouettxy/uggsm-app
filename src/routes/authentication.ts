@@ -1,4 +1,4 @@
-import * as express from 'express'
+import express from 'express'
 import { Controller, Router } from 'src/interfaces'
 import { AuthenticationController } from '../controllers'
 import {
