@@ -1,6 +1,6 @@
-import * as bodyParser from 'body-parser'
-import * as cookieParser from 'cookie-parser'
-import * as express from 'express'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import express from 'express'
 import { Router } from './interfaces'
 import { errorMiddleware, endpointValidationMiddleware } from './middlewares'
 import { connectToDatabase } from './utils'
@@ -21,7 +21,7 @@ class RestApi {
 
   private initializeRouter(routers: Router[]): void {
     routers.forEach(router => {
-      this.expressApp.use('/', router.expressRouter)
+      this.expressApp.use('/v1/', router.expressRouter)
     })
   }
 
