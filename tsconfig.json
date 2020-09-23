@@ -6,9 +6,9 @@
     "module": "commonjs",
     "target": "es6",
     "baseUrl": ".",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
-  "include": [
-    "./src/**/*.ts"
-  ]
+  "include": ["./src/**/*.ts"]
 }
