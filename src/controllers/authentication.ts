@@ -1,14 +1,16 @@
-import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
 import { NextFunction } from 'connect'
-import * as express from 'express'
-import * as jwt from 'jsonwebtoken'
+import express from 'express'
+import jwt from 'jsonwebtoken'
 import { Document } from 'mongoose'
 import {
+  CannotFindOfficeException,
+  HttpException,
   UserWithThatUsernameAlreadyExistsException,
   WrongCredentialsException,
 } from '../exceptions'
 import { Controller, DataStoredInToken, TokenData } from '../interfaces'
-import { UserModel } from '../models'
+import { OfficeModel, UserModel } from '../models'
 
 export class AuthenticationController implements Controller {
   private user = UserModel
@@ -29,48 +31,46 @@ export class AuthenticationController implements Controller {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`
   }
 
-  public register = async (
-    req: express.Request,
-    res: express.Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  public register = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
     const userData = req.body
     if (await this.user.findOne({ username: userData.username })) {
       next(new UserWithThatUsernameAlreadyExistsException(userData.email))
     } else {
-      const hashedPassword = await bcrypt.hash(userData.password, 10)
-      const user = await this.user.create({
-        ...userData,
-        password: hashedPassword,
-      })
-      user.set('password', undefined)
-      const tokenData = AuthenticationController.createToken(user)
-      res.setHeader('Set-Cookie', [
-        AuthenticationController.createCookie(tokenData),
-      ])
-      res.send(user)
+      try {
+        const hashedPassword = await bcrypt.hash(userData.password, 10)
+        const office = await OfficeModel.getOneByCode(userData.office)
+
+        if (!office) {
+          next(new CannotFindOfficeException(userData.office))
+        }
+
+        userData.office = office._id
+
+        const user = await this.user.create({
+          ...userData,
+          password: hashedPassword,
+        })
+
+        user.set('password', undefined)
+        const tokenData = AuthenticationController.createToken(user)
+        res.setHeader('Set-Cookie', [AuthenticationController.createCookie(tokenData)])
+        res.send(user)
+      } catch (error) {
+        next(new HttpException(500, error.message))
+      }
     }
   }
 
-  public login = async (
-    req: express.Request,
-    res: express.Response,
-    next: NextFunction,
-  ): Promise<void> => {
+  public login = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
     const loginData = req.body
     const user = await this.user.findOne({ email: loginData.email })
     if (user) {
-      const matchedPassword = await bcrypt.compare(
-        loginData.password,
-        user.get('password'),
-      )
+      const matchedPassword = await bcrypt.compare(loginData.password, user.get('password'))
 
       if (matchedPassword) {
         user.set('password', undefined)
         const tokenData = AuthenticationController.createToken(user)
-        res.setHeader('Set-Cookie', [
-          AuthenticationController.createCookie(tokenData),
-        ])
+        res.setHeader('Set-Cookie', [AuthenticationController.createCookie(tokenData)])
         res.send(user)
       } else {
         next(new WrongCredentialsException())
@@ -80,10 +80,7 @@ export class AuthenticationController implements Controller {
     }
   }
 
-  public logout = (
-    request: express.Request,
-    response: express.Response,
-  ): void => {
+  public logout = (request: express.Request, response: express.Response): void => {
     response.setHeader('Set-Cookie', 'Authorization=;Max-age=0')
     response.status(200).send({ status: 200, message: 'logout successfully' })
   }
