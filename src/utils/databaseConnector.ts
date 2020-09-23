@@ -1,18 +1,15 @@
 import 'dotenv/config'
-import * as mongoose from 'mongoose'
-import * as mongooseSequencePlugin from 'mongoose-sequence'
-export const AutoIncrement = mongooseSequencePlugin(mongoose)
+import mongoose from 'mongoose'
+import AutoIncrementFactory from 'mongoose-sequence'
+
+// @ts-ignore
+export const AutoIncrement = AutoIncrementFactory(mongoose)
 
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 
-const {
-  MONGO_USER,
-  MONGO_PASSWORD,
-  DB_CONNECTION_STRING,
-  DB_SERVER,
-} = process.env
+const { MONGO_USER, MONGO_PASSWORD, DB_CONNECTION_STRING, DB_SERVER } = process.env
 
 export function initializePlugins(_connection): void {
   // do nothing right now
