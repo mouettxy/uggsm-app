@@ -1,28 +1,28 @@
 import express from 'express'
-import { UsersController } from '../controllers'
+import { OfficeControler } from '../controllers'
 import { Controller, Router } from '../interfaces'
 import {
   authenticationMiddleware,
-  userValidationMiddleware,
+  officeValidationMiddleware,
 } from '../middlewares'
 
-export class UsersRouter implements Router {
+export class OfficeRouter implements Router {
   public expressRouter: express.Router = express.Router()
 
   constructor() {
-    const userController = new UsersController()
-    this.initializeRoutes(userController)
+    const officeControler = new OfficeControler()
+    this.initializeRoutes(officeControler)
   }
 
   public initializeRoutes(controller: Controller): void {
-    const path = '/user'
+    const path = '/office'
 
     this.expressRouter
       .all(`${path}*`, authenticationMiddleware)
       .get(path, controller.getAll)
-      .get(`${path}/:id`, controller.getById)
-      .post(path, userValidationMiddleware, controller.create)
-      .put(`${path}/:id`, userValidationMiddleware, controller.updateById)
+      .get(`${path}/:code`, controller.getByCode)
+      .post(path, officeValidationMiddleware, controller.create)
+      .put(`${path}/:id`, officeValidationMiddleware, controller.updateById)
       .delete(`${path}/:id`, controller.deleteById)
   }
 }
