@@ -8,6 +8,7 @@ export const AutoIncrement = AutoIncrementFactory(mongoose)
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
+mongoose.set('useUnifiedTopology', true)
 
 const { MONGO_USER, MONGO_PASSWORD, DB_CONNECTION_STRING, DB_SERVER } = process.env
 

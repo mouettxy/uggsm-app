@@ -2,7 +2,8 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
 import { Router } from './interfaces'
-import { errorMiddleware, endpointValidationMiddleware } from './middlewares'
+import { errorMiddleware } from './middlewares'
+import * as endpointValidationMiddleware from './middlewares/validators/validateEndpoint'
 import { connectToDatabase } from './utils'
 
 class RestApi {
@@ -17,6 +18,7 @@ class RestApi {
 
   public listen(): void {
     this.expressApp.listen(process.env.PORT)
+    console.log('server listens on ' + process.env.PORT + ' port')
   }
 
   private initializeRouter(routers: Router[]): void {
@@ -31,7 +33,7 @@ class RestApi {
   }
 
   private initializeErrorHandling(): void {
-    this.expressApp.use(endpointValidationMiddleware)
+    this.expressApp.use(endpointValidationMiddleware.endpoint)
     this.expressApp.use(errorMiddleware)
   }
 }
