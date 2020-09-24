@@ -1,7 +1,15 @@
 import express from 'express'
-import { Controller } from './controller'
+import {
+  IAdversitementController,
+  IAuthentificationController,
+  ICashController,
+  IOfficeController,
+  IOrdersController,
+} from '.'
 
 export interface Router {
   expressRouter: express.Router
-  initializeRoutes: (_: Controller) => void
+  initializeRoutes: (
+    _: IAdversitementController | IAuthentificationController | ICashController | IOfficeController | IOrdersController,
+  ) => void
 }
