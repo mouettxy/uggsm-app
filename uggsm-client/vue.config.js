@@ -1,12 +1,12 @@
 module.exports = {
-  transpileDependencies: ["vuetify"],
+  transpileDependencies: ['vuetify'],
 
   pluginOptions: {
     moment: {
-      locales: ["ru", "en"]
+      locales: ['ru', 'en']
     },
     autoRouting: {
-      chunkNamePrefix: "page-"
+      chunkNamePrefix: 'page-'
     }
   }
-};
+}
