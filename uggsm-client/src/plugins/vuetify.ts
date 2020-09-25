@@ -39,7 +39,7 @@ const vuetifyOpts = {
         warning: '#FB8C00',
         error: '#FF5252',
         dark: '#181818',
-        light: '#fafafa'
+        light: '#fefefe'
       },
       light: {
         primary: '#1859a1',
@@ -51,7 +51,7 @@ const vuetifyOpts = {
         warning: '#FB8C00',
         error: '#FF5252',
         dark: '#181818',
-        light: '#fafafa'
+        light: '#fefefe'
       }
     }
   }
