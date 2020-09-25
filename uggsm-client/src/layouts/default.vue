@@ -1,16 +1,16 @@
 <template lang="pug">
-  v-main.layout-default(app)
-    base-navigation-drawer(:items="items")
-    router-view
+v-main.layout-default(app)
+  o-main-navigation(:items='items')
+  router-view
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import BaseNavigationDrawer from '@/components/utils/BaseNavigationDrawer.vue'
+import OMainNavigation from '@/components/organizms/OMainNavigation.vue'
 
 @Component({
   components: {
-    BaseNavigationDrawer
+    OMainNavigation
   }
 })
 export default class LayoutDefault extends Vue {
