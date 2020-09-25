@@ -5,14 +5,22 @@
 </route>
 
 <template lang="pug">
-  .page-orders
-    v-app-bar(flat)
-      span abc
+.page-orders
+  t-orders-main
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component
+import TOrdersMain from '@/templates/TOrdersMain.vue'
+
+/**
+ * Orders page
+ */
+@Component({
+  components: {
+    TOrdersMain
+  }
+})
 export default class PageOrders extends Vue {}
 </script>
