@@ -23,4 +23,8 @@ const api = new RestApi([
   new AdversitementRouter(),
 ])
 
+api.io.on('connection', socket => {
+  console.log('all ok running perfect')
+})
+
 api.listen()
