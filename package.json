@@ -4,16 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install-client": "cd uggsm-client && npm i && cd ..",
     "build-client": "cd uggsm-client && npm run build --modern cd ..",
     "dev-client": "cd uggsm-client && npm run serve",
-    "install-server": "cd uggsm-server && npm i && cd ..",
     "build-server": "cd uggsm-server && npm run compile",
     "dev-server": "cd uggsm-server && npm run dev",
     "run-server": "cd uggsm-server && npm run compile && node dist/server.js",
     "dev": "concurrently --kill-others \"npm:dev-server\" \"npm:dev-client\"",
     "build": "concurrently --kill-others \"npm:build-server\" \"npm:build-client\"",
-    "install": "concurrently --kill-others \"npm:install-server\" \"npm:install-client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
