@@ -3,9 +3,15 @@ v-navigation-drawer.main-navigation(app, v-model='model', :mini-variant.sync='mi
   slot(name='header')
     v-list
       v-list-item.px-2
-        v-list-item-avatar
-          v-icon mdi-account
-        v-list-item-title Default user
+        template(v-if='isLoggedIn')
+          v-list-item-avatar
+            v-btn(icon, @click='logout')
+              v-icon mdi-exit-run
+          v-list-item-title {{ user.credentials }}
+        template(v-else)
+          v-btn(icon, @click='refreshAnimal')
+            v-icon mdi-refresh
+          v-list-item-title {{ animal }}
         v-btn(icon, @click.stop='mini = !mini')
           v-icon mdi-chevron-left
   v-divider
@@ -22,12 +28,39 @@ v-navigation-drawer.main-navigation(app, v-model='model', :mini-variant.sync='mi
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { authModule } from '@/store'
+import { getAnonymousAnimal } from '@/api/helpers'
 
 @Component
-export default class BaseNavigationDrawer extends Vue {
+export default class OMainNavigation extends Vue {
   @Prop(Array) items: any
+  public animal = ''
   public model = true
   public mini = false
+
+  get user() {
+    return authModule.user
+  }
+
+  get isLoggedIn() {
+    return authModule.isLoggedIn
+  }
+
+  refreshAnimal() {
+    this.animal = getAnonymousAnimal()
+  }
+
+  async logout() {
+    await authModule.logout()
+    this.$router.push({ name: 'login' })
+    this.$notification.success('Вы успешно вышли из системы')
+  }
+
+  mounted() {
+    if (!this.isLoggedIn) {
+      this.refreshAnimal()
+    }
+  }
 }
 </script>
 

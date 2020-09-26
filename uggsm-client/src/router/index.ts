@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import routes from 'vue-auto-routing'
 import { createRouterLayout } from 'vue-router-layout'
+import { authModule } from '@/store'
 
 Vue.use(Router)
 
@@ -9,7 +10,7 @@ const RouterLayout = createRouterLayout((layout) => {
   return import('@/layouts/' + layout + '.vue')
 })
 
-export default new Router({
+export const router = new Router({
   routes: [
     {
       path: '/',
@@ -19,3 +20,16 @@ export default new Router({
   ],
   mode: 'history'
 })
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = authModule.isLoggedIn
+  if (!isLoggedIn && to.name !== 'login') {
+    Vue.prototype.$notification.error('Авторизуйтесь прежде чем вам станут доступны основные функции приложения.')
+    next({ name: 'login' })
+  } else if (isLoggedIn && to.name === 'login') {
+    next({ name: 'orders' })
+  } else {
+    next()
+  }
+})
+export default router
