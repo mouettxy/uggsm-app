@@ -49,7 +49,7 @@ export class OfficeController implements IOfficeController {
   ): Promise<void> => {
     const code = request.params.code
     await this.model
-      .find({ code: code })
+      .findOne({ code: code })
       .then(order => {
         if (order) {
           response.status(200)
