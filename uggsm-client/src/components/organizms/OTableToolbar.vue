@@ -1,16 +1,18 @@
 <template lang="pug">
 .table-toolbar
   v-toolbar.toolbar(elevation='1', height='72')
-    m-office-switcher(:items='offices', @change='onOfficeSwitch')
+    m-office-switcher(:items='offices', :value='defaultOffice', @change='onOfficeSwitch')
     v-spacer
     m-search-field(@change='onSearchField')
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import MOfficeSwitcher from '@/components/moleculas/MOfficeSwitcher.vue'
 import MSearchField from '@/components/moleculas/MSearchField.vue'
+import { officesModule, settingsModule } from '@/store'
+import map from 'lodash/map'
 
 /**
  * Organizm that provides toolbar with office switcher and search field
@@ -25,8 +27,18 @@ import MSearchField from '@/components/moleculas/MSearchField.vue'
   }
 })
 export default class OTableToolbar extends Vue {
-  public offices = ['{CODE} {ADDRESS}', 'abc abcde', 'abcde abdec']
-  @Prop(String) defaultOffice: any
+  get offices() {
+    return map(officesModule.offices, (el) => `${el.code}|${el.name}`)
+  }
+
+  get defaultOffice() {
+    if (settingsModule.office) {
+      return `${settingsModule.office.code}|${settingsModule.office.name}`
+    } else {
+      settingsModule.setOffice('M1|UGGSM')
+      return ''
+    }
+  }
 
   onOfficeSwitch(value: string) {
     /**
@@ -34,8 +46,7 @@ export default class OTableToolbar extends Vue {
      *
      * @property {string} value - selected office
      */
-    console.log(value)
-    this.$emit('switch-office', value)
+    settingsModule.setOffice(value)
   }
 
   onSearchField(value: string) {
@@ -44,8 +55,11 @@ export default class OTableToolbar extends Vue {
      *
      * @property {string} value - current search field state
      */
-    console.log(value)
     this.$emit('search', value)
+  }
+
+  mounted() {
+    officesModule.fetch()
   }
 }
 </script>

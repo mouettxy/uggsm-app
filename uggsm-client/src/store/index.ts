@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import offices from '@/store/offices'
+import settings from '@/store/settings'
 import createPersistedState from 'vuex-persistedstate'
 
-/* import { getModule } from 'vuex-module-decorators'; */
+import { getModule } from 'vuex-module-decorators'
 
 Vue.use(Vuex)
 
@@ -10,11 +12,13 @@ export const persistedState = createPersistedState()
 
 export const store = new Vuex.Store({
   state: {},
-  modules: {},
+  modules: {
+    offices,
+    settings,
   plugins: [persistedState]
 })
 
-/* export const authModule = getModule(auth, store)
-export const addressesModule = getModule(addresses, store) */
+export const officesModule = getModule(offices, store)
+export const settingsModule = getModule(settings, store)
 
 export default store

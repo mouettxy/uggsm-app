@@ -1,6 +1,11 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { officeAPI } from '@/api'
+import find from 'lodash/find'
 
-@Module
+@Module({
+  namespaced: true,
+  name: 'offices'
+})
 export default class Offices extends VuexModule {
   public offices: Array<any> | null = null
 
@@ -10,7 +15,13 @@ export default class Offices extends VuexModule {
   }
 
   @Action
-  fetch() {
-    //
+  async fetch() {
+    this.context.commit('SET_OFFICES', await officeAPI().getAll())
+  }
+
+  @Action
+  findByCodeAndName(payload: string) {
+    const code = payload.split('|')[0]
+    return find(this.offices, { code })
   }
 }
