@@ -1,16 +1,17 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-import './plugins/cookies'
-import './plugins/axios'
-import './plugins/notifications'
-import './plugins/tippy'
-import './plugins/mask'
+import '@/plugins/cookies'
+import '@/plugins/axios'
+import '@/plugins/notifications'
+import '@/plugins/tippy'
+import '@/plugins/mask'
+import '@/plugins/socket.io.ts'
 
-import vuetify from './plugins/vuetify'
+import vuetify from '@/plugins/vuetify'
 
-import store from './store'
-import router from './router'
+import store from '@/store'
+import router from '@/router'
 
 Vue.config.productionTip = false
 
