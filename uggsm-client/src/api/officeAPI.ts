@@ -1,4 +1,4 @@
-import { OfficeEndpoints } from '@/typings/api/office'
+import { Office, OfficeEndpoints } from '@/typings/api/office'
 import { sendRequest } from '@/api/helpers'
 
 export const officeEndpoints = (code?: string): OfficeEndpoints => ({
@@ -10,7 +10,7 @@ export const officeEndpoints = (code?: string): OfficeEndpoints => ({
 })
 
 export const officeAPI = (code?: string) => ({
-  getAll: async () => {
+  getAll: async (): Promise<Array<Office> | []> => {
     try {
       const response = await sendRequest(officeEndpoints().getAll)
 
@@ -24,21 +24,21 @@ export const officeAPI = (code?: string) => ({
       return []
     }
   },
-  getByCode: async () => {
+  getByCode: async (): Promise<Office | null> => {
     try {
       const response = await sendRequest(officeEndpoints(code).getByCode)
 
       if (response.status === 200) {
         return response.data
       } else {
-        return null
+        return Promise.resolve(null)
       }
     } catch (error) {
       console.log(error)
-      return null
+      return Promise.resolve(null)
     }
   },
-  create: async (data: any) => {
+  create: async (data: Office) => {
     try {
       const response = await sendRequest(officeEndpoints(code).create, data)
 
