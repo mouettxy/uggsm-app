@@ -13,6 +13,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import TOrdersMain from '@/templates/TOrdersMain.vue'
+import { Socket } from 'vue-socket.io-extended'
 
 /**
  * Orders page
@@ -22,5 +23,10 @@ import TOrdersMain from '@/templates/TOrdersMain.vue'
     TOrdersMain
   }
 })
-export default class PageOrders extends Vue {}
+export default class PageOrders extends Vue {
+  @Socket() // --> listens to the event by method name, e.g. `connect`
+  connect() {
+    console.log('connection established')
+  }
+}
 </script>
