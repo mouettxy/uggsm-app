@@ -7,6 +7,7 @@ import * as endpointValidationMiddleware from './middlewares/validators/validate
 import { connectToDatabase } from './utils'
 import SocketIO from 'socket.io'
 import http from 'http'
+import cors from 'cors'
 
 class RestApi {
   public expressApp: express.Application = express()
@@ -39,6 +40,7 @@ class RestApi {
   }
 
   private initializeMiddlewares(): void {
+    this.expressApp.use(cors())
     this.expressApp.use(bodyParser.json())
     this.expressApp.use(cookieParser())
   }

@@ -24,7 +24,7 @@ const api = new RestApi([
 ])
 
 api.io.on('connection', socket => {
-  console.log('all ok running perfect')
+  console.log('socket connected succesefully')
 })
 
 api.listen()
