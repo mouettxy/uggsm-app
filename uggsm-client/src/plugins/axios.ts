@@ -7,7 +7,10 @@ import axios from 'axios'
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const config = {
-  baseURL: process.env.API_URL || '',
+  baseURL: `${process.env.VUE_APP_API_URL}/${process.env.VUE_APP_API_VERSION}` || '',
+  validateStatus: (status: any) => {
+    return status < 500 // default
+  },
   timeout: 60 * 1000
 }
 
@@ -15,7 +18,7 @@ const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
   function(config) {
-    // Do something before request is sent
+    console.debug(`sending request to ${config.url}`)
     return config
   },
   function(error) {
@@ -26,7 +29,7 @@ _axios.interceptors.request.use(
 
 _axios.interceptors.response.use(
   function(response) {
-    // Do something with response data
+    console.debug(`response from request`, response)
     return response
   },
   function(error) {
