@@ -7,6 +7,7 @@ import '@/plugins/notifications'
 import '@/plugins/tippy'
 import '@/plugins/mask'
 import '@/plugins/socket.io.ts'
+import '@/plugins/table'
 
 import vuetify from '@/plugins/vuetify'
 
