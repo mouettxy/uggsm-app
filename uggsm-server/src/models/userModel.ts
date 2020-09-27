@@ -2,7 +2,7 @@ import { getModelForClass, prop, Ref, plugin } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
 import { Office } from '.'
 import { AutoIncrement } from '../utils'
-export const roles = ['Administrator', 'Master', 'Manager']
+export const roles = ['administrator', 'master', 'manager']
 
 @plugin(AutoIncrement as any, {
   id: 'user_id',
@@ -10,9 +10,6 @@ export const roles = ['Administrator', 'Master', 'Manager']
 })
 @plugin(autopopulate as any)
 export class User {
-  @prop({ unique: true })
-  public id: number
-
   @prop({ required: true })
   public username: string
 

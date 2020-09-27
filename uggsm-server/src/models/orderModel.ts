@@ -1,12 +1,26 @@
 import { Office, OfficeModel, UserModel } from '.'
-import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType } from '@typegoose/typegoose'
+import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType, mongoose } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
 import { filter, isEmpty } from 'lodash'
 import { Client, ClientModel } from './clientModel'
 import { processWorkflowData, extendArrayWithId } from '../utils/helpers'
+import { Adversitement } from './adversitementModel'
+import { User } from './userModel'
 
-const statuses = ['Новый', 'На уточнении', 'В работе', 'Готов']
+const statuses = [
+  'Новый',
+  'На уточнении',
+  'В работе',
+  'Ждёт запчасть',
+  'Позвонить повторно',
+  'Нужно решить',
+  'Готов, без ремонта',
+  'На продаже',
+  'Закрыт',
+  'Обещали найти',
+  'Готов',
+]
 
 export class CompletedWork {
   @prop()
@@ -155,17 +169,20 @@ export class Order {
   @prop({ autopopulate: true, ref: 'Office' })
   public office: Ref<Office>
 
-  @prop({ autopopulate: false })
+  @prop()
   public officeCode: string
 
   @prop({ default: 'Не указано' })
   public phoneBrand: string
 
-  @prop()
-  public managerid: number
+  @prop({ autopopulate: true, ref: 'User' })
+  public manager: Ref<User>
 
-  @prop()
-  public masterid: number
+  @prop({ autopopulate: true, ref: 'User' })
+  public master: Ref<User>
+
+  @prop({ default: false })
+  public quick: boolean
 
   @prop({ default: 0 })
   public declaredPrice: number
@@ -191,8 +208,17 @@ export class Order {
   @prop({ default: new Date() })
   public createdAt: Date
 
+  @prop({ default: '-' })
+  public password: string
+
+  @prop()
+  public estimatedClosedAt: Date
+
   @prop()
   public closedAt: Date
+
+  @prop({ autopopulate: true, ref: 'Adversitement' })
+  public adversitement: Ref<Adversitement>
 
   @prop({ enum: statuses })
   public status: string
@@ -300,11 +326,15 @@ export class Order {
     return await order.save()
   }
 
-  public static async setMaster(this: ReturnModelType<typeof Order>, id: number | string, master: number) {
+  public static async setMaster(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    master: mongoose.Types.ObjectId,
+  ) {
     const order = await this.findOne({ id })
-    if (order.masterid) {
-      const oldMaster = await UserModel.findOne({ id: order.masterid })
-      const newMaster = await UserModel.findOne({ id: master })
+    if (order.master) {
+      const oldMaster = await UserModel.findById(order.master)
+      const newMaster = await UserModel.findById(master)
       this.setHelper(
         'workflow',
         order.workflow,
@@ -312,7 +342,7 @@ export class Order {
         `Мастер изменён с ${oldMaster.credentials} на ${newMaster.credentials}`,
       )
     } else {
-      const newMaster = await UserModel.findOne({ id: master })
+      const newMaster = await UserModel.findById(master)
 
       this.setHelper(
         'workflow',
@@ -321,15 +351,19 @@ export class Order {
         `Выставлен ответственный мастер ${newMaster.credentials}`,
       )
     }
-    order.masterid = master
+    order.master = master
     return await order.save()
   }
 
-  public static async setManager(this: ReturnModelType<typeof Order>, id: number | string, manager: number) {
+  public static async setManager(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    manager: mongoose.Types.ObjectId,
+  ) {
     const order = await this.findOne({ id })
-    if (order.managerid) {
-      const oldManager = await UserModel.findOne({ id: order.managerid })
-      const newManager = await UserModel.findOne({ id: manager })
+    if (order.manager) {
+      const oldManager = await UserModel.findById(order.manager)
+      const newManager = await UserModel.findById(manager)
       this.setHelper(
         'workflow',
         order.workflow,
@@ -337,7 +371,7 @@ export class Order {
         `Менеджер изменён с ${oldManager.credentials} на ${newManager.credentials}`,
       )
     } else {
-      const newManager = await UserModel.findOne({ id: manager })
+      const newManager = await UserModel.findById(manager)
 
       this.setHelper(
         'workflow',
@@ -346,7 +380,7 @@ export class Order {
         `Выставлен ответственный менеджер ${newManager.credentials}`,
       )
     }
-    order.managerid = manager
+    order.manager = manager
     return await order.save()
   }
 
