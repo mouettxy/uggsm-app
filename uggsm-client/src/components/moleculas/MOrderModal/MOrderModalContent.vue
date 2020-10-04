@@ -1,0 +1,81 @@
+<template lang="pug">
+.order-modal-content(:class='{ "order-modal-content__loading": !newOrder && order === null }')
+  header.order-modal-content__header
+    template(v-if='newOrder')
+      h5.text-h5 Новый заказ
+    template(v-else)
+      template(v-if='order')
+        .text-h5.pa-1 Заказ № {{ order.id }}
+        v-tooltip(bottom)
+          template(#activator='{on, attrs}')
+            .text-h6.pa-1.primary.white--text(v-on='on', v-bind='attrs', style='border-radius: 4px') {{ order.office.code }}
+          span {{ order.office.name }}
+
+  template(v-if='!newOrder && order === null')
+    v-progress-circular(indeterminate, color='primary', size='64')
+
+  template(v-else)
+    v-tabs(v-model='currentTab')
+      v-tab(key='information') Информация о заказе
+      v-tab(key='works', :disabled='newOrder') Работы и материалы
+      v-tab(key='payments', :disabled='newOrder') Платежи
+
+    v-tabs-items(v-model='currentTab', touchless)
+      v-tab-item.order-modal-content__item(key='information')
+        .order-modal-content__item__content
+          m-order-modal-fields(v-model='newOrder ? model : order', :new-order='newOrder')
+      v-tab-item.order-modal-content__item(key='works')
+        .order-modal-content__item__content
+          h6.text-h6 Выполненная работа
+      v-tab-item.order-modal-content__item(key='payments')
+        .order-modal-content__item__content
+          h6.text-h6 Оплата
+</template>
+
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+
+import MOrderModalFields from './MOrderModalFields.vue'
+
+@Component({
+  components: {
+    MOrderModalFields
+  }
+})
+export default class MOrderModalContent extends Vue {
+  @Prop({ default: false, type: Boolean }) newOrder: any
+  @Prop(Object) value: any
+  @Prop(Object) order: any
+
+  public currentTab = 0
+
+  get model() {
+    return this.value
+  }
+
+  set model(value) {
+    this.$emit('input', value)
+  }
+}
+</script>
+
+<style lang="sass">
+
+.order-modal-content
+  height: 100%
+  &__loading
+    display: flex
+    justify-content: center
+    align-items: center
+  &__header
+    display: flex
+  &__item
+    padding-left: 0px
+    padding-right: 0px
+
+    &__content
+      padding: 6px
+      overflow-y: scroll
+      height: calc(100vh - 136px)
+      box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important
+</style>
