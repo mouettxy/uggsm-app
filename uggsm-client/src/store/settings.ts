@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { officesModule } from '.'
+import { officesModule, ordersModule } from '.'
 
 @Module({
   namespaced: true,
@@ -16,5 +16,6 @@ export default class Settings extends VuexModule {
   @Action
   async setOffice(payload: string) {
     this.context.commit('SET_OFFICE', await officesModule.findByCodeAndName(payload))
+    ordersModule.fetch({ columnFilters: {}, sort: { field: '', type: '' }, page: 1, perPage: 10 })
   }
 }
