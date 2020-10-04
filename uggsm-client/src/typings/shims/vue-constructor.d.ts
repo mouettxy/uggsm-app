@@ -1,3 +1,4 @@
+import { AxiosInstance } from 'axios'
 import Vue from 'vue'
 import { NotificationPlugin } from './NotificationsPlugin'
 
@@ -6,5 +7,6 @@ declare module 'vue/types/vue' {
   // on the `VueConstructor` interface
   interface Vue {
     $notification: NotificationPlugin
+    $axios: AxiosInstance
   }
 }

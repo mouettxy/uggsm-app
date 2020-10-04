@@ -2,6 +2,7 @@ import { Endpoint } from '../Endpoint'
 
 export type OrdersEndpoints = {
   getAll: Endpoint
+  getPaginated: Endpoint
   getAllByOffice: Endpoint
   getById: Endpoint
   create: Endpoint

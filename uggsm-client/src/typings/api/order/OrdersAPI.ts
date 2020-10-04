@@ -2,6 +2,7 @@ export type OrdersAPI = {
   getAll(): Promise<any | null>
   getAllByOffice(): Promise<any | null>
   getById(): Promise<any | null>
+  getPaginated(data: any): Promise<any | null>
   create(data: any): Promise<any | null>
   createByOffice(data: any): Promise<any | null>
   addSms(data: any): Promise<any | null>
