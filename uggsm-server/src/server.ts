@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+// import { seedDatabase } from './faker'
 import RestApi from './RestApi'
 import {
   AuthenticationRouter,
@@ -30,3 +31,5 @@ api.io.on('connection', socket => {
 })
 
 api.listen()
+
+/* seedDatabase() */
