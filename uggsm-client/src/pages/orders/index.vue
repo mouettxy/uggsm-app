@@ -24,9 +24,9 @@ import { Socket } from 'vue-socket.io-extended'
   }
 })
 export default class PageOrders extends Vue {
-  @Socket() // --> listens to the event by method name, e.g. `connect`
+  @Socket()
   connect() {
-    console.log('connection established')
+    console.log('connected')
   }
 }
 </script>
