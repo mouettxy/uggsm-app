@@ -4,6 +4,7 @@ import { OrdersAPI, OrdersEndpoints } from '@/typings/api/order'
 export const ordersEndpoints = (code?: string | number): OrdersEndpoints => ({
   getAll: { method: 'get', link: `/order` },
   getAllByOffice: { method: 'get', link: `/order/office/${code}` },
+  getPaginated: { method: 'get', link: `/order/paginate` },
   getById: { method: 'get', link: `/order/${code}` },
   create: { method: 'post', link: `/order` },
   createByOffice: { method: 'post', link: `/order/office/${code}` },
@@ -32,7 +33,19 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve([])
       }
     } catch (error) {
-      console.log(error)
+      return Promise.resolve([])
+    }
+  },
+  getPaginated: async (data) => {
+    try {
+      const response = await sendRequest(ordersEndpoints().getPaginated, data)
+
+      if (response.status === 200) {
+        return Promise.resolve(response.data)
+      } else {
+        return Promise.resolve([])
+      }
+    } catch (error) {
       return Promise.resolve([])
     }
   },
@@ -45,13 +58,12 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve([])
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve([])
     }
   },
   getById: async () => {
     try {
-      const response = await sendRequest(ordersEndpoints().getById)
+      const response = await sendRequest(ordersEndpoints(code).getById)
 
       if (response.status === 200) {
         return Promise.resolve(response.data)
@@ -59,7 +71,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -73,7 +84,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -87,7 +97,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -101,7 +110,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -115,7 +123,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -129,7 +136,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -143,7 +149,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -157,7 +162,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -171,7 +175,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -185,7 +188,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -199,7 +201,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -213,7 +214,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -227,7 +227,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -241,7 +240,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -255,7 +253,6 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   }
