@@ -7,6 +7,7 @@ import {
   OfficeRouter,
   CashRouter,
   AdversitementRouter,
+  AutocompleteRouter,
 } from './routes'
 import { ClientRouter } from './routes/clientRoutes'
 import { validateEnv } from './utils'
@@ -21,6 +22,7 @@ const api = new RestApi([
   new CashRouter(),
   new ClientRouter(),
   new AdversitementRouter(),
+  new AutocompleteRouter(),
 ])
 
 api.io.on('connection', socket => {
