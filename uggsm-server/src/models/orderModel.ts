@@ -107,41 +107,70 @@ export class Workflow {
 }
 
 @pre<Order>('save', async function() {
-  if (!this.status) {
-    this.status = 'Новый'
+  if (this.isNew) {
+    if (!this.status) {
+      this.status = 'Новый'
+    }
+
     this.workflow.push(
       extendArrayWithId(this.workflow, {
         header: `Смена статуса заказа`,
         userid: null,
-        message: `Установлен статус ${this.status}`,
+        message: `${this.status}`,
       }),
     )
-  }
 
-  if (/[^\d]/g.test(this.customerPhone)) {
-    this.customerPhone = this.customerPhone.replace(/[^\d]/g, '').slice(1)
-  }
+    // find client and if not exist - create if exist trying to add phone number
+    if (this.customerName) {
+      const customer = await ClientModel.findOne({ name: this.customerName })
 
-  // !FIXME: dirty hack to get unique id for each office specificated
-  // @ts-ignore
-  this.officeCode = this.office
+      if (!customer) {
+        const newClient = await ClientModel.createByOrder(this.customerName, this.customerPhone)
+        this.customer = newClient._id
+      } else {
+        const isPhoneExists = !isEmpty(filter(customer.phone, { phone: this.customerPhone }))
 
-  // find client and if not exist - create if exist trying to add phone number
-  if (this.customerName) {
-    const customer = await ClientModel.findOne({ name: this.customerName })
+        if (!isPhoneExists) {
+          await ClientModel.addPhoneNumber(this.customerName, this.customerPhone, 'Добавлено при создании заявки')
+        }
 
-    if (!customer) {
-      const newClient = await ClientModel.createByOrder(this.customerName, this.customerPhone)
-      this.customer = newClient._id
-    } else {
-      const isPhoneExists = !isEmpty(filter(customer.phone, { phone: this.customerPhone }))
-
-      if (!isPhoneExists) {
-        await ClientModel.addPhoneNumber(this.customerName, this.customerPhone, 'Добавлено при создании заявки')
+        this.customer = customer._id
       }
-
-      this.customer = customer._id
+      this.workflow.push(
+        extendArrayWithId(this.workflow, {
+          header: `Назначен клиент`,
+          userid: null,
+          // @ts-ignore
+          message: `${this.customerName}`,
+        }),
+      )
     }
+
+    const master = await UserModel.findById(this.master)
+    this.workflow.push(
+      extendArrayWithId(this.workflow, {
+        header: `Назначен мастер`,
+        userid: null,
+        message: `${master.credentials}`,
+      }),
+    )
+
+    const manager = await UserModel.findById(this.manager)
+    this.workflow.push(
+      extendArrayWithId(this.workflow, {
+        header: `Назначен менеджер`,
+        userid: null,
+        message: `${manager.credentials}`,
+      }),
+    )
+
+    if (/[^\d]/g.test(this.customerPhone)) {
+      this.customerPhone = this.customerPhone.replace(/[^\d]/g, '').slice(1)
+    }
+
+    const office = await OfficeModel.findById(this.office)
+
+    this.officeCode = office.code
   }
 })
 @plugin(mongoosePaginate)
@@ -275,28 +304,28 @@ export class Order {
   public static async addCompletedWork(this: ReturnModelType<typeof Order>, id: number | string, work: CompletedWork) {
     const order = await this.findOne({ id })
     await this.addHelper('array', order.statusWork, work)
-    await this.addHelper('workflow', order.workflow, work, 'закрыта работа')
+    await this.addHelper('workflow', order.workflow, work, 'Закрыта работа')
     return await order.save()
   }
 
   public static async addSmsMessage(this: ReturnModelType<typeof Order>, id: number | string, message: SmsMessage) {
     const order = await this.findOne({ id })
     await this.addHelper('array', order.statusSms, message)
-    await this.addHelper('workflow', order.workflow, message, 'новое сообщение')
+    await this.addHelper('workflow', order.workflow, message, 'Новое сообщение')
     return await order.save()
   }
 
   public static async addMasterComment(this: ReturnModelType<typeof Order>, id: number | string, comment: Comment) {
     const order = await this.findOne({ id })
     await this.addHelper('array', order.masterComments, comment)
-    await this.addHelper('workflow', order.workflow, comment, 'новый комментарий')
+    await this.addHelper('workflow', order.workflow, comment, 'Новый комментарий')
     return await order.save()
   }
 
   public static async addManagerComment(this: ReturnModelType<typeof Order>, id: number | string, comment: Comment) {
     const order = await this.findOne({ id })
     await this.addHelper('array', order.managerComments, comment)
-    await this.addHelper('workflow', order.workflow, comment, 'новый комментарий')
+    await this.addHelper('workflow', order.workflow, comment, 'Новый комментарий')
     return await order.save()
   }
 
@@ -311,7 +340,7 @@ export class Order {
   ) {
     const order = await this.findOne({ id })
     order.status = status
-    this.setHelper('workflow', order.workflow, 'Смена статуса заказа', `Установлен статус ${status}`)
+    this.setHelper('workflow', order.workflow, 'Смена статуса заказа', `${status}`)
     return await order.save()
   }
 
@@ -319,12 +348,7 @@ export class Order {
     const order = await this.findOne({ id })
     const oldPayedStatus = order.payed
     order.payed = payed
-    this.setHelper(
-      'workflow',
-      order.workflow,
-      'Смена статуса оплаты',
-      `Статус оплаты изменён с ${oldPayedStatus} на ${payed}`,
-    )
+    this.setHelper('workflow', order.workflow, 'Смена статуса оплаты', `Изменён с "${oldPayedStatus}" на "${payed}"`)
     return await order.save()
   }
 
@@ -340,18 +364,13 @@ export class Order {
       this.setHelper(
         'workflow',
         order.workflow,
-        'Смена мастера',
-        `Мастер изменён с ${oldMaster.credentials} на ${newMaster.credentials}`,
+        'Смена мастер',
+        `Мастер изменён с "${oldMaster.credentials}" на "${newMaster.credentials}"`,
       )
     } else {
       const newMaster = await UserModel.findById(master)
 
-      this.setHelper(
-        'workflow',
-        order.workflow,
-        'Назначение мастера',
-        `Выставлен ответственный мастер ${newMaster.credentials}`,
-      )
+      this.setHelper('workflow', order.workflow, 'Назначен мастер', `${newMaster.credentials}`)
     }
     order.master = master
     return await order.save()
@@ -369,18 +388,13 @@ export class Order {
       this.setHelper(
         'workflow',
         order.workflow,
-        'Смена менеджера',
-        `Менеджер изменён с ${oldManager.credentials} на ${newManager.credentials}`,
+        'Смена менеджер',
+        `Менеджер изменён с "${oldManager.credentials}" на "${newManager.credentials}"`,
       )
     } else {
       const newManager = await UserModel.findById(manager)
 
-      this.setHelper(
-        'workflow',
-        order.workflow,
-        'Назначение менеджера',
-        `Выставлен ответственный менеджер ${newManager.credentials}`,
-      )
+      this.setHelper('workflow', order.workflow, 'Назначен менеджер', `${newManager.credentials}`)
     }
     order.manager = manager
     return await order.save()
