@@ -77,7 +77,6 @@ async function createOffices() {
       docsTemplate: faker.random.arrayElement(officeTemplates),
       address: faker.address.streetAddress(),
     })
-    console.log(office)
     const saved = await office.save()
     savedOfficeIds.push(saved._id)
   }
@@ -106,12 +105,16 @@ async function createUsers() {
 // create orders
 async function createOrders() {
   for (let i = 0; i < 10000; i += 1) {
+    const officeId = faker.random.arrayElement(savedOfficeIds)
+    const office = await OfficeModel.findById(officeId)
+
     const order = new OrderModel({
       customerName: faker.name.findName(),
       customerPhone: faker.phone.phoneNumber(),
-      office: faker.random.arrayElement(savedOfficeIds),
+      office: officeId,
       master: faker.random.arrayElement(savedMasterIds),
       manager: faker.random.arrayElement(savedManagerIds),
+      status: faker.random.arrayElement(statuses),
       phoneBrand: faker.vehicle.manufacturer(),
       phoneModel: faker.vehicle.model(),
       quick: faker.random.boolean(),
@@ -121,8 +124,28 @@ async function createOrders() {
       kit: faker.random.words(2),
       declaredPrice: faker.random.number(5000),
     })
-    const saved = await order.save()
-    console.log(saved._id)
+
+    const savedOrderFirstIteration = await order.save()
+
+    // @ts-ignore
+    savedOrderFirstIteration.setNext('order_id', async (_err, doc) => {
+      const parsed = office.ordersTemplateParsed
+
+      // setting up zero values so we can increment to it
+      let initial = parsed[0] + String('0').repeat(parseInt(parsed[1]))
+
+      // if incremented value bigger than zero amount we should extend
+      // given template and extend amount of zeros to prevent id broke
+      if (savedOrderFirstIteration.id.toString().length > initial.length - 1) {
+        initial = parsed[0] + String('0').repeat(savedOrderFirstIteration.id.toString().length)
+      }
+
+      savedOrderFirstIteration.id = parseInt(initial) + savedOrderFirstIteration.id
+
+      const savedOrderSecondIteration = await savedOrderFirstIteration.save()
+
+      console.log(savedOrderSecondIteration._id)
+    })
   }
 }
 
