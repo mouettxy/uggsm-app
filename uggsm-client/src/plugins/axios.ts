@@ -6,6 +6,8 @@ import axios from 'axios'
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
+const suppressLogs = true
+
 const config = {
   baseURL: `${process.env.VUE_APP_API_URL}/${process.env.VUE_APP_API_VERSION}` || '',
   validateStatus: (status: any) => {
@@ -18,7 +20,10 @@ const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
   function(config) {
-    console.debug(`sending request to ${config.url}`)
+    if (!suppressLogs) {
+      console.debug(`sending request to ${config.url}`)
+    }
+
     return config
   },
   function(error) {
@@ -29,7 +34,9 @@ _axios.interceptors.request.use(
 
 _axios.interceptors.response.use(
   function(response) {
-    console.debug(`response from request`, response)
+    if (!suppressLogs) {
+      console.debug(`response from request`, response)
+    }
     return response
   },
   function(error) {
