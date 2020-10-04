@@ -18,7 +18,6 @@ export const authAPI = () => ({
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   },
@@ -32,7 +31,6 @@ export const authAPI = () => ({
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   },
@@ -46,7 +44,6 @@ export const authAPI = () => ({
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   }

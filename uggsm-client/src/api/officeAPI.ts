@@ -20,7 +20,6 @@ export const officeAPI = (code?: string) => ({
         return []
       }
     } catch (error) {
-      console.log(error)
       return []
     }
   },
@@ -34,7 +33,6 @@ export const officeAPI = (code?: string) => ({
         return Promise.resolve(null)
       }
     } catch (error) {
-      console.log(error)
       return Promise.resolve(null)
     }
   },
@@ -48,7 +46,6 @@ export const officeAPI = (code?: string) => ({
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   },
@@ -62,7 +59,6 @@ export const officeAPI = (code?: string) => ({
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   },
@@ -76,7 +72,6 @@ export const officeAPI = (code?: string) => ({
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   }
