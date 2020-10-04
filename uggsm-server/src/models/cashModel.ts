@@ -5,7 +5,6 @@ import { extendArrayWithId } from '../utils/helpers'
 import { ClientModel, OrderModel, Office } from '.'
 
 @pre<Cash>('save', async function() {
-  console.log(this)
   if (this.orderid && this.clientid) {
     if (!this.comment) {
       const order = await OrderModel.findOne({ id: this.orderid })

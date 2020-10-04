@@ -51,13 +51,6 @@ export const manager: RequestHandlerParams = [...requiredFieldsHelper('manager')
 export const office: RequestHandlerParams = [...requiredFieldsHelper('office'), badRequestHelper()]
 
 export const order: RequestHandlerParams = [
-  ...requiredFieldsHelper(
-    'customerName',
-    'customerPhone',
-    'phoneModel',
-    'serialNumber',
-    'declaredDefect',
-    'overallKit',
-  ),
+  ...requiredFieldsHelper('customerName', 'customerPhone', 'phoneModel', 'serialNumber', 'declaredDefect', 'kit'),
   badRequestHelper(),
 ]

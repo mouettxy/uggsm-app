@@ -34,7 +34,7 @@ export class AuthenticationController implements IAuthentificationController {
   public register = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
     const userData = req.body
     if (await this.user.findOne({ username: userData.username })) {
-      next(new UserWithThatUsernameAlreadyExistsException(userData.email))
+      next(new UserWithThatUsernameAlreadyExistsException(userData.username))
     } else {
       try {
         const hashedPassword = await bcrypt.hash(userData.password, 10)
@@ -63,7 +63,7 @@ export class AuthenticationController implements IAuthentificationController {
 
   public login = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
     const loginData = req.body
-    const user = await this.user.findOne({ email: loginData.email })
+    const user = await this.user.findOne({ username: loginData.username })
     if (user) {
       const matchedPassword = await bcrypt.compare(loginData.password, user.get('password'))
 
