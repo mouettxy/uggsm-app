@@ -21,14 +21,11 @@ export function connectToDatabase(): void {
 
   mongoose
     .connect(DB_URL)
-    .then((connection) => {
+    .then(connection => {
       // tslint:disable-next-line: no-console
       console.log('Database connected successfully')
 
       initializePlugins(mongoose.connection)
-
-      /* // @ts-ignore
-      connection.connection.dropDatabase() */
 
       console.log('Database plugins initialized')
     })
