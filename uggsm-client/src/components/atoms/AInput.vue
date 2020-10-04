@@ -8,6 +8,7 @@ v-text-field(
   :rules='validate',
   :type='type',
   validate-on-blur,
+  :dense='dense',
   clearable
 )
 </template>
@@ -28,6 +29,7 @@ export default class AInput extends Vue {
   @Prop(String) hint: any
   @Prop(Array) validate: any
   @Prop(String) type: any
+  @Prop(Boolean) dense: any
 
   get model() {
     return this.value
