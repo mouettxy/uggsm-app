@@ -17,8 +17,12 @@ export class Office {
   public address: string
 
   public get ordersTemplateParsed() {
-    const regExp = /(\d){1}\{\C\:(\d){1}\}/g.exec(this.ordersTemplate)
-    return [regExp[1], regExp[2]]
+    const regExp = /(\d*)\{(\w*):(\d*)\}/g.exec(this.ordersTemplate)
+    return {
+      start: regExp[1],
+      modifier: regExp[2],
+      modifierCount: parseInt(regExp[3]),
+    }
   }
 
   public static getOneByCode(this: ReturnModelType<typeof Office>, code: string) {

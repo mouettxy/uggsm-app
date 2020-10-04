@@ -1,5 +1,6 @@
 import faker from 'faker'
 import { OfficeModel, OrderModel, UserModel } from './models'
+import { generateOrderId } from './utils/helpers'
 
 faker.locale = 'ru'
 faker.seed(12345)
@@ -125,26 +126,16 @@ async function createOrders() {
       declaredPrice: faker.random.number(5000),
     })
 
-    const savedOrderFirstIteration = await order.save()
+    const firstIteration = await order.save()
 
     // @ts-ignore
-    savedOrderFirstIteration.setNext('order_id', async (_err, doc) => {
-      const parsed = office.ordersTemplateParsed
+    firstIteration.setNext('order_id', async (_err, doc) => {
+      const generatedId = generateOrderId(office.ordersTemplateParsed, firstIteration.id)
+      console.log(generatedId)
+      firstIteration.id = generatedId
+      const secondIteration = await firstIteration.save()
 
-      // setting up zero values so we can increment to it
-      let initial = parsed[0] + String('0').repeat(parseInt(parsed[1]))
-
-      // if incremented value bigger than zero amount we should extend
-      // given template and extend amount of zeros to prevent id broke
-      if (savedOrderFirstIteration.id.toString().length > initial.length - 1) {
-        initial = parsed[0] + String('0').repeat(savedOrderFirstIteration.id.toString().length)
-      }
-
-      savedOrderFirstIteration.id = parseInt(initial) + savedOrderFirstIteration.id
-
-      const savedOrderSecondIteration = await savedOrderFirstIteration.save()
-
-      console.log(savedOrderSecondIteration._id)
+      console.log(`Order created ${secondIteration.id}`)
     })
   }
 }

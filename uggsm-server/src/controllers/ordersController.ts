@@ -1,5 +1,6 @@
 import { NextFunction } from 'connect'
 import express from 'express'
+import { generateOrderId } from '../utils/helpers'
 import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
@@ -338,27 +339,16 @@ export class OrdersController implements IOrdersController {
         office: office._id,
       })
 
-      const savedOrderFirstIteration = await order.save()
+      const firstIteration = await order.save()
 
       // @ts-ignore
-      savedOrderFirstIteration.setNext('order_id', async (_err, doc) => {
-        const parsed = office.ordersTemplateParsed
+      firstIteration.setNext('order_id', async (_err, doc) => {
+        firstIteration.id = generateOrderId(office.ordersTemplateParsed, firstIteration.id)
 
-        // setting up zero values so we can increment to it
-        let initial = parsed[0] + String('0').repeat(parseInt(parsed[1]))
-
-        // if incremented value bigger than zero amount we should extend
-        // given template and extend amount of zeros to prevent id broke
-        if (savedOrderFirstIteration.id.toString().length > initial.length - 1) {
-          initial = parsed[0] + String('0').repeat(savedOrderFirstIteration.id.toString().length)
-        }
-
-        savedOrderFirstIteration.id = parseInt(initial) + savedOrderFirstIteration.id
-
-        const savedOrderSecondIteration = await savedOrderFirstIteration.save()
+        const secondIteration = await firstIteration.save()
 
         response.status(200)
-        response.send(savedOrderSecondIteration)
+        response.send(secondIteration)
       })
     } catch (error) {
       next(new HttpException(500, error.message))

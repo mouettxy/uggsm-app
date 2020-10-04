@@ -155,3 +155,18 @@ export const badRequestHelper = () => {
     }
   }
 }
+
+export const generateOrderId = (
+  parsed: { start: string; modifier: string; modifierCount: number },
+  identifier: number,
+) => {
+  if (parsed.modifier === 'C') {
+    return parseInt(
+      `${parsed.start}${
+        identifier.toString().length >= parsed.modifierCount
+          ? ''
+          : '0'.repeat(parsed.modifierCount - identifier.toString().length)
+      }${identifier.toString()}`,
+    )
+  }
+}
