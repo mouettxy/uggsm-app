@@ -7,6 +7,7 @@ export interface IOrdersController {
   getById: (req: Request, res: Response, next: NextFunction) => Promise<void>
   addCompletedWork: (req: Request, res: Response, next: NextFunction) => Promise<void>
   addSms: (req: Request, res: Response, next: NextFunction) => Promise<void>
+  getAllWithParams: (req: Request, res: Response, next: NextFunction) => Promise<void>
   addMasterComment: (req: Request, res: Response, next: NextFunction) => Promise<void>
   addManagerComment: (req: Request, res: Response, next: NextFunction) => Promise<void>
   addWorkflow: (req: Request, res: Response, next: NextFunction) => Promise<void>

@@ -19,6 +19,7 @@ export class OrdersRouter implements Router {
       .all(`${path}*`, authenticationMiddleware)
       .get(path, controller.getAll)
       .get(`${path}/office/:code`, controller.getAllByOffice)
+      .get(`${path}/paginate/`, controller.getAllWithParams)
       .get(`${path}/:id`, controller.getById)
       .post(path, validateOrder.order, controller.create)
       .post(`${path}/office/:code`, validateOrder.order, controller.createByOffice)

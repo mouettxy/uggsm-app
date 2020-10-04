@@ -7,6 +7,7 @@ import { Client, ClientModel } from './clientModel'
 import { processWorkflowData, extendArrayWithId } from '../utils/helpers'
 import { Adversitement } from './adversitementModel'
 import { User } from './userModel'
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 const statuses = [
   'Новый',
@@ -39,7 +40,7 @@ export class CompletedWork {
   public message: string
 
   @prop()
-  public price: string
+  public price: number
 }
 
 export class SmsMessage {
@@ -110,17 +111,11 @@ export class Workflow {
     this.status = 'Новый'
     this.workflow.push(
       extendArrayWithId(this.workflow, {
+        header: `Смена статуса заказа`,
+        userid: null,
         message: `Установлен статус ${this.status}`,
       }),
     )
-  } else {
-    if (this.modifiedPaths().includes('status')) {
-      this.workflow.push(
-        extendArrayWithId(this.workflow, {
-          message: `Установлен статус ${this.status}`,
-        }),
-      )
-    }
   }
 
   if (/[^\d]/g.test(this.customerPhone)) {
@@ -149,6 +144,7 @@ export class Workflow {
     }
   }
 })
+@plugin(mongoosePaginate)
 @plugin(AutoIncrement as any, {
   id: 'order_id',
   inc_field: 'id',
@@ -195,6 +191,12 @@ export class Order {
 
   @prop({ default: 'Нет серийного номера' })
   public serialNumber: string
+
+  @prop({ default: 'Нет описания внешнего вида' })
+  public appearance: string
+
+  @prop({ default: 'Платный' })
+  public orderType: string
 
   @prop({ default: 'Нет дефекта' })
   public declaredDefect: string
@@ -272,14 +274,14 @@ export class Order {
 
   public static async addCompletedWork(this: ReturnModelType<typeof Order>, id: number | string, work: CompletedWork) {
     const order = await this.findOne({ id })
-    await this.addHelper('array', order.masterComments, work)
+    await this.addHelper('array', order.statusWork, work)
     await this.addHelper('workflow', order.workflow, work, 'закрыта работа')
     return await order.save()
   }
 
   public static async addSmsMessage(this: ReturnModelType<typeof Order>, id: number | string, message: SmsMessage) {
     const order = await this.findOne({ id })
-    await this.addHelper('array', order.masterComments, message)
+    await this.addHelper('array', order.statusSms, message)
     await this.addHelper('workflow', order.workflow, message, 'новое сообщение')
     return await order.save()
   }
