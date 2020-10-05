@@ -13,15 +13,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import { MOrderModal } from '@/components/moleculas'
-
 /**
  * Orders page
  */
-@Component({
-  components: {
-    MOrderModal
-  }
-})
+@Component
 export default class OrderModal extends Vue {}
 </script>

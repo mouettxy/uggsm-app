@@ -11,9 +11,9 @@
       v-container.order-modal__container
         v-row(no-gutters)
           v-col.order-modal__container-item(cols='9')
-            m-order-modal-content(v-model='model', :new-order='newOrder', :order='order')
+            m-order-modal-content(v-model='model', :new-order='newOrder')
           v-col.order-modal__container-item(cols='3')
-            m-order-modal-workflow(:new-order='newOrder', :order='order')
+            m-order-modal-workflow(:new-order='newOrder')
       v-footer.order-modal-footer
         template(v-if='newOrder')
           v-btn.mr-2(color='primary', @click='createOrder(close)')
@@ -34,28 +34,22 @@
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-import { MOrderModalContent, MOrderModalWorkflow } from './'
-
-import { ARightModal } from '@/components/atoms'
-
 import { ordersModule, settingsModule } from '@/store'
 
-@Component({
-  components: {
-    MOrderModalContent,
-    ARightModal,
-    MOrderModalWorkflow
-  }
-})
+@Component
 export default class MOrderModal extends Vue {
   @Prop({ default: true, type: Boolean }) newOrder: any
   @Prop({ default: null, type: Number }) orderid: any
   @Prop(Boolean) active: any
   @Prop(Boolean) btnHided: any
 
-  public order = null
+  get order() {
+    return ordersModule.currentOrder
+  }
+
   public model = {
     orderType: 'Платный',
+    estimatedCloseAt: '',
     customerName: '',
     customerPhone: '',
     password: '',
@@ -68,7 +62,7 @@ export default class MOrderModal extends Vue {
     kit: '',
     quick: false,
     master: '',
-    manager: ''
+    manager: '',
   }
 
   checkOrder(model: any) {
@@ -130,9 +124,7 @@ export default class MOrderModal extends Vue {
 
   async mounted() {
     if (!this.newOrder && this.$route.params?.id) {
-      const order = await ordersModule.getOrder(this.$route.params.id)
-
-      this.order = order
+      await ordersModule.getOrder(this.$route.params.id)
     }
   }
 }

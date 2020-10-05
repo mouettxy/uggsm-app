@@ -5,9 +5,9 @@
 </route>
 
 <template lang="pug">
-  .page-analytics
-    v-alert(type="error")
-      | Страница аналитики находится в статусе активной разработки.
+.page-analytics
+  v-alert(type='error')
+    | Страница аналитики находится в статусе активной разработки.
 </template>
 
 <script lang="ts">

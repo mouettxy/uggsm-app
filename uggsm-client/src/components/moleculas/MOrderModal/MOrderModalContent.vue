@@ -5,47 +5,69 @@
       h5.text-h5 Новый заказ
     template(v-else)
       template(v-if='order')
-        .text-h5.pa-1 Заказ № {{ order.id }}
+        .text-h5.pa-2 Заказ № {{ order.id }}
         v-tooltip(bottom)
           template(#activator='{on, attrs}')
-            .text-h6.pa-1.primary.white--text(v-on='on', v-bind='attrs', style='border-radius: 4px') {{ order.office.code }}
+            .text-h5(style='padding: 5px')
+              v-btn(
+                v-on='on',
+                v-bind='attrs',
+                color='primary',
+                small
+              ) {{ order.office.code }}
           span {{ order.office.name }}
+        .text-h5.pa-1
+          m-order-status-switcher(:status='order.status')
 
   template(v-if='!newOrder && order === null')
-    v-progress-circular(indeterminate, color='primary', size='64')
+    v-progress-circular(
+      color='primary',
+      indeterminate,
+      size='64'
+    )
 
   template(v-else)
     v-tabs(v-model='currentTab')
       v-tab(key='information') Информация о заказе
-      v-tab(key='works', :disabled='newOrder') Работы и материалы
-      v-tab(key='payments', :disabled='newOrder') Платежи
+      v-tab(
+        key='works',
+        :disabled='newOrder'
+      ) Работы и материалы
+      v-tab(
+        key='payments',
+        :disabled='newOrder'
+      ) Платежи
 
-    v-tabs-items(v-model='currentTab', touchless)
+    v-tabs-items(
+      v-model='currentTab',
+      touchless
+    )
       v-tab-item.order-modal-content__item(key='information')
         .order-modal-content__item__content
-          m-order-modal-fields(v-model='newOrder ? model : order', :new-order='newOrder')
+          m-order-modal-fields(
+            v-model='newOrder ? model : order',
+            :new-order='newOrder'
+          )
       v-tab-item.order-modal-content__item(key='works')
         .order-modal-content__item__content
-          h6.text-h6 Выполненная работа
+          m-order-modal-works(:new-order='newOrder')
       v-tab-item.order-modal-content__item(key='payments')
         .order-modal-content__item__content
-          h6.text-h6 Оплата
+          .text-h5 Оплата
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { ordersModule } from '@/store'
 
-import MOrderModalFields from './MOrderModalFields.vue'
-
-@Component({
-  components: {
-    MOrderModalFields
-  }
-})
+@Component
 export default class MOrderModalContent extends Vue {
   @Prop({ default: false, type: Boolean }) newOrder: any
   @Prop(Object) value: any
-  @Prop(Object) order: any
+
+  get order() {
+    return ordersModule.currentOrder
+  }
 
   public currentTab = 0
 

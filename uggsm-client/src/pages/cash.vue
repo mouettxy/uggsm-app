@@ -5,9 +5,9 @@
 </route>
 
 <template lang="pug">
-  .page-cash
-    v-alert(type="error")
-      | Страница кассы находится в статусе активной разработки.
+.page-cash
+  v-alert(type='error')
+    | Страница кассы находится в статусе активной разработки.
 </template>
 
 <script lang="ts">

@@ -39,14 +39,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { ordersModule } from '@/store'
 
-import { AInput, ASelect } from '@/components/atoms'
-
-@Component({
-  components: {
-    AInput,
-    ASelect
-  }
-})
+@Component
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
   public page = 1
@@ -56,59 +49,59 @@ export default class OOrdersTable extends Vue {
     sortBy: ['id'],
     sortDesc: [true],
     mustSort: false,
-    multiSort: true
+    multiSort: true,
   }
   public headers: any = [
     {
       text: 'Заказ №',
       value: 'id',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Срок заказа',
       value: 'estimatedClosedAt',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Статус',
       value: 'status',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Создан',
       value: 'created',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Устройство',
       value: 'phoneModel',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Бренд',
       value: 'phoneBrand',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Неисправность',
       value: 'declaredDefect',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Уведомления',
       value: 'notifications',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Рекламная кампания',
       value: 'adversitement',
-      hidden: false
+      hidden: false,
     },
     {
       text: 'Пароль',
       value: 'password',
-      hidden: false
-    }
+      hidden: false,
+    },
   ]
   public isLoading = false
 

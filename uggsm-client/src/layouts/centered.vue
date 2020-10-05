@@ -11,8 +11,8 @@ import OMainNavigation from '@/components/organizms/OMainNavigation.vue'
 
 @Component({
   components: {
-    OMainNavigation
-  }
+    OMainNavigation,
+  },
 })
 export default class LayoutDefault extends Vue {
   public items = [
@@ -20,31 +20,31 @@ export default class LayoutDefault extends Vue {
       linkName: 'orders',
       title: 'Заявки',
       icon: 'mdi-bat',
-      divider: false
+      divider: false,
     },
     {
       linkName: 'clients',
       title: 'Клиенты',
       icon: 'mdi-account-group',
-      divider: false
+      divider: false,
     },
     {
       linkName: 'cash',
       title: 'Касса',
-      icon: 'mdi-cash-register'
+      icon: 'mdi-cash-register',
     },
     {
       linkName: 'analytic',
       title: 'Аналитика',
       icon: 'mdi-google-analytics',
-      divider: true
+      divider: true,
     },
     {
       linkName: 'settings',
       title: 'Настройки',
       icon: 'mdi-cog',
-      divider: true
-    }
+      divider: true,
+    },
   ]
 }
 </script>

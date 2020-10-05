@@ -20,8 +20,8 @@ import { Socket } from 'vue-socket.io-extended'
  */
 @Component({
   components: {
-    TOrdersMain
-  }
+    TOrdersMain,
+  },
 })
 export default class PageOrders extends Vue {
   @Socket()

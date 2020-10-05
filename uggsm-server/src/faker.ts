@@ -1,25 +1,14 @@
 import faker from 'faker'
+import { each } from 'lodash'
+import { office } from './middlewares/validators/validateOrder'
 import { OfficeModel, OrderModel, UserModel } from './models'
 import { generateOrderId } from './utils/helpers'
+import { statuses } from './utils/enums'
 
 faker.locale = 'ru'
 faker.seed(12345)
 
 const roles = ['administrator', 'master', 'manager']
-
-const statuses = [
-  'Новый',
-  'На уточнении',
-  'В работе',
-  'Ждёт запчасть',
-  'Позвонить повторно',
-  'Нужно решить',
-  'Готов, без ремонта',
-  'На продаже',
-  'Закрыт',
-  'Обещали найти',
-  'Готов',
-]
 
 const officeTemplates = [
   '1{C:4}',
@@ -70,6 +59,7 @@ const savedManagerIds = []
 const savedOfficeIds = []
 
 async function createOffices() {
+  const offices = []
   for (let i = 0; i < 10; i += 1) {
     const office = new OfficeModel({
       code: faker.address.stateAbbr(),
@@ -78,12 +68,15 @@ async function createOffices() {
       docsTemplate: faker.random.arrayElement(officeTemplates),
       address: faker.address.streetAddress(),
     })
-    const saved = await office.save()
-    savedOfficeIds.push(saved._id)
+    offices.push(office)
+    /* const saved = await office.save()
+    savedOfficeIds.push(saved._id) */
   }
+  return offices
 }
 
 async function createUsers() {
+  const users = []
   for (let i = 0; i < 100; i += 1) {
     const user = new UserModel({
       username: faker.internet.userName(),
@@ -92,22 +85,29 @@ async function createUsers() {
       role: faker.random.arrayElement(roles),
       office: faker.random.arrayElement(savedOfficeIds),
     })
-    const saved = await user.save()
+
+    users.push(user)
+    /* const saved = await user.save()
     if (user.role === 'master') {
       savedMasterIds.push(saved._id)
     }
     if (user.role === 'manager') {
       savedManagerIds.push(saved._id)
     }
-    userUsernamePasswords[user.username] = user.password
+    userUsernamePasswords[user.username] = user.password */
   }
+  return users
 }
 
 // create orders
 async function createOrders() {
-  for (let i = 0; i < 10000; i += 1) {
+  const orders = []
+  for (let i = 0; i < 3000; i += 1) {
     const officeId = faker.random.arrayElement(savedOfficeIds)
     const office = await OfficeModel.findById(officeId)
+    const date = new Date()
+    date.setDate(date.getDate() + 7)
+    console.log(date)
 
     const order = new OrderModel({
       customerName: faker.name.findName(),
@@ -124,6 +124,7 @@ async function createOrders() {
       declaredDefect: faker.random.words(5),
       kit: faker.random.words(2),
       declaredPrice: faker.random.number(5000),
+      estimatedCloseAt: date,
     })
 
     const firstIteration = await order.save()
@@ -138,10 +139,24 @@ async function createOrders() {
       console.log(`Order created ${secondIteration.id}`)
     })
   }
+  return orders
 }
 
 export async function seedDatabase() {
-  await createOffices()
-  await createUsers()
-  await createOrders()
+  const offices = await createOffices()
+  for (const office in offices) {
+    const saved = await offices[office].save()
+    savedOfficeIds.push(saved._id)
+  }
+  const users = await createUsers()
+  for (const user in users) {
+    const saved = await users[user].save()
+    if (saved.role === 'master') {
+      savedMasterIds.push(saved._id)
+    }
+    if (saved.role === 'manager') {
+      savedManagerIds.push(saved._id)
+    }
+  }
+  const orders = await createOrders()
 }

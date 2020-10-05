@@ -5,9 +5,9 @@
 </route>
 
 <template lang="pug">
-  .page-settings
-    v-alert(type="error")
-      | Страница настроек находится в статусе активной разработки.
+.page-settings
+  v-alert(type='error')
+    | Страница настроек находится в статусе активной разработки.
 </template>
 
 <script lang="ts">

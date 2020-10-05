@@ -113,3 +113,31 @@ export function getAnonymousAnimal() {
 
   return animals[Math.floor(Math.random() * animals.length)]
 }
+
+export function getCorrectTextColor(hex: string) {
+  function cutHex(h: string) {
+    return h.charAt(0) == '#' ? h.substring(1, 7) : h
+  }
+  function hexToR(h: string) {
+    return parseInt(cutHex(h).substring(0, 2), 16)
+  }
+  function hexToG(h: string) {
+    return parseInt(cutHex(h).substring(2, 4), 16)
+  }
+  function hexToB(h: string) {
+    return parseInt(cutHex(h).substring(4, 6), 16)
+  }
+
+  const threshold = 130
+
+  const hRed = hexToR(hex)
+  const hGreen = hexToG(hex)
+  const hBlue = hexToB(hex)
+
+  const cBrightness = (hRed * 299 + hGreen * 587 + hBlue * 114) / 1000
+  if (cBrightness > threshold) {
+    return '#151515'
+  } else {
+    return '#fafafa'
+  }
+}

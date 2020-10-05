@@ -4,18 +4,18 @@ module.exports = {
   env: {
     es6: true,
     node: true,
-    browser: true
+    browser: true,
   },
 
   globals: {
     localStorage: true,
-    fetch: true
+    fetch: true,
   },
 
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 2020,
-    sourceType: 'module'
+    sourceType: 'module',
   },
 
   plugins: ['prettier'],
@@ -26,15 +26,16 @@ module.exports = {
       {
         singleQuote: true,
         semi: false,
-        printWidth: 120
-      }
+        printWidth: 120,
+        endOfLine: 'auto',
+      },
     ],
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
     'no-unused-vars': 0,
     'trailing-comma': 0,
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
 
   extends: [
@@ -42,6 +43,6 @@ module.exports = {
     '@vue/typescript/recommended',
     '@vue/prettier',
     '@vue/prettier/@typescript-eslint',
-    '@vue/typescript'
-  ]
+    '@vue/typescript',
+  ],
 }

@@ -9,10 +9,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import MOfficeSwitcher from '@/components/moleculas/MOfficeSwitcher.vue'
-import MSearchField from '@/components/moleculas/MSearchField.vue'
 import { officesModule, settingsModule } from '@/store'
-import map from 'lodash/map'
+import { map } from 'lodash'
 
 /**
  * Organizm that provides toolbar with office switcher and search field
@@ -20,12 +18,7 @@ import map from 'lodash/map'
  * @emmits switch-office
  * @emits search
  */
-@Component({
-  components: {
-    MOfficeSwitcher,
-    MSearchField
-  }
-})
+@Component
 export default class OTableToolbar extends Vue {
   get offices() {
     return map(officesModule.offices, (el) => `${el.code}|${el.name}`)

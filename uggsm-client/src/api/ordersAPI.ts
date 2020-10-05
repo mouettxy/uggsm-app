@@ -167,7 +167,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   setStatus: async (data: any) => {
     try {
-      const response = await sendRequest(ordersEndpoints(code).addWorkflow, data)
+      const response = await sendRequest(ordersEndpoints(code).setStatus, data)
 
       if (response.status === 200) {
         return Promise.resolve(response.data)

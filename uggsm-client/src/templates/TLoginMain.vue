@@ -8,17 +8,11 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import OLoginForm from '@/components/organizms/OLoginForm.vue'
-
 /**
  * Template of main order view
  *
  */
-@Component({
-  components: {
-    OLoginForm
-  }
-})
+@Component
 export default class TLoginMain extends Vue {}
 </script>
 

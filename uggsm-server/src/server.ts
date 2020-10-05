@@ -1,5 +1,6 @@
+import { mongoose } from '@typegoose/typegoose'
 import 'reflect-metadata'
-// import { seedDatabase } from './faker'
+import { seedDatabase } from './faker'
 import RestApi from './RestApi'
 import {
   AuthenticationRouter,
@@ -32,4 +33,11 @@ api.io.on('connection', socket => {
 
 api.listen()
 
-/* seedDatabase() */
+/* async function seed() {
+  await mongoose.connection.dropDatabase()
+
+  seedDatabase()
+}
+
+seed()
+ */

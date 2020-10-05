@@ -1,26 +1,26 @@
 <template lang="pug">
 v-autocomplete(
   v-model='model',
-  :search-input.sync='query',
   :label='label',
+  :items='items',
+  :search-input.sync='query',
   :dense='dense',
+  :return-object='returnObject',
+  :prepend-inner-icon='icon',
   @focus.stop='onAutocompleteFocus',
-  outlined,
   item-text='text',
   item-value='value',
+  outlined,
   hide-no-data,
-  :items='items',
   clearable,
   auto-select-first,
-  no-data-text='Нет доступных данных',
-  :prepend-inner-icon='icon'
+  no-data-text='Нет доступных данных'
 )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
-import axios from '@/plugins/axios'
 import { isEmpty } from 'lodash'
 
 @Component
@@ -32,6 +32,7 @@ export default class AAutocomplete extends Vue {
   @Prop(Boolean) dense: any
   @Prop(String) icon: any
   @Prop(Array) predefinedItems: any
+  @Prop(Boolean) returnObject!: boolean
 
   public items: Array<any> = []
   public query = ''
@@ -62,14 +63,14 @@ export default class AAutocomplete extends Vue {
   async getItems() {
     try {
       const params = {
-        search: this.query
+        search: this.query,
       }
 
       if (this.replaceSearchWith) {
         params.search = this.replaceSearchWith
       }
 
-      const response = await axios.get(`autocomplete${this.endpoint}`, { params: params })
+      const response = await this.$axios.get(`autocomplete${this.endpoint}`, { params: params })
       if (response.status === 200) {
         return response.data
       } else {

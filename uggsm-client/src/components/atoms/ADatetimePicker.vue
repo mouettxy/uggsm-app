@@ -57,8 +57,8 @@ const DEFAULT_OK_TEXT = 'Применить'
 @Component({
   model: {
     prop: 'datetime',
-    event: 'input'
-  }
+    event: 'input',
+  },
 })
 export default class ADatetimePicker extends Vue {
   @Prop({ type: [Date, String], default: DEFAULT_DATE }) datetime: any
@@ -88,19 +88,15 @@ export default class ADatetimePicker extends Vue {
     this.init()
   }
 
-  get formattedDatetime() {
-    return ''
+  get dateToDb() {
+    return moment(this.selectedDatetime, 'DD.MM.YYYY HH:mm').toISOString()
   }
 
   get selectedDatetime() {
     if (this.date && this.time) {
-      const date = moment(this.date, 'YYYY-MM-DD')
-        .locale('ru')
-        .format('DD.MM.YYYY')
+      const date = moment(this.date, 'YYYY-MM-DD').locale('ru').format('DD.MM.YYYY')
 
-      const time = moment(this.time, 'HH:mm')
-        .locale('ru')
-        .format('HH:ss')
+      const time = moment(this.time, 'HH:mm').locale('ru').format('HH:mm')
 
       return `${date} ${time}`
     } else {
@@ -113,12 +109,16 @@ export default class ADatetimePicker extends Vue {
       const m = moment().add(7, 'days')
       this.date = m.format('YYYY-DD-MM')
       this.time = m.format('HH:mm')
+    } else {
+      const m = moment(this.datetime)
+      this.date = m.format('YYYY-DD-MM')
+      this.time = m.format('HH:mm')
     }
   }
 
   okHandler() {
     this.resetPicker()
-    this.$emit('input', this.selectedDatetime)
+    this.$emit('input', this.dateToDb)
   }
 
   clearHandler() {
@@ -126,7 +126,7 @@ export default class ADatetimePicker extends Vue {
     const m = moment().add(7, 'days')
     this.date = m.format('YYYY-DD-MM')
     this.time = m.format('HH:mm')
-    this.$emit('input', this.selectedDatetime)
+    this.$emit('input', this.dateToDb)
   }
 
   resetPicker() {

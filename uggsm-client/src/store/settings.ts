@@ -16,6 +16,13 @@ export default class Settings extends VuexModule {
   @Action
   async setOffice(payload: string) {
     this.context.commit('SET_OFFICE', await officesModule.findByCodeAndName(payload))
-    ordersModule.fetch({ columnFilters: {}, sort: { field: '', type: '' }, page: 1, perPage: 10 })
+    ordersModule.fetch({
+      page: 1,
+      itemsPerPage: 15,
+      sortBy: ['id'],
+      sortDesc: [true],
+      mustSort: false,
+      multiSort: true
+    })
   }
 }

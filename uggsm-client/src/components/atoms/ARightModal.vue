@@ -21,27 +21,16 @@ export default class ARightModal extends Vue {
   @Prop(String) title: any
   @Prop(Boolean) active: any
 
-  public interval = setInterval(() => {
-    if (this.active) {
-      document.documentElement.classList.add('overflow-y-hidden')
-    } else {
-      document.documentElement.classList.remove('overflow-y-hidden')
-    }
-  }, 100)
-
   toggleModal() {
     this.value = !this.value
+    document.documentElement.classList.remove('overflow-y-hidden')
   }
 
   mounted() {
     if (this.active) {
       this.value = true
     }
-  }
-
-  beforeDestroy() {
-    clearInterval(this.interval)
-    document.documentElement.classList.remove('overflow-y-hidden')
+    document.documentElement.classList.add('overflow-y-hidden')
   }
 }
 </script>

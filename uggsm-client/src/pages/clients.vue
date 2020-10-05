@@ -5,9 +5,9 @@
 </route>
 
 <template lang="pug">
-  .page-clients
-    v-alert(type="error")
-      | Страница клиентов находится в статусе активной разработки.
+.page-clients
+  v-alert(type='error')
+    | Страница клиентов находится в статусе активной разработки.
 </template>
 
 <script lang="ts">

@@ -1,11 +1,10 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { ordersAPI } from '@/api'
-import map from 'lodash/map'
-import zip from 'lodash/zip'
+import { map, zip } from 'lodash'
 
 import moment from 'moment'
 import { settingsModule } from '.'
-import { cloneDeep, each, fromPairs } from 'lodash'
+import { cloneDeep, fromPairs } from 'lodash'
 
 function getTime(date: any) {
   const m = moment(date)
@@ -18,13 +17,13 @@ function getTime(date: any) {
 })
 export default class Orders extends VuexModule {
   public orders: Array<any> | null = null
+  public currentOrder: Record<string, any> | null = null
   public countRows = 0
 
   get ordersTable() {
     return map(this.orders, (e) => {
       const closeTime = getTime(e.estimatedCloseAt)
       const createTime = getTime(e.createdAt)
-
       return {
         id: e.id,
         estimatedCloseAt: closeTime,
@@ -41,6 +40,11 @@ export default class Orders extends VuexModule {
   SET_ORDERS(payload: any) {
     this.orders = payload.docs
     this.countRows = payload.totalDocs
+  }
+
+  @Mutation
+  SET_ORDER(payload: any) {
+    this.currentOrder = payload
   }
 
   @Action
@@ -66,7 +70,7 @@ export default class Orders extends VuexModule {
 
   @Action
   async getOrder(id: number | string) {
-    return await ordersAPI(id).getById()
+    this.context.commit('SET_ORDER', await ordersAPI(id).getById())
   }
 
   @Action

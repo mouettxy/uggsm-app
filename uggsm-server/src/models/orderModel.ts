@@ -8,20 +8,7 @@ import { processWorkflowData, extendArrayWithId } from '../utils/helpers'
 import { Adversitement } from './adversitementModel'
 import { User } from './userModel'
 import mongoosePaginate from 'mongoose-paginate-v2'
-
-const statuses = [
-  'Новый',
-  'На уточнении',
-  'В работе',
-  'Ждёт запчасть',
-  'Позвонить повторно',
-  'Нужно решить',
-  'Готов, без ремонта',
-  'На продаже',
-  'Закрыт',
-  'Обещали найти',
-  'Готов',
-]
+import { statuses } from '../utils/enums'
 
 export class CompletedWork {
   @prop()
@@ -243,7 +230,7 @@ export class Order {
   public password: string
 
   @prop()
-  public estimatedClosedAt: Date
+  public estimatedCloseAt: Date
 
   @prop()
   public closedAt: Date

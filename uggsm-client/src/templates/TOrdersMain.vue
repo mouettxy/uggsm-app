@@ -8,17 +8,10 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import OTableToolbar from '@/components/organizms/OTableToolbar.vue'
-import OOrdersTable from '@/components/organizms/OOrdersTable.vue'
 /**
  * Template of main order view
  *
  */
-@Component({
-  components: {
-    OTableToolbar,
-    OOrdersTable
-  }
-})
+@Component
 export default class TOrdersMain extends Vue {}
 </script>

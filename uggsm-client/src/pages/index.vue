@@ -5,7 +5,7 @@
 </route>
 
 <template lang="pug">
-  .a a
+.a a
 </template>
 
 <script lang="ts">

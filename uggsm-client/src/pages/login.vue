@@ -17,8 +17,8 @@ import TLoginMain from '@/templates/TLoginMain.vue'
 @Component({
   layout: 'centered',
   components: {
-    TLoginMain
-  }
+    TLoginMain,
+  },
 })
 export default class PageLogin extends Vue {
   public value = ''

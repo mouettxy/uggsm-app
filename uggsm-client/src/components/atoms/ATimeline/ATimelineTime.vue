@@ -1,6 +1,6 @@
 <template lang="pug">
 .timeline-time
-  .timeline-time__line(:class='color')
+  .timeline-time__line(:style='{ backgroundColor: color }')
   span {{ date }}
 </template>
 
@@ -26,6 +26,6 @@ export default class ATimelineTime extends Vue {
     height: 100%
     position: absolute
     top: 0
-    left: 18px
+    left: 16px
     z-index: 10
 </style>

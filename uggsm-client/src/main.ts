@@ -8,6 +8,7 @@ import '@/plugins/tippy'
 import '@/plugins/mask'
 import '@/plugins/socket.io.ts'
 import '@/plugins/table'
+import '@/plugins/components'
 
 import vuetify from '@/plugins/vuetify'
 
