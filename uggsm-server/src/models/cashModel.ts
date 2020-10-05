@@ -3,21 +3,23 @@ import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
 import { extendArrayWithId } from '../utils/helpers'
 import { ClientModel, OrderModel, Office } from '.'
+import { Client } from './clientModel'
+import { User } from './userModel'
 
 @pre<Cash>('save', async function() {
-  if (this.orderid && this.clientid) {
+  if (this.orderid && this.client) {
     if (!this.comment) {
       const order = await OrderModel.findOne({ id: this.orderid })
-      const client = await ClientModel.findOne({ id: this.clientid })
+      const client = await ClientModel.findById(this.client)
 
       this.comment = `Оплата по заказу #${this.orderid} (${order.phoneModel}) (Клиент: ${client.name})`
     }
-  } else if (this.orderid && !this.clientid) {
+  } else if (this.orderid && !this.client) {
     const order = await OrderModel.findOne({ id: this.orderid })
 
     this.comment = `Оплата по заказу #${this.orderid} (${order.phoneModel})`
-  } else if (!this.orderid && this.clientid) {
-    const client = await ClientModel.findOne({ id: this.clientid })
+  } else if (!this.orderid && this.client) {
+    const client = await ClientModel.findById(this.client)
 
     this.comment = `Оплата (Клиент: ${client.name})`
   }
@@ -61,8 +63,11 @@ export class Cash {
   @prop()
   public orderid?: number
 
-  @prop()
-  public clientid?: number
+  @prop({ autopopulate: true, ref: 'Client', required: true })
+  public client?: Ref<Client>
+
+  @prop({ autopopulate: true, ref: 'User', required: true })
+  public cashier: Ref<User>
 
   @prop()
   public comment: string

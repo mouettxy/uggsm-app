@@ -47,6 +47,33 @@ export class CashController implements ICashController {
       })
   }
 
+  public getByOrder = async (
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    console.log(request.params)
+    const orderid = Number(request.params.id)
+    await this.cash
+      .find({ orderid })
+      .then(cash => {
+        if (cash) {
+          response.status(200)
+          response.send(cash)
+        } else {
+          next(new ObjectNotFoundException(this.cash.modelName, String(orderid)))
+        }
+      })
+      .catch(() =>
+        next(
+          new HttpException(
+            422,
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
+          ),
+        ),
+      )
+  }
+
   public getById = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     const id = request.params.id
     await this.cash
@@ -139,7 +166,7 @@ export class CashController implements ICashController {
         if (successResponse) {
           response.status(200)
           response.json({
-            message: `Запись из кассы с ${id} была успешно удалена`,
+            message: `Запись из кассы с ID ${id} была успешно удалена`,
           })
           response.send()
         } else {

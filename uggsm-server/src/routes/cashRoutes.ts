@@ -18,6 +18,7 @@ export class CashRouter implements Router {
       .all(`${path}*`, authenticationMiddleware)
       .get(path, controller.getAll)
       .get(`${path}/:code`, controller.getAllByOffice)
+      .get(`${path}/order/:id`, controller.getByOrder)
       .post(`${path}/:code`, controller.createByOffice)
       .put(`${path}/:id`, controller.updateById)
       .delete(`${path}/:id`, controller.deleteById)
