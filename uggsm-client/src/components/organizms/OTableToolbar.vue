@@ -1,7 +1,14 @@
 <template lang="pug">
 .table-toolbar
-  v-toolbar.toolbar(elevation='1', height='72')
-    m-office-switcher(:items='offices', :value='defaultOffice', @change='onOfficeSwitch')
+  v-toolbar.toolbar(
+    height='72',
+    elevation='1'
+  )
+    m-office-switcher(
+      :value='defaultOffice',
+      :items='offices',
+      @change='onOfficeSwitch'
+    )
     v-spacer
     m-search-field(@change='onSearchField')
 </template>

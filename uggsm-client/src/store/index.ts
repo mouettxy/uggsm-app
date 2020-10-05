@@ -11,7 +11,7 @@ import { getModule } from 'vuex-module-decorators'
 Vue.use(Vuex)
 
 export const persistedState = createPersistedState({
-  paths: ['settings', 'offices', 'auth']
+  paths: ['settings', 'offices', 'auth'],
 })
 
 export const store = new Vuex.Store({
@@ -20,9 +20,9 @@ export const store = new Vuex.Store({
     offices,
     settings,
     auth,
-    orders
+    orders,
   },
-  plugins: [persistedState]
+  plugins: [persistedState],
 })
 
 export const officesModule = getModule(offices, store)

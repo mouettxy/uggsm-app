@@ -1,19 +1,19 @@
 <template lang="pug">
 v-card.order-modal-workflow(v-if='!newOrder')
   v-toolbar.order-modal-workflow__header(
-    dense,
-    flat
+    flat,
+    dense
   )
     v-menu(
-      bottom,
-      close-on-click
+      close-on-click,
+      bottom
     )
       template(v-slot:activator='{ on, attrs }')
         v-btn(
           v-on='on',
           v-bind='attrs',
-          color='secondary',
-          small
+          small,
+          color='secondary'
         )
           v-icon mdi-printer
       v-list(dense)
@@ -29,15 +29,15 @@ v-card.order-modal-workflow(v-if='!newOrder')
               v-list-item-title Товарный чек
     v-spacer
     v-menu(
-      bottom,
-      close-on-click
+      close-on-click,
+      bottom
     )
       template(v-slot:activator='{ on, attrs }')
         v-btn(
           v-on='on',
           v-bind='attrs',
-          color='secondary',
-          small
+          small,
+          color='secondary'
         )
           v-icon mdi-swap-horizontal
       v-list(dense)
@@ -52,8 +52,8 @@ v-card.order-modal-workflow(v-if='!newOrder')
     v-spacer
     // TODO: add modal sms
     v-btn(
-      color='secondary',
-      small
+      small,
+      color='secondary'
     )
       v-icon(left) mdi-cellphone
       span SMS
@@ -61,13 +61,13 @@ v-card.order-modal-workflow(v-if='!newOrder')
     a-timeline
       template(v-for='workflow in workflows')
         a-timeline-time(
-          :color='workflow[1][0]["color"]',
-          :date='workflow[0]'
+          :date='workflow[0]',
+          :color='workflow[1][0]["color"]'
         )
         a-timeline-item(
           v-for='action in workflow[1]',
-          :item='action',
-          :key='action.id'
+          :key='action.id',
+          :item='action'
         )
 </template>
 
@@ -144,6 +144,7 @@ export default class MOrderModalWorkflow extends Vue {
 
         if (e.header === 'Закрыта работа') {
           color = '#c3a442'
+          icon = 'mdi-account-cog'
         } else if (e.header === 'Назначен клиент') {
           color = '#1b78c3'
           icon = 'mdi-account'

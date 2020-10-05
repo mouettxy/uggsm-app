@@ -1,20 +1,19 @@
 <template lang="pug">
 v-autocomplete(
   v-model='model',
+  :search-input.sync='query',
+  :prepend-inner-icon='icon',
   :label='label',
   :items='items',
-  :search-input.sync='query',
   :dense='dense',
-  :return-object='returnObject',
-  :prepend-inner-icon='icon',
   @focus.stop='onAutocompleteFocus',
-  item-text='text',
-  item-value='value',
   outlined,
+  no-data-text='Нет доступных данных',
+  item-value='value',
+  item-text='text',
   hide-no-data,
   clearable,
-  auto-select-first,
-  no-data-text='Нет доступных данных'
+  auto-select-first
 )
 </template>
 
@@ -25,7 +24,7 @@ import { isEmpty } from 'lodash'
 
 @Component
 export default class AAutocomplete extends Vue {
-  @Prop(String) value: any
+  @Prop({ type: [String, Object] }) value: any
   @Prop(String) label: any
   @Prop(String) endpoint: any
   @Prop(String) replaceSearchWith: any

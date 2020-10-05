@@ -4,7 +4,7 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 
 @Module({
   namespaced: true,
-  name: 'auth'
+  name: 'auth',
 })
 export default class Auth extends VuexModule {
   public user: any = null

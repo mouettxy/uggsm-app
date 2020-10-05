@@ -6,13 +6,13 @@ export const sendRequest = async (endpoint: Endpoint, data?: any) => {
   if (data) {
     if (endpoint.method === 'get') {
       data_ = {
-        params: { ...data }
+        params: { ...data },
       }
     } else {
       data_ = {
         data: {
-          ...data
-        }
+          ...data,
+        },
       }
     }
   }
@@ -21,12 +21,12 @@ export const sendRequest = async (endpoint: Endpoint, data?: any) => {
     return axios({
       url: endpoint.link,
       method: endpoint.method,
-      ...data_
+      ...data_,
     })
   } else {
     return axios({
       url: endpoint.link,
-      method: endpoint.method
+      method: endpoint.method,
     })
   }
 }
@@ -108,7 +108,7 @@ export function getAnonymousAnimal() {
     'Таинственный морж',
     'Таинственный волк',
     'Таинственный росомаха',
-    'Таинственный вомбат'
+    'Таинственный вомбат',
   ]
 
   return animals[Math.floor(Math.random() * animals.length)]

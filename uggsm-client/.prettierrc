@@ -4,9 +4,7 @@
   "bracketSpacing": true,
   "arrowParens": "always",
   "printWidth": 120,
-  "pugAttributeSeparator": "always",
   "pugWrapAttributesThreshold": 1,
-  "pugBracketSpacing": "true",
   "pugSortAttributesBeginning": [
     "^cols$",
     "^key$",
@@ -23,24 +21,6 @@
     "^:.*$",
     "^@.*$"
   ],
-  "pugSortAttributesEnd": [
-    "^:?hint$",
-    "^:?persistent-hint$",
-    "^prepend-",
-    "^@click:prepend",
-    "^append-",
-    "^@click:append",
-    "^:to$",
-    "^exact$",
-    "^:(?!(width|height|loading|disabled|data-))",
-    "^target$",
-    "^:?width$",
-    "^:?height$",
-    "^@click",
-    "^@",
-    "^:loading$",
-    "^:disabled$",
-    "^:?data-"
-  ],
-  "pugSortAttributes": "asc"
+  "pugSortAttributesEnd": ["^:?hint$"],
+  "pugSortAttributes": "desc"
 }

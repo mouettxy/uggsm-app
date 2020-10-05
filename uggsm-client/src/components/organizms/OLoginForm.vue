@@ -1,8 +1,26 @@
 <template lang="pug">
-v-form.login-form(ref='form', v-model='valid', @submit.prevent='onLogin')
-  a-input(v-model='user.username', icon='mdi-account', label='Логин', :validate='usernameRules')
-  a-input(v-model='user.password', icon='mdi-lock', label='Пароль', type='password', :validate='passwordRules')
-  v-btn(color='primary', type='submit') Войти
+v-form.login-form(
+  ref='form',
+  v-model='valid',
+  @submit.prevent='onLogin'
+)
+  a-input(
+    v-model='user.username',
+    :validate='usernameRules',
+    label='Логин',
+    icon='mdi-account'
+  )
+  a-input(
+    v-model='user.password',
+    :validate='passwordRules',
+    type='password',
+    label='Пароль',
+    icon='mdi-lock'
+  )
+  v-btn(
+    type='submit',
+    color='primary'
+  ) Войти
 </template>
 
 <script lang="ts">

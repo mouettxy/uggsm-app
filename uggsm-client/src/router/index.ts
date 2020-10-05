@@ -20,10 +20,10 @@ export const router = new Router({
     {
       path: '/',
       component: RouterLayout,
-      children: routes
-    }
+      children: routes,
+    },
   ],
-  mode: 'history'
+  mode: 'history',
 })
 
 router.beforeEach((to, from, next) => {

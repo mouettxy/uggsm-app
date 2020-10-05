@@ -4,7 +4,7 @@ import { sendRequest } from '@/api/helpers'
 export const authEnpoints = (): AuthEndpoints => ({
   login: { method: 'post', link: `/auth/login` },
   logout: { method: 'post', link: `/auth/logout` },
-  register: { method: 'post', link: `/auth/register` }
+  register: { method: 'post', link: `/auth/register` },
 })
 
 export const authAPI = () => ({
@@ -46,5 +46,5 @@ export const authAPI = () => ({
     } catch (error) {
       return null
     }
-  }
+  },
 })

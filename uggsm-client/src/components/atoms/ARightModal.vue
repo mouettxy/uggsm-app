@@ -1,15 +1,21 @@
 <template lang="pug">
 .right-modal
-  slot(name='activator', :click='toggleModal')
+  slot(
+    name='activator',
+    :click='toggleModal'
+  )
   v-dialog(
     v-model='value',
-    persistent,
     transition='dialog-bottom-transition',
+    persistent,
     overlay-opacity='0.8',
     content-class='right-modal'
   )
     v-card.card
-      slot(name='content', :close='toggleModal')
+      slot(
+        name='content',
+        :close='toggleModal'
+      )
 </template>
 
 <script lang="ts">

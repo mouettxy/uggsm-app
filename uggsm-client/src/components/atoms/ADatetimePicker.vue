@@ -1,24 +1,35 @@
 <template lang="pug">
-v-dialog(v-model='display', :width='dialogWidth')
+v-dialog(
+  v-model='display',
+  :width='dialogWidth'
+)
   template(v-slot:activator='{ on }')
     v-text-field(
+      v-on='on',
       v-bind='textFieldProps',
-      :disabled='disabled',
+      :value='selectedDatetime',
+      :prepend-inner-icon='icon',
       :loading='loading',
       :label='label',
-      :value='selectedDatetime',
-      v-on='on',
-      :prepend-inner-icon='icon',
+      :disabled='disabled',
+      readonly,
       outlined,
-      dense,
-      readonly
+      dense
     )
       template(#progress)
         slot(name='progress')
-          v-progress-linear(color='primary', indeterminate, absolute, height='2')
+          v-progress-linear(
+            indeterminate,
+            height='2',
+            color='primary',
+            absolute
+          )
   v-card
     v-card-text.px-0.py-0
-      v-tabs(fixed-tabs, v-model='activeTab')
+      v-tabs(
+        v-model='activeTab',
+        fixed-tabs
+      )
         v-tab(key='calendar')
           slot(name='dateIcon')
             v-icon mdi-calendar-clock
@@ -26,20 +37,37 @@ v-dialog(v-model='display', :width='dialogWidth')
           slot(name='timeIcon')
             v-icon mdi-clock-check
         v-tab-item(key='calendar')
-          v-date-picker(v-model='date', v-bind='datePickerProps', locale='ru-ru', @input='showTimePicker', full-width)
+          v-date-picker(
+            v-bind='datePickerProps',
+            v-model='date',
+            @input='showTimePicker',
+            locale='ru-ru',
+            full-width
+          )
         v-tab-item(key='timer')
           v-time-picker.v-time-picker-custom(
+            v-bind='timePickerProps',
             ref='timer',
             v-model='time',
-            format='24hr',
-            v-bind='timePickerProps',
-            full-width=''
+            full-width='',
+            format='24hr'
           )
     v-card-actions
       v-spacer
-      slot(name='actions', :parent='this')
-        v-btn(color='grey lighten-1', text='', @click.native='clearHandler') {{ clearText }}
-        v-btn(color='green darken-1', text='', @click='okHandler') {{ okText }}
+      slot(
+        name='actions',
+        :parent='this'
+      )
+        v-btn(
+          @click.native='clearHandler',
+          text='',
+          color='grey lighten-1'
+        ) {{ clearText }}
+        v-btn(
+          @click='okHandler',
+          text='',
+          color='green darken-1'
+        ) {{ okText }}
 </template>
 
 <script lang="ts">

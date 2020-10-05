@@ -4,7 +4,7 @@ import find from 'lodash/find'
 
 @Module({
   namespaced: true,
-  name: 'offices'
+  name: 'offices',
 })
 export default class Offices extends VuexModule {
   public offices: Array<any> | null = null

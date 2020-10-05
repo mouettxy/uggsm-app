@@ -1,14 +1,14 @@
 <template lang="pug">
 v-select(
   v-model='model',
-  :items='items',
+  :readonly='readonly',
   :prepend-inner-icon='icon',
   :label='label',
-  :hint='hint',
+  :items='items',
   :dense='dense',
-  :readonly='readonly',
-  outlined,
-  :clearable='clearable'
+  :clearable='clearable',
+  :hint='hint',
+  outlined
 )
 </template>
 

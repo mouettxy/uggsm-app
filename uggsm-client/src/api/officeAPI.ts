@@ -6,7 +6,7 @@ export const officeEndpoints = (code?: string): OfficeEndpoints => ({
   getByCode: { method: 'get', link: `/office/${code}` },
   create: { method: 'post', link: `/office` },
   update: { method: 'put', link: `/office/${code}` },
-  delete: { method: 'delete', link: `/office/${code}` }
+  delete: { method: 'delete', link: `/office/${code}` },
 })
 
 export const officeAPI = (code?: string) => ({
@@ -74,5 +74,5 @@ export const officeAPI = (code?: string) => ({
     } catch (error) {
       return null
     }
-  }
+  },
 })

@@ -13,36 +13,36 @@ const config = {
   validateStatus: (status: any) => {
     return status < 500 // default
   },
-  timeout: 60 * 1000
+  timeout: 60 * 1000,
 }
 
 const _axios = axios.create(config)
 
 _axios.interceptors.request.use(
-  function(config) {
+  function (config) {
     if (!suppressLogs) {
       console.debug(`sending request to ${config.url}`)
     }
 
     return config
   },
-  function(error) {
+  function (error) {
     // Do something with request error
     return Promise.reject(error)
-  }
+  },
 )
 
 _axios.interceptors.response.use(
-  function(response) {
+  function (response) {
     if (!suppressLogs) {
       console.debug(`response from request`, response)
     }
     return response
   },
-  function(error) {
+  function (error) {
     // Do something with response error
     return Promise.reject(error)
-  }
+  },
 )
 
 Vue.prototype.$axios = _axios

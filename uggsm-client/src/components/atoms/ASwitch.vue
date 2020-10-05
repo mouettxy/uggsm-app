@@ -1,5 +1,9 @@
 <template lang="pug">
-v-switch(v-model='model', :label='label', :prepend-icon='icon')
+v-switch(
+  v-model='model',
+  :prepend-icon='icon',
+  :label='label'
+)
 </template>
 
 <script lang="ts">

@@ -1,20 +1,33 @@
 <template lang="pug">
-v-menu.order-status-switcher(bottom, :close-on-content-click='false')
+v-menu.order-status-switcher(
+  :close-on-content-click='false',
+  bottom
+)
   template(v-slot:activator='{ on, attrs }')
-    v-btn(:color='statusColor', :style='{ color: accessibleColor(statusColor) }', small, v-bind='attrs', v-on='on')
+    v-btn(
+      v-on='on',
+      v-bind='attrs',
+      :style='{ color: accessibleColor(statusColor) }',
+      :color='statusColor',
+      small
+    )
       span {{ status }}
       v-icon(right) mdi-chevron-down
   .order-status-switcher__lists
     template(v-for='head in statusList')
-      v-list.order-status-switcher__list(subheader, dense, nav)
+      v-list.order-status-switcher__list(
+        subheader,
+        nav,
+        dense
+      )
         v-subheader.order-status-switcher__list-subheader {{ head.text }}
         v-list-item.order-status-switcher__list-item(
           v-for='s in head.statuses',
           :value='s.status',
-          :disabled='status === s.status',
-          :key='s.status',
-          :class='{ selected: status === s.status }',
           :style='{ color: `${accessibleColor(s.color)} !important`, backgroundColor: s.color }',
+          :key='s.status',
+          :disabled='status === s.status',
+          :class='{ selected: status === s.status }',
           @click='setStatus(s.status)'
         )
           v-list-item-content

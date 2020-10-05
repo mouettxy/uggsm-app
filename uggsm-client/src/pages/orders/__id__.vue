@@ -7,7 +7,11 @@
 <template lang="pug">
 .page-orders-modal
   template(v-if='$route.params.id')
-    m-order-modal(:new-order='$route.params.id === "new"', active, btn-hided)
+    m-order-modal(
+      :new-order='$route.params.id === "new"',
+      btn-hided,
+      active
+    )
 </template>
 
 <script lang="ts">

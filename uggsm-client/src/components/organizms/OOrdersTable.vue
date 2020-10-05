@@ -1,36 +1,54 @@
 <template lang="pug">
 .orders-table
   v-toolbar.orders-table-toolbar(flat)
-    v-btn(to='/orders/new', color='primary')
+    v-btn(
+      to='/orders/new',
+      color='primary'
+    )
       v-icon(left) mdi-plus
       span Новый заказ
     v-spacer
-    v-menu(v-model='columnsMenu', :close-on-content-click='false', offset-x='')
+    v-menu(
+      v-model='columnsMenu',
+      :close-on-content-click='false',
+      offset-x=''
+    )
       template(#activator='{ on, attrs }')
-        v-btn(v-bind='attrs', icon, v-on='on')
+        v-btn(
+          v-on='on',
+          v-bind='attrs',
+          icon
+        )
           v-icon mdi-table-large
       v-card
         v-list
-          v-list-item(v-for='header in headers', :key='header.value')
+          v-list-item(
+            v-for='header in headers',
+            :key='header.value'
+          )
             v-list-item-action
               v-switch(v-model='header.hidden')
             v-list-item-title {{ header.text }}
   v-data-table(
-    :headers='headers',
-    :items='items',
+    :server-items-length='totalItems',
     :options.sync='options',
     :loading='isLoading',
-    @update:page='update',
-    @update:sort-by='update',
-    @update:sort-desc='update',
-    @update:items-per-page='update',
+    :items='items',
+    :headers='headers',
     :calculate-widths='true',
+    @update:sort-desc='update',
+    @update:sort-by='update',
+    @update:page='update',
+    @update:items-per-page='update',
     multi-sort,
-    item-key='id',
-    :server-items-length='totalItems'
+    item-key='id'
   )
     template(#item.id='{value}')
-      v-btn(:new-order='false', text, :to='{ name: "orderModal", params: { id: value } }')
+      v-btn(
+        :to='{ name: "orderModal", params: { id: value } }',
+        :new-order='false',
+        text
+      )
         v-icon(left) mdi-pencil
         span {{ value }}
 </template>

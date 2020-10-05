@@ -3,7 +3,7 @@ import { officesModule, ordersModule } from '.'
 
 @Module({
   namespaced: true,
-  name: 'settings'
+  name: 'settings',
 })
 export default class Settings extends VuexModule {
   public office: any = null
@@ -22,7 +22,7 @@ export default class Settings extends VuexModule {
       sortBy: ['id'],
       sortDesc: [true],
       mustSort: false,
-      multiSort: true
+      multiSort: true,
     })
   }
 }

@@ -13,7 +13,7 @@ function getTime(date: any) {
 
 @Module({
   namespaced: true,
-  name: 'orders'
+  name: 'orders',
 })
 export default class Orders extends VuexModule {
   public orders: Array<any> | null = null
@@ -31,7 +31,7 @@ export default class Orders extends VuexModule {
         created: createTime,
         phoneModel: e.phoneModel,
         phoneBrand: e.phoneBrand,
-        password: e.password
+        password: e.password,
       }
     })
   }
@@ -53,7 +53,7 @@ export default class Orders extends VuexModule {
     const query: any = {
       page: payload.page,
       limit: payload.itemsPerPage,
-      office
+      office,
     }
 
     const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))

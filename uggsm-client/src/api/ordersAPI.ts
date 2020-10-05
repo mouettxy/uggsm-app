@@ -19,7 +19,7 @@ export const ordersEndpoints = (code?: string | number): OrdersEndpoints => ({
   setManager: { method: 'put', link: `/order/${code}/manager` },
   setOffice: { method: 'put', link: `/order/${code}/office` },
   updateById: { method: 'put', link: `/order/${code}` },
-  deleteById: { method: 'delete', link: `/order` }
+  deleteById: { method: 'delete', link: `/order` },
 })
 
 export const ordersAPI = (code?: string | number): OrdersAPI => ({
@@ -255,5 +255,5 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
     } catch (error) {
       return Promise.resolve(null)
     }
-  }
+  },
 })

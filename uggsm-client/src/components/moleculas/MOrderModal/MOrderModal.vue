@@ -1,9 +1,15 @@
 <template lang="pug">
 .order-modal
-  a-right-modal(title='Новая заявка', :active='active')
+  a-right-modal(
+    :active='active',
+    title='Новая заявка'
+  )
     template(#activator='{click}')
       template(v-if='!btnHided')
-        v-btn(@click='click', color='primary')
+        v-btn(
+          @click='click',
+          color='primary'
+        )
           v-icon(left) mdi-plus
           span Новый
 
@@ -11,22 +17,37 @@
       v-container.order-modal__container
         v-row(no-gutters)
           v-col.order-modal__container-item(cols='9')
-            m-order-modal-content(v-model='model', :new-order='newOrder')
+            m-order-modal-content(
+              v-model='model',
+              :new-order='newOrder'
+            )
           v-col.order-modal__container-item(cols='3')
             m-order-modal-workflow(:new-order='newOrder')
       v-footer.order-modal-footer
         template(v-if='newOrder')
-          v-btn.mr-2(color='primary', @click='createOrder(close)')
+          v-btn.mr-2(
+            @click='createOrder(close)',
+            color='primary'
+          )
             v-icon(left) mdi-content-save
             span Создать
-          v-btn(text, :to='{ name: "orders" }')
+          v-btn(
+            :to='{ name: "orders" }',
+            text
+          )
             v-icon(left) mdi-close
             span Закрыть
         template(v-else)
-          v-btn.mr-2(color='primary', @click='updateOrder(close)')
+          v-btn.mr-2(
+            @click='updateOrder(close)',
+            color='primary'
+          )
             v-icon(left) mdi-content-save-edit
             span Обновить
-          v-btn(text, :to='{ name: "orders" }')
+          v-btn(
+            :to='{ name: "orders" }',
+            text
+          )
             v-icon(left) mdi-close
             span Закрыть
 </template>

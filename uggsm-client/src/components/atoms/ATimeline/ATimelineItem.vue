@@ -13,14 +13,24 @@
     template(v-if='item.username')
       v-tooltip(left)
         template(#activator='{on, attrs}')
-          .timeline-item__icon(:style='{ backgroundColor: item.color }', v-on='on', v-bind='attrs')
-            v-icon(size='1.5rem', :color='item.textColor') {{ item.icon }}
+          .timeline-item__icon(
+            v-on='on',
+            v-bind='attrs',
+            :style='{ backgroundColor: item.color }'
+          )
+            v-icon(
+              :color='item.textColor',
+              size='1.5rem'
+            ) {{ item.icon }}
         .text-subtitle-1 {{ item.username }}
         .text-subtitle-2.text-center
           span {{ item.date }}
     template(v-else)
       .timeline-item__icon(:style='{ backgroundColor: item.color }')
-        v-icon(size='1.5rem', :color='item.textColor') {{ item.icon }}
+        v-icon(
+          :color='item.textColor',
+          size='1.5rem'
+        ) {{ item.icon }}
     .timeline-item__content
       .timeline-item__content-header
         .timeline-item__content-header__title

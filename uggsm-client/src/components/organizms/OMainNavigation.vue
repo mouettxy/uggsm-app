@@ -1,25 +1,44 @@
 <template lang="pug">
-v-navigation-drawer.main-navigation(app, v-model='model', :mini-variant.sync='mini', color='secondary', dark)
+v-navigation-drawer.main-navigation(
+  v-model='model',
+  :mini-variant.sync='mini',
+  dark,
+  color='secondary',
+  app
+)
   slot(name='header')
     v-list
       v-list-item.px-2
         template(v-if='isLoggedIn')
           v-list-item-avatar
-            v-btn(icon, @click='logout')
+            v-btn(
+              @click='logout',
+              icon
+            )
               v-icon mdi-exit-run
           v-list-item-title {{ user.credentials }}
         template(v-else)
-          v-btn(icon, @click='refreshAnimal')
+          v-btn(
+            @click='refreshAnimal',
+            icon
+          )
             v-icon mdi-refresh
           v-list-item-title {{ animal }}
-        v-btn(icon, @click.stop='mini = !mini')
+        v-btn(
+          @click.stop='mini = !mini',
+          icon
+        )
           v-icon mdi-chevron-left
   v-divider
   v-list
     template(v-for='item in items')
       template(v-if='item.divider')
         v-divider.my-1
-      v-list-item(:to='{ name: item.linkName }', color='#fafafa', :key='item.title')
+      v-list-item(
+        :to='{ name: item.linkName }',
+        :key='item.title',
+        color='#fafafa'
+      )
         v-list-item-icon
           v-icon {{ item.icon }}
         v-list-item-content

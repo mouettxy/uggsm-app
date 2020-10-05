@@ -2,13 +2,13 @@
 .search-field
   v-text-field(
     v-model='model',
-    outlined,
-    clearable,
-    dense,
-    hide-details,
     single-line,
     prepend-inner-icon='mdi-magnify',
-    label='Поиск'
+    outlined,
+    label='Поиск',
+    hide-details,
+    dense,
+    clearable
   )
 </template>
 

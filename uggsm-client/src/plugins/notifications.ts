@@ -6,7 +6,7 @@ import { NotificationPluginOptions } from '@/typings/NotificationsPlugin'
 Vue.use(VueNotification, {
   timer: 7,
   showCloseIcn: true,
-  animateIn: function() {
+  animateIn: function () {
     // @ts-ignore
     const el = this.notificationEl
     const tl = new TimelineMax()
@@ -14,19 +14,19 @@ Vue.use(VueNotification, {
     tl.from(el, 0.4, {
       left: 999,
       width: 0,
-      position: 'absolute'
+      position: 'absolute',
     })
 
     return tl
   },
-  animateOut: function() {
+  animateOut: function () {
     // @ts-ignore
     const el = this.notificationEl
     const tl = new TimelineMax()
     tl.to(el, 0.5, {
-      opacity: 0
+      opacity: 0,
     })
 
     return tl
-  }
+  },
 } as NotificationPluginOptions)

@@ -3,18 +3,18 @@ module.exports = {
 
   pluginOptions: {
     moment: {
-      locales: ['ru', 'en']
+      locales: ['ru', 'en'],
     },
     autoRouting: {
-      chunkNamePrefix: 'page-'
-    }
+      chunkNamePrefix: 'page-',
+    },
   },
 
   css: {
     loaderOptions: {
       sass: {
-        prependData: '@import "@/sass/variables.sass"'
-      }
-    }
-  }
+        prependData: '@import "@/sass/variables.sass"',
+      },
+    },
+  },
 }

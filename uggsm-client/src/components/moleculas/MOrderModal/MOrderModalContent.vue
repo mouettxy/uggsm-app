@@ -12,8 +12,8 @@
               v-btn(
                 v-on='on',
                 v-bind='attrs',
-                color='primary',
-                small
+                small,
+                color='primary'
               ) {{ order.office.code }}
           span {{ order.office.name }}
         .text-h5.pa-1
@@ -21,9 +21,9 @@
 
   template(v-if='!newOrder && order === null')
     v-progress-circular(
-      color='primary',
+      size='64',
       indeterminate,
-      size='64'
+      color='primary'
     )
 
   template(v-else)

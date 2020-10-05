@@ -3,13 +3,13 @@
   v-select(
     v-model='model',
     :items='items',
-    dense,
+    single-line,
     outlined,
+    no-data-text='Похоже нет доступных офисов...',
     menu-props='auto',
     label='Офис',
     hide-details,
-    single-line,
-    no-data-text='Похоже нет доступных офисов...'
+    dense
   )
 </template>
 
