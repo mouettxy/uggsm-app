@@ -29,7 +29,7 @@ _axios.interceptors.request.use(
   function (error) {
     // Do something with request error
     return Promise.reject(error)
-  },
+  }
 )
 
 _axios.interceptors.response.use(
@@ -42,7 +42,7 @@ _axios.interceptors.response.use(
   function (error) {
     // Do something with response error
     return Promise.reject(error)
-  },
+  }
 )
 
 Vue.prototype.$axios = _axios

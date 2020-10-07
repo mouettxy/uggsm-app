@@ -17,6 +17,6 @@ export interface Router {
       | ICashController
       | IOfficeController
       | IOrdersController
-      | IAutocompleteController,
+      | IAutocompleteController
   ) => void
 }

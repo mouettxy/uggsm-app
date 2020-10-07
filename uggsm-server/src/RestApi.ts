@@ -34,7 +34,7 @@ class RestApi {
   }
 
   private initializeRouter(routers: Router[]): void {
-    routers.forEach(router => {
+    routers.forEach((router) => {
       this.expressApp.use('/v1/', router.expressRouter)
     })
   }

@@ -4,13 +4,8 @@ import { RequestHandlerParams } from 'express-serve-static-core'
 import { body, validationResult } from 'express-validator/check'
 const requiredFieldsHelper = (...args: string[]) => {
   const fields = []
-  args.forEach(e => {
-    fields.push(
-      body(e)
-        .not()
-        .isEmpty()
-        .withMessage('Необходимое поле'),
-    )
+  args.forEach((e) => {
+    fields.push(body(e).not().isEmpty().withMessage('Необходимое поле'))
   })
   return fields
 }

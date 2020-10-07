@@ -32,7 +32,7 @@ export class AutocompleteController implements IAutocompleteController {
             a.push({ text: e.name, value: e.name })
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -46,7 +46,7 @@ export class AutocompleteController implements IAutocompleteController {
   }
 
   public customerPhone = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+    const search = req.query.search
 
     if (isString(search)) {
       try {
@@ -57,7 +57,7 @@ export class AutocompleteController implements IAutocompleteController {
             a.push({ text: e.phone, value: e.phone })
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -94,7 +94,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -128,7 +128,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -165,7 +165,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -202,7 +202,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -239,7 +239,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -282,7 +282,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -318,7 +318,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)
@@ -353,7 +353,7 @@ export class AutocompleteController implements IAutocompleteController {
 
             return a
           },
-          [],
+          []
         )
 
         res.status(200)

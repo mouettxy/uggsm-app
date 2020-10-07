@@ -93,7 +93,7 @@ export class Workflow {
   public date?: Date
 }
 
-@pre<Order>('save', async function() {
+@pre<Order>('save', async function () {
   if (this.isNew) {
     if (!this.status) {
       this.status = 'Новый'
@@ -104,7 +104,7 @@ export class Workflow {
         header: `Смена статуса заказа`,
         userid: null,
         message: `${this.status}`,
-      }),
+      })
     )
 
     // find client and if not exist - create if exist trying to add phone number
@@ -129,7 +129,7 @@ export class Workflow {
           userid: null,
           // @ts-ignore
           message: `${this.customerName}`,
-        }),
+        })
       )
     }
 
@@ -139,7 +139,7 @@ export class Workflow {
         header: `Назначен мастер`,
         userid: null,
         message: `${master.credentials}`,
-      }),
+      })
     )
 
     const manager = await UserModel.findById(this.manager)
@@ -148,7 +148,7 @@ export class Workflow {
         header: `Назначен менеджер`,
         userid: null,
         message: `${manager.credentials}`,
-      }),
+      })
     )
 
     if (/[^\d]/g.test(this.customerPhone)) {
@@ -270,8 +270,8 @@ export class Order {
             header: workFlowStart,
             message: data?.message,
             userid: data.userid || null,
-          }),
-        ),
+          })
+        )
       )
     }
   }
@@ -283,7 +283,7 @@ export class Order {
           header: header,
           message: comment,
           userid: null,
-        }),
+        })
       )
     }
   }
@@ -323,7 +323,7 @@ export class Order {
   public static async setStatus(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    status: 'Новый' | 'На уточнении' | 'В работе' | 'Готов',
+    status: 'Новый' | 'На уточнении' | 'В работе' | 'Готов'
   ) {
     const order = await this.findOne({ id })
     order.status = status
@@ -342,7 +342,7 @@ export class Order {
   public static async setMaster(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    master: mongoose.Types.ObjectId,
+    master: mongoose.Types.ObjectId
   ) {
     const order = await this.findOne({ id })
     if (order.master) {
@@ -352,7 +352,7 @@ export class Order {
         'workflow',
         order.workflow,
         'Смена мастер',
-        `Мастер изменён с "${oldMaster.credentials}" на "${newMaster.credentials}"`,
+        `Мастер изменён с "${oldMaster.credentials}" на "${newMaster.credentials}"`
       )
     } else {
       const newMaster = await UserModel.findById(master)
@@ -366,7 +366,7 @@ export class Order {
   public static async setManager(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    manager: mongoose.Types.ObjectId,
+    manager: mongoose.Types.ObjectId
   ) {
     const order = await this.findOne({ id })
     if (order.manager) {
@@ -376,7 +376,7 @@ export class Order {
         'workflow',
         order.workflow,
         'Смена менеджер',
-        `Менеджер изменён с "${oldManager.credentials}" на "${newManager.credentials}"`,
+        `Менеджер изменён с "${oldManager.credentials}" на "${newManager.credentials}"`
       )
     } else {
       const newManager = await UserModel.findById(manager)

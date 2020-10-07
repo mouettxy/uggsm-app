@@ -18,7 +18,7 @@ export class ClientPhone {
   public comment?: string
 }
 
-@pre<Client>('save', async function() {
+@pre<Client>('save', async function () {
   // if (!this.adversitement) {
   //   // this.adversitement = (await AdversitementModel.findOne({ name: 'default' }))._id
   // }
@@ -85,7 +85,7 @@ export class Client {
     this: ReturnModelType<typeof Client>,
     name: string,
     phone: string,
-    comment?: string,
+    comment?: string
   ) {
     const client = await this.findOne({ name })
     client.phone.push(extendArrayWithId(client.phone, { phone, comment }))

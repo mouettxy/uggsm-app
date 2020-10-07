@@ -12,7 +12,7 @@ export class OrdersController implements IOrdersController {
   public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     await this.order
       .find({})
-      .then(orders => {
+      .then((orders) => {
         response.status(200)
         response.send(orders)
       })
@@ -24,7 +24,7 @@ export class OrdersController implements IOrdersController {
   public getAllByOffice = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const code = request.params.code
     await this.order
@@ -35,9 +35,9 @@ export class OrdersController implements IOrdersController {
           code,
         },
       })
-      .then(orders => {
+      .then((orders) => {
         response.status(200)
-        orders = orders.filter(function(order) {
+        orders = orders.filter(function (order) {
           return order.office
         })
         response.send(orders)
@@ -50,7 +50,7 @@ export class OrdersController implements IOrdersController {
   public getAllWithParams = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const office = request.query.office
     const page = request.query.page
@@ -101,7 +101,7 @@ export class OrdersController implements IOrdersController {
     const id = request.params.id
     await this.order
       .findOne({ id })
-      .then(order => {
+      .then((order) => {
         if (order) {
           response.status(200)
           response.send(order)
@@ -113,9 +113,9 @@ export class OrdersController implements IOrdersController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
@@ -128,7 +128,7 @@ export class OrdersController implements IOrdersController {
     })
     await createdOrder
       .save()
-      .then(savedOrder => {
+      .then((savedOrder) => {
         response.status(200)
         response.send(savedOrder)
       })
@@ -140,7 +140,7 @@ export class OrdersController implements IOrdersController {
   public async addCompletedWork(
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> {
     try {
       const order = await OrderModel.addCompletedWork(request.params.id, request.body)
@@ -175,7 +175,7 @@ export class OrdersController implements IOrdersController {
   public addMasterComment = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.addMasterComment(request.params.id, request.body)
@@ -193,7 +193,7 @@ export class OrdersController implements IOrdersController {
   public addManagerComment = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.addManagerComment(request.params.id, request.body)
@@ -212,7 +212,7 @@ export class OrdersController implements IOrdersController {
   public addWorkflow = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.addWorkflow(request.params.id, request.body)
@@ -231,7 +231,7 @@ export class OrdersController implements IOrdersController {
   public setStatus = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.setStatus(request.params.id, request.body.status)
@@ -265,7 +265,7 @@ export class OrdersController implements IOrdersController {
   public setMaster = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.setMaster(request.params.id, request.body.master)
@@ -284,7 +284,7 @@ export class OrdersController implements IOrdersController {
   public setManager = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.setManager(request.params.id, request.body.manager)
@@ -303,7 +303,7 @@ export class OrdersController implements IOrdersController {
   public setOffice = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     try {
       const order = await OrderModel.setOffice(request.params.id, request.body.office)
@@ -322,7 +322,7 @@ export class OrdersController implements IOrdersController {
   public createByOffice = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const orderData = request.body
     const officeCode = request.params.code
@@ -358,7 +358,7 @@ export class OrdersController implements IOrdersController {
   public updateById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id: string = request.params.id
     const orderData = request.body
@@ -366,7 +366,7 @@ export class OrdersController implements IOrdersController {
       .findByIdAndUpdate(id, orderData, {
         new: true,
       })
-      .then(updatedOrder => {
+      .then((updatedOrder) => {
         if (updatedOrder) {
           response.status(200)
           response.send(updatedOrder)
@@ -378,8 +378,8 @@ export class OrdersController implements IOrdersController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }
@@ -387,12 +387,12 @@ export class OrdersController implements IOrdersController {
   public deleteById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id = request.params.id
     await this.order
       .findByIdAndDelete(id)
-      .then(successResponse => {
+      .then((successResponse) => {
         if (successResponse) {
           response.status(200)
           response.json({
@@ -407,8 +407,8 @@ export class OrdersController implements IOrdersController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }

@@ -21,7 +21,7 @@ export function connectToDatabase(): void {
 
   mongoose
     .connect(DB_URL)
-    .then(connection => {
+    .then((connection) => {
       // tslint:disable-next-line: no-console
       console.log('Database connected successfully')
 

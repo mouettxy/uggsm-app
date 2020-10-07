@@ -27,7 +27,7 @@ const api = new RestApi([
   new AutocompleteRouter(),
 ])
 
-api.io.on('connection', socket => {
+api.io.on('connection', (socket) => {
   console.log('socket connected succesefully')
 })
 

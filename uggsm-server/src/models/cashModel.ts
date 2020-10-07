@@ -6,7 +6,7 @@ import { ClientModel, OrderModel, Office } from '.'
 import { Client } from './clientModel'
 import { User } from './userModel'
 
-@pre<Cash>('save', async function() {
+@pre<Cash>('save', async function () {
   if (this.orderid && this.client) {
     if (!this.comment) {
       const order = await OrderModel.findOne({ id: this.orderid })

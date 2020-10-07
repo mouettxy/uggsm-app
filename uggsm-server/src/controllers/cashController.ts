@@ -12,7 +12,7 @@ export class CashController implements ICashController {
   public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     await this.cash
       .find()
-      .then(cash => {
+      .then((cash) => {
         response.status(200)
         response.send(cash)
       })
@@ -24,7 +24,7 @@ export class CashController implements ICashController {
   public getBalance = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const office = request.params.office
     await this.cash
@@ -32,7 +32,7 @@ export class CashController implements ICashController {
       .sort({
         id: 'desc',
       })
-      .then(cash => {
+      .then((cash) => {
         response.status(200)
         response.send({ balance: cash[0].balance || 0 })
       })
@@ -44,7 +44,7 @@ export class CashController implements ICashController {
   public getPaginated = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const office = request.query.office
     const page = request.query.page
@@ -94,7 +94,7 @@ export class CashController implements ICashController {
   public getAllByOffice = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const code = request.params.code
     await this.cash
@@ -105,9 +105,9 @@ export class CashController implements ICashController {
           code,
         },
       })
-      .then(cash => {
+      .then((cash) => {
         response.status(200)
-        cash = cash.filter(function(c) {
+        cash = cash.filter(function (c) {
           return c.office
         })
         response.send(cash)
@@ -120,13 +120,13 @@ export class CashController implements ICashController {
   public getByOrder = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     console.log(request.params)
     const orderid = Number(request.params.id)
     await this.cash
       .find({ orderid })
-      .then(cash => {
+      .then((cash) => {
         if (cash) {
           response.status(200)
           response.send(cash)
@@ -138,9 +138,9 @@ export class CashController implements ICashController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
@@ -148,7 +148,7 @@ export class CashController implements ICashController {
     const id = request.params.id
     await this.cash
       .findOne({ id })
-      .then(cash => {
+      .then((cash) => {
         if (cash) {
           response.status(200)
           response.send(cash)
@@ -160,16 +160,16 @@ export class CashController implements ICashController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
   public createByOffice = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const cashData = request.body
     const officeCode = request.params.code
@@ -198,7 +198,7 @@ export class CashController implements ICashController {
   public updateById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id: string = request.params.id
     const cashData = request.body
@@ -206,7 +206,7 @@ export class CashController implements ICashController {
       .findOneAndUpdate({ id }, cashData, {
         new: true,
       })
-      .then(updatedCash => {
+      .then((updatedCash) => {
         if (updatedCash) {
           response.status(200)
           response.send(updatedCash)
@@ -218,8 +218,8 @@ export class CashController implements ICashController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }
@@ -227,12 +227,12 @@ export class CashController implements ICashController {
   public deleteById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id = request.params.id
     await this.cash
       .findOneAndDelete({ id })
-      .then(successResponse => {
+      .then((successResponse) => {
         if (successResponse) {
           response.status(200)
           response.json({
@@ -247,8 +247,8 @@ export class CashController implements ICashController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }

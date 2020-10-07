@@ -95,7 +95,7 @@ export function extendArrayWithId(extend: any, data: any) {
       ...data_,
     }
   } else {
-    let lastIdInc = (last(extend) as any).id + 1
+    const lastIdInc = (last(extend) as any).id + 1
     data_ = {
       ...data_,
       id: lastIdInc,
@@ -105,24 +105,20 @@ export function extendArrayWithId(extend: any, data: any) {
 }
 
 export async function processWorkflowData(data: any) {
-  let data_ = cloneDeep(data)
+  const data_ = cloneDeep(data)
   if (data_.userid) {
     try {
       const user = await UserModel.findOne({ id: data_.userid })
       if (user) {
         data_.username = user.credentials
-        data_.message = data_.message
       } else {
         data_.username = getAnonymousAnimal()
-        data_.message = data_.message
       }
     } catch (e) {
       data_.username = getAnonymousAnimal()
-      data_.message = data_.message
     }
   } else {
     data_.username = getAnonymousAnimal()
-    data_.message = data_.message
   }
 
   return data_
@@ -130,13 +126,8 @@ export async function processWorkflowData(data: any) {
 
 export const requiredFieldsHelper = (...args: string[]) => {
   const fields = []
-  args.forEach(e => {
-    fields.push(
-      body(e)
-        .not()
-        .isEmpty()
-        .withMessage('Необходимое поле'),
-    )
+  args.forEach((e) => {
+    fields.push(body(e).not().isEmpty().withMessage('Необходимое поле'))
   })
   return fields
 }
@@ -158,7 +149,7 @@ export const badRequestHelper = () => {
 
 export const generateOrderId = (
   parsed: { start: string; modifier: string; modifierCount: number },
-  identifier: number,
+  identifier: number
 ) => {
   if (parsed.modifier === 'C') {
     return parseInt(
@@ -166,7 +157,7 @@ export const generateOrderId = (
         identifier.toString().length >= parsed.modifierCount
           ? ''
           : '0'.repeat(parsed.modifierCount - identifier.toString().length)
-      }${identifier.toString()}`,
+      }${identifier.toString()}`
     )
   }
 }

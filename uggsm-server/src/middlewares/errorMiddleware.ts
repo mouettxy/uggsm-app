@@ -6,7 +6,7 @@ export function errorMiddleware(
   request: Request,
   response: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction,
+  next: NextFunction
 ): void {
   const status = error.status || 500
   const message = error.message || 'Something went wrong'

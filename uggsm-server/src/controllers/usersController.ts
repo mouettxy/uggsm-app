@@ -13,7 +13,7 @@ export class UsersController implements IUserController {
     await this.user
       .find()
       .populate('office')
-      .then(users => {
+      .then((users) => {
         response.status(200)
         response.send(users)
       })
@@ -27,7 +27,7 @@ export class UsersController implements IUserController {
     await this.user
       .findById(id)
       .populate('office')
-      .then(user => {
+      .then((user) => {
         if (user) {
           response.status(200)
           response.send(user)
@@ -39,9 +39,9 @@ export class UsersController implements IUserController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
@@ -77,13 +77,13 @@ export class UsersController implements IUserController {
   public updateById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id: string = request.params.id
     const userData = request.body
     const hashedPassword = await bcrypt.hash(userData.password, 10)
     // @ts-ignore
-    await this.user.findOneAndUpdate(id, userData, { new: true }).then(user => {
+    await this.user.findOneAndUpdate(id, userData, { new: true }).then((user) => {
       if (user) {
         const updatedUser = {
           ...userData,
@@ -100,10 +100,10 @@ export class UsersController implements IUserController {
   public deleteById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id = request.params.id
-    await this.user.findByIdAndDelete(id).then(successResponse => {
+    await this.user.findByIdAndDelete(id).then((successResponse) => {
       if (successResponse) {
         response.status(200)
         response.json({

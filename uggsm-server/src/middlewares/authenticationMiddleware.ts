@@ -8,7 +8,7 @@ import { UserModel } from '../models'
 export async function authenticationMiddleware(
   request: Request,
   response: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<void> {
   const cookies = request.cookies
   next()

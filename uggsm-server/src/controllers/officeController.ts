@@ -11,7 +11,7 @@ export class OfficeController implements IOfficeController {
   public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     await this.model
       .find({})
-      .then(orders => {
+      .then((orders) => {
         response.status(200)
         response.send(orders)
       })
@@ -24,7 +24,7 @@ export class OfficeController implements IOfficeController {
     const id = request.params.id
     await this.model
       .findById(id)
-      .then(order => {
+      .then((order) => {
         if (order) {
           response.status(200)
           response.send(order)
@@ -36,21 +36,21 @@ export class OfficeController implements IOfficeController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
   public getByCode = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const code = request.params.code
     await this.model
       .findOne({ code: code })
-      .then(order => {
+      .then((order) => {
         if (order) {
           response.status(200)
           response.send(order)
@@ -62,9 +62,9 @@ export class OfficeController implements IOfficeController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
@@ -76,7 +76,7 @@ export class OfficeController implements IOfficeController {
     })
     await createdOffice
       .save()
-      .then(savedOrder => {
+      .then((savedOrder) => {
         response.status(200)
         response.send(savedOrder)
       })
@@ -88,7 +88,7 @@ export class OfficeController implements IOfficeController {
   public updateById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id: string = request.params.id
     const officeData = request.body
@@ -96,7 +96,7 @@ export class OfficeController implements IOfficeController {
       .findByIdAndUpdate(id, officeData, {
         new: true,
       })
-      .then(updatedOrder => {
+      .then((updatedOrder) => {
         if (updatedOrder) {
           response.status(200)
           response.send(updatedOrder)
@@ -108,8 +108,8 @@ export class OfficeController implements IOfficeController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }
@@ -117,12 +117,12 @@ export class OfficeController implements IOfficeController {
   public deleteById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id = request.params.id
     await this.model
       .findByIdAndDelete(id)
-      .then(successResponse => {
+      .then((successResponse) => {
         if (successResponse) {
           response.status(200)
           response.json({
@@ -137,8 +137,8 @@ export class OfficeController implements IOfficeController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }

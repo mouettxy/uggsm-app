@@ -11,7 +11,7 @@ export class AdversitementController implements IAdversitementController {
   public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     await this.adversitement
       .find()
-      .then(adversitement => {
+      .then((adversitement) => {
         response.status(200)
         response.send(adversitement)
       })
@@ -24,7 +24,7 @@ export class AdversitementController implements IAdversitementController {
     const id = request.params.id
     await this.adversitement
       .findOne({ id })
-      .then(adversitement => {
+      .then((adversitement) => {
         if (adversitement) {
           response.status(200)
           response.send(adversitement)
@@ -36,9 +36,9 @@ export class AdversitementController implements IAdversitementController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
-        ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
+        )
       )
   }
 
@@ -61,7 +61,7 @@ export class AdversitementController implements IAdversitementController {
   public updateById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id: string = request.params.id
     const adversitementData = request.body
@@ -69,7 +69,7 @@ export class AdversitementController implements IAdversitementController {
       .findOneAndUpdate({ id }, adversitementData, {
         new: true,
       })
-      .then(updatedadversitement => {
+      .then((updatedadversitement) => {
         if (updatedadversitement) {
           response.status(200)
           response.send(updatedadversitement)
@@ -81,8 +81,8 @@ export class AdversitementController implements IAdversitementController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }
@@ -90,12 +90,12 @@ export class AdversitementController implements IAdversitementController {
   public deleteById = async (
     request: express.Request,
     response: express.Response,
-    next: NextFunction,
+    next: NextFunction
   ): Promise<void> => {
     const id = request.params.id
     await this.adversitement
       .findOneAndDelete({ id })
-      .then(successResponse => {
+      .then((successResponse) => {
         if (successResponse) {
           response.status(200)
           response.json({
@@ -110,8 +110,8 @@ export class AdversitementController implements IAdversitementController {
         next(
           new HttpException(
             422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.',
-          ),
+            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
+          )
         )
       })
   }
