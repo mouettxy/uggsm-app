@@ -45,17 +45,23 @@
             v-icon(left) mdi-content-save-edit
             span Обновить
           v-btn(
-            :to='{ name: "orders" }',
+            @click='clearCurrentOrder',
             text
           )
             v-icon(left) mdi-close
             span Закрыть
+          template(v-if='order')
+            template(v-if='order.payed')
+              v-list-item.d-inline-block(style='flex: 0 0 0')
+                v-list-item-content
+                  v-list-item-title {{ order.declaredPrice }} руб.
+                  v-list-item-subtitle Оплачено
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-import { ordersModule, settingsModule } from '@/store'
+import { ordersModule, settingsModule, cashModule } from '@/store'
 
 @Component
 export default class MOrderModal extends Vue {
@@ -122,6 +128,12 @@ export default class MOrderModal extends Vue {
     return true
   }
 
+  clearCurrentOrder() {
+    ordersModule.clearOrder()
+    cashModule.clearCash()
+    this.$router.push({ name: 'orders' })
+  }
+
   async createOrder(close: Function) {
     if (this.checkOrder(this.model)) {
       if (settingsModule.office) {
@@ -152,7 +164,7 @@ export default class MOrderModal extends Vue {
 </script>
 
 <style lang="sass">
-$height: calc(100vh - 48px)
+$height: calc(100vh - 70px)
 
 .order-modal__container
   height: $height

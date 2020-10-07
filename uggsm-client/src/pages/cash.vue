@@ -6,8 +6,7 @@
 
 <template lang="pug">
 .page-cash
-  v-alert(type='error')
-    | Страница кассы находится в статусе активной разработки.
+  t-cash-main
 </template>
 
 <script lang="ts">

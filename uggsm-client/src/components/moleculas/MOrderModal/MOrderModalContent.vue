@@ -53,7 +53,7 @@
           m-order-modal-works(:new-order='newOrder')
       v-tab-item.order-modal-content__item(key='payments')
         .order-modal-content__item__content
-          .text-h5 Оплата
+          m-order-modal-cash(:new-order='newOrder')
 </template>
 
 <script lang="ts">
@@ -98,6 +98,6 @@ export default class MOrderModalContent extends Vue {
     &__content
       padding: 6px
       overflow-y: scroll
-      height: calc(100vh - 136px)
+      height: calc(100vh - 150px)
       box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important
 </style>

@@ -118,7 +118,7 @@
         v-list-item-content
           v-list-item-title {{ model.customerName }}
           v-list-item-subtitle Имя клиента
-      v-list-item
+      v-list-item(two-line)
         v-list-item-content
           v-list-item-title {{ model.customerPhone }}
           v-list-item-subtitle Номер клиента

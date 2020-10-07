@@ -35,7 +35,7 @@ export default class OTableToolbar extends Vue {
     if (settingsModule.office) {
       return `${settingsModule.office.code}|${settingsModule.office.name}`
     } else {
-      settingsModule.setOffice('M1|UGGSM')
+      settingsModule.setOffice({ office: 'M1|UGGSM', type: 'order' })
       return ''
     }
   }
@@ -46,7 +46,9 @@ export default class OTableToolbar extends Vue {
      *
      * @property {string} value - selected office
      */
-    settingsModule.setOffice(value)
+    if (this.$route.name === 'order' || this.$route.name === 'cash') {
+      settingsModule.setOffice({ office: value, type: this.$route.name })
+    }
   }
 
   onSearchField(value: string) {
