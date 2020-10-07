@@ -4,16 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build-client": "cd uggsm-client && npm run build --modern cd ..",
+    "build-client": "cd uggsm-client && npm run build",
     "dev-client": "cd uggsm-client && npm run serve",
     "build-server": "cd uggsm-server && npm run compile",
     "dev-server": "cd uggsm-server && npm run dev",
     "run-server": "cd uggsm-server && npm run compile && node dist/server.js",
     "lint-server": "cd uggsm-server && npm run lint",
     "lint-client": "cd uggsm-client && npm run lint",
+    "deploy": "node deploy",
     "lint": "npm run lint-server && npm run lint-client",
     "dev": "concurrently --kill-others \"npm:dev-server\" \"npm:dev-client\"",
-    "build": "concurrently --kill-others \"npm:build-server\" \"npm:build-client\"",
+    "build": "npm run build-server && npm run build-client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +23,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint"
+      "pre-commit": "npm run lint && npm run build && npm run deploy"
     }
   },
   "author": "newfox79",
@@ -40,10 +41,12 @@
     "@typescript-eslint/parser": "^4.4.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^6.0.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.10.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^7.0.1",
     "husky": "^4.3.0",
+    "node-ssh": "^11.1.1",
     "prettier": "^2.1.2",
     "typescript": "^4.0.3"
   }
