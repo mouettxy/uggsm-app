@@ -1,6 +1,9 @@
 <route>
 {
-  "name": "orders"
+  "name": "orders",
+  "meta": {
+    "header": "Заказы"
+  }
 }
 </route>
 
@@ -13,7 +16,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import TOrdersMain from '@/templates/TOrdersMain.vue'
-import { Socket } from 'vue-socket.io-extended'
+/* import { Socket } from 'vue-socket.io-extended' */
 
 /**
  * Orders page
@@ -24,9 +27,12 @@ import { Socket } from 'vue-socket.io-extended'
   },
 })
 export default class PageOrders extends Vue {
-  @Socket()
+  /* @Socket()
   connect() {
     console.log('connected')
+  } */
+  mounted() {
+    document.title = this.$route.meta.header
   }
 }
 </script>

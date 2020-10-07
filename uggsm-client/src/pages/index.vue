@@ -1,16 +1,25 @@
 <route>
 {
-  "name": "index"
+  "name": "index",
+  "meta": {
+    "header": "Рабочий стол"
+  }
 }
 </route>
 
 <template lang="pug">
-.a a
+.page-index.pa-4
+  v-alert(type='error')
+    | Страница рабочего стола находится в статусе активной разработки.
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class PageIndex extends Vue {}
+export default class PageIndex extends Vue {
+  mounted() {
+    document.title = this.$route.meta.header
+  }
+}
 </script>
