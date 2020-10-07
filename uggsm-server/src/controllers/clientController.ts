@@ -1,5 +1,6 @@
 import { NextFunction } from 'connect'
 import express from 'express'
+import { parsePaginateResponse } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IClientController } from '../interfaces'
@@ -14,6 +15,40 @@ export class ClientController implements IClientController {
       .then(orders => {
         response.status(200)
         response.send(orders)
+      })
+      .catch((err: Error) => {
+        next(new HttpException(500, err.message))
+      })
+  }
+
+  public getPaginated = async (
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    const { query, options } = parsePaginateResponse(request.query, false)
+    console.log(query, options)
+    try {
+      // @ts-ignore
+      const clients = await this.model.paginate(query, options)
+      response.status(200)
+      response.send(clients)
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
+  public getByName = async (
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    const name = request.params.name
+    await this.model
+      .findOne({ name })
+      .then(user => {
+        response.status(200)
+        response.send(user)
       })
       .catch((err: Error) => {
         next(new HttpException(500, err.message))

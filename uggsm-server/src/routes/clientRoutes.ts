@@ -18,7 +18,9 @@ export class ClientRouter implements Router {
     this.expressRouter
       .all(`${path}*`, authenticationMiddleware)
       .get(path, controller.getAll)
+      .get(`${path}/paginated`, controller.getPaginated)
       .get(`${path}/:id`, controller.getById)
+      .get(`${path}/name/:name`, controller.getByName)
       .post(`${path}`, validateClient.client, controller.create)
       .put(`${path}/:id`, validateClient.client, controller.updateById)
       .delete(`${path}/:id`, controller.deleteById)

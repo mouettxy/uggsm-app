@@ -4,17 +4,20 @@
     height='72',
     elevation='1'
   )
-    m-office-switcher(
-      :value='defaultOffice',
-      :items='offices',
-      @change='onOfficeSwitch'
-    )
+    template(v-if='!hideOffices')
+      m-office-switcher(
+        :value='defaultOffice',
+        :items='offices',
+        @change='onOfficeSwitch'
+      )
+    template(v-else)
+      .text-h5 {{ $route.meta.header }}
     v-spacer
     m-search-field(@change='onSearchField')
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import { officesModule, settingsModule } from '@/store'
 import { map } from 'lodash'
@@ -27,6 +30,7 @@ import { map } from 'lodash'
  */
 @Component
 export default class OTableToolbar extends Vue {
+  @Prop({ default: false, type: Boolean }) hideOffices!: boolean
   get offices() {
     return map(officesModule.offices, (el) => `${el.code}|${el.name}`)
   }

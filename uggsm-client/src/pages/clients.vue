@@ -1,18 +1,24 @@
 <route>
 {
-  "name": "clients"
+  "name": "clients",
+  "meta": {
+    "header": "Клиенты"
+  }
 }
 </route>
 
 <template lang="pug">
 .page-clients
-  v-alert(type='error')
-    | Страница клиентов находится в статусе активной разработки.
+  t-clients-main
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class PageClients extends Vue {}
+export default class PageClients extends Vue {
+  mounted() {
+    document.title = this.$route.meta.header
+  }
+}
 </script>
