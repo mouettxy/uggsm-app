@@ -9,6 +9,9 @@
     "build-server": "cd uggsm-server && npm run compile",
     "dev-server": "cd uggsm-server && npm run dev",
     "run-server": "cd uggsm-server && npm run compile && node dist/server.js",
+    "lint-client": "cd uggsm-client && npm run lint",
+    "lint-server": "cd uggsm-server && npm run lint",
+    "lint": "concurrently --kill-others \"npm:lint-server\" \"npm:lint-client\"",
     "dev": "concurrently --kill-others \"npm:dev-server\" \"npm:dev-client\"",
     "build": "concurrently --kill-others \"npm:build-server\" \"npm:build-client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +27,19 @@
   },
   "homepage": "https://github.com/newfox79/uggsm-app#readme",
   "devDependencies": {
-    "concurrently": "^5.3.0"
+    "@prettier/plugin-pug": "1.8.0",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
+    "@vue/eslint-config-typescript": "^5.1.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-vue": "^6.2.2",
+    "prettier": "2.1.1",
+    "concurrently": "^5.3.0",
+    "husky": "^4.3.0"
+  },
+  "dependencies": {
+    "typescript": "^4.0.3"
   }
 }
