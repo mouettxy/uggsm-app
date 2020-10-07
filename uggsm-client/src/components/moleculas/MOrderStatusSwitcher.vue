@@ -45,6 +45,8 @@ import { ordersAPI } from '@/api'
 @Component
 export default class MOrderStatusSwitcher extends Vue {
   @Prop({ required: true, type: String }) status!: string
+  @Prop({ default: 'modal', type: String }) scope!: string
+  @Prop({ type: [String, Number] }) orderid!: string | number
 
   public statusList = [
     {
@@ -70,6 +72,10 @@ export default class MOrderStatusSwitcher extends Vue {
         {
           color: '#689f38',
           status: 'На тестировании',
+        },
+        {
+          color: '#689f38',
+          status: 'На уточнении',
         },
       ],
     },
@@ -145,17 +151,25 @@ export default class MOrderStatusSwitcher extends Vue {
 
   async setStatus(status: string) {
     try {
+      let response
       if (this.order) {
-        const response = await ordersAPI(this.order.id).setStatus({ status })
-        if (response) {
-          this.$notification.success('Успешная смена статуса')
-          await ordersModule.getOrder(this.order.id)
-        } else {
-          this.$notification.error('Произошла ошбика при смене статуса')
+        response = await ordersAPI(this.order.id).setStatus({ status })
+      } else if (this.orderid) {
+        response = await ordersAPI(this.orderid).setStatus({ status })
+      }
+
+      if (response) {
+        this.$notification.success('Успешная смена статуса')
+        if (this.scope === 'modal') {
+          await ordersModule.getOrder(this.order?.id)
+        } else if (this.scope === 'table') {
+          await ordersModule.fetch()
         }
+      } else {
+        this.$notification.error('[Клиент] Произошла ошбика при смене статуса')
       }
     } catch (error) {
-      this.$notification.error(error.message)
+      this.$notification.error(`[Сервер] ${error.message}`)
     }
   }
 
