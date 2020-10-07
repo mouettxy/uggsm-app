@@ -1,6 +1,9 @@
 <route>
 {
-  "name": "cash"
+  "name": "cash",
+  "meta": {
+    "header": "Касса"
+  }
 }
 </route>
 
@@ -13,5 +16,9 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class PageCash extends Vue {}
+export default class PageCash extends Vue {
+  mounted() {
+    document.title = this.$route.meta.header
+  }
+}
 </script>

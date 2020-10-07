@@ -1,6 +1,9 @@
 <route>
 {
-  "name": "login"
+  "name": "login",
+  "meta": {
+    "header": "Авторизация"
+  }
 }
 </route>
 
@@ -21,7 +24,9 @@ import TLoginMain from '@/templates/TLoginMain.vue'
   },
 })
 export default class PageLogin extends Vue {
-  public value = ''
+  mounted() {
+    document.title = this.$route.meta.header
+  }
 }
 </script>
 

@@ -333,9 +333,14 @@ export class Order {
 
   public static async setPayed(this: ReturnModelType<typeof Order>, id: number | string, payed: boolean) {
     const order = await this.findOne({ id })
-    const oldPayedStatus = order.payed
+    const oldPayedStatus = order.payed ? 'Оплачено' : 'Не оплачено'
     order.payed = payed
-    this.setHelper('workflow', order.workflow, 'Смена статуса оплаты', `Изменён с "${oldPayedStatus}" на "${payed}"`)
+    this.setHelper(
+      'workflow',
+      order.workflow,
+      'Смена статуса оплаты',
+      `Изменён с "${oldPayedStatus}" на "${payed ? 'Оплачено' : 'Не оплачено'}"`
+    )
     return await order.save()
   }
 

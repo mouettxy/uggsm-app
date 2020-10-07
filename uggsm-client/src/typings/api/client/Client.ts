@@ -3,13 +3,15 @@ import { ClientPhone } from './ClientPhone'
 export type Client = {
   createdAt: string
   discount: string
-  allowedEmailNotifications: string
-  allowedNotifications: string
+  address: string
+  allowedEmailNotifications: boolean
+  allowedNotifications: boolean
   clientType: string
-  isProvider: string
-  isConflict: string
+  isProvider: boolean
+  email: string
+  isConflict: boolean
   _id: string
   name: string
   phone: [ClientPhone]
-  id: string
+  id: number
 }

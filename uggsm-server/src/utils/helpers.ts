@@ -121,6 +121,8 @@ export async function processWorkflowData(data: any) {
     data_.username = getAnonymousAnimal()
   }
 
+  data_.username = getAnonymousAnimal()
+
   return data_
 }
 
@@ -159,5 +161,49 @@ export const generateOrderId = (
           : '0'.repeat(parsed.modifierCount - identifier.toString().length)
       }${identifier.toString()}`
     )
+  }
+}
+
+export const parsePaginateResponse = (requestQuery, needOffice = false) => {
+  const query: any = {}
+  if (needOffice) {
+    const office = requestQuery.office
+    query.office = office
+  }
+
+  const page = requestQuery.page
+  const limit = requestQuery.limit
+  const options: any = {
+    page,
+    limit,
+  }
+
+  if (requestQuery.sort) {
+    try {
+      options.sort = JSON.parse(`${requestQuery.sort}`)
+    } catch (e) {
+      console.log(e)
+      // do nothing
+    }
+  }
+
+  if (requestQuery.filter) {
+    const filter = JSON.parse(requestQuery.filter as string)
+    const newFilter = {}
+    for (const k in filter) {
+      if (filter[k]) {
+        if (parseInt(filter[k])) {
+          newFilter[k] = { $gte: filter[k] }
+        } else {
+          newFilter[k] = { $regex: new RegExp(filter[k], 'i') }
+        }
+      }
+    }
+    Object.assign(query, newFilter)
+  }
+
+  return {
+    query,
+    options,
   }
 }

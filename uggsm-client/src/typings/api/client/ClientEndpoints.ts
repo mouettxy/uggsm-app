@@ -1,7 +1,9 @@
 import { Endpoint } from '../Endpoint'
 
-export type CashEndpoints = {
+export type ClientEndpoints = {
   getAll: Endpoint
+  getPaginated: Endpoint
+  getByName: Endpoint
   getById: Endpoint
   create: Endpoint
   updateById: Endpoint

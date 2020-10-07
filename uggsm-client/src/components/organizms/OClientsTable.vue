@@ -1,12 +1,6 @@
 <template lang="pug">
 .orders-table
   v-toolbar.orders-table-toolbar(flat)
-    v-btn(
-      to='/orders/new',
-      color='primary'
-    )
-      v-icon(left) mdi-plus
-      span Новый заказ
     v-spacer
     v-menu(
       v-model='columnsMenu',
@@ -27,42 +21,56 @@
             :key='header.value'
           )
             v-list-item-action
-              v-switch(v-model='header.hidden')
+              v-switch(v-model='header.show')
             v-list-item-title {{ header.text }}
   v-data-table(
     :server-items-length='totalItems',
     :options.sync='options',
     :loading='isLoading',
     :items='items',
-    :headers='headers',
+    :headers='headersFormatted',
     :calculate-widths='true',
     @update:sort-desc='update',
     @update:sort-by='update',
     @update:page='update',
     @update:items-per-page='update',
-    no-data-text='Не найдено заявок',
+    no-data-text='Не найдено клиентов',
     multi-sort,
     locale='ru',
-    loading-text='Загружаем заявки...',
-    items-per-page-text='asd',
+    loading-text='Загружаем клиентов...',
     item-key='id',
     hide-default-footer,
     height='calc(100vh - 230px)'
   )
-    template(#item.id='{value}')
-      v-btn(
-        :to='{ name: "orderModal", params: { id: value } }',
-        :new-order='false',
-        text
+    template(#item.name='{value, item}')
+      v-list-item
+        v-list-item-content
+          v-list-item-title {{ value }}
+          v-list-item-subtitle {{ item.type }}
+    template(#item.phone='{value}')
+      v-tooltip(
+        v-for='v in value',
+        :key='v.id',
+        left
       )
-        v-icon(left) mdi-pencil
-        span {{ value }}
-    template(#item.status='{value, item}')
-      m-order-status-switcher(
-        :status='value',
-        :orderid='item.id',
-        scope='table'
-      )
+        template(#activator='{on, attrs}')
+          a.d-block(
+            v-on='on',
+            v-bind='attrs',
+            :href='`tel:+7${v.phone}`'
+          ) +7 {{ v.phone }}
+        span {{ v.comment }}
+    template(#item.notifications='{value}')
+      v-icon.pa-2(
+        v-if='value.email',
+        size='1.4rem',
+        color='success'
+      ) mdi-email-check
+      v-icon.pa-2(
+        v-if='value.sms',
+        size='1.4rem',
+        color='success'
+      ) mdi-message
   v-pagination.mt-4(
     v-model='options.page',
     :length='Math.round(totalItems / options.itemsPerPage)',
@@ -73,83 +81,74 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { ordersModule } from '@/store'
+import { clientModule } from '@/store'
+import { filter } from 'lodash'
 
 @Component
-export default class OOrdersTable extends Vue {
+export default class OClientsTable extends Vue {
   public columnsMenu = false
-  public page = 1
   public headers: any = [
     {
-      text: 'Заказ №',
+      text: '№',
       value: 'id',
-      hidden: false,
+      show: true,
     },
     {
-      text: 'Срок заказа',
-      value: 'estimatedCloseAt',
-      hidden: false,
+      text: 'Имя',
+      value: 'name',
+      show: true,
     },
     {
-      text: 'Статус',
-      value: 'status',
-      hidden: false,
+      text: 'Почта',
+      value: 'email',
+      show: true,
     },
     {
-      text: 'Создан',
-      value: 'created',
-      hidden: false,
+      text: 'Телефон',
+      value: 'phone',
+      show: true,
     },
     {
-      text: 'Устройство',
-      value: 'phoneModel',
-      hidden: false,
+      text: 'Адрес',
+      value: 'address',
+      show: true,
     },
     {
-      text: 'Бренд',
-      value: 'phoneBrand',
-      hidden: false,
-    },
-    {
-      text: 'Неисправность',
-      value: 'declaredDefect',
-      hidden: false,
+      text: 'Дата создания клиента',
+      value: 'createdAt',
+      show: true,
     },
     {
       text: 'Уведомления',
       value: 'notifications',
-      hidden: false,
-    },
-    {
-      text: 'Рекламная кампания',
-      value: 'adversitement',
-      hidden: false,
-    },
-    {
-      text: 'Пароль',
-      value: 'password',
-      hidden: false,
+      show: true,
     },
   ]
 
+  get headersFormatted() {
+    return filter(this.headers, (e) => {
+      return e.show
+    })
+  }
+
   get isLoading() {
-    return ordersModule.isLoading
+    return clientModule.isLoading
   }
 
   get items() {
-    return ordersModule.ordersTable
+    return clientModule.clientTable
   }
 
   get options() {
-    return ordersModule.options
+    return clientModule.options
   }
 
   set options(value) {
-    ordersModule.setOptions(value)
+    clientModule.setOptions(value)
   }
 
   get totalItems() {
-    return ordersModule.countRows
+    return clientModule.countRows
   }
 
   update() {
@@ -157,7 +156,7 @@ export default class OOrdersTable extends Vue {
   }
 
   async loadItems() {
-    await ordersModule.fetch()
+    await clientModule.fetch()
   }
 
   created() {

@@ -5,6 +5,7 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { ICashController } from '../interfaces'
 import { OfficeModel } from '../models'
+import { parsePaginateResponse } from '../utils/helpers'
 
 export class CashController implements ICashController {
   private cash = CashModel
@@ -46,40 +47,7 @@ export class CashController implements ICashController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    const office = request.query.office
-    const page = request.query.page
-    const limit = request.query.limit
-    const query: any = {
-      office,
-    }
-    const options: any = {
-      page,
-      limit,
-    }
-
-    if (request.query.sort) {
-      try {
-        options.sort = JSON.parse(`${request.query.sort}`)
-      } catch (e) {
-        console.log(e)
-        // do nothing
-      }
-    }
-
-    if (request.query.filter) {
-      const filter = JSON.parse(request.query.filter as string)
-      const newFilter = {}
-      for (const k in filter) {
-        if (filter[k]) {
-          if (parseInt(filter[k])) {
-            newFilter[k] = { $gte: filter[k] }
-          } else {
-            newFilter[k] = { $regex: new RegExp(filter[k], 'i') }
-          }
-        }
-      }
-      Object.assign(query, newFilter)
-    }
+    const { query, options } = parsePaginateResponse(request.query, true)
 
     try {
       // @ts-ignore

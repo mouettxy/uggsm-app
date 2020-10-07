@@ -1,6 +1,9 @@
 <route>
 {
-  "name": "orderModal"
+  "name": "orderModal",
+  "meta": {
+    "header": "Заказ"
+  }
 }
 </route>
 
@@ -21,5 +24,9 @@ import { Component, Vue } from 'vue-property-decorator'
  * Orders page
  */
 @Component
-export default class OrderModal extends Vue {}
+export default class OrderModal extends Vue {
+  mounted() {
+    document.title = this.$route.params.id === 'new' ? 'Новый заказ' : 'Заказ №' + this.$route.params.id
+  }
+}
 </script>

@@ -3,7 +3,7 @@ import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
 import { extendArrayWithId } from '../utils/helpers'
 import { Adversitement } from '.'
-import { AdversitementModel } from './adversitementModel'
+import mongoosePaginate from 'mongoose-paginate-v2'
 
 export const clientTypes = ['физ. лицо', 'компания']
 
@@ -27,6 +27,7 @@ export class ClientPhone {
   id: 'client_id',
   inc_field: 'id',
 })
+@plugin(mongoosePaginate)
 @plugin(autopopulate as any)
 export class Client {
   @prop({ default: new Date() })

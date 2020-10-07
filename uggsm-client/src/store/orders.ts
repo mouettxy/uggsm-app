@@ -4,7 +4,7 @@ import { map, zip } from 'lodash'
 
 import moment from 'moment'
 import { settingsModule } from '.'
-import { cloneDeep, fromPairs } from 'lodash'
+import { fromPairs } from 'lodash'
 
 function getTime(date: any) {
   const m = moment(date)
@@ -18,7 +18,16 @@ function getTime(date: any) {
 export default class Orders extends VuexModule {
   public orders: Array<any> | null = null
   public currentOrder: Record<string, any> | null = null
+  public isLoading = false
   public countRows = 0
+  public options = {
+    page: 1,
+    itemsPerPage: 25,
+    sortBy: ['id'],
+    sortDesc: [true],
+    mustSort: false,
+    multiSort: true,
+  }
 
   get ordersTable() {
     return map(this.orders, (e) => {
@@ -37,6 +46,11 @@ export default class Orders extends VuexModule {
   }
 
   @Mutation
+  SET_LOADING(payload: boolean) {
+    this.isLoading = payload
+  }
+
+  @Mutation
   SET_ORDERS(payload: any) {
     this.orders = payload.docs
     this.countRows = payload.totalDocs
@@ -47,8 +61,25 @@ export default class Orders extends VuexModule {
     this.currentOrder = payload
   }
 
+  @Mutation
+  SET_OPTIONS(payload: any) {
+    this.options = payload
+  }
+
+  @Mutation
+  CLEAR_CURRENT_ORDER() {
+    this.currentOrder = null
+  }
+
   @Action
-  async fetch(payload: any) {
+  setOptions(payload: any) {
+    this.context.commit('SET_OPTIONS', payload)
+  }
+
+  @Action
+  async fetch() {
+    this.context.commit('SET_LOADING', true)
+    const payload = this.options
     const office = settingsModule.office?._id
     const query: any = {
       page: payload.page,
@@ -60,21 +91,25 @@ export default class Orders extends VuexModule {
 
     query.sort = fromPairs(zip(payload.sortBy, sortDesc))
 
-    const filters = cloneDeep(payload.columnFilters)
-    if (filters) {
-      query.filter = filters
-    }
-
     this.context.commit('SET_ORDERS', await ordersAPI().getPaginated(query))
+    this.context.commit('SET_LOADING', false)
   }
 
   @Action
   async getOrder(id: number | string) {
+    this.context.commit('SET_LOADING', true)
     this.context.commit('SET_ORDER', await ordersAPI(id).getById())
+    this.context.commit('SET_LOADING', false)
+  }
+
+  @Action
+  async clearOrder() {
+    this.context.commit('CLEAR_CURRENT_ORDER')
   }
 
   @Action
   async createOrder(payload: any) {
+    this.context.commit('SET_LOADING', true)
     try {
       const response = await ordersAPI().create(payload)
 
@@ -85,6 +120,8 @@ export default class Orders extends VuexModule {
       }
     } catch (error) {
       return false
+    } finally {
+      this.context.commit('SET_LOADING', false)
     }
   }
 }

@@ -1,4 +1,4 @@
-import { plugin, getModelForClass, prop, Ref, ReturnModelType, pre } from '@typegoose/typegoose'
+import { plugin, getModelForClass, prop, Ref, pre } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
 import mongoosePaginate from 'mongoose-paginate-v2'

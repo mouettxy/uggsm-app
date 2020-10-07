@@ -22,7 +22,7 @@ export class User {
   @prop({ required: true, enum: roles })
   public role: string
 
-  @prop({ ref: 'Office' })
+  @prop({ autopopulate: true, ref: 'Office' })
   public office: Ref<Office>
 }
 
