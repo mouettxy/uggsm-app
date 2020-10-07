@@ -40,8 +40,14 @@
     @update:sort-by='update',
     @update:page='update',
     @update:items-per-page='update',
+    no-data-text='Не найдено заявок',
     multi-sort,
-    item-key='id'
+    locale='ru',
+    loading-text='Загружаем заявки...',
+    items-per-page-text='asd',
+    item-key='id',
+    hide-default-footer,
+    height='calc(100vh - 230px)'
   )
     template(#item.id='{value}')
       v-btn(
@@ -51,6 +57,18 @@
       )
         v-icon(left) mdi-pencil
         span {{ value }}
+    template(#item.status='{value, item}')
+      m-order-status-switcher(
+        :status='value',
+        :orderid='item.id',
+        scope='table'
+      )
+  v-pagination.mt-4(
+    v-model='options.page',
+    :length='Math.round(totalItems / options.itemsPerPage)',
+    :current-page='options.page',
+    total-visible='9'
+  )
 </template>
 
 <script lang="ts">
@@ -61,14 +79,6 @@ import { ordersModule } from '@/store'
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
   public page = 1
-  public options = {
-    page: 1,
-    itemsPerPage: 15,
-    sortBy: ['id'],
-    sortDesc: [true],
-    mustSort: false,
-    multiSort: true,
-  }
   public headers: any = [
     {
       text: 'Заказ №',
@@ -77,7 +87,7 @@ export default class OOrdersTable extends Vue {
     },
     {
       text: 'Срок заказа',
-      value: 'estimatedClosedAt',
+      value: 'estimatedCloseAt',
       hidden: false,
     },
     {
@@ -121,10 +131,21 @@ export default class OOrdersTable extends Vue {
       hidden: false,
     },
   ]
-  public isLoading = false
+
+  get isLoading() {
+    return ordersModule.isLoading
+  }
 
   get items() {
     return ordersModule.ordersTable
+  }
+
+  get options() {
+    return ordersModule.options
+  }
+
+  set options(value) {
+    ordersModule.setOptions(value)
   }
 
   get totalItems() {
@@ -136,7 +157,7 @@ export default class OOrdersTable extends Vue {
   }
 
   async loadItems() {
-    await ordersModule.fetch(this.options)
+    await ordersModule.fetch()
   }
 
   created() {

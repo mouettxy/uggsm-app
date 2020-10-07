@@ -26,8 +26,8 @@ export class UsersController implements IUserController {
     const id = request.params.id
     await this.user
       .findById(id)
-      .populate('office')
       .then(user => {
+        console.log(user)
         if (user) {
           response.status(200)
           response.send(user)
