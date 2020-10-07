@@ -27,6 +27,7 @@ module.exports = {
         singleQuote: true,
         semi: false,
         printWidth: 120,
+        endOfLine: 'auto',
       },
     ],
     '@typescript-eslint/no-explicit-any': 'off',
