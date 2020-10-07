@@ -5,6 +5,7 @@ v-autocomplete(
   :prepend-inner-icon='icon',
   :label='label',
   :items='items',
+  :hide-details='hideDetails',
   :dense='dense',
   @focus.stop='onAutocompleteFocus',
   outlined,
@@ -32,6 +33,7 @@ export default class AAutocomplete extends Vue {
   @Prop(String) icon: any
   @Prop(Array) predefinedItems: any
   @Prop(Boolean) returnObject!: boolean
+  @Prop(Boolean) hideDetails!: boolean
 
   public items: Array<any> = []
   public query = ''
