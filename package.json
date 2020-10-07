@@ -20,6 +20,11 @@
     "type": "git",
     "url": "git+https://github.com/newfox79/uggsm-app.git"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run build"
+    }
+  },
   "author": "newfox79",
   "license": "ISC",
   "bugs": {
