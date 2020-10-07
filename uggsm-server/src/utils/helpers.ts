@@ -112,18 +112,17 @@ export async function processWorkflowData(data: any) {
       if (user) {
         data_.username = user.credentials
         data_.message = data_.message
-      } else {
-        data_.username = getAnonymousAnimal()
-        data_.message = data_.message
+        return data_
       }
     } catch (e) {
       data_.username = getAnonymousAnimal()
       data_.message = data_.message
+      return data_
     }
-  } else {
-    data_.username = getAnonymousAnimal()
-    data_.message = data_.message
   }
+
+  data_.username = getAnonymousAnimal()
+  data_.message = data_.message
 
   return data_
 }
