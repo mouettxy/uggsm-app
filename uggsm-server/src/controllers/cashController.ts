@@ -21,6 +21,76 @@ export class CashController implements ICashController {
       })
   }
 
+  public getBalance = async (
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    const office = request.params.office
+    await this.cash
+      .find({ office })
+      .sort({
+        id: 'desc',
+      })
+      .then(cash => {
+        response.status(200)
+        response.send({ balance: cash[0].balance || 0 })
+      })
+      .catch((err: Error) => {
+        next(new HttpException(500, err.message))
+      })
+  }
+
+  public getPaginated = async (
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    const office = request.query.office
+    const page = request.query.page
+    const limit = request.query.limit
+    const query: any = {
+      office,
+    }
+    const options: any = {
+      page,
+      limit,
+    }
+
+    if (request.query.sort) {
+      try {
+        options.sort = JSON.parse(`${request.query.sort}`)
+      } catch (e) {
+        console.log(e)
+        // do nothing
+      }
+    }
+
+    if (request.query.filter) {
+      const filter = JSON.parse(request.query.filter as string)
+      const newFilter = {}
+      for (const k in filter) {
+        if (filter[k]) {
+          if (parseInt(filter[k])) {
+            newFilter[k] = { $gte: filter[k] }
+          } else {
+            newFilter[k] = { $regex: new RegExp(filter[k], 'i') }
+          }
+        }
+      }
+      Object.assign(query, newFilter)
+    }
+
+    try {
+      // @ts-ignore
+      const cash = await this.cash.paginate(query, options)
+      response.status(200)
+      response.send(cash)
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
   public getAllByOffice = async (
     request: express.Request,
     response: express.Response,

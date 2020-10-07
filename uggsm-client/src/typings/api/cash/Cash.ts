@@ -7,9 +7,7 @@ export type Cash = {
   consumption: number
   balance: number
   orderid: number
-  clientid: number
-  cahierid: number
-  user: User
+  cashier: User
   client: Client
   office: Office
   id: number

@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { officesModule, ordersModule } from '.'
+import { cashModule, officesModule, ordersModule } from '.'
 
 @Module({
   namespaced: true,
@@ -14,15 +14,13 @@ export default class Settings extends VuexModule {
   }
 
   @Action
-  async setOffice(payload: string) {
-    this.context.commit('SET_OFFICE', await officesModule.findByCodeAndName(payload))
-    ordersModule.fetch({
-      page: 1,
-      itemsPerPage: 15,
-      sortBy: ['id'],
-      sortDesc: [true],
-      mustSort: false,
-      multiSort: true,
-    })
+  async setOffice(payload: { office: string; type: 'order' | 'cash' }) {
+    const office = await officesModule.findByCodeAndName(payload.office)
+    this.context.commit('SET_OFFICE', office)
+    if (payload.type === 'order') {
+      await ordersModule.fetch()
+    } else if (payload.type === 'cash') {
+      await cashModule.fetch()
+    }
   }
 }

@@ -17,6 +17,8 @@ export class CashRouter implements Router {
     this.expressRouter
       .all(`${path}*`, authenticationMiddleware)
       .get(path, controller.getAll)
+      .get(`${path}/paginated`, controller.getPaginated)
+      .get(`${path}/balance/:office`, controller.getBalance)
       .get(`${path}/:code`, controller.getAllByOffice)
       .get(`${path}/order/:id`, controller.getByOrder)
       .post(`${path}/:code`, controller.createByOffice)

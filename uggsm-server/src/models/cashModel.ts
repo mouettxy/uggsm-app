@@ -1,7 +1,7 @@
 import { plugin, getModelForClass, prop, Ref, ReturnModelType, pre } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
-import { extendArrayWithId } from '../utils/helpers'
+import mongoosePaginate from 'mongoose-paginate-v2'
 import { ClientModel, OrderModel, Office } from '.'
 import { Client } from './clientModel'
 import { User } from './userModel'
@@ -49,6 +49,7 @@ import { User } from './userModel'
   id: 'cash_id',
   inc_field: 'id',
 })
+@plugin(mongoosePaginate)
 @plugin(autopopulate as any)
 export class Cash {
   @prop({ default: new Date() })

@@ -4,6 +4,7 @@ import offices from '@/store/offices'
 import settings from '@/store/settings'
 import auth from '@/store/auth'
 import orders from '@/store/orders'
+import cash from '@/store/cash'
 import createPersistedState from 'vuex-persistedstate'
 
 import { getModule } from 'vuex-module-decorators'
@@ -11,7 +12,7 @@ import { getModule } from 'vuex-module-decorators'
 Vue.use(Vuex)
 
 export const persistedState = createPersistedState({
-  paths: ['settings', 'offices', 'auth'],
+  paths: ['settings', 'offices', 'auth', 'orders'],
 })
 
 export const store = new Vuex.Store({
@@ -21,6 +22,7 @@ export const store = new Vuex.Store({
     settings,
     auth,
     orders,
+    cash,
   },
   plugins: [persistedState],
 })
@@ -29,5 +31,6 @@ export const officesModule = getModule(offices, store)
 export const settingsModule = getModule(settings, store)
 export const authModule = getModule(auth, store)
 export const ordersModule = getModule(orders, store)
+export const cashModule = getModule(cash, store)
 
 export default store
