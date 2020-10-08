@@ -35,15 +35,36 @@ async function run() {
     concurrency: 10,
   })
 
+  await ssh.putFile(__dirname + '/uggsm-server/package.json', `${process.env.DEPLOY_SERVER_PATH}/package.json`)
+
+  await ssh.execCommand('npm i', { cwd: `${process.env.DEPLOY_SERVER_PATH}` })
+
+  console.log('server deployed succesefuly')
+
   await ssh.putDirectory(__dirname + '/uggsm-client/dist', `${process.env.DEPLOY_CLIENT_PATH}`, {
     recursive: true,
     concurrency: 10,
+  })
+
+  console.log('client deployed succesefuly')
+
+  fs.rmdir(__dirname + '/uggsm-server/dist/', { recursive: true }, (err) => {
+    if (err) {
+      throw err
+    }
+
+    console.log(`'./uggsm-server/dist/' is deleted!`)
+  })
+
+  fs.rmdir(__dirname + '/uggsm-client/dist/', { recursive: true }, (err) => {
+    if (err) {
+      throw err
+    }
+
+    console.log(`'./uggsm-client/dist/' is deleted!`)
   })
 
   process.exit()
 }
 
 run()
-
-deleteFolderRecursive('/uggsm-client/dist')
-deleteFolderRecursive('/uggsm-server/dist')
