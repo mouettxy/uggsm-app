@@ -32,9 +32,11 @@ async function run() {
 
   console.info('[SERVER] Packages installed')
 
-  console.info('[SERVER] Deployed succesefully')
+  await ssh.execCommand('sudo systemctl stop uggsm-api', { cwd: '' })
 
-  await ssh.execCommand('rm -rf /var/www/app', { cwd: '/' })
+  console.info('[SERVER] Server restarted')
+
+  console.info('[SERVER] Deployed succesefully')
 
   console.info('[CLIENT] Folder removed')
 
@@ -44,14 +46,20 @@ async function run() {
   })
 
   console.info('[CLIENT] Deployed succesefully')
+
+  process.exit()
 }
 
 run()
 
+let serverDel = false
+let clientDel = false
 fs.rmdir(__dirname + '/uggsm-server/dist/', { recursive: true }, (err) => {
   if (err) {
     throw err
   }
+
+  serverDel = true
 
   console.log(`'./uggsm-server/dist/' is deleted!`)
 })
@@ -61,7 +69,13 @@ fs.rmdir(__dirname + '/uggsm-client/dist/', { recursive: true }, (err) => {
     throw err
   }
 
+  clientDel = true
+
   console.log(`'./uggsm-client/dist/' is deleted!`)
 })
 
-process.exit()
+if (serverDel && clientDel) {
+  process.exit()
+} else {
+  process.exit(1)
+}
