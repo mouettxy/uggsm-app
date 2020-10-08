@@ -310,7 +310,8 @@ export class OrdersController implements IOrdersController {
 
       // @ts-ignore
       firstIteration.setNext('order_id', async (_err, doc) => {
-        firstIteration.id = generateOrderId(office.ordersTemplateParsed, firstIteration.id)
+        const id = generateOrderId(office.ordersTemplateParsed, firstIteration.id)
+        firstIteration.id = id
 
         const secondIteration = await firstIteration.save()
 
@@ -329,6 +330,27 @@ export class OrdersController implements IOrdersController {
   ): Promise<void> => {
     const id: string = request.params.id
     const orderData = request.body
+
+    const order = await this.order.findById(id)
+    // @ts-ignore
+    const oldMaster = order.master._id
+    // @ts-ignore
+    const oldManager = order.manager._id
+
+    if (oldMaster.toString() !== orderData.master) {
+      const newMaster = orderData.master
+
+      await this.order.setMaster(order.id, newMaster)
+    }
+    if (oldManager.toString() !== orderData.manager) {
+      const newManager = orderData.manager
+
+      await this.order.setManager(order.id, newManager)
+    }
+
+    delete orderData.master
+    delete orderData.manager
+
     await this.order
       .findByIdAndUpdate(id, orderData, {
         new: true,
@@ -341,7 +363,7 @@ export class OrdersController implements IOrdersController {
           next(new ObjectNotFoundException(this.order.modelName, id))
         }
       })
-      .catch(() => {
+      .catch((err) => {
         next(
           new HttpException(
             422,

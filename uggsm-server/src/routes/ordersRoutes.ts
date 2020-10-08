@@ -33,7 +33,7 @@ export class OrdersRouter implements Router {
       .put(`${path}/:id/master`, validateOrder.master, controller.setMaster)
       .put(`${path}/:id/manager`, validateOrder.manager, controller.setManager)
       .put(`${path}/:id/office`, validateOrder.office, controller.setOffice)
-      .put(`${path}/:id`, validateOrder.order, controller.updateById)
+      .put(`${path}/:id`, controller.updateById)
       .delete(`${path}/:id`, controller.deleteById)
   }
 }

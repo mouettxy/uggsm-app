@@ -276,14 +276,17 @@ export class Order {
     }
   }
 
-  private static setHelper(target: 'workflow', arr: any, header: string, comment: string) {
+  private static async setHelper(target: 'workflow', arr: any, header: string, comment: string) {
     if (target === 'workflow') {
       arr.push(
-        extendArrayWithId(arr, {
-          header: header,
-          message: comment,
-          userid: null,
-        })
+        extendArrayWithId(
+          arr,
+          await processWorkflowData({
+            header,
+            message: comment,
+            userid: null,
+          })
+        )
       )
     }
   }
@@ -353,16 +356,16 @@ export class Order {
     if (order.master) {
       const oldMaster = await UserModel.findById(order.master)
       const newMaster = await UserModel.findById(master)
-      this.setHelper(
+      await this.setHelper(
         'workflow',
         order.workflow,
-        'Смена мастер',
+        'Смена мастера',
         `Мастер изменён с "${oldMaster.credentials}" на "${newMaster.credentials}"`
       )
     } else {
       const newMaster = await UserModel.findById(master)
 
-      this.setHelper('workflow', order.workflow, 'Назначен мастер', `${newMaster.credentials}`)
+      await this.setHelper('workflow', order.workflow, 'Назначен мастер', `${newMaster.credentials}`)
     }
     order.master = master
     return await order.save()
@@ -377,16 +380,16 @@ export class Order {
     if (order.manager) {
       const oldManager = await UserModel.findById(order.manager)
       const newManager = await UserModel.findById(manager)
-      this.setHelper(
+      await this.setHelper(
         'workflow',
         order.workflow,
-        'Смена менеджер',
+        'Смена менеджера',
         `Менеджер изменён с "${oldManager.credentials}" на "${newManager.credentials}"`
       )
     } else {
       const newManager = await UserModel.findById(manager)
 
-      this.setHelper('workflow', order.workflow, 'Назначен менеджер', `${newManager.credentials}`)
+      await this.setHelper('workflow', order.workflow, 'Назначен менеджер', `${newManager.credentials}`)
     }
     order.manager = manager
     return await order.save()
