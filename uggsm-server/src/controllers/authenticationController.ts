@@ -37,24 +37,26 @@ export class AuthenticationController implements IAuthentificationController {
       next(new UserWithThatUsernameAlreadyExistsException(userData.username))
     } else {
       try {
-        const hashedPassword = await bcrypt.hash(userData.password, 10)
-        const office = await OfficeModel.getOneByCode(userData.office)
+        if (userData.masterPwd === process.env.REGISTER_USER_MASTER_PWD) {
+          const hashedPassword = await bcrypt.hash(userData.password, 10)
+          const office = await OfficeModel.getOneByCode(userData.office)
 
-        if (!office) {
-          next(new CannotFindOfficeException(userData.office))
+          if (!office) {
+            next(new CannotFindOfficeException(userData.office))
+          }
+
+          userData.office = office._id
+
+          const user = await this.user.create({
+            ...userData,
+            password: hashedPassword,
+          })
+
+          user.set('password', undefined)
+          res.send(user)
+        } else {
+          next(new HttpException(500, 'Master pwd incorrect'))
         }
-
-        userData.office = office._id
-
-        const user = await this.user.create({
-          ...userData,
-          password: hashedPassword,
-        })
-
-        user.set('password', undefined)
-        const tokenData = AuthenticationController.createToken(user)
-        res.setHeader('Set-Cookie', [AuthenticationController.createCookie(tokenData)])
-        res.send(user)
       } catch (error) {
         next(new HttpException(500, error.message))
       }
