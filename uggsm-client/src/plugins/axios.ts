@@ -1,8 +1,17 @@
 import Vue from 'vue'
 import axios from 'axios'
 
+const baseURL =
+  process.env.NODE_ENV === 'production'
+    ? process.env.VUE_APP_API_URL_PRODUCTION
+    : process.env.VUE_APP_API_URL_DEVELOPEMENT
+const baseURLVersion =
+  process.env.NODE_ENV === 'production'
+    ? process.env.VUE_APP_API_VERSION_PRODUCTION
+    : process.env.VUE_APP_API_VERSION_DEVELOPEMENT
+
 const config = {
-  baseURL: `${process.env.VUE_APP_API_URL}/${process.env.VUE_APP_API_VERSION}` || '',
+  baseURL: `${baseURL}/${baseURLVersion}`,
   validateStatus: (status: any) => {
     return status < 500 // default
   },

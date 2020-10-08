@@ -111,7 +111,25 @@ export default class Orders extends VuexModule {
   async createOrder(payload: any) {
     this.context.commit('SET_LOADING', true)
     try {
-      const response = await ordersAPI().create(payload)
+      const response = await ordersAPI(payload.office).createByOffice(payload)
+
+      if (response) {
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    } finally {
+      this.context.commit('SET_LOADING', false)
+    }
+  }
+
+  @Action
+  async updateOrder(payload: any) {
+    this.context.commit('SET_LOADING', true)
+    try {
+      const response = await ordersAPI(payload.id).updateById(payload.order)
 
       if (response) {
         return true

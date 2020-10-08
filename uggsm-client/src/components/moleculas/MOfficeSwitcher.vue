@@ -37,7 +37,7 @@ export default class MOfficeSwitcher extends Vue {
      *
      * @property {string} value - current office
      */
-    this.$emit('change', value)
+    this.$emit('input', value)
   }
 }
 </script>

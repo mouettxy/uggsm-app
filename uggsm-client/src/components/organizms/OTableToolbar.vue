@@ -6,9 +6,8 @@
   )
     template(v-if='!hideOffices')
       m-office-switcher(
-        :value='defaultOffice',
-        :items='offices',
-        @change='onOfficeSwitch'
+        v-model='defaultOffice',
+        :items='offices'
       )
     template(v-else)
       .text-h5 {{ $route.meta.header }}
@@ -39,18 +38,13 @@ export default class OTableToolbar extends Vue {
     if (settingsModule.office) {
       return `${settingsModule.office.code}|${settingsModule.office.name}`
     } else {
-      settingsModule.setOffice({ office: 'M1|UGGSM', type: 'order' })
+      settingsModule.setOffice({ office: '', type: 'orders' })
       return ''
     }
   }
 
-  onOfficeSwitch(value: string) {
-    /**
-     * Emits when office switches
-     *
-     * @property {string} value - selected office
-     */
-    if (this.$route.name === 'order' || this.$route.name === 'cash') {
+  set defaultOffice(value) {
+    if (this.$route.name === 'orders' || this.$route.name === 'cash') {
       settingsModule.setOffice({ office: value, type: this.$route.name })
     }
   }

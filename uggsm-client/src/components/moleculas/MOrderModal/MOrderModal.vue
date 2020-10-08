@@ -14,7 +14,7 @@
           span Новый
 
     template(#content='{close}')
-      v-container.order-modal__container
+      v-container.order-modal__container(:class='{ "order-modal__container--payed": order ? order.payed : false }')
         v-row(no-gutters)
           v-col.order-modal__container-item(cols='9')
             m-order-modal-content(
@@ -62,6 +62,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import { ordersModule, settingsModule, cashModule } from '@/store'
+import { cloneDeep } from 'lodash'
 
 @Component
 export default class MOrderModal extends Vue {
@@ -137,11 +138,11 @@ export default class MOrderModal extends Vue {
   async createOrder(close: Function) {
     if (this.checkOrder(this.model)) {
       if (settingsModule.office) {
-        const sendedOrder = await ordersModule.createOrder({ ...this.model, office: settingsModule.office })
+        const sendedOrder = await ordersModule.createOrder({ ...this.model, office: settingsModule.office.code })
 
         if (sendedOrder) {
-          this.$notification.success('Заказ успешно создана')
-          close()
+          this.$notification.success('Заявка успешно создана')
+          this.clearCurrentOrder()
         } else {
           this.$notification.error('Ошибка при создании заказа')
         }
@@ -151,8 +152,35 @@ export default class MOrderModal extends Vue {
     }
   }
 
-  async updateOrder() {
-    //
+  async updateOrder(close: Function) {
+    if (this.order) {
+      if (settingsModule.office) {
+        const copyOfOrder = cloneDeep(this.order)
+        delete copyOfOrder._id
+        delete copyOfOrder.workflow
+        delete copyOfOrder.id
+        delete copyOfOrder.__v
+        delete copyOfOrder.statusWork
+        delete copyOfOrder.statusSms
+        delete copyOfOrder.masterComments
+        delete copyOfOrder.managerComments
+        copyOfOrder.master = copyOfOrder.master._id
+        copyOfOrder.manager = copyOfOrder.manager._id
+        copyOfOrder.office = copyOfOrder.office._id
+        copyOfOrder.customer = copyOfOrder.customer._id
+
+        const sendedOrder = await ordersModule.updateOrder({ id: this.order._id, order: copyOfOrder })
+
+        if (sendedOrder) {
+          this.$notification.success('Заявка обновлена успешно')
+          this.clearCurrentOrder()
+        } else {
+          this.$notification.error('Ошибка при обновлении заявки')
+        }
+      } else {
+        this.$notification.error('Выберите офис')
+      }
+    }
   }
 
   async mounted() {
@@ -164,11 +192,14 @@ export default class MOrderModal extends Vue {
 </script>
 
 <style lang="sass">
-$height: calc(100vh - 70px)
+$height: calc(100vh - 50px)
+$height-payed: calc(100vh - 70px)
 
 .order-modal__container
   height: $height
   overflow: hidden
+  &--payed
+    height: $height-payed
   .order-modal__container-item
     padding: 0 !important
 </style>

@@ -43,16 +43,23 @@
       touchless
     )
       v-tab-item.order-modal-content__item(key='information')
-        .order-modal-content__item__content
+        .order-modal-content__item__content(
+          :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
+        )
           m-order-modal-fields(
             v-model='newOrder ? model : order',
             :new-order='newOrder'
           )
       v-tab-item.order-modal-content__item(key='works')
-        .order-modal-content__item__content
+        .order-modal-content__item__content(
+          :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
+        )
           m-order-modal-works(:new-order='newOrder')
+
       v-tab-item.order-modal-content__item(key='payments')
-        .order-modal-content__item__content
+        .order-modal-content__item__content(
+          :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
+        )
           m-order-modal-cash(:new-order='newOrder')
 </template>
 
@@ -98,6 +105,8 @@ export default class MOrderModalContent extends Vue {
     &__content
       padding: 6px
       overflow-y: scroll
-      height: calc(100vh - 150px)
+      height: calc(100vh - 154px)
       box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important
+      &--payed
+        height: calc(100vh - 174px)
 </style>

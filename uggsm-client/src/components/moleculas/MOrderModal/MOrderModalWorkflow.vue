@@ -1,5 +1,8 @@
 <template lang="pug">
-v-card.order-modal-workflow(v-if='!newOrder')
+.order-modal-workflow(
+  v-if='!newOrder',
+  :class='{ "order-modal-workflow--payed": order ? order.payed : false }'
+)
   v-toolbar.order-modal-workflow__header(
     flat,
     dense
@@ -148,10 +151,10 @@ export default class MOrderModalWorkflow extends Vue {
         } else if (e.header === 'Назначен клиент') {
           color = '#1b78c3'
           icon = 'mdi-account'
-        } else if (e.header === 'Назначен мастер') {
+        } else if (e.header === 'Назначен мастер' || e.header === 'Смена мастера') {
           color = '#1e89d8'
           icon = 'mdi-account-hard-hat'
-        } else if (e.header === 'Назначен менеджер') {
+        } else if (e.header === 'Назначен менеджер' || e.header === 'Смена менеджера') {
           color = '#1f9dec'
           icon = 'mdi-account-cowboy-hat'
         } else if (e.header === 'Изменение офиса') {
@@ -215,4 +218,6 @@ export default class MOrderModalWorkflow extends Vue {
 .order-modal-workflow
   height: calc(100vh - 60px)
   overflow-y: scroll
+  &--payed
+    height: calc(100vh - 80px)
 </style>

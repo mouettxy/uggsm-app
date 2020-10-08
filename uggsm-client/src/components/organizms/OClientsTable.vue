@@ -2,6 +2,16 @@
 .orders-table
   v-toolbar.orders-table-toolbar(flat)
     v-spacer
+    v-tooltip(top)
+      template(#activator='{on, attrs}')
+        v-btn(
+          v-on='on',
+          v-bind='attrs',
+          @click='toggleUpdateStatus',
+          icon
+        )
+          v-icon(:color='isNeedToUpdateTable ? "primary" : "black"') mdi-reload {{ isNeedToUpdateTable ? "mdi-spin" : "" }}
+      span Включить автообновление таблиц
     v-menu(
       v-model='columnsMenu',
       :close-on-content-click='false',
@@ -131,6 +141,11 @@ export default class OClientsTable extends Vue {
     })
   }
 
+  public isNeedToUpdateTable = false
+  toggleUpdateStatus() {
+    this.isNeedToUpdateTable = !this.isNeedToUpdateTable
+  }
+
   get isLoading() {
     return clientModule.isLoading
   }
@@ -161,6 +176,12 @@ export default class OClientsTable extends Vue {
 
   created() {
     this.loadItems()
+
+    setInterval(() => {
+      if (this.isNeedToUpdateTable) {
+        this.loadItems()
+      }
+    }, 20000)
   }
 }
 </script>

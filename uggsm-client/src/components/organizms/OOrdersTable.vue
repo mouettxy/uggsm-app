@@ -8,6 +8,16 @@
       v-icon(left) mdi-plus
       span Новый заказ
     v-spacer
+    v-tooltip(top)
+      template(#activator='{on, attrs}')
+        v-btn(
+          v-on='on',
+          v-bind='attrs',
+          @click='toggleUpdateStatus',
+          icon
+        )
+          v-icon(:color='isNeedToUpdateTable ? "primary" : "black"') mdi-reload {{ isNeedToUpdateTable ? "mdi-spin" : "" }}
+      span Включить автообновление таблиц
     v-menu(
       v-model='columnsMenu',
       :close-on-content-click='false',
@@ -27,14 +37,14 @@
             :key='header.value'
           )
             v-list-item-action
-              v-switch(v-model='header.hidden')
+              v-switch(v-model='header.show')
             v-list-item-title {{ header.text }}
   v-data-table(
     :server-items-length='totalItems',
     :options.sync='options',
     :loading='isLoading',
     :items='items',
-    :headers='headers',
+    :headers='headersFormatted',
     :calculate-widths='true',
     @update:sort-desc='update',
     @update:sort-by='update',
@@ -74,63 +84,75 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { ordersModule } from '@/store'
+import { filter } from 'lodash'
 
 @Component
 export default class OOrdersTable extends Vue {
+  public isNeedToUpdateTable = false
   public columnsMenu = false
   public page = 1
   public headers: any = [
     {
       text: 'Заказ №',
       value: 'id',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Срок заказа',
       value: 'estimatedCloseAt',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Статус',
       value: 'status',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Создан',
       value: 'created',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Устройство',
       value: 'phoneModel',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Бренд',
       value: 'phoneBrand',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Неисправность',
       value: 'declaredDefect',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Уведомления',
       value: 'notifications',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Рекламная кампания',
       value: 'adversitement',
-      hidden: false,
+      show: true,
     },
     {
       text: 'Пароль',
       value: 'password',
-      hidden: false,
+      show: true,
     },
   ]
+
+  toggleUpdateStatus() {
+    this.isNeedToUpdateTable = !this.isNeedToUpdateTable
+  }
+
+  get headersFormatted() {
+    return filter(this.headers, (e) => {
+      return e.show
+    })
+  }
 
   get isLoading() {
     return ordersModule.isLoading
@@ -162,6 +184,12 @@ export default class OOrdersTable extends Vue {
 
   created() {
     this.loadItems()
+
+    setInterval(() => {
+      if (this.isNeedToUpdateTable) {
+        this.loadItems()
+      }
+    }, 20000)
   }
 }
 </script>

@@ -135,11 +135,12 @@ export default class ADatetimePicker extends Vue {
   init() {
     if (!this.datetime) {
       const m = moment().add(7, 'days')
-      this.date = m.format('YYYY-DD-MM')
+      this.date = m.format('YYYY-MM-DD')
       this.time = m.format('HH:mm')
+      this.$emit('input', this.dateToDb)
     } else {
       const m = moment(this.datetime)
-      this.date = m.format('YYYY-DD-MM')
+      this.date = m.format('YYYY-MM-DD')
       this.time = m.format('HH:mm')
     }
   }
@@ -152,7 +153,7 @@ export default class ADatetimePicker extends Vue {
   clearHandler() {
     this.resetPicker()
     const m = moment().add(7, 'days')
-    this.date = m.format('YYYY-DD-MM')
+    this.date = m.format('YYYY-MM-DD')
     this.time = m.format('HH:mm')
     this.$emit('input', this.dateToDb)
   }

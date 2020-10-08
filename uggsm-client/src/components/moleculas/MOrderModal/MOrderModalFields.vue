@@ -171,7 +171,8 @@
           dense
         )
         a-input(
-          v-model='model.declaredPrice.toString()',
+          v-model='model.declaredPrice',
+          type='number',
           label='Ориентировочная цена',
           icon='mdi-cash',
           dense

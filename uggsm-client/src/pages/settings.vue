@@ -9,8 +9,15 @@
 
 <template lang="pug">
 .page-settings.pa-4
-  v-alert(type='error')
-    | Страница настроек находится в статусе активной разработки.
+  v-btn(
+    :to='{ name: "register" }',
+    color='primary'
+  ) Новый пользователь
+  br.my-4
+  v-btn(
+    :to='{ name: "office" }',
+    color='primary'
+  ) Новый офис
 </template>
 
 <script lang="ts">

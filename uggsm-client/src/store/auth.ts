@@ -45,4 +45,15 @@ export default class Auth extends VuexModule {
       return Promise.resolve(false)
     }
   }
+
+  @Action
+  async register(payload: any) {
+    const response = await authAPI().register(payload)
+
+    if (response) {
+      return Promise.resolve(true)
+    } else {
+      return Promise.resolve(false)
+    }
+  }
 }

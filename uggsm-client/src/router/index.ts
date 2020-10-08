@@ -30,11 +30,16 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = authModule.isLoggedIn
   if (!isLoggedIn && to.name !== 'login') {
     Vue.prototype.$notification.error('Авторизуйтесь прежде чем вам станут доступны основные функции приложения.')
-    next({ name: 'login' })
+    if (to.name === 'register') {
+      next()
+    } else {
+      next({ name: 'login' })
+    }
   } else if (isLoggedIn && to.name === 'login') {
     next({ name: 'orders' })
   } else {
     next()
   }
 })
+
 export default router
