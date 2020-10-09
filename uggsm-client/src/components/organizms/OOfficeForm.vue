@@ -63,7 +63,7 @@ import { officeAPI } from '@/api'
 export default class OOfficeForm extends Vue {
   @Ref('form') form: any
   public valid = false
-  public requiredField: Array<Function> = [(v: string) => !!v || 'Необходимое поле']
+  public requiredField: Array<any> = [(v: string) => !!v || 'Необходимое поле']
   public office: any = {
     code: '',
     name: '',

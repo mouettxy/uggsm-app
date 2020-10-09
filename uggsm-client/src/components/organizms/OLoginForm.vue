@@ -33,8 +33,8 @@ import { authModule } from '@/store'
 export default class OLoginForm extends Vue {
   @Ref('form') form: any
   public valid = false
-  public usernameRules: Array<Function> = [(v: string) => !!v || 'Заполните логин для входа']
-  public passwordRules: Array<Function> = [(v: string) => !!v || 'Заполните пароль для входа']
+  public usernameRules: Array<any> = [(v: string) => !!v || 'Заполните логин для входа']
+  public passwordRules: Array<any> = [(v: string) => !!v || 'Заполните пароль для входа']
   public user: AuthInput = {
     username: '',
     password: '',

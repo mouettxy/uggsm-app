@@ -3,6 +3,36 @@
   v-if='!newOrder',
   :class='{ "order-modal-workflow--payed": order ? order.payed : false }'
 )
+  .d-none(v-if='order')
+    m-print-receipt(
+      :serial-number='order.serialNumber',
+      :phone-model='order.phoneModel',
+      :password='order.password',
+      :order-id='order.id',
+      :kit='order.kit',
+      :estimated-close-at='order.estimatedCloseAt',
+      :declared-price='order.declaredPrice',
+      :declared-deffect='order.declaredDefect',
+      :customer-phone='order.customerPhone',
+      :customer-name='order.customerName',
+      :created-at='order.createdAt',
+      :appearance='order.appearance',
+      avance='200'
+    )
+    m-print-warranty(
+      :serial-number='order.serialNumber',
+      :phone-model='order.phoneModel',
+      :order-id='order.id',
+      :declared-deffect='order.declaredDefect',
+      :customer-phone='order.customerPhone',
+      :customer-name='order.customerName',
+      :created-at='order.createdAt'
+    )
+    m-print-check(
+      :works='order.statusWork',
+      :order-id='order.id',
+      :customer-name='order.customerName'
+    )
   v-toolbar.order-modal-workflow__header(
     flat,
     dense
@@ -21,13 +51,13 @@
           v-icon mdi-printer
       v-list(dense)
         v-list-item-group
-          v-list-item
+          v-list-item(@click='$htmlToPaper("print-warranty")')
             v-list-item-content
-              v-list-item-title Акт выполненных работ
-          v-list-item
+              v-list-item-title Гарантия
+          v-list-item(@click='$htmlToPaper("print-receipt")')
             v-list-item-content
               v-list-item-title Приемная квитанция
-          v-list-item
+          v-list-item(@click='$htmlToPaper("print-check")')
             v-list-item-content
               v-list-item-title Товарный чек
     v-spacer

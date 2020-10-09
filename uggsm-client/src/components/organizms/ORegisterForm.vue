@@ -62,10 +62,10 @@ import { map, cloneDeep } from 'lodash'
 export default class ORegisterForm extends Vue {
   @Ref('form') form: any
   public valid = false
-  public usernameRules: Array<Function> = [(v: string) => !!v || 'Заполните логин для успешной регистрации']
-  public passwordRules: Array<Function> = [(v: string) => !!v || 'Заполните пароль для успешной регистрации']
-  public credentialsRules: Array<Function> = [(v: string) => !!v || 'Заполните имя для успешной регистрации']
-  public masterPwdRules: Array<Function> = [(v: string) => !!v || 'Заполните мастер пароль для успешной регистрации']
+  public usernameRules: Array<any> = [(v: string) => !!v || 'Заполните логин для успешной регистрации']
+  public passwordRules: Array<any> = [(v: string) => !!v || 'Заполните пароль для успешной регистрации']
+  public credentialsRules: Array<any> = [(v: string) => !!v || 'Заполните имя для успешной регистрации']
+  public masterPwdRules: Array<any> = [(v: string) => !!v || 'Заполните мастер пароль для успешной регистрации']
   public user: any = {
     username: '',
     password: '',

@@ -135,7 +135,7 @@ export default class MOrderModal extends Vue {
     this.$router.push({ name: 'orders' })
   }
 
-  async createOrder(close: Function) {
+  async createOrder() {
     if (this.checkOrder(this.model)) {
       if (settingsModule.office) {
         const sendedOrder = await ordersModule.createOrder({ ...this.model, office: settingsModule.office.code })
@@ -152,7 +152,7 @@ export default class MOrderModal extends Vue {
     }
   }
 
-  async updateOrder(close: Function) {
+  async updateOrder() {
     if (this.order) {
       if (settingsModule.office) {
         const copyOfOrder = cloneDeep(this.order)
