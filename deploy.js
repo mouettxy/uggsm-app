@@ -47,35 +47,23 @@ async function run() {
 
   console.info('[CLIENT] Deployed succesefully')
 
-  process.exit()
+  fs.rmdir(__dirname + '/uggsm-server/dist/', { recursive: true }, (err) => {
+    if (err) {
+      throw err
+    }
+
+    console.log(`'./uggsm-server/dist/' is deleted!`)
+
+    fs.rmdir(__dirname + '/uggsm-client/dist/', { recursive: true }, (err) => {
+      if (err) {
+        throw err
+      }
+
+      console.log(`'./uggsm-client/dist/' is deleted!`)
+
+      process.exit()
+    })
+  })
 }
 
 run()
-
-let serverDel = false
-let clientDel = false
-fs.rmdir(__dirname + '/uggsm-server/dist/', { recursive: true }, (err) => {
-  if (err) {
-    throw err
-  }
-
-  serverDel = true
-
-  console.log(`'./uggsm-server/dist/' is deleted!`)
-})
-
-fs.rmdir(__dirname + '/uggsm-client/dist/', { recursive: true }, (err) => {
-  if (err) {
-    throw err
-  }
-
-  clientDel = true
-
-  console.log(`'./uggsm-client/dist/' is deleted!`)
-})
-
-if (serverDel && clientDel) {
-  process.exit()
-} else {
-  process.exit(1)
-}
