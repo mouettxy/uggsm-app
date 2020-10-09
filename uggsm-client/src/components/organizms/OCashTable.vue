@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { cashModule } from '@/store'
 import { filter } from 'lodash'
 
@@ -119,6 +119,13 @@ export default class OCashTable extends Vue {
   public isNeedToUpdateTable = false
   toggleUpdateStatus() {
     this.isNeedToUpdateTable = !this.isNeedToUpdateTable
+  }
+
+  @Watch('isNeedToUpdateTable')
+  onUpdateTableValueChange(value: boolean) {
+    if (value) {
+      this.loadItems()
+    }
   }
 
   get headersFormatted() {

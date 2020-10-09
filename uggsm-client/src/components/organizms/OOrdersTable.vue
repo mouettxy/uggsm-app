@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { ordersModule } from '@/store'
 import { filter } from 'lodash'
 
@@ -146,6 +146,13 @@ export default class OOrdersTable extends Vue {
 
   toggleUpdateStatus() {
     this.isNeedToUpdateTable = !this.isNeedToUpdateTable
+  }
+
+  @Watch('isNeedToUpdateTable')
+  onUpdateTableValueChange(value: boolean) {
+    if (value) {
+      this.loadItems()
+    }
   }
 
   get headersFormatted() {
