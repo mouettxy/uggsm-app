@@ -44,7 +44,7 @@ export default class Cash extends VuexModule {
     return map(this.currentCash, (e) => {
       return {
         id: e.id,
-        createdAt: moment(e.createdAt).format('DD mm YYYY HH:mm'),
+        createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
         comment: e.comment,
         total: e.income - e.consumption,
       }
