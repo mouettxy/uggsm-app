@@ -3,7 +3,7 @@ import { ordersAPI } from '@/api'
 import { map, zip } from 'lodash'
 
 import moment from 'moment'
-import { settingsModule } from '.'
+import { authModule, settingsModule } from '.'
 import { fromPairs } from 'lodash'
 
 function getTime(date: any) {
@@ -94,6 +94,10 @@ export default class Orders extends VuexModule {
     const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))
 
     query.sort = fromPairs(zip(payload.sortBy, sortDesc))
+
+    if (authModule.user.role === 'master') {
+      query.master = authModule.user._id
+    }
 
     this.context.commit('SET_ORDERS', await ordersAPI().getPaginated(query))
     this.context.commit('SET_LOADING', false)

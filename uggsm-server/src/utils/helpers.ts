@@ -167,8 +167,7 @@ export const generateOrderId = (
 export const parsePaginateResponse = (requestQuery, needOffice = false, model = undefined) => {
   let query: any = {}
   if (needOffice) {
-    const office = requestQuery.office
-    query.office = office
+    query.office = requestQuery.office
   }
 
   const page = requestQuery.page
@@ -197,7 +196,6 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
         ...query,
         ...searchQuery,
       }
-      console.log(searchQuery.$and[0].$or)
     }
   }
 
@@ -214,6 +212,10 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
       }
     }
     Object.assign(query, newFilter)
+  }
+
+  if (requestQuery.master) {
+    query.master = requestQuery.master
   }
 
   return {
