@@ -124,5 +124,9 @@ export default class ORegisterForm extends Vue {
       }
     }
   }
+
+  mounted() {
+    officesModule.fetch()
+  }
 }
 </script>
