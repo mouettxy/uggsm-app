@@ -1,5 +1,5 @@
 import { Office, OfficeModel, UserModel } from '.'
-import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType, mongoose } from '@typegoose/typegoose'
+import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType, mongoose, index } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
 import { filter, isEmpty } from 'lodash'
@@ -9,6 +9,7 @@ import { Adversitement } from './adversitementModel'
 import { User } from './userModel'
 import mongoosePaginate from 'mongoose-paginate-v2'
 import { statuses } from '../utils/enums'
+import mongooseSearch from 'mongoose-partial-search'
 
 export class CompletedWork {
   @prop()
@@ -160,6 +161,7 @@ export class Workflow {
     this.officeCode = office.code
   }
 })
+@plugin(mongooseSearch)
 @plugin(mongoosePaginate)
 @plugin(AutoIncrement as any, {
   id: 'order_id',
@@ -167,15 +169,15 @@ export class Workflow {
   reference_fields: ['officeCode'],
   disable_hooks: true,
 })
-@plugin(autopopulate as any)
+@plugin(autopopulate)
 export class Order {
   @prop({ autopopulate: true, ref: 'Client' })
   public customer: Ref<Client>
 
-  @prop({ required: true })
+  @prop({ required: true, searchable: true })
   public customerName: string
 
-  @prop({ required: true })
+  @prop({ required: true, searchable: true })
   public customerPhone: string
 
   @prop({ autopopulate: true, ref: 'Office' })
@@ -184,7 +186,7 @@ export class Order {
   @prop()
   public officeCode: string
 
-  @prop({ default: 'Не указано' })
+  @prop({ default: 'Не указано', searchable: true })
   public phoneBrand: string
 
   @prop({ autopopulate: true, ref: 'User' })
@@ -199,34 +201,31 @@ export class Order {
   @prop({ default: 0 })
   public declaredPrice: number
 
-  @prop({ default: 0 })
-  public totalPrice: number
-
-  @prop({ default: 'Нет модели' })
+  @prop({ default: 'Нет модели', searchable: true })
   public phoneModel: string
 
-  @prop({ default: 'Нет серийного номера' })
+  @prop({ default: 'Нет серийного номера', searchable: true })
   public serialNumber: string
 
-  @prop({ default: 'Нет описания внешнего вида' })
+  @prop({ default: 'Нет описания внешнего вида', searchable: true })
   public appearance: string
 
   @prop({ default: 'Платный' })
   public orderType: string
 
-  @prop({ default: 'Нет дефекта' })
+  @prop({ default: 'Нет дефекта', searchable: true })
   public declaredDefect: string
 
-  @prop({ default: 'Нет дефекта' })
+  @prop({ default: 'Нет дефекта', searchable: true })
   public defect: string
 
-  @prop({ default: 'Нет комплектации' })
+  @prop({ default: 'Нет комплектации', searchable: true })
   public kit: string
 
   @prop({ default: new Date() })
   public createdAt: Date
 
-  @prop({ default: '-' })
+  @prop({ default: '-', searchable: true })
   public password: string
 
   @prop()

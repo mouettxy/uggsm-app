@@ -5,6 +5,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 import { ClientModel, OrderModel, Office } from '.'
 import { Client } from './clientModel'
 import { User } from './userModel'
+import mongooseSearch from 'mongoose-partial-search'
 
 @pre<Cash>('save', async function () {
   if (this.orderid && this.client) {
@@ -45,6 +46,7 @@ import { User } from './userModel'
     this.balance = this.income
   }
 })
+@plugin(mongooseSearch)
 @plugin(AutoIncrement as any, {
   id: 'cash_id',
   inc_field: 'id',
@@ -70,7 +72,7 @@ export class Cash {
   @prop({ autopopulate: true, ref: 'User', required: true })
   public cashier: Ref<User>
 
-  @prop()
+  @prop({ searchable: true })
   public comment: string
 
   @prop({ default: 0 })

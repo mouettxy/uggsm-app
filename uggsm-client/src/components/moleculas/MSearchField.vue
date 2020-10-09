@@ -1,7 +1,7 @@
 <template lang="pug">
 .search-field
   v-text-field(
-    v-model='model',
+    v-model='value',
     single-line,
     prepend-inner-icon='mdi-magnify',
     outlined,
@@ -13,7 +13,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { settingsModule } from '@/store'
+import { debounce } from 'lodash'
 
 /**
  * Atom that provides cool look search field
@@ -22,19 +24,17 @@ import { Component, Vue } from 'vue-property-decorator'
  */
 @Component
 export default class MSearchField extends Vue {
+  @Prop({ required: true, type: String }) type!: string
   public value = ''
+  public debounced = debounce(settingsModule.setSearch, 300)
 
-  get model() {
-    return this.value
+  @Watch('value')
+  async onValueChanges(value: string) {
+    this.debounced({ search: value, type: this.type })
   }
 
-  set model(value: string) {
-    /**
-     * Emits when search changes
-     *
-     * @property {string} value - input value
-     */
-    this.$emit('change', value)
+  async beforeDestroy() {
+    await settingsModule.setSearch({ search: '', type: this.type })
   }
 }
 </script>

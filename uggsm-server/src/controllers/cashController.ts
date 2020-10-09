@@ -47,7 +47,7 @@ export class CashController implements ICashController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    const { query, options } = parsePaginateResponse(request.query, true)
+    const { query, options } = parsePaginateResponse(request.query, true, this.cash)
 
     try {
       // @ts-ignore

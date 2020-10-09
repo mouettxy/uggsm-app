@@ -52,7 +52,7 @@ export class OrdersController implements IOrdersController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    const { query, options } = parsePaginateResponse(request.query, true)
+    const { query, options } = parsePaginateResponse(request.query, true, this.order)
 
     try {
       // @ts-ignore

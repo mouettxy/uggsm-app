@@ -12,7 +12,7 @@
     template(v-else)
       .text-h5 {{ $route.meta.header }}
     v-spacer
-    m-search-field(@change='onSearchField')
+    m-search-field(:type='$route.name')
 </template>
 
 <script lang="ts">
@@ -47,15 +47,6 @@ export default class OTableToolbar extends Vue {
     if (this.$route.name === 'orders' || this.$route.name === 'cash') {
       settingsModule.setOffice({ office: value, type: this.$route.name })
     }
-  }
-
-  onSearchField(value: string) {
-    /**
-     * Emits when search fields changes
-     *
-     * @property {string} value - current search field state
-     */
-    this.$emit('search', value)
   }
 
   mounted() {

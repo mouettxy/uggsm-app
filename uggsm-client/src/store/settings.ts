@@ -1,5 +1,5 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { cashModule, officesModule, ordersModule } from '.'
+import { cashModule, clientModule, officesModule, ordersModule } from '.'
 
 @Module({
   namespaced: true,
@@ -7,10 +7,16 @@ import { cashModule, officesModule, ordersModule } from '.'
 })
 export default class Settings extends VuexModule {
   public office: any = null
+  public search: any = null
 
   @Mutation
   SET_OFFICE(payload: string) {
     this.office = payload
+  }
+
+  @Mutation
+  SET_SEARCH(payload: string) {
+    this.search = payload
   }
 
   @Action
@@ -21,6 +27,19 @@ export default class Settings extends VuexModule {
       await ordersModule.fetch()
     } else if (payload.type === 'cash') {
       await cashModule.fetch()
+    }
+  }
+
+  @Action
+  async setSearch(payload: any) {
+    this.context.commit('SET_SEARCH', payload.search)
+
+    if (payload.type === 'orders') {
+      ordersModule.fetch()
+    } else if (payload.type === 'cash') {
+      cashModule.fetch()
+    } else if (payload.type === 'clients') {
+      clientModule.fetch()
     }
   }
 }

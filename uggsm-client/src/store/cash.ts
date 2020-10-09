@@ -17,7 +17,7 @@ export default class Cash extends VuexModule {
 
   public isLoading = false
   public countRows = 0
-  public options = {
+  public options: any = {
     page: 1,
     itemsPerPage: 25,
     sortBy: ['id'],
@@ -97,6 +97,10 @@ export default class Cash extends VuexModule {
       page: payload.page,
       limit: payload.itemsPerPage,
       office,
+    }
+
+    if (settingsModule.search) {
+      query.search = settingsModule.search
     }
 
     const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))

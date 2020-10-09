@@ -76,6 +76,10 @@ export default class Client extends VuexModule {
       office,
     }
 
+    if (settingsModule.search) {
+      query.search = settingsModule.search
+    }
+
     const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))
 
     query.sort = fromPairs(zip(payload.sortBy, sortDesc))

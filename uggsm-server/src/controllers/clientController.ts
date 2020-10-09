@@ -26,7 +26,7 @@ export class ClientController implements IClientController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    const { query, options } = parsePaginateResponse(request.query, false)
+    const { query, options } = parsePaginateResponse(request.query, false, this.model)
     console.log(query, options)
     try {
       // @ts-ignore

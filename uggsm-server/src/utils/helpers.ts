@@ -164,8 +164,8 @@ export const generateOrderId = (
   }
 }
 
-export const parsePaginateResponse = (requestQuery, needOffice = false) => {
-  const query: any = {}
+export const parsePaginateResponse = (requestQuery, needOffice = false, model = undefined) => {
+  let query: any = {}
   if (needOffice) {
     const office = requestQuery.office
     query.office = office
@@ -184,6 +184,20 @@ export const parsePaginateResponse = (requestQuery, needOffice = false) => {
     } catch (e) {
       console.log(e)
       // do nothing
+    }
+  }
+
+  if (requestQuery.search) {
+    if (model) {
+      const searchQuery = model.searchBuilder(requestQuery.search)
+      if (parseInt(requestQuery.search)) {
+        searchQuery.$and[0].$or.push({ id: { $gte: requestQuery.search, $lte: requestQuery.search } })
+      }
+      query = {
+        ...query,
+        ...searchQuery,
+      }
+      console.log(searchQuery.$and[0].$or)
     }
   }
 

@@ -4,6 +4,7 @@ import { AutoIncrement } from '../utils'
 import { extendArrayWithId } from '../utils/helpers'
 import { Adversitement } from '.'
 import mongoosePaginate from 'mongoose-paginate-v2'
+import mongooseSearch from 'mongoose-partial-search'
 
 export const clientTypes = ['физ. лицо', 'компания']
 
@@ -23,29 +24,30 @@ export class ClientPhone {
   //   // this.adversitement = (await AdversitementModel.findOne({ name: 'default' }))._id
   // }
 })
+@plugin(mongoosePaginate)
 @plugin(AutoIncrement as any, {
   id: 'client_id',
   inc_field: 'id',
 })
-@plugin(mongoosePaginate)
+@plugin(mongooseSearch)
 @plugin(autopopulate as any)
 export class Client {
   @prop({ default: new Date() })
   public createdAt: Date
 
-  @prop({ unique: true, required: true })
+  @prop({ unique: true, required: true, searchable: true })
   public name: string
 
-  @prop()
+  @prop({ searchable: true })
   public email: string
 
   @prop({ autopopulate: true, ref: 'Adversitement' })
   public adversitement: Ref<Adversitement>
 
-  @prop()
+  @prop({ searchable: true })
   public comment: string
 
-  @prop()
+  @prop({ searchable: true })
   public address: string
 
   @prop({ default: 0 })
@@ -57,7 +59,7 @@ export class Client {
   @prop({ default: true })
   public allowedNotifications: boolean
 
-  @prop({ default: 'физ. лицо', enum: clientTypes })
+  @prop({ default: 'физ. лицо', enum: clientTypes, searchable: true })
   public clientType: string
 
   @prop({ default: false })
