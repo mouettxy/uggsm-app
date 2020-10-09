@@ -88,7 +88,7 @@ import { filter } from 'lodash'
 
 @Component
 export default class OOrdersTable extends Vue {
-  public isNeedToUpdateTable = false
+  public isNeedToUpdateTable = true
   public columnsMenu = false
   public page = 1
   public headers: any = [

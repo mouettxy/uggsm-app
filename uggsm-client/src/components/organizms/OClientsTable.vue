@@ -141,7 +141,7 @@ export default class OClientsTable extends Vue {
     })
   }
 
-  public isNeedToUpdateTable = false
+  public isNeedToUpdateTable = true
   toggleUpdateStatus() {
     this.isNeedToUpdateTable = !this.isNeedToUpdateTable
   }

@@ -116,7 +116,7 @@ export default class OCashTable extends Vue {
     },
   ]
 
-  public isNeedToUpdateTable = false
+  public isNeedToUpdateTable = true
   toggleUpdateStatus() {
     this.isNeedToUpdateTable = !this.isNeedToUpdateTable
   }
