@@ -132,7 +132,7 @@ export default class Cash extends VuexModule {
   async createCash(payload: CashInput) {
     this.context.commit('SET_LOADING', true)
     try {
-      const office = settingsModule.office?._id
+      const office = settingsModule.office?.code
       const response = await cashAPI(office).createByOffice(payload)
 
       if (response) {
