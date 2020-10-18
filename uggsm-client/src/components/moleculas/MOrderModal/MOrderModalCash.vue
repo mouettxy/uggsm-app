@@ -36,7 +36,7 @@
         td.order-modal-cash__table__item.text-right {{ total }}
       tr
         td.order-modal-cash__table__item.text-right Клиент должен нам:
-        td.order-modal-cash__table__item.text-right {{ total - order.declaredPrice }}
+        td.order-modal-cash__table__item.text-right {{ order.declaredPrice - total }}
 </template>
 
 <script lang="ts">
