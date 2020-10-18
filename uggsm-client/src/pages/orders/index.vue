@@ -16,7 +16,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import TOrdersMain from '@/templates/TOrdersMain.vue'
-/* import { Socket } from 'vue-socket.io-extended' */
 
 /**
  * Orders page
@@ -27,10 +26,6 @@ import TOrdersMain from '@/templates/TOrdersMain.vue'
   },
 })
 export default class PageOrders extends Vue {
-  /* @Socket()
-  connect() {
-    console.log('connected')
-  } */
   mounted() {
     document.title = this.$route.meta.header
   }
