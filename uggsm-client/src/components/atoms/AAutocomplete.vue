@@ -6,9 +6,11 @@ v-autocomplete(
   :label='label',
   :items='items',
   :hide-details='hideDetails',
+  :disabled='disabled',
   :dense='dense',
   @focus.stop='onAutocompleteFocus',
   outlined,
+  no-filter,
   no-data-text='Нет доступных данных',
   item-value='value',
   item-text='text',
@@ -26,6 +28,7 @@ import { isEmpty } from 'lodash'
 @Component
 export default class AAutocomplete extends Vue {
   @Prop({ type: [String, Object] }) value: any
+  @Prop({ type: Boolean, default: false }) disabled!: boolean
   @Prop(String) label: any
   @Prop(String) endpoint: any
   @Prop(String) replaceSearchWith: any
@@ -43,7 +46,9 @@ export default class AAutocomplete extends Vue {
     if (this.query) {
       const items = await this.getItems()
 
-      if (isEmpty(items)) {
+      this.items = items
+
+      if (isEmpty(this.items)) {
         this.items.push({ value: this.query, text: this.query })
       }
     }
