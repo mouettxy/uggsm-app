@@ -196,7 +196,15 @@
           endpoint='/master',
           dense
         )
-        .text-h5 Менежер: {{ model.manager.credentials }}
+        a-autocomplete(
+          v-model='model.manager._id',
+          :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
+          label='Менеджер',
+          icon='mdi-account-cowboy-hat',
+          endpoint='/manager',
+          disabled,
+          dense
+        )
 </template>
 
 <script lang="ts">
