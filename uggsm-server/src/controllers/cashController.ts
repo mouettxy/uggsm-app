@@ -90,7 +90,6 @@ export class CashController implements ICashController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    console.log(request.params)
     const orderid = Number(request.params.id)
     await this.cash
       .find({ orderid })

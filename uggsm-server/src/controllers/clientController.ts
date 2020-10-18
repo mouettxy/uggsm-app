@@ -27,7 +27,6 @@ export class ClientController implements IClientController {
     next: NextFunction
   ): Promise<void> => {
     const { query, options } = parsePaginateResponse(request.query, false, this.model)
-    console.log(query, options)
     try {
       // @ts-ignore
       const clients = await this.model.paginate(query, options)

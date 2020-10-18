@@ -272,8 +272,6 @@ export class AutocompleteController implements IAutocompleteController {
           { $sample: { size: 10 } },
         ])
 
-        console.log(response)
-
         const reduced = reduce(
           // @ts-ignore
           response,
@@ -288,7 +286,6 @@ export class AutocompleteController implements IAutocompleteController {
         res.status(200)
         res.send(reduced)
       } catch (error) {
-        console.log(error)
         next(new HttpException(500, 'Неопознанная ошибка при поиске'))
       }
     } else {

@@ -181,7 +181,6 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     try {
       options.sort = JSON.parse(`${requestQuery.sort}`)
     } catch (e) {
-      console.log(e)
       // do nothing
     }
   }

@@ -31,6 +31,5 @@ export function connectWithRetry(uri) {
 
 export function connectToDatabase(): void {
   const DB_URL = `${DB_CONNECTION_STRING}${MONGO_USER}:${MONGO_PASSWORD}${DB_SERVER}?connectTimeoutMS=1000&bufferCommands=false&authSource=admin`
-  console.log(DB_URL)
   connectWithRetry(DB_URL)
 }

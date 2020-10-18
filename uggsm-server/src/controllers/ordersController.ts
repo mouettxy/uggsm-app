@@ -53,7 +53,6 @@ export class OrdersController implements IOrdersController {
     next: NextFunction
   ): Promise<void> => {
     const { query, options } = parsePaginateResponse(request.query, true, this.order)
-
     try {
       // @ts-ignore
       const orders = await this.order.paginate(query, options)
