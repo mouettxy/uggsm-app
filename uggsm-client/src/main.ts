@@ -15,6 +15,9 @@ import vuetify from '@/plugins/vuetify'
 import store from '@/store'
 import router from '@/router'
 
+import moment from 'moment'
+moment.locale('ru')
+
 Vue.config.productionTip = false
 
 new Vue({
