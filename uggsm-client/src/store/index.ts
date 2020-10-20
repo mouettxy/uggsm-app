@@ -13,7 +13,7 @@ import { getModule } from 'vuex-module-decorators'
 Vue.use(Vuex)
 
 export const persistedState = createPersistedState({
-  paths: ['settings', 'offices', 'auth', 'orders'],
+  paths: ['settings', 'offices', 'auth'],
 })
 
 export const store = new Vuex.Store({

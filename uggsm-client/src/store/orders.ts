@@ -1,3 +1,4 @@
+import { Order as OrderType } from '@/typings/api/order'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { ordersAPI } from '@/api'
 import { map, zip } from 'lodash'
@@ -16,8 +17,8 @@ function getTime(date: any) {
   name: 'orders',
 })
 export default class Orders extends VuexModule {
-  public orders: Array<any> | null = null
-  public currentOrder: Record<string, any> | null = null
+  public orders: Array<OrderType> | null = null
+  public currentOrder: OrderType | null = null
   public isLoading = false
   public countRows = 0
   public options = {
@@ -104,7 +105,7 @@ export default class Orders extends VuexModule {
   }
 
   @Action
-  async getOrder(id: number | string) {
+  async getOrder(id: number | string | undefined) {
     this.context.commit('SET_LOADING', true)
     this.context.commit('SET_ORDER', await ordersAPI(id).getById())
     this.context.commit('SET_LOADING', false)
@@ -113,6 +114,33 @@ export default class Orders extends VuexModule {
   @Action
   async clearOrder() {
     this.context.commit('CLEAR_CURRENT_ORDER')
+  }
+
+  @Action
+  async socket_updateOrders() {
+    this.fetch()
+    console.log('updated orders by socket')
+  }
+
+  @Action
+  async socket_updatedOrder(evt: OrderType) {
+    console.log(evt)
+    if (this.currentOrder) {
+      if (this.currentOrder.id == evt.id) {
+        this.getOrder(evt.id)
+        console.log('updated order ' + evt.id + ' by socket')
+      }
+    }
+  }
+
+  @Action
+  async socket_updateOrder(evt: string | number) {
+    if (this.currentOrder) {
+      if (this.currentOrder.id == evt) {
+        this.getOrder(evt)
+        console.log('update order ' + evt + ' by socket')
+      }
+    }
   }
 
   @Action

@@ -4,7 +4,8 @@ import { Cash as CashType } from '@/typings/api/cash'
 import moment from 'moment'
 import { settingsModule } from '.'
 import { cashAPI } from '@/api'
-import { CashInput } from '@/typings/api/cash/CashInput'
+import { CashInput } from '@/typings/api/cash'
+import { getAnonymousAnimal } from '@/api/helpers'
 
 @Module({
   namespaced: true,
@@ -28,9 +29,10 @@ export default class Cash extends VuexModule {
 
   get cashTable() {
     return map(this.cashes, (e) => {
+      const cashier = e.cashier ? e.cashier.credentials : getAnonymousAnimal()
       return {
         id: e.id,
-        createdBy: e.cashier.credentials,
+        createdBy: cashier,
         createdAt: moment(e.createdAt).locale('ru').format('DD MMMM YYYY HH:mm'),
         comment: e.comment,
         income: e.income,
@@ -112,10 +114,12 @@ export default class Cash extends VuexModule {
   }
 
   @Action
-  async getCash(id: string) {
+  async getCash(id: string | number) {
     this.context.commit('SET_LOADING', true)
-    this.context.commit('SET_CASH', await cashAPI(id).getByOrder())
+    const cash = await cashAPI(id).getByOrder()
+    this.context.commit('SET_CASH', cash)
     this.context.commit('SET_LOADING', false)
+    return cash
   }
 
   @Action

@@ -8,6 +8,7 @@ import { cashModule, clientModule, officesModule, ordersModule } from '.'
 export default class Settings extends VuexModule {
   public office: any = null
   public search: any = null
+  public socketNotifications = true
 
   @Mutation
   SET_OFFICE(payload: string) {
@@ -17,6 +18,11 @@ export default class Settings extends VuexModule {
   @Mutation
   SET_SEARCH(payload: string) {
     this.search = payload
+  }
+
+  @Mutation
+  SET_SOCKET_NOTIFICATION_STATUS(payload: boolean) {
+    this.socketNotifications = payload
   }
 
   @Action
@@ -41,5 +47,10 @@ export default class Settings extends VuexModule {
     } else if (payload.type === 'clients') {
       clientModule.fetch()
     }
+  }
+
+  @Action
+  async setSocketNotificationStatus(payload: boolean) {
+    this.context.commit('SET_SOCKET_NOTIFICATION_STATUS', payload)
   }
 }
