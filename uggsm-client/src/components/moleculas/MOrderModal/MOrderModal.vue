@@ -1,6 +1,6 @@
 <template lang="pug">
 .order-modal
-  a-right-modal(
+  a-fullscreen-modal(
     :active='active',
     title='Новая заявка'
   )
@@ -14,7 +14,10 @@
           span Новый
 
     template(#content='{close}')
-      v-container.order-modal__container(:class='{ "order-modal__container--payed": order ? order.payed : false }')
+      v-container.order-modal__container(
+        :class='{ "order-modal__container--payed": order ? order.payed : false }',
+        fluid
+      )
         v-row(no-gutters)
           v-col.order-modal__container-item(cols='9')
             m-order-modal-content(
@@ -63,6 +66,9 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import { ordersModule, settingsModule, cashModule } from '@/store'
 import { cloneDeep } from 'lodash'
+import { User } from '@/typings/api/auth'
+import { Office } from '@/typings/api/office'
+import { Client } from '@/typings/api/client'
 
 @Component
 export default class MOrderModal extends Vue {
@@ -164,10 +170,10 @@ export default class MOrderModal extends Vue {
         delete copyOfOrder.statusSms
         delete copyOfOrder.masterComments
         delete copyOfOrder.managerComments
-        copyOfOrder.master = copyOfOrder.master._id
-        copyOfOrder.manager = copyOfOrder.manager._id
-        copyOfOrder.office = copyOfOrder.office._id
-        copyOfOrder.customer = copyOfOrder.customer._id
+        copyOfOrder.master = (copyOfOrder.master._id as unknown) as User
+        copyOfOrder.manager = (copyOfOrder.manager._id as unknown) as User
+        copyOfOrder.office = (copyOfOrder.office._id as unknown) as Office
+        copyOfOrder.customer = (copyOfOrder.customer._id as unknown) as Client
 
         const sendedOrder = await ordersModule.updateOrder({ id: this.order._id, order: copyOfOrder })
 
