@@ -19,12 +19,12 @@
         fluid
       )
         v-row(no-gutters)
-          v-col.order-modal__container-item(cols='9')
+          v-col.order-modal__container-item(cols='8')
             m-order-modal-content(
               v-model='model',
               :new-order='newOrder'
             )
-          v-col.order-modal__container-item(cols='3')
+          v-col.order-modal__container-item(cols='4')
             m-order-modal-workflow(:new-order='newOrder')
       v-footer.order-modal-footer
         template(v-if='newOrder')
