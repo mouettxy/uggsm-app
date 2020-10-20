@@ -15,7 +15,7 @@ const config = {
   validateStatus: (status: any) => {
     return status < 500 // default
   },
-  timeout: 60 * 1000,
+  timeout: 3 * 1000,
 }
 
 const _axios = axios.create(config)
