@@ -4,7 +4,6 @@ import { settingsModule } from '.'
 import { Client as ClientType } from '@/typings/api/client'
 import { clientAPI } from '@/api'
 import moment from 'moment'
-
 @Module({
   namespaced: true,
   name: 'client',
@@ -27,7 +26,7 @@ export default class Client extends VuexModule {
     return map(this.clients, (e) => {
       return {
         id: e.id,
-        createdAt: moment(e.createdAt).format('DD mm YYYY HH:mm'),
+        createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
         isProvider: e.isProvider,
         isConflict: e.isConflict,
         address: e.address,
@@ -86,5 +85,11 @@ export default class Client extends VuexModule {
 
     this.context.commit('SET_CLIENTS', await clientAPI().getPaginated(query))
     this.context.commit('SET_LOADING', false)
+  }
+
+  @Action
+  async socket_updateClients() {
+    this.fetch()
+    console.log('update clients by socket')
   }
 }

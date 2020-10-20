@@ -1,8 +1,8 @@
-import { fromPairs, map, zip } from 'lodash'
+import { fromPairs, isNull, map, zip } from 'lodash'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { Cash as CashType } from '@/typings/api/cash'
 import moment from 'moment'
-import { settingsModule } from '.'
+import { settingsModule, ordersModule } from '@/store'
 import { cashAPI } from '@/api'
 import { CashInput } from '@/typings/api/cash'
 import { getAnonymousAnimal } from '@/api/helpers'
@@ -120,6 +120,20 @@ export default class Cash extends VuexModule {
     this.context.commit('SET_CASH', cash)
     this.context.commit('SET_LOADING', false)
     return cash
+  }
+
+  @Action
+  async socket_updateCashes() {
+    this.fetch()
+  }
+
+  @Action
+  async socket_createdCash(evt: CashType) {
+    if (ordersModule.currentOrder && !isNull(this.currentCash)) {
+      if (evt.orderid && evt.orderid === ordersModule.currentOrder.id) {
+        this.currentCash.push(evt)
+      }
+    }
   }
 
   @Action

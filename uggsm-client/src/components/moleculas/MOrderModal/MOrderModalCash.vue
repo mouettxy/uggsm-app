@@ -91,7 +91,6 @@ export default class MOrderModalCash extends Vue {
 
         if (response) {
           this.$notification.success('Успешно изменён статус оплаты заказа')
-          await ordersModule.getOrder(this.order.id)
         } else {
           this.$notification.error('[Клиент] Не удалось изменить статус оплаты заказа')
         }

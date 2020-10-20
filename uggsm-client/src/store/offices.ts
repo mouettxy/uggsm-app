@@ -20,6 +20,12 @@ export default class Offices extends VuexModule {
   }
 
   @Action
+  async socket_updateOffices() {
+    this.fetch()
+    console.log('update offices by socket')
+  }
+
+  @Action
   findByCodeAndName(payload: string) {
     const code = payload.split('|')[0]
     return find(this.offices, { code })

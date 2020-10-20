@@ -8,16 +8,6 @@
       v-icon(left) mdi-plus
       span Новый заказ
     v-spacer
-    v-tooltip(top)
-      template(#activator='{on, attrs}')
-        v-btn(
-          v-on='on',
-          v-bind='attrs',
-          @click='toggleUpdateStatus',
-          icon
-        )
-          v-icon(:color='isNeedToUpdateTable ? "primary" : "black"') mdi-reload {{ isNeedToUpdateTable ? "mdi-spin" : "" }}
-      span Включить автообновление таблиц
     v-menu(
       v-model='columnsMenu',
       :close-on-content-click='false',
@@ -88,7 +78,6 @@ import { filter } from 'lodash'
 
 @Component
 export default class OOrdersTable extends Vue {
-  public isNeedToUpdateTable = true
   public columnsMenu = false
   public page = 1
   public headers: any = [
@@ -144,10 +133,6 @@ export default class OOrdersTable extends Vue {
     },
   ]
 
-  toggleUpdateStatus() {
-    this.isNeedToUpdateTable = !this.isNeedToUpdateTable
-  }
-
   @Watch('isNeedToUpdateTable')
   onUpdateTableValueChange(value: boolean) {
     if (value) {
@@ -191,12 +176,6 @@ export default class OOrdersTable extends Vue {
 
   created() {
     this.loadItems()
-
-    setInterval(() => {
-      if (this.isNeedToUpdateTable) {
-        this.loadItems()
-      }
-    }, 20000)
   }
 }
 </script>
