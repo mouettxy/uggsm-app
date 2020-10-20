@@ -1,3 +1,4 @@
+import { api } from './../server'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { generateOrderId, parsePaginateResponse } from '../utils/helpers'
@@ -96,6 +97,7 @@ export class OrdersController implements IOrdersController {
       .save()
       .then((savedOrder) => {
         response.status(200)
+        api.io.emit('created order', savedOrder)
         response.send(savedOrder)
       })
       .catch((err: Error) => {
@@ -113,6 +115,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order completed work', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -129,6 +134,8 @@ export class OrdersController implements IOrdersController {
       // TODO: sms sending through gate
       if (order) {
         response.status(200)
+        api.io.emit('added order sms', order.id)
+        api.io.emit('update order', order.id)
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -147,6 +154,8 @@ export class OrdersController implements IOrdersController {
       const order = await OrderModel.addMasterComment(request.params.id, request.body)
       if (order) {
         response.status(200)
+        api.io.emit('added order masterComment', order.id)
+        api.io.emit('update order', order.id)
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -166,6 +175,8 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order manager comment', order.id)
+        api.io.emit('update order', order.id)
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -185,6 +196,8 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order workflow', order.id)
+        api.io.emit('update order', order.id)
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -204,6 +217,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order status', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -219,6 +235,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order payed', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -238,6 +257,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order master', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -257,6 +279,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order manager', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -276,6 +301,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         response.status(200)
+        api.io.emit('added order office', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         response.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -315,6 +343,8 @@ export class OrdersController implements IOrdersController {
         const secondIteration = await firstIteration.save()
 
         response.status(200)
+        api.io.emit('created order', secondIteration)
+        api.io.emit('update orders')
         response.send(secondIteration)
       })
     } catch (error) {
@@ -332,9 +362,9 @@ export class OrdersController implements IOrdersController {
 
     const order = await this.order.findById(id)
     // @ts-ignore
-    const oldMaster = order.master._id
+    const oldMaster = order.master ? order.master._id : ''
     // @ts-ignore
-    const oldManager = order.manager._id
+    const oldManager = order.manager ? order.manager._id : ''
 
     if (oldMaster.toString() !== orderData.master) {
       const newMaster = orderData.master
@@ -357,6 +387,8 @@ export class OrdersController implements IOrdersController {
       .then((updatedOrder) => {
         if (updatedOrder) {
           response.status(200)
+          api.io.emit('updated order', updatedOrder)
+          api.io.emit('update orders')
           response.send(updatedOrder)
         } else {
           next(new ObjectNotFoundException(this.order.modelName, id))
@@ -383,6 +415,8 @@ export class OrdersController implements IOrdersController {
       .then((successResponse) => {
         if (successResponse) {
           response.status(200)
+          api.io.emit('deleted order', id)
+          api.io.emit('update orders')
           response.json({
             message: `the order with id: ${id} was deleted successfully`,
           })

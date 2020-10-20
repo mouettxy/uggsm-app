@@ -1,3 +1,4 @@
+import { api } from './../server'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { parsePaginateResponse } from '../utils/helpers'
@@ -112,6 +113,8 @@ export class ClientController implements IClientController {
       .save()
       .then((savedOrder) => {
         response.status(200)
+        api.io.emit('created client', savedOrder)
+        api.io.emit('update clients')
         response.send(savedOrder)
       })
       .catch((err: Error) => {
@@ -133,6 +136,8 @@ export class ClientController implements IClientController {
       .then((updatedOrder) => {
         if (updatedOrder) {
           response.status(200)
+          api.io.emit('updated client', updatedOrder)
+          api.io.emit('update clients')
           response.send(updatedOrder)
         } else {
           next(new ObjectNotFoundException(this.model.modelName, id))
@@ -159,6 +164,8 @@ export class ClientController implements IClientController {
       .then((successResponse) => {
         if (successResponse) {
           response.status(200)
+          api.io.emit('deleted client', id)
+          api.io.emit('update clients')
           response.json({
             message: `Оффис с ${id} был успешно удалён`,
           })

@@ -1,3 +1,4 @@
+import { api } from './../server'
 import bcrypt from 'bcrypt'
 import { NextFunction } from 'connect'
 import express from 'express'
@@ -53,6 +54,8 @@ export class AuthenticationController implements IAuthentificationController {
           })
 
           user.set('password', undefined)
+          api.io.emit('created new user', user.credentials)
+          api.io.emit('update users')
           res.send(user)
         } else {
           next(new HttpException(500, 'Master pwd incorrect'))

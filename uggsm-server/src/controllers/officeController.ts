@@ -1,3 +1,4 @@
+import { api } from './../server'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { ObjectNotFoundException } from '../exceptions'
@@ -79,6 +80,8 @@ export class OfficeController implements IOfficeController {
         .save()
         .then((savedOrder) => {
           response.status(200)
+          api.io.emit('created office', savedOrder)
+          api.io.emit('update offices')
           response.send(savedOrder)
         })
         .catch((err: Error) => {
@@ -103,6 +106,8 @@ export class OfficeController implements IOfficeController {
       .then((updatedOrder) => {
         if (updatedOrder) {
           response.status(200)
+          api.io.emit('updated office', updatedOrder)
+          api.io.emit('update offices')
           response.send(updatedOrder)
         } else {
           next(new ObjectNotFoundException(this.model.modelName, id))
@@ -129,6 +134,8 @@ export class OfficeController implements IOfficeController {
       .then((successResponse) => {
         if (successResponse) {
           response.status(200)
+          api.io.emit('deleted office', id)
+          api.io.emit('update offices')
           response.json({
             message: `Оффис с ${id} был успешно удалён`,
           })

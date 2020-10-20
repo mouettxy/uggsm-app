@@ -16,7 +16,7 @@ import { validateEnv } from './utils'
 
 validateEnv()
 
-const api = new RestApi([
+export const api = new RestApi([
   new AuthenticationRouter(),
   new OrdersRouter(),
   new UsersRouter(),
@@ -27,8 +27,8 @@ const api = new RestApi([
   new AutocompleteRouter(),
 ])
 
-api.io.on('connection', (socket) => {
-  console.log('socket connected succesefully')
+api.io.on('connection', () => {
+  //
 })
 
 api.listen()

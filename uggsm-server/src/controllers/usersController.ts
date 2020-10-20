@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { NextFunction } from 'connect'
 import express from 'express'
+import { api } from '../server'
 import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IUserController } from '../interfaces'
@@ -68,6 +69,8 @@ export class UsersController implements IUserController {
 
       userData.password = undefined
       response.status(200)
+      api.io.emit('created new user', savedUser.credentials)
+      api.io.emit('update users')
       response.send(savedUser)
     } catch (error) {
       next(new HttpException(500, error.message))
@@ -90,6 +93,8 @@ export class UsersController implements IUserController {
           password: hashedPassword,
         }
         response.status(200)
+        api.io.emit('updated user', updatedUser)
+        api.io.emit('update user', updatedUser.id)
         response.send(updatedUser)
       } else {
         next(new ObjectNotFoundException(this.user.modelName, id))
@@ -106,6 +111,9 @@ export class UsersController implements IUserController {
     await this.user.findByIdAndDelete(id).then((successResponse) => {
       if (successResponse) {
         response.status(200)
+        api.io.emit('deleted user', id)
+        api.io.emit('update users')
+        api.io.emit('update user', id)
         response.json({
           message: `the user with id: ${id} was deleted successfully`,
         })

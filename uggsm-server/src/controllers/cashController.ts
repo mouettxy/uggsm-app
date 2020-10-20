@@ -1,3 +1,4 @@
+import { api } from './../server'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { CashModel } from '../models'
@@ -156,6 +157,11 @@ export class CashController implements ICashController {
       const saved = await cash.save()
 
       response.status(200)
+      api.io.emit('created cash', saved)
+      api.io.emit('update cashes')
+      if (saved.orderid) {
+        api.io.emit('update order', saved.orderid)
+      }
       response.send(saved)
     } catch (error) {
       next(new HttpException(500, error.message))
@@ -176,6 +182,11 @@ export class CashController implements ICashController {
       .then((updatedCash) => {
         if (updatedCash) {
           response.status(200)
+          api.io.emit('updated cash', updatedCash)
+          api.io.emit('update cashes')
+          if (updatedCash.orderid) {
+            api.io.emit('update order', updatedCash.orderid)
+          }
           response.send(updatedCash)
         } else {
           next(new ObjectNotFoundException(this.cash.modelName, id))
@@ -197,11 +208,17 @@ export class CashController implements ICashController {
     next: NextFunction
   ): Promise<void> => {
     const id = request.params.id
+    const cash = await this.cash.findOne({ id })
     await this.cash
       .findOneAndDelete({ id })
       .then((successResponse) => {
         if (successResponse) {
           response.status(200)
+          api.io.emit('deleted cash', id)
+          api.io.emit('update cashes')
+          if (cash.orderid) {
+            api.io.emit('update order', cash.orderid)
+          }
           response.json({
             message: `Запись из кассы с ID ${id} была успешно удалена`,
           })

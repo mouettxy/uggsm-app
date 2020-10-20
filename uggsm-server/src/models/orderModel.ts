@@ -21,6 +21,9 @@ export class CompletedWork {
   @prop()
   public username: string
 
+  @prop({ default: '' })
+  public credentials: string
+
   @prop()
   public header: string
 
@@ -124,6 +127,7 @@ export class Workflow {
 
         this.customer = customer._id
       }
+
       this.workflow.push(
         extendArrayWithId(this.workflow, {
           header: `Назначен клиент`,
