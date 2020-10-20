@@ -37,8 +37,6 @@ module.exports = {
     '@typescript-eslint/ban-ts-ignore': 'off',
     'no-unused-vars': 0,
     'trailing-comma': 0,
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
 
   extends: [
