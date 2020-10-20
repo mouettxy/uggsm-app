@@ -118,7 +118,7 @@ export default class MOrderModalWorks extends Vue {
     },
     {
       text: 'Мастер',
-      value: 'username',
+      value: 'credentials',
     },
     {
       text: 'Название',
@@ -129,6 +129,7 @@ export default class MOrderModalWorks extends Vue {
       value: 'price',
     },
   ]
+
   public model: any = {
     userid: null,
     username: '',
@@ -182,7 +183,7 @@ export default class MOrderModalWorks extends Vue {
 
   getMessage(id: number) {
     if (this.order) {
-      return find(this.order.statusWork, { id }).message
+      return find(this.order.statusWork, { id })?.message
     } else {
       return 'Не удалось получить описание'
     }
@@ -191,15 +192,15 @@ export default class MOrderModalWorks extends Vue {
   async sendWork() {
     try {
       if (this.order) {
-        this.model.userid = authModule.user.id
-        this.model.username = authModule.user.username
+        this.model.userid = authModule.user?.id
+        this.model.username = authModule.user?.username
+        this.model.credentials = authModule.user?.credentials
 
         if (this.model.userid || this.model.username) {
           const response = await ordersAPI(this.order.id).addCompletedWork(this.model)
 
           if (response) {
             this.$notification.success('Успешное закрытие работы')
-            ordersModule.getOrder(this.order.id)
             this.resetModels()
             this.work = null
           } else {
@@ -219,14 +220,13 @@ export default class MOrderModalWorks extends Vue {
   async addMasterComment() {
     try {
       if (this.order) {
-        this.masterComment.userid = authModule.user.id
+        this.masterComment.userid = authModule.user?.id
 
         if (this.masterComment.userid) {
           const response = await ordersAPI(this.order.id).addMasterComment(this.masterComment)
 
           if (response) {
             this.$notification.success('Успешное добавление комментария')
-            ordersModule.getOrder(this.order.id)
             this.resetModels()
             this.work = null
           } else {
@@ -246,14 +246,13 @@ export default class MOrderModalWorks extends Vue {
   async addManagerComment() {
     try {
       if (this.order) {
-        this.managerComment.userid = authModule.user.id
+        this.managerComment.userid = authModule.user?.id
 
         if (this.managerComment.userid) {
           const response = await ordersAPI(this.order.id).addManagerComment(this.managerComment)
 
           if (response) {
             this.$notification.success('Успешное добавление комментария')
-            ordersModule.getOrder(this.order.id)
             this.resetModels()
             this.work = null
           } else {

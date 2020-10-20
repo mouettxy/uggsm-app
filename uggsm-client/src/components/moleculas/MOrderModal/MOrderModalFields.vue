@@ -199,16 +199,17 @@
         a-autocomplete(
           v-model='model.manager._id',
           :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
+          :disabled='isObjectId(model.manager._id)',
           label='Менеджер',
           icon='mdi-account-cowboy-hat',
           endpoint='/manager',
-          disabled,
           dense
         )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import { getAnonymousAnimal } from '@/api/helpers'
 
 @Component
 export default class MOrderModalFields extends Vue {
@@ -245,6 +246,30 @@ export default class MOrderModalFields extends Vue {
 
   set model(value) {
     this.$emit('input', value)
+  }
+
+  isObjectId(string: string) {
+    if (string.match(/^[0-9a-fA-F]{24}$/)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  created() {
+    if (!this.model.manager) {
+      this.model.manager = {
+        _id: '',
+        credentials: getAnonymousAnimal(),
+      }
+    }
+
+    if (!this.model.master) {
+      this.model.master = {
+        _id: '',
+        credentials: getAnonymousAnimal(),
+      }
+    }
   }
 }
 </script>

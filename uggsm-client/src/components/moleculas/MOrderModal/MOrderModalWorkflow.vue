@@ -138,7 +138,7 @@ export default class MOrderModalWorkflow extends Vue {
 
     if (this.order) {
       each(this.order.workflow, (el) => {
-        const unitedDate = uniteDate(el.date)
+        const unitedDate = uniteDate(el.date as Date)
         if (
           !find(unitedDates, (e) => {
             return e[0] === unitedDate
@@ -155,7 +155,7 @@ export default class MOrderModalWorkflow extends Vue {
         let color = '#1858a1'
         let icon = 'mdi-account'
 
-        const date = this.normalizeDate(e.date).split(' ')[1]
+        const date = this.normalizeDate(e.date as Date).split(' ')[1]
 
         if (e.header === 'Смена статуса заказа') {
           type = 'solo'
@@ -211,7 +211,7 @@ export default class MOrderModalWorkflow extends Vue {
         }
 
         const uniteDateArr = find(unitedDates, (unitedDate: any) => {
-          return unitedDate[0] === uniteDate(e.date)
+          return unitedDate[0] === uniteDate(e.date as Date)
         })[1]
         uniteDateArr.push(workflow)
       })
@@ -226,7 +226,6 @@ export default class MOrderModalWorkflow extends Vue {
 
         if (response) {
           this.$notification.success('Успешная смена офиса')
-          await ordersModule.getOrder(this.order.id)
         } else {
           this.$notification.error('Ошибка при смене офиса')
         }

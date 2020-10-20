@@ -39,7 +39,7 @@ v-menu.order-status-switcher(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { filter, each, reduce } from 'lodash'
+import { filter, each, reduce, includes } from 'lodash'
 import { getCorrectTextColor } from '@/api/helpers'
 import { ordersModule, authModule, cashModule } from '@/store'
 import { ordersAPI } from '@/api'
@@ -51,7 +51,7 @@ export default class MOrderStatusSwitcher extends Vue {
   @Prop({ type: [String, Number] }) orderid!: string | number
 
   get statusList() {
-    if (this.status === 'Закрыт' && authModule.user.role !== 'administrator') {
+    if (this.status === 'Закрыт' && authModule.user?.role !== 'administrator') {
       return [
         {
           text: 'Закрытые успешно',
@@ -174,7 +174,6 @@ export default class MOrderStatusSwitcher extends Vue {
 
         if (response) {
           this.$notification.success('Успешно изменён статус оплаты заказа')
-          await ordersModule.getOrder(order.id)
         } else {
           this.$notification.error('[Клиент] Не удалось изменить статус оплаты заказа')
         }
@@ -188,14 +187,15 @@ export default class MOrderStatusSwitcher extends Vue {
 
   async setCash() {
     try {
+      let skipCash = false
       let order
       if (this.order) {
         order = this.order
       } else if (this.orderid) {
         const order_ = await ordersAPI(this.orderid).getById()
 
-        if (order_.status === 200) {
-          order = order_.data
+        if (order_) {
+          order = order_
         } else {
           this.$notification.error(
             '[Клиент] Не удалось получить заказ, попробуйте сменить статус заказа из редактирования заказа'
@@ -204,7 +204,7 @@ export default class MOrderStatusSwitcher extends Vue {
         }
       }
 
-      const income = reduce(
+      let income = reduce(
         order.statusWork,
         (a, e) => {
           a += e.price
@@ -213,20 +213,60 @@ export default class MOrderStatusSwitcher extends Vue {
         0
       )
 
-      const payload = {
-        orderid: order.id,
-        client: order.customer._id,
-        cashier: authModule.user._id,
-        income,
+      const cash = await cashModule.getCash(order.id)
+
+      let consumption
+      if (cash.length > 0) {
+        const prepaySum = reduce(
+          cash,
+          (a, e) => {
+            a += e.income
+            return a
+          },
+          0
+        )
+
+        const difference = prepaySum - income
+
+        if (income === 0 && prepaySum > 0) {
+          consumption = prepaySum
+        } else if (prepaySum > income && difference > 0) {
+          income = difference
+        } else if (difference < 0) {
+          consumption = difference
+        } else if (prepaySum === income) {
+          skipCash = true
+        }
       }
 
-      const response = await cashModule.createCash(payload)
+      if (!skipCash) {
+        if (this.orderid) {
+          cashModule.clearCash()
+        }
 
-      if (response) {
+        const payload: any = {
+          orderid: order.id,
+          client: order.customer._id,
+          cashier: authModule.user?._id,
+        }
+
+        if (consumption) {
+          payload.consumption = consumption
+        } else {
+          payload.income = income
+        }
+
+        const response = await cashModule.createCash(payload)
+
+        if (response) {
+          this.$notification.success(`Касса по заказу №${order.id} успешно закрыта`)
+          await this.setPayed(order)
+        } else {
+          this.$notification.error('[Клиент] Произошла ошбика при закрытии кассы')
+        }
+      } else {
         this.$notification.success(`Касса по заказу №${order.id} успешно закрыта`)
         await this.setPayed(order)
-      } else {
-        this.$notification.error('[Клиент] Произошла ошбика при закрытии кассы')
       }
     } catch (error) {
       this.$notification.error(`[Сервер] ${error.message}`)
@@ -247,12 +287,6 @@ export default class MOrderStatusSwitcher extends Vue {
 
         if (status === 'Закрыт') {
           await this.setCash()
-        }
-
-        if (this.scope === 'modal') {
-          await ordersModule.getOrder(this.order?.id)
-        } else if (this.scope === 'table') {
-          await ordersModule.fetch()
         }
       } else {
         this.$notification.error('[Клиент] Произошла ошбика при смене статуса')

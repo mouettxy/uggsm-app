@@ -85,15 +85,15 @@ export default class MCashModalActions extends Vue {
   }
 
   get isDisplayConsumption() {
-    return this.type === 'consumption' && authModule.user.role === 'administrator'
+    return this.type === 'consumption' && authModule.user?.role === 'administrator'
   }
 
   get userCredentials() {
-    return authModule.user.credentials
+    return authModule.user?.credentials
   }
 
   get userId() {
-    return authModule.user._id
+    return authModule.user?._id
   }
 
   async sendCash() {
@@ -138,11 +138,6 @@ export default class MCashModalActions extends Vue {
 
       if (response) {
         this.$notification.success('Успешное сохранение чека')
-        if (this.customerName || this.orderId) {
-          await cashModule.getCash(this.orderId)
-        } else {
-          await cashModule.fetch()
-        }
         this.model = {
           customer: '',
           price: 0,

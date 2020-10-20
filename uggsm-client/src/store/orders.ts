@@ -96,7 +96,7 @@ export default class Orders extends VuexModule {
 
     query.sort = fromPairs(zip(payload.sortBy, sortDesc))
 
-    if (authModule.user.role === 'master') {
+    if (authModule.user?.role === 'master') {
       query.master = authModule.user._id
     }
 
@@ -124,10 +124,8 @@ export default class Orders extends VuexModule {
 
   @Action
   async socket_updatedOrder(evt: OrderType) {
-    console.log(evt)
     if (this.currentOrder) {
       if (this.currentOrder.id == evt.id) {
-        this.getOrder(evt.id)
         console.log('updated order ' + evt.id + ' by socket')
       }
     }
