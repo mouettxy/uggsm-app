@@ -1,8 +1,8 @@
 import { Cash, CashEndpoints } from '@/typings/api/cash'
 import { sendRequest } from '@/api/helpers'
-import { CashInput } from '@/typings/api/cash/CashInput'
+import { CashInput } from '@/typings/api/cash'
 
-export const cashEndpoints = (code?: string): CashEndpoints => ({
+export const cashEndpoints = (code?: string | number): CashEndpoints => ({
   getAll: { method: 'get', link: `/cash` },
   getAllByOffice: { method: 'get', link: `/cash/${code}` },
   getBalance: { method: 'get', link: `/cash/balance/${code}` },
@@ -13,7 +13,7 @@ export const cashEndpoints = (code?: string): CashEndpoints => ({
   deleteById: { method: 'delete', link: `/cash/${code}` },
 })
 
-export const cashAPI = (code?: string) => ({
+export const cashAPI = (code?: string | number) => ({
   getAll: async (): Promise<Array<Cash> | []> => {
     try {
       const response = await sendRequest(cashEndpoints().getAll)
