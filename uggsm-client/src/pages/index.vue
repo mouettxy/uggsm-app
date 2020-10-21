@@ -17,9 +17,5 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class PageIndex extends Vue {
-  mounted() {
-    document.title = this.$route.meta.header
-  }
-}
+export default class PageIndex extends Vue {}
 </script>

@@ -16,9 +16,5 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component
-export default class PageClients extends Vue {
-  mounted() {
-    document.title = this.$route.meta.header
-  }
-}
+export default class PageClients extends Vue {}
 </script>

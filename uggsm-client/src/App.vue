@@ -4,10 +4,19 @@ v-app
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 
 @Component
-export default class App extends Vue {}
+export default class App extends Vue {
+  get header() {
+    return this.$route.meta.header
+  }
+
+  @Watch('header')
+  onHeaderChange(header: string) {
+    document.title = header
+  }
+}
 </script>
 
 <style lang="sass">

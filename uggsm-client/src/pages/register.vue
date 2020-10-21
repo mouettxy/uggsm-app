@@ -18,11 +18,7 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   layout: 'centered',
 })
-export default class PageRegister extends Vue {
-  mounted() {
-    document.title = this.$route.meta.header
-  }
-}
+export default class PageRegister extends Vue {}
 </script>
 
 <style lang="sass">

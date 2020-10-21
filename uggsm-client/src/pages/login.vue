@@ -23,11 +23,7 @@ import TLoginMain from '@/templates/TLoginMain.vue'
     TLoginMain,
   },
 })
-export default class PageLogin extends Vue {
-  mounted() {
-    document.title = this.$route.meta.header
-  }
-}
+export default class PageLogin extends Vue {}
 </script>
 
 <style lang="sass">
