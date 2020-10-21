@@ -1,6 +1,6 @@
 <template lang="pug">
 v-main.layout-centered(app)
-  o-main-navigation(:items='items')
+  o-navigation(:items='items')
   v-container(
     fluid,
     fill-height
