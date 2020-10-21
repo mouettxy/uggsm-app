@@ -23,7 +23,9 @@ import { Component, Vue } from 'vue-property-decorator'
 /**
  * Orders page
  */
-@Component
+@Component({
+  layout: 'orders',
+})
 export default class OrderModal extends Vue {
   mounted() {
     document.title = this.$route.params.id === 'new' ? 'Новый заказ' : 'Заказ №' + this.$route.params.id

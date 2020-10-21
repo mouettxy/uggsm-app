@@ -1,11 +1,8 @@
 <template lang="pug">
-v-main.layout-centered(app)
-  o-main-navigation(:items='items')
-  v-container(
-    fluid,
-    fill-height
-  )
-    router-view
+v-main.layout-default(app)
+  o-navigation(:items='items')
+  router-view
+  router-view(name='modal')
 </template>
 
 <script lang="ts">

@@ -1,51 +1,16 @@
 <template lang="pug">
 v-main.layout-default(app)
-  o-main-navigation(:items='items')
+  o-navigation(:items='items')
   router-view
-  router-view(name='modal')
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import OMainNavigation from '@/components/organizms/OMainNavigation.vue'
+import { defaultMenu } from '@/api/helpers/menus'
 
-@Component({
-  components: {
-    OMainNavigation,
-  },
-})
+@Component
 export default class LayoutDefault extends Vue {
-  public items = [
-    {
-      linkName: 'orders',
-      title: 'Заявки',
-      icon: 'mdi-bat',
-      divider: false,
-    },
-    {
-      linkName: 'clients',
-      title: 'Клиенты',
-      icon: 'mdi-account-group',
-      divider: false,
-    },
-    {
-      linkName: 'cash',
-      title: 'Касса',
-      icon: 'mdi-cash-register',
-    },
-    {
-      linkName: 'analytic',
-      title: 'Аналитика',
-      icon: 'mdi-google-analytics',
-      divider: true,
-    },
-    {
-      linkName: 'settings',
-      title: 'Настройки',
-      icon: 'mdi-cog',
-      divider: true,
-    },
-  ]
+  public items = defaultMenu
 }
 </script>
 
