@@ -5,10 +5,7 @@
     elevation='1'
   )
     template(v-if='!hideOffices')
-      m-office-switcher(
-        v-model='defaultOffice',
-        :items='offices'
-      )
+      m-office-switcher(v-model='defaultOffice')
     template(v-else)
       .text-h5 {{ $route.meta.header }}
     v-spacer
@@ -30,9 +27,6 @@ import { map } from 'lodash'
 @Component
 export default class OTableToolbar extends Vue {
   @Prop({ default: false, type: Boolean }) hideOffices!: boolean
-  get offices() {
-    return map(officesModule.offices, (el) => `${el.code}|${el.name}`)
-  }
 
   get defaultOffice() {
     if (settingsModule.office) {
@@ -47,10 +41,6 @@ export default class OTableToolbar extends Vue {
     if (this.$route.name === 'orders' || this.$route.name === 'cash') {
       settingsModule.setOffice({ office: value, type: this.$route.name })
     }
-  }
-
-  mounted() {
-    officesModule.fetch()
   }
 }
 </script>
