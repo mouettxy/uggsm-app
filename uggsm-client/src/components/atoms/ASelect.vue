@@ -8,7 +8,8 @@ v-select(
   :dense='dense',
   :clearable='clearable',
   :hint='hint',
-  outlined
+  outlined,
+  hide-details='auto'
 )
 </template>
 
