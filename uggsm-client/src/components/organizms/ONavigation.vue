@@ -51,7 +51,7 @@ import { authModule } from '@/store'
 import { getAnonymousAnimal } from '@/api/helpers'
 
 @Component
-export default class OMainNavigation extends Vue {
+export default class ONavigation extends Vue {
   @Prop(Array) items: any
   public animal = ''
   public model = true
