@@ -1,20 +1,20 @@
 <template lang="pug">
-.office-switcher
-  v-select(
-    v-model='model',
-    :items='items',
-    single-line,
-    outlined,
-    no-data-text='Похоже нет доступных офисов...',
-    menu-props='auto',
-    label='Офис',
-    hide-details,
-    dense
-  )
+v-select.office-switcher(
+  v-model='model',
+  :items='items',
+  outlined,
+  no-data-text='Похоже нет доступных офисов...',
+  menu-props='auto',
+  label='Офис',
+  hide-details,
+  dense
+)
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { officesModule } from '@/store'
+import { map } from 'lodash'
 
 /**
  * Atom that switch offices
@@ -24,7 +24,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
  */
 @Component
 export default class MOfficeSwitcher extends Vue {
-  @Prop(Array) items: any
   @Prop(String) value: any
 
   get model() {
@@ -38,6 +37,14 @@ export default class MOfficeSwitcher extends Vue {
      * @property {string} value - current office
      */
     this.$emit('input', value)
+  }
+
+  get items() {
+    return map(officesModule.offices, (el) => `${el.code}|${el.name}`)
+  }
+
+  mounted() {
+    officesModule.fetch()
   }
 }
 </script>
