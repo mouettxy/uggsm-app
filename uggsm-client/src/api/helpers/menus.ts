@@ -36,3 +36,12 @@ export const defaultMenu = [
     divider: true,
   },
 ]
+
+export const reportsMenu = [
+  {
+    linkName: 'reportsOrders',
+    title: 'Заявки',
+    icon: 'mdi-bat',
+    divider: false,
+  },
+]
