@@ -1,120 +1,58 @@
 <template lang="pug">
 v-navigation-drawer.navigation(
   v-model='model',
-  :width='width',
-  :mini-variant='mini',
+  :style='{ "max-width": width }',
+  :mini-variant='miniMain',
+  width='100%',
   stateless,
   permanent,
   dark,
   color='secondary',
   app
 )
-  template(v-if='secondItems.length > 0')
-    v-row.fill-height(no-gutters)
+  template(v-if='secondItemsExists')
+    v-row.fill-height(
+      :style='{ "min-width": width }',
+      no-gutters
+    )
       v-navigation-drawer(
         permanent,
         mini-variant-width='56',
         mini-variant,
         color='secondary'
       )
-        v-list-item.px-2(dense)
-          template(v-if='isLoggedIn')
-            v-list-item-avatar
-              v-btn(
-                @click='logout',
-                icon
-              )
-                v-icon mdi-exit-run
-            v-list-item-title {{ user.credentials }}
-          template(v-else)
-            v-btn(
-              @click='refreshAnimal',
-              icon
-            )
-              v-icon mdi-refresh
-            v-list-item-title {{ animal }}
-          v-btn(
-            @click.stop='mini = !mini',
-            icon
-          )
-            v-icon mdi-chevron-left
+        m-navigation-auth
         v-divider
-        v-list(
+        m-navigation-list(:items='items')
+      v-navigation-drawer.grow(
+        :mini-variant='mini',
+        stateless,
+        permanent,
+        mini-variant-width='56',
+        color='secondary'
+      )
+        m-navigation-list(:items='secondItems')
+        v-list.navigation-unminify(
           nav,
           dense
         )
-          template(v-for='item in items')
-            template(v-if='item.divider')
-              v-divider.my-1
-            v-list-item(
-              :to='{ name: item.linkName }',
-              :key='item.title',
-              color='#fafafa'
-            )
-              v-list-item-icon
-                v-icon {{ item.icon }}
-              v-list-item-content
-                v-list-item-title {{ item.title }}
-      v-list.grow(nav)
-        template(v-for='item in secondItems')
-          template(v-if='item.divider')
-            v-divider.my-1
-          v-list-item(
-            :to='{ name: item.linkName }',
-            :key='item.title',
-            color='#fafafa'
-          )
+          v-list-item
             v-list-item-icon
-              v-icon {{ item.icon }}
-            v-list-item-content
-              v-list-item-title {{ item.title }}
+              v-icon(@click.stop='mini = !mini')
+                template(v-if='mini') mdi-chevron-right
+                template(v-else) mdi-chevron-left
   template(v-else)
-    v-list-item.px-2(dense)
-      template(v-if='isLoggedIn')
-        v-list-item-avatar
-          v-btn(
-            @click='logout',
-            icon
-          )
-            v-icon mdi-exit-run
-        v-list-item-title {{ user.credentials }}
-      template(v-else)
-        v-btn(
-          @click='refreshAnimal',
-          icon
-        )
-          v-icon mdi-refresh
-        v-list-item-title {{ animal }}
-      v-btn(
-        @click.stop='mini = !mini',
-        icon
-      )
-        v-icon mdi-chevron-left
+    m-navigation-auth
     v-divider
-    v-list(
-      nav,
-      dense
-    )
-      template(v-for='item in items')
-        template(v-if='item.divider')
-          v-divider.my-1
-        v-list-item(
-          :to='{ name: item.linkName }',
-          :key='item.title',
-          color='#fafafa'
-        )
+    m-navigation-list(:items='items')
+    template(v-if='mini')
+      v-list.navigation-unminify(
+        nav,
+        dense
+      )
+        v-list-item
           v-list-item-icon
-            v-icon {{ item.icon }}
-          v-list-item-content
-            v-list-item-title {{ item.title }}
-  template(v-if='mini')
-    v-list.navigation-unminify(
-      nav,
-      dense
-    )
-      v-list-item
-        v-list-item-icon
-          v-icon(@click.stop='mini = !mini') mdi-chevron-right
+            v-icon(@click.stop='mini = !mini') mdi-chevron-right
 </template>
 
 <script lang="ts">
@@ -127,43 +65,34 @@ export default class ONavigation extends Vue {
   @Prop(Array) items!: Array<any>
   @Prop({ type: Array, default: () => [] }) secondItems!: Array<any>
 
-  public animal = ''
   public model = true
 
-  get user() {
-    return authModule.user
-  }
-
-  get isLoggedIn() {
-    return authModule.isLoggedIn
-  }
-
   get width() {
-    return this.secondItems.length ? '15vw' : '10vw'
+    let width
+    if (this.secondItems.length && this.mini) {
+      width = 112
+    } else if (this.secondItems.length) {
+      width = 330
+    } else {
+      width = 256
+    }
+    return `${width}px`
   }
 
   get mini() {
     return settingsModule.miniNavigation
   }
 
-  set mini(state: boolean) {
+  set mini(state: boolean | null) {
     settingsModule.setMiniNavigation(state)
   }
 
-  refreshAnimal() {
-    this.animal = getAnonymousAnimal()
+  get miniMain() {
+    return this.mini && !this.secondItemsExists
   }
 
-  async logout() {
-    await authModule.logout()
-    this.$router.push({ name: 'login' })
-    this.$notification.success('Вы успешно вышли из системы')
-  }
-
-  mounted() {
-    if (!this.isLoggedIn) {
-      this.refreshAnimal()
-    }
+  get secondItemsExists() {
+    return this.secondItems.length > 0
   }
 }
 </script>
