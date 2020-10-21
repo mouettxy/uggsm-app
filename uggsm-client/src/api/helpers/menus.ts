@@ -45,3 +45,18 @@ export const reportsMenu = [
     divider: false,
   },
 ]
+
+export const settingsMenu = [
+  {
+    linkName: 'settingsNewUser',
+    title: 'Новый пользователь',
+    icon: 'mdi-account-plus',
+    divider: false,
+  },
+  {
+    linkName: 'settingsNewOffice',
+    title: 'Новый офис',
+    icon: 'mdi-office-building-marker',
+    divider: true,
+  },
+]

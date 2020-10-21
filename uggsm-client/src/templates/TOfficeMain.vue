@@ -1,6 +1,6 @@
 <template lang="pug">
 .office-main
-  v-card.pa-12(elevation='2')
+  v-card.pa-12.office-main__card(elevation='2')
     v-card-title Новый офис
     o-office-form
 </template>
@@ -19,6 +19,10 @@ export default class TOfficeMain extends Vue {}
 <style lang="sass">
 .office-main
   width: 100%
+  height: 100%
   display: flex
   justify-content: center
+
+  .office-main__card
+    align-self: center
 </style>

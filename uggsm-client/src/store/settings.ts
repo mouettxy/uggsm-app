@@ -9,7 +9,7 @@ export default class Settings extends VuexModule {
   public office: any = null
   public search: any = null
   public socketNotifications = true
-  public miniNavigation = true
+  public miniNavigation: boolean | null = null
 
   @Mutation
   SET_OFFICE(payload: string) {
@@ -27,7 +27,7 @@ export default class Settings extends VuexModule {
   }
 
   @Mutation
-  SET_MINI_NAVIGATION(payload: boolean) {
+  SET_MINI_NAVIGATION(payload: boolean | null) {
     this.miniNavigation = payload
   }
 
@@ -61,7 +61,7 @@ export default class Settings extends VuexModule {
   }
 
   @Action
-  async setMiniNavigation(payload: boolean) {
+  async setMiniNavigation(payload: boolean | null) {
     this.context.commit('SET_MINI_NAVIGATION', payload)
   }
 }

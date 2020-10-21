@@ -1,6 +1,6 @@
 <route>
 {
-  "name": "office",
+  "name": "settingsNewOffice",
   "meta": {
     "header": "Новый офис"
   }
@@ -8,7 +8,7 @@
 </route>
 
 <template lang="pug">
-.page-office
+.page-settings-new-office
   t-office-main
 </template>
 
@@ -16,12 +16,13 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  layout: 'centered',
+  layout: 'settings',
 })
-export default class PageOffice extends Vue {}
+export default class PageSettingsNewOffice extends Vue {}
 </script>
 
 <style lang="sass">
-.page-office
+.page-settings-new-office
+  height: 100%
   width: 100%
 </style>
