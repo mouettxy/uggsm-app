@@ -11,6 +11,7 @@
       :hide-details='hideDetails ? "auto" : false',
       :dense='dense',
       :hint='hint',
+      @change='onChange',
       validate-on-blur,
       outlined,
       clearable
@@ -33,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Ref } from 'vue-property-decorator'
+import { Component, Vue, Prop, Ref, Emit } from 'vue-property-decorator'
 
 /**
  * Describes default app input
@@ -63,6 +64,11 @@ export default class AInput extends Vue {
      * @property {string} value - changed string
      */
     this.$emit('input', value)
+  }
+
+  @Emit('change')
+  onChange() {
+    return this.model
   }
 
   mounted() {
