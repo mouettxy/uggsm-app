@@ -6,6 +6,7 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
+import { first } from 'lodash'
 
 export class OrdersController implements IOrdersController {
   private order = OrderModel
@@ -213,7 +214,7 @@ export class OrdersController implements IOrdersController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const order = await OrderModel.setStatus(request.params.id, request.body.status)
+      const order = await OrderModel.setStatus(request.params.id, request.body.status, request.body.userid)
 
       if (order) {
         response.status(200)
@@ -231,7 +232,7 @@ export class OrdersController implements IOrdersController {
 
   public setPayed = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     try {
-      const order = await OrderModel.setPayed(request.params.id, request.body.payed)
+      const order = await OrderModel.setPayed(request.params.id, request.body.payed, request.body.userid)
 
       if (order) {
         response.status(200)
@@ -253,7 +254,7 @@ export class OrdersController implements IOrdersController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const order = await OrderModel.setMaster(request.params.id, request.body.master)
+      const order = await OrderModel.setMaster(request.params.id, request.body.master, request.body.userid)
 
       if (order) {
         response.status(200)
@@ -275,7 +276,7 @@ export class OrdersController implements IOrdersController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const order = await OrderModel.setManager(request.params.id, request.body.manager)
+      const order = await OrderModel.setManager(request.params.id, request.body.manager, request.body.userid)
 
       if (order) {
         response.status(200)
@@ -297,7 +298,7 @@ export class OrdersController implements IOrdersController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const order = await OrderModel.setOffice(request.params.id, request.body.office)
+      const order = await OrderModel.setOffice(request.params.id, request.body.office, request.body.userid)
 
       if (order) {
         response.status(200)
@@ -352,6 +353,151 @@ export class OrdersController implements IOrdersController {
     }
   }
 
+  public generateReport = async (
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const params = request.query as { firstDate: string; secondDate: string; office: string; status: string }
+
+    try {
+      const aggregated = await this.order.aggregate([
+        {
+          $lookup: {
+            from: 'offices',
+            localField: 'office',
+            foreignField: '_id',
+            as: 'office',
+          },
+        },
+        {
+          $unwind: {
+            path: '$office',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'master',
+            foreignField: '_id',
+            as: 'master',
+          },
+        },
+        {
+          $unwind: {
+            path: '$master',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'manager',
+            foreignField: '_id',
+            as: 'manager',
+          },
+        },
+        {
+          $unwind: {
+            path: '$manager',
+          },
+        },
+        {
+          $lookup: {
+            from: 'cashes',
+            localField: 'id',
+            foreignField: 'orderid',
+            as: 'cash',
+          },
+        },
+        {
+          $match: {
+            status: params.status,
+            'office.code': params.office,
+            'workflow.date': {
+              $gte: new Date(params.firstDate),
+              $lte: new Date(params.secondDate),
+            },
+            'workflow.header': 'Смена статуса заказа',
+          },
+        },
+        {
+          $unwind: {
+            path: '$workflow',
+          },
+        },
+        {
+          $match: {
+            'workflow.message': params.status,
+          },
+        },
+        {
+          $addFields: {
+            idString: {
+              $toString: '$id',
+            },
+            statusWork: {
+              $map: {
+                input: '$statusWork',
+                in: {
+                  message: '$$this.message',
+                  price: '$$this.price',
+                  priceString: {
+                    $toString: '$$this.price',
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            master: '$master.credentials',
+            manager: '$manager.credentials',
+            date: '$workflow.date',
+            type: 'Исполнителю за работу в заказе',
+            product: {
+              $concat: ['Заказ №', '$idString', ' ', '$phoneModel', ' (', '$serialNumber', ') '],
+            },
+            works: {
+              $reduce: {
+                input: '$statusWork',
+                initialValue: '',
+                in: {
+                  $concat: ['$$value', '$$this.message', ' ', '$$this.priceString', ' руб. '],
+                },
+              },
+            },
+            price: {
+              $sum: {
+                $map: {
+                  input: '$cash',
+                  in: {
+                    $subtract: ['$$this.income', '$$this.consumption'],
+                  },
+                },
+              },
+            },
+            total: {
+              $sum: {
+                $map: {
+                  input: '$cash',
+                  in: {
+                    $subtract: ['$$this.income', '$$this.consumption'],
+                  },
+                },
+              },
+            },
+          },
+        },
+      ])
+
+      response.status(200)
+      response.send(aggregated)
+    } catch (e) {
+      next(new HttpException(500, e.message))
+    }
+  }
+
   public updateById = async (
     request: express.Request,
     response: express.Response,
@@ -369,12 +515,12 @@ export class OrdersController implements IOrdersController {
     if (oldMaster.toString() !== orderData.master) {
       const newMaster = orderData.master
 
-      await this.order.setMaster(order.id, newMaster)
+      await this.order.setMaster(order.id, newMaster, orderData.userid)
     }
     if (oldManager.toString() !== orderData.manager) {
       const newManager = orderData.manager
 
-      await this.order.setManager(order.id, newManager)
+      await this.order.setManager(order.id, newManager, orderData.userid)
     }
 
     delete orderData.master

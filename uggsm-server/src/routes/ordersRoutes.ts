@@ -18,6 +18,7 @@ export class OrdersRouter implements Router {
     this.expressRouter
       .all(`${path}*`, authenticationMiddleware)
       .get(path, controller.getAll)
+      .get(`${path}/reports/report`, controller.generateReport)
       .get(`${path}/office/:code`, controller.getAllByOffice)
       .get(`${path}/paginate/`, controller.getAllWithParams)
       .get(`${path}/:id`, controller.getById)
