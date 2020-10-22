@@ -6,10 +6,11 @@ import { map, zip } from 'lodash'
 import moment from 'moment'
 import { authModule, settingsModule } from '.'
 import { fromPairs } from 'lodash'
+import axios from '@/plugins/axios'
 
 function getTime(date: any) {
   const m = moment(date)
-  return `${m.locale('ru').format('L')} ${m.locale('ru').format('LTS')}`
+  return `${m.format('L')} ${m.format('LTS')}`
 }
 
 @Module({
@@ -28,6 +29,7 @@ export default class Orders extends VuexModule {
     sortDesc: [true],
     mustSort: false,
     multiSort: true,
+    hideClosed: false,
   }
 
   get ordersTable() {
@@ -42,6 +44,7 @@ export default class Orders extends VuexModule {
         phoneModel: e.phoneModel,
         phoneBrand: e.phoneBrand,
         password: e.password,
+        declaredDefect: e.declaredDefect,
       }
     })
   }
@@ -86,6 +89,7 @@ export default class Orders extends VuexModule {
       page: payload.page,
       limit: payload.itemsPerPage,
       office,
+      hideStatuses: [payload.hideClosed ? 'Закрыт' : ''],
     }
 
     if (settingsModule.search) {
@@ -138,6 +142,17 @@ export default class Orders extends VuexModule {
         this.getOrder(evt)
         console.log('update order ' + evt + ' by socket')
       }
+    }
+  }
+
+  @Action
+  async generateReport(payload: any) {
+    try {
+      const response = await axios.get('/order/reports/report', { params: payload })
+
+      return response.data
+    } catch (e) {
+      return false
     }
   }
 
