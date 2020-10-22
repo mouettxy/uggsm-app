@@ -98,7 +98,9 @@
       dense
     )
     a-autocomplete(
-      v-model='model.manager',
+      v-model='model.manager._id',
+      :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
+      :disabled='isObjectId(model.manager._id)',
       label='Менеджер',
       icon='mdi-account-cowboy-hat',
       endpoint='/manager',
@@ -210,6 +212,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { getAnonymousAnimal } from '@/api/helpers'
+import { authModule } from '@/store'
 
 @Component
 export default class MOrderModalFields extends Vue {
@@ -258,9 +261,16 @@ export default class MOrderModalFields extends Vue {
 
   created() {
     if (!this.model.manager) {
-      this.model.manager = {
-        _id: '',
-        credentials: getAnonymousAnimal(),
+      if (this.newOrder) {
+        this.model.manager = {
+          _id: authModule.user?._id,
+          credentials: authModule.user?.credentials,
+        }
+      } else {
+        this.model.manager = {
+          _id: '',
+          credentials: getAnonymousAnimal(),
+        }
       }
     }
 
