@@ -121,8 +121,6 @@ export async function processWorkflowData(data: any) {
     data_.username = getAnonymousAnimal()
   }
 
-  data_.username = getAnonymousAnimal()
-
   return data_
 }
 
@@ -215,6 +213,10 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
 
   if (requestQuery.master) {
     query.master = requestQuery.master
+  }
+
+  if (requestQuery.hideStatuses) {
+    query.status = { $not: { $in: requestQuery.hideStatuses } }
   }
 
   return {
