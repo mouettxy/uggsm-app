@@ -60,41 +60,23 @@
         td(:colspan='headers.length')
           | Описание: {{ getMessage(item.id) }}
   .text-h6.text-right.my-8.success--text Итого: {{ total }}
-  .text-h5.my-4 Оставьте комментарий
-  template(v-if='user.role === "master" || user.role === "administrator"')
-    v-form(
-      ref='masterCommentForm',
-      @submit.prevent='addMasterComment'
+  .text-h5.my-4 Комментарий
+  v-form(
+    ref='commentForm',
+    @submit.prevent='addComment'
+  )
+    a-textarea(
+      v-model='comment.message',
+      label='Комментарий',
+      hide-details,
+      dense
     )
-      a-textarea(
-        v-model='masterComment.message',
-        label='Комментарий мастера',
-        hide-details,
-        dense
-      )
-      v-slide-y-transition
-        v-btn.my-2(
-          v-if='masterComment.message',
-          @click.prevent='addMasterComment',
-          color='primary'
-        ) Отправить
-  template(v-if='user.role === "manager" || user.role === "administrator"')
-    v-form(
-      ref='managerCommentForm',
-      @submit.prevent='addManagerComment'
-    )
-      a-textarea(
-        v-model='masterComment.message',
-        label='Комментарий менеджера',
-        hide-details,
-        dense
-      )
-      v-slide-y-transition
-        v-btn.my-2(
-          v-if='masterComment.message',
-          @click.prevent='addManagerComment',
-          color='primary'
-        ) Отправить
+    v-slide-y-transition
+      v-btn.my-2(
+        v-if='comment.message',
+        @click.prevent='addComment',
+        color='primary'
+      ) Отправить
 </template>
 
 <script lang="ts">
@@ -106,8 +88,7 @@ import { find, reduce } from 'lodash'
 @Component
 export default class MOrderModalWorks extends Vue {
   @Ref('form') form!: any
-  @Ref('masterCommentForm') masterCommentForm!: any
-  @Ref('managerCommentForm') managerCommentForm!: any
+  @Ref('commentForm') commentForm!: any
   @Prop({ required: true, type: Boolean }) newOrder!: boolean
 
   public work = null
@@ -137,11 +118,7 @@ export default class MOrderModalWorks extends Vue {
     message: '',
     price: 0,
   }
-  public masterComment: any = {
-    userid: null,
-    message: '',
-  }
-  public managerComment: any = {
+  public comment: any = {
     userid: null,
     message: '',
   }
@@ -217,39 +194,13 @@ export default class MOrderModalWorks extends Vue {
     }
   }
 
-  async addMasterComment() {
+  async addComment() {
     try {
       if (this.order) {
-        this.masterComment.userid = authModule.user?.id
+        this.comment.userid = authModule.user?.id
 
-        if (this.masterComment.userid) {
-          const response = await ordersAPI(this.order.id).addMasterComment(this.masterComment)
-
-          if (response) {
-            this.$notification.success('Успешное добавление комментария')
-            this.resetModels()
-            this.work = null
-          } else {
-            this.$notification.error('[Клиент] Ошибка при добавлении коментария')
-          }
-        } else {
-          this.$notification.error('[Клиент] Не удалось получить достаточно данных пользователя')
-        }
-      } else {
-        this.$notification.error('[Клиент] Неожиданная ошибка. Перезагрузите страницу')
-      }
-    } catch (error) {
-      this.$notification.error('[Сервер] Ошибка при добавлении коментария')
-    }
-  }
-
-  async addManagerComment() {
-    try {
-      if (this.order) {
-        this.managerComment.userid = authModule.user?.id
-
-        if (this.managerComment.userid) {
-          const response = await ordersAPI(this.order.id).addManagerComment(this.managerComment)
+        if (this.comment.userid) {
+          const response = await ordersAPI(this.order.id).addMasterComment(this.comment)
 
           if (response) {
             this.$notification.success('Успешное добавление комментария')
@@ -277,11 +228,7 @@ export default class MOrderModalWorks extends Vue {
       message: '',
       price: 0,
     }
-    this.masterComment = {
-      userid: null,
-      message: '',
-    }
-    this.managerComment = {
+    this.comment = {
       userid: null,
       message: '',
     }
