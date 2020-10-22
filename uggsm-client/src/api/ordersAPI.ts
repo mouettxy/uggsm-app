@@ -1,3 +1,4 @@
+import { authModule } from './../store/index'
 import { sendRequest } from '@/api/helpers'
 import { OrdersAPI, OrdersEndpoints } from '@/typings/api/order'
 
@@ -102,6 +103,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   addSms: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).addSms, data)
 
       if (response.status === 200) {
@@ -115,6 +117,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   addCompletedWork: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).addCompletedWork, data)
 
       if (response.status === 200) {
@@ -128,6 +131,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   addMasterComment: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).addMasterComment, data)
 
       if (response.status === 200) {
@@ -141,6 +145,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   addManagerComment: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).addManagerComment, data)
 
       if (response.status === 200) {
@@ -167,6 +172,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   setStatus: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).setStatus, data)
 
       if (response.status === 200) {
@@ -180,6 +186,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   setPayed: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).setPayed, data)
 
       if (response.status === 200) {
@@ -193,6 +200,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   setMaster: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).setMaster, data)
 
       if (response.status === 200) {
@@ -206,6 +214,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   setManager: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).setManager, data)
 
       if (response.status === 200) {
@@ -219,6 +228,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   setOffice: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).setOffice, data)
 
       if (response.status === 200) {
@@ -232,6 +242,7 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   updateById: async (data: any) => {
     try {
+      data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).updateById, data)
 
       if (response.status === 200) {
