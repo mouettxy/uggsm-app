@@ -7,6 +7,19 @@
     )
       v-icon(left) mdi-plus
       span Новый заказ
+    v-btn.mx-2(
+      @click='hideClosedOrders',
+      color='secondary'
+    )
+      v-icon(
+        v-if='!isHideClosedOrders',
+        left
+      ) mdi-close
+      v-icon(
+        v-else,
+        left
+      ) mdi-check
+      span Скрыть закрытые
     v-spacer
     v-menu(
       v-model='columnsMenu',
@@ -79,6 +92,7 @@ import { filter } from 'lodash'
 @Component
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
+  public isHideClosedOrders = true
   public page = 1
   public headers: any = [
     {
@@ -133,13 +147,6 @@ export default class OOrdersTable extends Vue {
     },
   ]
 
-  @Watch('isNeedToUpdateTable')
-  onUpdateTableValueChange(value: boolean) {
-    if (value) {
-      this.loadItems()
-    }
-  }
-
   get headersFormatted() {
     return filter(this.headers, (e) => {
       return e.show
@@ -167,6 +174,17 @@ export default class OOrdersTable extends Vue {
   }
 
   update() {
+    this.loadItems()
+  }
+
+  async hideClosedOrders() {
+    this.isHideClosedOrders = !this.isHideClosedOrders
+
+    this.options = {
+      ...this.options,
+      hideClosed: this.isHideClosedOrders,
+    }
+
     this.loadItems()
   }
 
