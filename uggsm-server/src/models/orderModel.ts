@@ -1,3 +1,4 @@
+import { user } from './../middlewares/validators/validateUser'
 import { Office, OfficeModel, UserModel } from '.'
 import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType, mongoose, index } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
@@ -279,19 +280,26 @@ export class Order {
     }
   }
 
-  private static async setHelper(target: 'workflow', arr: any, header: string, comment: string) {
+  private static async setHelper(
+    target: 'workflow',
+    arr: any,
+    header: string,
+    comment: string,
+    userid?: number | string | undefined
+  ) {
     if (target === 'workflow') {
-      arr.push(
-        extendArrayWithId(
-          arr,
-          await processWorkflowData({
-            header,
-            message: comment,
-            userid: null,
-          })
-        )
+      const workflow = extendArrayWithId(
+        arr,
+        await processWorkflowData({
+          header,
+          message: comment,
+          userid: userid,
+        })
       )
+      arr.push(workflow)
     }
+
+    return arr
   }
 
   public static async addCompletedWork(this: ReturnModelType<typeof Order>, id: number | string, work: CompletedWork) {
@@ -329,23 +337,30 @@ export class Order {
   public static async setStatus(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    status: 'Новый' | 'На уточнении' | 'В работе' | 'Готов'
+    status: 'Новый' | 'На уточнении' | 'В работе' | 'Готов',
+    userid: string | number
   ) {
     const order = await this.findOne({ id })
     order.status = status
-    this.setHelper('workflow', order.workflow, 'Смена статуса заказа', `${status}`)
+    order.workflow = await this.setHelper('workflow', order.workflow, 'Смена статуса заказа', `${status}`, userid)
     return await order.save()
   }
 
-  public static async setPayed(this: ReturnModelType<typeof Order>, id: number | string, payed: boolean) {
+  public static async setPayed(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    payed: boolean,
+    userid: string | number
+  ) {
     const order = await this.findOne({ id })
     const oldPayedStatus = order.payed ? 'Оплачено' : 'Не оплачено'
     order.payed = payed
-    this.setHelper(
+    order.workflow = await this.setHelper(
       'workflow',
       order.workflow,
       'Смена статуса оплаты',
-      `Изменён с "${oldPayedStatus}" на "${payed ? 'Оплачено' : 'Не оплачено'}"`
+      `Изменён с "${oldPayedStatus}" на "${payed ? 'Оплачено' : 'Не оплачено'}"`,
+      parseInt(userid as string)
     )
     return await order.save()
   }
@@ -353,13 +368,14 @@ export class Order {
   public static async setMaster(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    master: mongoose.Types.ObjectId
+    master: mongoose.Types.ObjectId,
+    userid: string | number
   ) {
     const order = await this.findOne({ id })
     if (order.master) {
       const oldMaster = await UserModel.findById(order.master)
       const newMaster = await UserModel.findById(master)
-      await this.setHelper(
+      order.workflow = await this.setHelper(
         'workflow',
         order.workflow,
         'Смена мастера',
@@ -368,7 +384,13 @@ export class Order {
     } else {
       const newMaster = await UserModel.findById(master)
 
-      await this.setHelper('workflow', order.workflow, 'Назначен мастер', `${newMaster.credentials}`)
+      order.workflow = await await this.setHelper(
+        'workflow',
+        order.workflow,
+        'Назначен мастер',
+        `${newMaster.credentials}`,
+        parseInt(userid as string)
+      )
     }
     order.master = master
     return await order.save()
@@ -377,32 +399,51 @@ export class Order {
   public static async setManager(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    manager: mongoose.Types.ObjectId
+    manager: mongoose.Types.ObjectId,
+    userid: string | number
   ) {
     const order = await this.findOne({ id })
     if (order.manager) {
       const oldManager = await UserModel.findById(order.manager)
       const newManager = await UserModel.findById(manager)
-      await this.setHelper(
+      order.workflow = await this.setHelper(
         'workflow',
         order.workflow,
         'Смена менеджера',
-        `Менеджер изменён с "${oldManager.credentials}" на "${newManager.credentials}"`
+        `Менеджер изменён с "${oldManager.credentials}" на "${newManager.credentials}"`,
+        parseInt(userid as string)
       )
     } else {
       const newManager = await UserModel.findById(manager)
 
-      await this.setHelper('workflow', order.workflow, 'Назначен менеджер', `${newManager.credentials}`)
+      order.workflow = await this.setHelper(
+        'workflow',
+        order.workflow,
+        'Назначен менеджер',
+        `${newManager.credentials}`,
+        parseInt(userid as string)
+      )
     }
     order.manager = manager
     return await order.save()
   }
 
-  public static async setOffice(this: ReturnModelType<typeof Order>, id: number | string, officeCode: string) {
+  public static async setOffice(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    officeCode: string,
+    userid: string | number
+  ) {
     const order = await this.findOne({ id })
     const office = await OfficeModel.getOneByCode(officeCode)
     order.office = office._id
-    this.setHelper('workflow', order.workflow, 'Изменение офиса', `Изменен офис на ${office.code}`)
+    order.workflow = await this.setHelper(
+      'workflow',
+      order.workflow,
+      'Изменение офиса',
+      `Изменен офис на ${office.code}|${office.name}`,
+      parseInt(userid as string)
+    )
     return await order.save()
   }
 }
