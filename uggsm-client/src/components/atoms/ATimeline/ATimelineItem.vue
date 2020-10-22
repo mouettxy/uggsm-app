@@ -2,8 +2,15 @@
 .timeline-item
   .timeline-item__line(:style='{ backgroundColor: item.color, color: `${item.textColor} !important` }')
   template(v-if='item.type === "solo"')
-    .timeline-item__icon(:style='{ backgroundColor: item.color, color: `${item.textColor} !important` }')
-      span.text-overline.pa-2 {{ item.header }}
+    v-tooltip(left)
+      template(#activator='{on, attrs}')
+        .timeline-item__icon(
+          v-on='on',
+          v-bind='attrs',
+          :style='{ backgroundColor: item.color, color: `${item.textColor} !important` }'
+        )
+          span.text-overline.pa-2 {{ item.header }}
+      .text-subtitle-1 {{ item.username }}
     .timeline-item__content
       .timeline-item__content-header
         .timeline-item__content-header__title
