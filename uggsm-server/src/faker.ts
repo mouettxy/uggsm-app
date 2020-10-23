@@ -1,6 +1,4 @@
 import faker from 'faker'
-import { each } from 'lodash'
-import { office } from './middlewares/validators/validateOrder'
 import { OfficeModel, OrderModel, UserModel } from './models'
 import { generateOrderId } from './utils/helpers'
 import { statuses } from './utils/enums'
@@ -53,7 +51,6 @@ const officeTemplates = [
   '55{C:4}',
 ]
 
-const userUsernamePasswords = {}
 const savedMasterIds = []
 const savedManagerIds = []
 const savedOfficeIds = []
@@ -69,8 +66,6 @@ async function createOffices() {
       address: faker.address.streetAddress(),
     })
     offices.push(office)
-    /* const saved = await office.save()
-    savedOfficeIds.push(saved._id) */
   }
   return offices
 }
@@ -87,14 +82,6 @@ async function createUsers() {
     })
 
     users.push(user)
-    /* const saved = await user.save()
-    if (user.role === 'master') {
-      savedMasterIds.push(saved._id)
-    }
-    if (user.role === 'manager') {
-      savedManagerIds.push(saved._id)
-    }
-    userUsernamePasswords[user.username] = user.password */
   }
   return users
 }
@@ -102,12 +89,12 @@ async function createUsers() {
 // create orders
 async function createOrders() {
   const orders = []
-  for (let i = 0; i < 3000; i += 1) {
+  console.time()
+  for (let i = 0; i < 1000; i += 1) {
     const officeId = faker.random.arrayElement(savedOfficeIds)
     const office = await OfficeModel.findById(officeId)
     const date = new Date()
     date.setDate(date.getDate() + 7)
-    console.log(date)
 
     const order = new OrderModel({
       customerName: faker.name.findName(),
@@ -132,13 +119,15 @@ async function createOrders() {
     // @ts-ignore
     firstIteration.setNext('order_id', async (_err, doc) => {
       const generatedId = generateOrderId(office.ordersTemplateParsed, firstIteration.id)
-      console.log(generatedId)
       firstIteration.id = generatedId
       const secondIteration = await firstIteration.save()
-
-      console.log(`Order created ${secondIteration.id}`)
+      orders.push(secondIteration.id)
+      //console.log(`Order created ${secondIteration.id}`)
     })
+
+    console.log(orders.length)
   }
+  console.timeEnd()
   return orders
 }
 
@@ -158,5 +147,6 @@ export async function seedDatabase() {
       savedManagerIds.push(saved._id)
     }
   }
-  const orders = await createOrders()
+
+  await createOrders()
 }
