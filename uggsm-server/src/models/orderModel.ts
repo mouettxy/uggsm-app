@@ -54,7 +54,7 @@ export class SmsMessage {
   @prop({ default: false })
   public sended: boolean
 
-  @prop({ default: new Date() })
+  @prop({ default: Date.now })
   public date: Date
 }
 
@@ -74,7 +74,7 @@ export class Comment {
   @prop()
   public message: string
 
-  @prop({ default: new Date() })
+  @prop({ default: Date.now })
   public date: Date
 }
 
@@ -94,7 +94,7 @@ export class Workflow {
   @prop()
   public userid?: number
 
-  @prop({ default: new Date() })
+  @prop({ default: Date.now })
   public date?: Date
 }
 
@@ -227,7 +227,7 @@ export class Order {
   @prop({ default: 'Нет комплектации', searchable: true })
   public kit: string
 
-  @prop({ default: new Date() })
+  @prop({ default: Date.now })
   public createdAt: Date
 
   @prop({ default: '-', searchable: true })
@@ -337,12 +337,18 @@ export class Order {
   public static async setStatus(
     this: ReturnModelType<typeof Order>,
     id: number | string,
-    status: 'Новый' | 'На уточнении' | 'В работе' | 'Готов',
+    status: 'Новый' | 'На уточнении' | 'В работе' | 'Готов' | 'Закрыт',
     userid: string | number
   ) {
     const order = await this.findOne({ id })
+
     order.status = status
     order.workflow = await this.setHelper('workflow', order.workflow, 'Смена статуса заказа', `${status}`, userid)
+
+    if (status === 'Закрыт' || status === 'Готов') {
+      order.closedAt = new Date()
+    }
+
     return await order.save()
   }
 
