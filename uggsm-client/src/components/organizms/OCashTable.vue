@@ -57,6 +57,13 @@
       span.error--text {{ value }}
     template(#item.balance='{value}')
       strong {{ value }}
+    template(#item.actions='{item}')
+      template(v-if='item.orderid')
+        v-btn(
+          :to='{ name: "orderModal", params: { id: item.orderid }, query: { from: "cash" } }',
+          icon
+        )
+          v-icon mdi-eye
   v-pagination.mt-4(
     v-model='options.page',
     :length='Math.round(totalItems / options.itemsPerPage)',
@@ -102,6 +109,11 @@ export default class OCashTable extends Vue {
     {
       text: 'Остаток',
       value: 'balance',
+      show: true,
+    },
+    {
+      text: 'Действия',
+      value: 'actions',
       show: true,
     },
   ]

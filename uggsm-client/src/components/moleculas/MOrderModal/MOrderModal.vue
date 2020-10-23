@@ -5,13 +5,17 @@
     title='Новая заявка'
   )
     template(#activator='{click}')
-      template(v-if='!btnHided')
-        v-btn(
-          @click='click',
-          color='primary'
-        )
-          v-icon(left) mdi-plus
-          span Новый
+      slot(
+        name='activator',
+        :click='click'
+      )
+        template(v-if='!btnHided')
+          v-btn(
+            @click='click',
+            color='primary'
+          )
+            v-icon(left) mdi-plus
+            span Новый
 
     template(#content='{close}')
       v-container.order-modal__container(
@@ -48,7 +52,7 @@
             v-icon(left) mdi-content-save-edit
             span Обновить
           v-btn(
-            @click='clearCurrentOrder',
+            @click='clearCurrentOrder(close)',
             text
           )
             v-icon(left) mdi-close
@@ -62,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
 import { ordersModule, settingsModule, cashModule } from '@/store'
 import { cloneDeep } from 'lodash'
@@ -135,10 +139,14 @@ export default class MOrderModal extends Vue {
     return true
   }
 
-  clearCurrentOrder() {
+  clearCurrentOrder(close?: any) {
     ordersModule.clearOrder()
     cashModule.clearCash()
-    this.$router.push({ name: 'orders' })
+    if (this.$route.query.from) {
+      this.$router.push({ name: this.$route.query.from as string })
+    } else {
+      this.$router.push({ name: 'orders' })
+    }
   }
 
   async createOrder() {
@@ -189,9 +197,9 @@ export default class MOrderModal extends Vue {
     }
   }
 
-  async mounted() {
+  created() {
     if (!this.newOrder && this.$route.params?.id) {
-      await ordersModule.getOrder(this.$route.params.id)
+      ordersModule.getOrder(this.$route.params.id)
     }
   }
 }

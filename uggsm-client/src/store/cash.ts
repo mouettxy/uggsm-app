@@ -38,6 +38,7 @@ export default class Cash extends VuexModule {
         income: e.income,
         consumption: e.consumption,
         balance: e.balance,
+        orderid: e.orderid,
       }
     })
   }
@@ -49,6 +50,7 @@ export default class Cash extends VuexModule {
         createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
         comment: e.comment,
         total: e.income - e.consumption,
+        orderid: e.orderid,
       }
     })
   }

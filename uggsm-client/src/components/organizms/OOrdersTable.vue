@@ -62,9 +62,10 @@
     hide-default-footer,
     height='calc(100vh - 230px)'
   )
-    template(#item.id='{value}')
+    template(#item.id='{value, item}')
       v-btn(
         :to='{ name: "orderModal", params: { id: value } }',
+        :style='{ background: item.quick ? "rgba(255, 82, 82, .1)" : "" }',
         :new-order='false',
         text
       )
