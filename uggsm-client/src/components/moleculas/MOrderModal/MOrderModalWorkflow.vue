@@ -133,7 +133,7 @@ export default class MOrderModalWorkflow extends Vue {
     const unitedDates: any = []
 
     const uniteDate = (date: Date) => {
-      return moment(this.normalizeDate(date).split(' ')[0], 'DD.MM.YYY').locale('ru').format('D MMMM')
+      return moment(this.normalizeDate(date).split(' ')[0], 'DD.MM.YYY').format('D MMMM')
     }
 
     if (this.order) {

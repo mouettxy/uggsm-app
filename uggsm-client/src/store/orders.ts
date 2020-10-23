@@ -10,7 +10,7 @@ import axios from '@/plugins/axios'
 
 function getTime(date: any) {
   const m = moment(date)
-  return `${m.format('L')} ${m.format('LTS')}`
+  return `${m.format('DD.MM.YYYY')} ${m.format('HH:mm')}`
 }
 
 @Module({
@@ -29,7 +29,7 @@ export default class Orders extends VuexModule {
     sortDesc: [true],
     mustSort: false,
     multiSort: true,
-    hideClosed: false,
+    hideClosed: true,
   }
 
   get ordersTable() {
@@ -45,6 +45,7 @@ export default class Orders extends VuexModule {
         phoneBrand: e.phoneBrand,
         password: e.password,
         declaredDefect: e.declaredDefect,
+        quick: e.quick,
       }
     })
   }
