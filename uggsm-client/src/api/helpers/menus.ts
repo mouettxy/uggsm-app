@@ -1,9 +1,15 @@
 export const defaultMenu = [
   {
+    linkName: 'index',
+    title: 'Рабочий стол',
+    icon: 'mdi-home',
+    divider: false,
+  },
+  {
     linkName: 'orders',
     title: 'Заявки',
     icon: 'mdi-bat',
-    divider: false,
+    divider: true,
   },
   {
     linkName: 'clients',
