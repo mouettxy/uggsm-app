@@ -6,7 +6,7 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
-import { first } from 'lodash'
+import { filter, first } from 'lodash'
 
 export class OrdersController implements IOrdersController {
   private order = OrderModel
@@ -117,6 +117,34 @@ export class OrdersController implements IOrdersController {
       if (order) {
         response.status(200)
         api.io.emit('added order completed work', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
+        response.send(order)
+      } else {
+        throw new Error('Не удалось обработать данные')
+      }
+    } catch (e) {
+      next(new HttpException(500, e.message))
+    }
+  }
+
+  public async deleteCompletedWork(
+    request: express.Request,
+    response: express.Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const order = await OrderModel.findOne({ id: request.params.id })
+
+      const completedWorks = filter(order.statusWork, (e) => e.id != parseInt(request.params.workId))
+
+      order.statusWork = completedWorks
+
+      await order.save()
+
+      if (order) {
+        response.status(200)
+        api.io.emit('deleted order completed work', order.id)
         api.io.emit('update order', order.id)
         api.io.emit('update orders')
         response.send(order)
@@ -413,21 +441,15 @@ export class OrdersController implements IOrdersController {
           $match: {
             status: params.status,
             'office.code': params.office,
-            'workflow.date': {
+            closedAt: {
               $gte: new Date(params.firstDate),
-              $lte: new Date(params.secondDate),
+              $lt: new Date(params.secondDate),
             },
-            'workflow.header': 'Смена статуса заказа',
           },
         },
         {
           $unwind: {
-            path: '$workflow',
-          },
-        },
-        {
-          $match: {
-            'workflow.message': params.status,
+            path: '$statusWork',
           },
         },
         {
@@ -436,57 +458,56 @@ export class OrdersController implements IOrdersController {
               $toString: '$id',
             },
             statusWork: {
-              $map: {
-                input: '$statusWork',
-                in: {
-                  message: '$$this.message',
-                  price: '$$this.price',
-                  priceString: {
-                    $toString: '$$this.price',
-                  },
-                },
+              priceString: {
+                $toString: '$statusWork.price',
               },
             },
           },
         },
         {
           $project: {
-            master: '$master.credentials',
+            master: '$statusWork.credentials',
             manager: '$manager.credentials',
-            date: '$workflow.date',
+            date: '$closedAT',
             type: 'Исполнителю за работу в заказе',
             product: {
               $concat: ['Заказ №', '$idString', ' ', '$phoneModel', ' (', '$serialNumber', ') '],
             },
             works: {
-              $reduce: {
-                input: '$statusWork',
-                initialValue: '',
-                in: {
-                  $concat: ['$$value', '$$this.message', ' ', '$$this.priceString', ' руб. '],
-                },
-              },
+              work: { $concat: ['$statusWork.header', ' (', '$statusWork.message', ') '] },
+              total: '$statusWork.price',
+            },
+            price: '$statusWork.price',
+            total: '$statusWork.price',
+          },
+        },
+        {
+          $group: {
+            _id: {
+              master: '$master',
+              type: '$type',
+              product: '$product',
+            },
+            works: {
+              $push: '$works',
             },
             price: {
-              $sum: {
-                $map: {
-                  input: '$cash',
-                  in: {
-                    $subtract: ['$$this.income', '$$this.consumption'],
-                  },
-                },
-              },
+              $sum: '$price',
             },
             total: {
-              $sum: {
-                $map: {
-                  input: '$cash',
-                  in: {
-                    $subtract: ['$$this.income', '$$this.consumption'],
-                  },
-                },
-              },
+              $sum: '$total',
             },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            master: '$_id.master',
+            type: '$_id.type',
+            product: '$_id.product',
+            works: 1,
+            price: 1,
+            total: 1,
           },
         },
       ])

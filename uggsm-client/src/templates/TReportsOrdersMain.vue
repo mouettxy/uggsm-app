@@ -1,8 +1,7 @@
 <template lang="pug">
 .reports-orders-main
   .reports-orders-main__content.pa-4
-    v-alert(type='error')
-      | Страница отчётов по заявкам находится в статусе разработки.
+    o-orders-report
 </template>
 
 <script lang="ts">
