@@ -42,10 +42,10 @@
   table(style='width: 100%; font-size: 14px')
     tr
       td
-        span Забрал(а) из ремонта {{ customerName }}
+        span Сдал(а) в ремонт {{ customerName }}
         span(style='margin-left: 5px; width: 60px; border-bottom: 2px solid; display: inline-block')
       td
-        span Телефон выдал(а)
+        span Принял(а)
         span(style='margin-left: 5px; margin-right:5px; width: 60px; border-bottom: 2px solid; display: inline-block')
         span (роспись)
 </template>
