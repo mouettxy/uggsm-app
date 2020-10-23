@@ -47,10 +47,10 @@ export class AuthenticationController implements IAuthentificationController {
           }
 
           userData.office = office._id
+          userData.password = hashedPassword
 
           const user = await this.user.create({
             ...userData,
-            password: hashedPassword,
           })
 
           user.set('password', undefined)
