@@ -136,6 +136,7 @@ export type OrdersAPI = {
   createByOffice(data: any): Promise<any | null>
   addSms(data: any): Promise<any | null>
   addCompletedWork(data: any): Promise<any | null>
+  deleteCompletedWork(data: any): Promise<any | null>
   addMasterComment(data: any): Promise<any | null>
   addManagerComment(data: any): Promise<any | null>
   addWorkflow(data: any): Promise<any | null>
@@ -157,6 +158,7 @@ export type OrdersEndpoints = {
   createByOffice: Endpoint
   addSms: Endpoint
   addCompletedWork: Endpoint
+  deleteCompletedWork: Endpoint
   addMasterComment: Endpoint
   addManagerComment: Endpoint
   addWorkflow: Endpoint

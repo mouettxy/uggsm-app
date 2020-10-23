@@ -59,6 +59,13 @@
       template(#expanded-item='{headers, item}')
         td(:colspan='headers.length')
           | Описание: {{ getMessage(item.id) }}
+      template(#item.actions='{item}')
+        v-btn(
+          @click='deleteWork(item)',
+          icon,
+          color='red'
+        )
+          v-icon mdi-delete
   .text-h6.text-right.my-8.success--text Итого: {{ total }}
   .text-h5.my-4 Комментарий
   v-form(
@@ -108,6 +115,10 @@ export default class MOrderModalWorks extends Vue {
     {
       text: 'Цена',
       value: 'price',
+    },
+    {
+      text: 'Действия',
+      value: 'actions',
     },
   ]
 
@@ -191,6 +202,22 @@ export default class MOrderModalWorks extends Vue {
       }
     } catch (error) {
       this.$notification.error('[Сервер] Ошибка при закрытии работы')
+    }
+  }
+
+  async deleteWork(item: any) {
+    try {
+      if (this.order) {
+        const response = await ordersAPI(this.order.id).deleteCompletedWork(item.id)
+
+        if (response) {
+          this.$notification.success('Успешное удаление работы')
+        } else {
+          this.$notification.error('[Клиент] Ошибка при удалении работы')
+        }
+      }
+    } catch (error) {
+      this.$notification.error('[Сервер] Ошибка при удалении работы')
     }
   }
 

@@ -2,7 +2,7 @@ import { authModule } from './../store/index'
 import { sendRequest } from '@/api/helpers'
 import { OrdersAPI, OrdersEndpoints } from '@/typings/api/order'
 
-export const ordersEndpoints = (code?: string | number): OrdersEndpoints => ({
+export const ordersEndpoints = (code?: string | number, ...args: any): OrdersEndpoints => ({
   getAll: { method: 'get', link: `/order` },
   getAllByOffice: { method: 'get', link: `/order/office/${code}` },
   getPaginated: { method: 'get', link: `/order/paginate` },
@@ -11,6 +11,7 @@ export const ordersEndpoints = (code?: string | number): OrdersEndpoints => ({
   createByOffice: { method: 'post', link: `/order/office/${code}` },
   addSms: { method: 'put', link: `/order/${code}/sms` },
   addCompletedWork: { method: 'put', link: `/order/${code}/completed-work` },
+  deleteCompletedWork: { method: 'delete', link: `/order/${code}/completed-work/${args[0]}` },
   addMasterComment: { method: 'put', link: `/order/${code}/master-comment` },
   addManagerComment: { method: 'put', link: `/order/${code}/manager-comment` },
   addWorkflow: { method: 'put', link: `/order/${code}/workflow` },
@@ -119,6 +120,19 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
     try {
       data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).addCompletedWork, data)
+
+      if (response.status === 200) {
+        return Promise.resolve(response.data)
+      } else {
+        return Promise.resolve(null)
+      }
+    } catch (error) {
+      return Promise.resolve(null)
+    }
+  },
+  deleteCompletedWork: async (id) => {
+    try {
+      const response = await sendRequest(ordersEndpoints(code, id).deleteCompletedWork)
 
       if (response.status === 200) {
         return Promise.resolve(response.data)
