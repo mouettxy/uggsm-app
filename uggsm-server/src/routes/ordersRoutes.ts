@@ -36,5 +36,6 @@ export class OrdersRouter implements Router {
       .put(`${path}/:id/office`, validateOrder.office, controller.setOffice)
       .put(`${path}/:id`, controller.updateById)
       .delete(`${path}/:id`, controller.deleteById)
+      .delete(`${path}/:id/completed-work/:workId`, controller.deleteCompletedWork)
   }
 }
