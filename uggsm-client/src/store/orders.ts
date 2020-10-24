@@ -46,6 +46,7 @@ export default class Orders extends VuexModule {
         password: e.password,
         declaredDefect: e.declaredDefect,
         quick: e.quick,
+        client: e.customerName,
       }
     })
   }

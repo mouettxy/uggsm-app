@@ -112,6 +112,11 @@ export default class OOrdersTable extends Vue {
       show: true,
     },
     {
+      text: 'Клиент',
+      value: 'client',
+      show: true,
+    },
+    {
       text: 'Создан',
       value: 'created',
       show: true,
@@ -132,6 +137,11 @@ export default class OOrdersTable extends Vue {
       show: true,
     },
     {
+      text: 'Пароль',
+      value: 'password',
+      show: true,
+    },
+    {
       text: 'Уведомления',
       value: 'notifications',
       show: true,
@@ -139,11 +149,6 @@ export default class OOrdersTable extends Vue {
     {
       text: 'Рекламная кампания',
       value: 'adversitement',
-      show: true,
-    },
-    {
-      text: 'Пароль',
-      value: 'password',
       show: true,
     },
   ]
