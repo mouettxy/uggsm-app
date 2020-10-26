@@ -2,6 +2,7 @@
 v-autocomplete(
   v-model='model',
   :search-input.sync='query',
+  :return-object='returnObject',
   :prepend-inner-icon='icon',
   :label='label',
   :items='items',
@@ -27,8 +28,9 @@ import { isEmpty } from 'lodash'
 
 @Component
 export default class AAutocomplete extends Vue {
-  @Prop({ type: [String, Object] }) value: any
+  @Prop({ type: [String, Object, Number] }) value: any
   @Prop({ type: Boolean, default: false }) disabled!: boolean
+  @Prop({ type: Object }) uriQuery!: Record<string, any>
   @Prop(String) label: any
   @Prop(String) endpoint: any
   @Prop(String) replaceSearchWith: any
@@ -68,15 +70,23 @@ export default class AAutocomplete extends Vue {
 
   async getItems() {
     try {
-      const params = {
+      let params = {
         search: this.query,
+      }
+
+      if (this.uriQuery) {
+        params = {
+          ...params,
+          ...this.uriQuery,
+        }
       }
 
       if (this.replaceSearchWith) {
         params.search = this.replaceSearchWith
       }
 
-      const response = await this.$axios.get(`autocomplete${this.endpoint}`, { params: params })
+      const response = await this.$axios.get(`autocomplete${this.endpoint}`, { params })
+
       if (response.status === 200) {
         return response.data
       } else {
