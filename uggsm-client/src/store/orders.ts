@@ -1,7 +1,7 @@
 import { Order as OrderType } from '@/typings/api/order'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { ordersAPI } from '@/api'
-import { map, zip } from 'lodash'
+import { map, reduce, zip } from 'lodash'
 
 import moment from 'moment'
 import { authModule, settingsModule } from '.'
@@ -36,6 +36,15 @@ export default class Orders extends VuexModule {
     return map(this.orders, (e) => {
       const closeTime = getTime(e.estimatedCloseAt)
       const createTime = getTime(e.createdAt)
+      const totalWorks = reduce(
+        e.statusWork,
+        (a, el) => {
+          a += el.price
+          return a
+        },
+        0
+      )
+
       return {
         id: e.id,
         estimatedCloseAt: closeTime,
@@ -47,6 +56,7 @@ export default class Orders extends VuexModule {
         declaredDefect: e.declaredDefect,
         quick: e.quick,
         client: e.customerName,
+        totalWorks,
       }
     })
   }
