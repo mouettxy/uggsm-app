@@ -95,6 +95,7 @@ export default class OOrdersTable extends Vue {
   public columnsMenu = false
   public isHideClosedOrders = true
   public page = 1
+
   public headers: any = [
     {
       text: 'Заказ №',
@@ -122,18 +123,23 @@ export default class OOrdersTable extends Vue {
       show: true,
     },
     {
-      text: 'Устройство',
-      value: 'phoneModel',
-      show: true,
-    },
-    {
       text: 'Бренд',
       value: 'phoneBrand',
       show: true,
     },
     {
+      text: 'Устройство',
+      value: 'phoneModel',
+      show: true,
+    },
+    {
       text: 'Неисправность',
       value: 'declaredDefect',
+      show: true,
+    },
+    {
+      text: 'Сумма работ',
+      value: 'totalWorks',
       show: true,
     },
     {
@@ -152,6 +158,12 @@ export default class OOrdersTable extends Vue {
       show: true,
     },
   ]
+
+  @Watch('headers', { deep: true })
+  onHeadersChange(value: any) {
+    console.log(value)
+    localStorage.setItem('orders-headers', JSON.stringify(value))
+  }
 
   get headersFormatted() {
     return filter(this.headers, (e) => {
@@ -200,6 +212,12 @@ export default class OOrdersTable extends Vue {
 
   created() {
     this.loadItems()
+
+    const savedHeaders = localStorage.getItem('orders-headers')
+
+    if (savedHeaders) {
+      this.headers = JSON.parse(savedHeaders)
+    }
   }
 }
 </script>
@@ -210,4 +228,10 @@ export default class OOrdersTable extends Vue {
     .v-toolbar__content
       padding: 0 !important
       padding-right: 16px !important
+  .v-data-table__wrapper
+    table
+      thead, tbody
+        tr
+          th, td
+            white-space: nowrap
 </style>
