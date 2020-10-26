@@ -200,13 +200,11 @@ export default class OOrdersReport extends Vue {
 
   async getReport() {
     const search = cloneDeep(this.search)
-    console.log(search)
     //@ts-ignore
     search.firstDate = moment(search.date[0], 'DD.MM.YYYY').startOf('day').toISOString()
     //@ts-ignore
     search.secondDate = moment(search.date[1], 'DD.MM.YYYY').endOf('day').toISOString()
     search.office = search.office.split('|')[0]
-    console.log(search)
 
     const response = await ordersModule.generateReport(search)
 
