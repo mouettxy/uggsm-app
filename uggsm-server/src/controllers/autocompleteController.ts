@@ -8,7 +8,6 @@ import { ClientModel, OfficeModel, OrderModel, UserModel } from '../models'
 export class AutocompleteController implements IAutocompleteController {
   private user = UserModel
   private order = OrderModel
-  private office = OfficeModel
   private client = ClientModel
 
   public customerName = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
@@ -277,6 +276,43 @@ export class AutocompleteController implements IAutocompleteController {
           response,
           (a, e) => {
             a.push({ text: e._id.header, value: e._id })
+
+            return a
+          },
+          []
+        )
+
+        res.status(200)
+        res.send(reduced)
+      } catch (error) {
+        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
+      }
+    } else {
+      next(new HttpException(400, 'Нет данных для поиска'))
+    }
+  }
+
+  public users = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
+    let search = req.query.search
+    const returnValue = req.query['return-value'] as string
+
+    if (!search) {
+      search = ''
+    }
+
+    if (isString(search)) {
+      try {
+        const response = await this.user
+          .find({ credentials: new RegExp(search, 'i') })
+          .limit(10)
+          .lean()
+
+        const returns: string = returnValue ? returnValue : '_id'
+
+        const reduced = reduce(
+          response,
+          (a, e) => {
+            a.push({ text: e.credentials, value: e[returns] })
 
             return a
           },

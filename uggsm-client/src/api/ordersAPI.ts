@@ -1,4 +1,4 @@
-import { authModule } from './../store/index'
+import { authModule } from '@/store'
 import { sendRequest } from '@/api/helpers'
 import { OrdersAPI, OrdersEndpoints } from '@/typings/api/order'
 
@@ -118,8 +118,12 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
   },
   addCompletedWork: async (data: any) => {
     try {
-      data.userid = authModule.user?.id
-      const response = await sendRequest(ordersEndpoints(code).addCompletedWork, data)
+      const enrichRequest = {
+        ...data,
+        createdBy: authModule.user?.id,
+      }
+
+      const response = await sendRequest(ordersEndpoints(code).addCompletedWork, enrichRequest)
 
       if (response.status === 200) {
         return Promise.resolve(response.data)

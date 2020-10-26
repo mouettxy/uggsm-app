@@ -40,6 +40,17 @@
               dense
             )
           v-col(cols='6')
+            a-autocomplete(
+              v-model='model.user',
+              :uri-query='{ "return-value": "id" }',
+              :predefined-items='[model.user]',
+              return-object,
+              label='Исполнитель',
+              icon='mdi-account-hard-hat',
+              endpoint='/users',
+              dense
+            )
+          v-col(cols='12')
             v-btn(
               @click.prevent='sendWork',
               type='submit',
@@ -123,16 +134,25 @@ export default class MOrderModalWorks extends Vue {
   ]
 
   public model: any = {
-    userid: null,
+    user: { text: authModule.user?.credentials, value: authModule.user?.id },
     username: '',
     header: '',
     message: '',
     price: 0,
   }
+
   public comment: any = {
     userid: null,
     message: '',
   }
+
+  @Watch('modelUser')
+  onModelUserChange(value: any) {
+    if (!value) {
+      this.model.user = { text: authModule.user?.credentials, value: authModule.user?.id }
+    }
+  }
+
   @Watch('work')
   onWorkChange() {
     if (this.work) {
@@ -144,6 +164,10 @@ export default class MOrderModalWorks extends Vue {
     } else {
       this.resetModels()
     }
+  }
+
+  get modelUser() {
+    return this.model.user
   }
 
   get total() {
@@ -180,11 +204,16 @@ export default class MOrderModalWorks extends Vue {
   async sendWork() {
     try {
       if (this.order) {
-        this.model.userid = authModule.user?.id
-        this.model.username = authModule.user?.username
-        this.model.credentials = authModule.user?.credentials
+        if (!this.model.user) {
+          this.model.user = { text: authModule.user?.credentials, value: authModule.user?.id }
+        }
 
-        if (this.model.userid || this.model.username) {
+        this.model.userid = this.model.user.value
+        this.model.credentials = this.model.user.text
+
+        delete this.model.user
+
+        if (this.model.userid) {
           const response = await ordersAPI(this.order.id).addCompletedWork(this.model)
 
           if (response) {

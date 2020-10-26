@@ -23,6 +23,7 @@ export class AutocompleteRouter implements Router {
       .get(`${path}/declared-defect`, controller.declaredDefect)
       .get(`${path}/appearance`, controller.appearance)
       .get(`${path}/kit`, controller.kit)
+      .get(`${path}/users`, controller.users)
       .get(`${path}/master`, controller.master)
       .get(`${path}/manager`, controller.manager)
       .get(`${path}/completed-work`, controller.completedWork)

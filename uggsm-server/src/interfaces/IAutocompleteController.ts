@@ -10,6 +10,7 @@ export interface IAutocompleteController {
   appearance: (req: Request, res: Response, next: NextFunction) => Promise<void>
   kit: (req: Request, res: Response, next: NextFunction) => Promise<void>
   master: (req: Request, res: Response, next: NextFunction) => Promise<void>
+  users: (req: Request, res: Response, next: NextFunction) => Promise<void>
   manager: (req: Request, res: Response, next: NextFunction) => Promise<void>
   completedWork: (req: Request, res: Response, next: NextFunction) => Promise<void>
 }

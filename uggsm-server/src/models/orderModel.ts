@@ -263,7 +263,13 @@ export class Order {
   @prop({ type: () => [Workflow], _id: false })
   public workflow: Workflow[]
 
-  private static async addHelper(target: 'array' | 'workflow', arr: any, data: any, workFlowStart?: string) {
+  private static async addHelper(
+    target: 'array' | 'workflow',
+    arr: any,
+    data: any,
+    workFlowStart?: string,
+    userid?: any
+  ) {
     if (target === 'array') {
       arr.push(extendArrayWithId(arr, data))
     } else if (target === 'workflow') {
@@ -273,7 +279,7 @@ export class Order {
           await processWorkflowData({
             header: workFlowStart,
             message: data?.message,
-            userid: data.userid || null,
+            userid: userid ? userid : data.userid || null,
           })
         )
       )
@@ -302,10 +308,14 @@ export class Order {
     return arr
   }
 
-  public static async addCompletedWork(this: ReturnModelType<typeof Order>, id: number | string, work: CompletedWork) {
+  public static async addCompletedWork(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    work: CompletedWork & { createdBy: string }
+  ) {
     const order = await this.findOne({ id })
     await this.addHelper('array', order.statusWork, work)
-    await this.addHelper('workflow', order.workflow, work, 'Закрыта работа')
+    await this.addHelper('workflow', order.workflow, work, 'Закрыта работа', work.createdBy)
     return await order.save()
   }
 
