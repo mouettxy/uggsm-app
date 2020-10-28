@@ -61,6 +61,7 @@
     )
     a-autocomplete(
       v-model='model.appearance',
+      :predefined-items='{ value: "царапины и потёртости", text: "царапины и потёртости" }',
       label='Внешний вид',
       icon='mdi-cellphone-text',
       endpoint='/appearance',
@@ -68,6 +69,7 @@
     )
     a-autocomplete(
       v-model='model.kit',
+      :predefined-items='{ value: "устройство без сим карты, чехла, карты памяти", text: "устройство без сим карты, чехла, карты памяти" }',
       label='Комплектация',
       icon='mdi-cellphone-cog',
       endpoint='/kit',

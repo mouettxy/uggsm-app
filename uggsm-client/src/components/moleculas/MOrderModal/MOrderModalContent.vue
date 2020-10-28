@@ -18,6 +18,16 @@
           span {{ order.office.name }}
         .text-h5.pa-1
           m-order-status-switcher(:status='order.status')
+        v-tooltip(bottom)
+          template(#activator='{on, attrs}')
+            .text-h5(style='padding: 5px')
+              v-btn(
+                v-on='on',
+                v-bind='attrs',
+                small,
+                color='grey'
+              ) {{ order.password }}
+          span Пароль
 
   template(v-if='!newOrder && order === null')
     v-progress-circular(
