@@ -53,7 +53,7 @@ export default class PageIndex extends Vue {
     },
     {
       date: moment('27.10.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
-      items: [{ type: 'bug', text: 'Исправление Принял(а) на Выдал(а) и т.д относящиеся к печати' }],
+      items: [{ type: 'chore', text: 'Исправление Принял(а) на Выдал(а) и т.д относящиеся к печати' }],
     },
     {
       date: moment('26.10.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
