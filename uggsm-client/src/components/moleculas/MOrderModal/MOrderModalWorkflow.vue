@@ -33,6 +33,17 @@
       :order-id='order.id',
       :customer-name='order.customerName'
     )
+    m-print-repair-contract-i-market(
+      :serial-number='order.serialNumber',
+      :password='order.password',
+      :model='order.phoneModel',
+      :kit='order.kit',
+      :declared-defect='order.declaredDeffect',
+      :client-phone='order.customerPhone',
+      :client-name='order.customerName',
+      :appearance='order.appearance'
+    )
+    m-print-warranty-i-market
   v-toolbar.order-modal-workflow__header(
     flat,
     dense
@@ -60,6 +71,12 @@
           v-list-item(@click='$htmlToPaper("print-check")')
             v-list-item-content
               v-list-item-title Товарный чек
+          v-list-item(@click='$htmlToPaper("print-warranty-i-market")')
+            v-list-item-content
+              v-list-item-title Гарантий талон iMarket
+          v-list-item(@click='$htmlToPaper("print-repair-contract-i-market")')
+            v-list-item-content
+              v-list-item-title Акт приема iMarket
     v-spacer
     v-menu(
       close-on-click,
