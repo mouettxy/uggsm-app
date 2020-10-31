@@ -1,7 +1,7 @@
 <template lang="pug">
 .reports-orders-main
   .reports-orders-main__content.pa-4
-    o-orders-report
+    o-report-orders
 </template>
 
 <script lang="ts">
@@ -12,5 +12,5 @@ import { Component, Vue } from 'vue-property-decorator'
  *
  */
 @Component
-export default class TOrdersMain extends Vue {}
+export default class TReportsOrdersMain extends Vue {}
 </script>

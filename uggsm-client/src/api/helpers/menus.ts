@@ -50,6 +50,24 @@ export const reportsMenu = [
     icon: 'mdi-bat',
     divider: false,
   },
+  {
+    linkName: 'reportsOrdersWithoutWork',
+    title: 'Заявки без работы',
+    icon: 'mdi-account-cancel',
+    divider: false,
+  },
+  {
+    linkName: 'reportsOrdersCount',
+    title: 'Отчёт по количеству',
+    icon: 'mdi-counter',
+    divider: false,
+  },
+  {
+    linkName: 'reportsOrdersDaily',
+    title: 'Ежедневный отчёт',
+    icon: 'mdi-calendar',
+    divider: false,
+  },
 ]
 
 export const settingsMenu = [

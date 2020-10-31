@@ -1,15 +1,15 @@
 <route>
 {
-  "name": "reportsOrders",
+  "name": "reportsOrdersCount",
   "meta": {
-    "header": "Отчёт по заявкам"
+    "header": "Отчёт по количеству"
   }
 }
 </route>
 
 <template lang="pug">
-.page-reports-orders
-  t-reports-orders-main
+.page-reports-orders-count
+  t-reports-orders-count
 </template>
 
 <script lang="ts">
@@ -18,10 +18,10 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component({
   layout: 'reports',
 })
-export default class PageReportsOrders extends Vue {}
+export default class PageReportsOrdersCount extends Vue {}
 </script>
 
 <style lang="sass">
-.page-reports-orders
+.page-reports-orders-count
   width: 100%
 </style>
