@@ -7,6 +7,7 @@ import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
 import { filter, first } from 'lodash'
+import mongoose from 'mongoose'
 
 export class OrdersController implements IOrdersController {
   private order = OrderModel
@@ -362,20 +363,24 @@ export class OrdersController implements IOrdersController {
         office: office._id,
       })
 
-      const firstIteration = await order.save()
+      let saved = await order.save()
 
-      // @ts-ignore
-      firstIteration.setNext('order_id', async (_err, doc) => {
-        const id = generateOrderId(office.ordersTemplateParsed, firstIteration.id)
-        firstIteration.id = id
+      if (saved) {
+        // @ts-ignore
+        saved.setNext('order_id', async (_err, doc) => {
+          const id = generateOrderId(office.ordersTemplateParsed, doc.id)
+          doc.id = id
 
-        const secondIteration = await firstIteration.save()
+          saved = await doc.save()
 
-        response.status(200)
-        api.io.emit('created order', secondIteration)
-        api.io.emit('update orders')
-        response.send(secondIteration)
-      })
+          response.status(200)
+          api.io.emit('created order', saved)
+          api.io.emit('update orders')
+          response.send(saved)
+        })
+      } else {
+        next(new HttpException(500, 'Ошибка валидации полей.'))
+      }
     } catch (error) {
       next(new HttpException(500, error.message))
     }
