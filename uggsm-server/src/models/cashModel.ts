@@ -23,6 +23,8 @@ import mongooseSearch from 'mongoose-partial-search'
     const client = await ClientModel.findById(this.client)
 
     this.comment = `Оплата (Клиент: ${client.name})`
+  } else if (!this.orderid && !this.client && !this.comment) {
+    this.comment = 'Оплата'
   }
 
   let income = await CashModel.aggregate()
@@ -66,7 +68,7 @@ export class Cash {
   @prop()
   public orderid?: number
 
-  @prop({ autopopulate: true, ref: 'Client', required: true })
+  @prop({ autopopulate: true, ref: 'Client' })
   public client?: Ref<Client>
 
   @prop({ autopopulate: true, ref: 'User', required: true })
