@@ -1,7 +1,7 @@
 <template lang="pug">
 .report-orders-count
   v-card
-    v-row.fill-height.orders-report__row
+    v-row.fill-height.report-orders-count__toolbar
       v-col(cols='2')
         v-card-title Количество заявок
       v-col(cols='3')
@@ -137,4 +137,9 @@ export default class OReportsOrdersCount extends Vue {
 }
 </script>
 
-<style lang="sass"></style>
+<style lang="sass">
+.report-orders-count__
+  &toolbar
+    width: 100%
+    align-items: center
+</style>
