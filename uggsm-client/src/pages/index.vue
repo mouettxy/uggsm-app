@@ -38,9 +38,22 @@ import moment from 'moment'
 
 @Component
 export default class PageIndex extends Vue {
-  public date = moment('29.10.2020', 'DD.MM.YYYY').format('DD MMMM YYYY')
+  public date = moment('31.10.2020', 'DD.MM.YYYY').format('DD MMMM YYYY')
 
   public news = [
+    {
+      date: moment('31.10.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      items: [
+        {
+          type: 'feature',
+          text: 'Оплата в кассу больше не требует указания клиента',
+        },
+        {
+          type: 'fix',
+          text: 'Убрана неисправность когда заявка сохранялась с ошибкой и без ID.',
+        },
+      ],
+    },
     {
       date: moment('29.10.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       items: [
