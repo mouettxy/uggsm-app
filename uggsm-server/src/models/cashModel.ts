@@ -56,7 +56,7 @@ import mongooseSearch from 'mongoose-partial-search'
 @plugin(mongoosePaginate)
 @plugin(autopopulate as any)
 export class Cash {
-  @prop({ default: new Date() })
+  @prop({ default: Date.now })
   public createdAt: Date
 
   @prop({ autopopulate: true, ref: 'Office', required: true })
