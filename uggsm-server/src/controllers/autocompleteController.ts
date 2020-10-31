@@ -302,10 +302,7 @@ export class AutocompleteController implements IAutocompleteController {
 
     if (isString(search)) {
       try {
-        const response = await this.user
-          .find({ credentials: new RegExp(search, 'i') })
-          .limit(10)
-          .lean()
+        const response = await this.user.find({ credentials: new RegExp(search, 'i') }).lean()
 
         const returns: string = returnValue ? returnValue : '_id'
 
@@ -341,7 +338,6 @@ export class AutocompleteController implements IAutocompleteController {
         const response = await this.user
           .find({ credentials: new RegExp(search, 'i'), role: { $in: ['master', 'manager', 'administrator'] } })
           .select('_id credentials')
-          .limit(10)
           .lean()
 
         const reduced = reduce(
@@ -376,7 +372,6 @@ export class AutocompleteController implements IAutocompleteController {
         const response = await this.user
           .find({ credentials: new RegExp(search, 'i'), role: { $in: ['manager', 'administrator'] } })
           .select('_id credentials')
-          .limit(10)
           .lean()
 
         const reduced = reduce(

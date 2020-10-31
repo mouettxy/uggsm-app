@@ -48,6 +48,10 @@ export default class PageIndex extends Vue {
           type: 'feature',
           text: 'Печать гарантийного талона и акта приема для iMarket.',
         },
+        {
+          type: 'feature',
+          text: 'Убрано ограничение в количестве подсказок для ввода у полей мастер и менеджер в заявке.',
+        },
       ],
     },
     {
