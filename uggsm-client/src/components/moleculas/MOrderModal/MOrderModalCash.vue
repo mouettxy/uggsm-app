@@ -5,18 +5,20 @@
     flat,
     dense
   )
-    m-cash-modal-actions(
-      :order-id='order.id',
-      :customer='order.customer',
-      type='income'
-    )
-    m-cash-modal-actions(
-      :order-id='order.id',
-      :customer='order.customer',
-      type='consumption'
-    )
+    template(v-if='displayActions')
+      m-cash-modal-actions(
+        :order-id='order.id',
+        :customer='order.customer',
+        type='income'
+      )
+      m-cash-modal-actions(
+        :order-id='order.id',
+        :customer='order.customer',
+        type='consumption'
+      )
     v-spacer
     v-btn(
+      :disabled='!displayActions',
       :color='order.payed ? "success" : "error"',
       @click='setPayed'
     )
@@ -41,7 +43,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { ordersModule, cashModule } from '@/store'
+import { ordersModule, cashModule, authModule } from '@/store'
 import { reduce } from 'lodash'
 import { ordersAPI } from '@/api'
 
@@ -82,6 +84,18 @@ export default class MOrderModalCash extends Vue {
       },
       0
     )
+  }
+
+  get displayActions() {
+    if (authModule.user?.role === 'administrator') {
+      return true
+    }
+
+    if (this.order?.closedAt) {
+      return false
+    } else {
+      return true
+    }
   }
 
   async setPayed() {

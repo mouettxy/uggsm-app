@@ -1,5 +1,6 @@
 <template lang="pug">
 a-center-modal(
+  v-if='enabled',
   v-model='modal',
   content-class='cash-modal-actions'
 )
@@ -74,6 +75,7 @@ export default class MCashModalActions extends Vue {
   @Prop({ required: true, type: String }) type!: 'income' | 'consumption'
   @Prop({ type: [Number, String] }) orderId: any
   @Prop({ type: Object }) customer: any
+  @Prop({ type: Boolean, default: true }) enabled!: boolean
 
   public customerName = null
   public modal = false

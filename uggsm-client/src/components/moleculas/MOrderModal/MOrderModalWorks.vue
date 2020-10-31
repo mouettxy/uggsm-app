@@ -2,6 +2,7 @@
 .order-modal-works.pa-2(v-if='!newOrder')
   .text-h5.mb-4 Выполненная работа
   a-autocomplete(
+    v-if='!isOrderClosed',
     v-model='work',
     label='Выполненная работа',
     icon='mdi-hammer-screwdriver',
@@ -72,6 +73,7 @@
           | Описание: {{ getMessage(item.id) }}
       template(#item.actions='{item}')
         v-btn(
+          :disabled='isOrderClosed',
           @click='deleteWork(item)',
           icon,
           color='red'
@@ -150,6 +152,18 @@ export default class MOrderModalWorks extends Vue {
   onModelUserChange(value: any) {
     if (!value) {
       this.model.user = { text: authModule.user?.credentials, value: authModule.user?.id }
+    }
+  }
+
+  get isOrderClosed() {
+    if (authModule.user?.role === 'administrator') {
+      return false
+    }
+
+    if (this.order?.closedAt) {
+      return true
+    } else {
+      return false
     }
   }
 
