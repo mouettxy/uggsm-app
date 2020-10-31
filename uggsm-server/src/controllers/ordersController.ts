@@ -391,7 +391,7 @@ export class OrdersController implements IOrdersController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    const params = request.query as { firstDate: string; secondDate: string; office: string; status: string }
+    const params = request.query as { date: string | string[]; office: string; status: string }
 
     try {
       const aggregated = await this.order.aggregate([
@@ -444,12 +444,13 @@ export class OrdersController implements IOrdersController {
         },
         {
           $match: {
-            status: params.status,
+            status: { $in: params.status },
             'office.code': params.office,
             closedAt: {
-              $gte: new Date(params.firstDate),
-              $lt: new Date(params.secondDate),
+              $gte: new Date(params.date[0]),
+              $lt: new Date(params.date[1]),
             },
+            statusWork: { $gte: [] },
           },
         },
         {
@@ -473,7 +474,7 @@ export class OrdersController implements IOrdersController {
           $project: {
             master: '$statusWork.credentials',
             manager: '$manager.credentials',
-            date: '$closedAT',
+            date: '$closedAt',
             type: 'Исполнителю за работу в заказе',
             product: {
               $concat: ['Заказ №', '$idString', ' ', '$phoneModel', ' (', '$serialNumber', ') '],
