@@ -61,11 +61,13 @@
               template(#actions)
                 strong.success--text(v-if='getSumOfReport(report) > 0') {{ getSumOfReport(report) }}
                 strong.error--text(v-else) {{ getSumOfReport(report) }}
+                strong.warning--text.ml-1 {{ report.length }}
             v-expansion-panel-content
               v-data-table.elevation-2(
                 :items='report',
                 :headers='tableHeaders',
                 show-expand,
+                items-per-page='10000',
                 hide-default-footer
               )
                 template(#expanded-item='{item, headers}')
