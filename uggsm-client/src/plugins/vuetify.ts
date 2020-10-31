@@ -40,6 +40,7 @@ const vuetifyOpts = {
         error: '#FF5252',
         dark: '#181818',
         light: '#fefefe',
+        softgrey: '#F1F1F1',
       },
       light: {
         primary: '#1859a1',
@@ -52,6 +53,7 @@ const vuetifyOpts = {
         error: '#FF5252',
         dark: '#181818',
         light: '#fefefe',
+        softgrey: '#F1F1F1',
       },
     },
   },

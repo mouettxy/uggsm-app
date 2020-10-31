@@ -6,7 +6,7 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
-import { filter, first } from 'lodash'
+import { filter, first, isArray, isObject } from 'lodash'
 import mongoose from 'mongoose'
 
 export class OrdersController implements IOrdersController {
@@ -651,6 +651,201 @@ export class OrdersController implements IOrdersController {
           },
         },
       ],
+      daily: (newMatch, closedMatch) => ({
+        new: [
+          {
+            $lookup: {
+              from: 'offices',
+              localField: 'office',
+              foreignField: '_id',
+              as: 'office',
+            },
+          },
+          {
+            $unwind: {
+              path: '$office',
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'master',
+              foreignField: '_id',
+              as: 'master',
+            },
+          },
+          {
+            $unwind: {
+              path: '$master',
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'manager',
+              foreignField: '_id',
+              as: 'manager',
+            },
+          },
+          {
+            $unwind: {
+              path: '$manager',
+            },
+          },
+          {
+            $lookup: {
+              from: 'cashes',
+              localField: 'id',
+              foreignField: 'orderid',
+              as: 'cash',
+            },
+          },
+          {
+            $addFields: {
+              cashIncome: {
+                $sum: '$cash.income',
+              },
+            },
+          },
+          {
+            $match: newMatch,
+          },
+          {
+            $group: {
+              _id: {
+                $concat: ['$office.code', '|', '$office.name'],
+              },
+              orders: {
+                $push: {
+                  client: '$customerName',
+                  defect: '$declaredDefect',
+                  phone: '$phoneModel',
+                },
+              },
+              ordersTotal: {
+                $sum: 1,
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              office: '$_id',
+              orders: 1,
+              ordersTotal: 1,
+            },
+          },
+        ],
+        closed: [
+          {
+            $lookup: {
+              from: 'offices',
+              localField: 'office',
+              foreignField: '_id',
+              as: 'office',
+            },
+          },
+          {
+            $unwind: {
+              path: '$office',
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'master',
+              foreignField: '_id',
+              as: 'master',
+            },
+          },
+          {
+            $unwind: {
+              path: '$master',
+            },
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'manager',
+              foreignField: '_id',
+              as: 'manager',
+            },
+          },
+          {
+            $unwind: {
+              path: '$manager',
+            },
+          },
+          {
+            $lookup: {
+              from: 'cashes',
+              localField: 'id',
+              foreignField: 'orderid',
+              as: 'cash',
+            },
+          },
+          {
+            $addFields: {
+              cashIncome: {
+                $sum: '$cash.income',
+              },
+            },
+          },
+          {
+            $match: closedMatch,
+          },
+          {
+            $group: {
+              _id: {
+                $concat: ['$office.code', '|', '$office.name'],
+              },
+              orders: {
+                $push: {
+                  client: '$customerName',
+                  defect: '$declaredDefect',
+                  phone: '$phoneModel',
+                  worksPrice: {
+                    $sum: '$statusWork.price',
+                  },
+                  cashPrice: {
+                    $subtract: [
+                      {
+                        $sum: '$cash.income',
+                      },
+                      {
+                        $sum: '$cash.consumption',
+                      },
+                    ],
+                  },
+                },
+              },
+              ordersTotal: {
+                $sum: 1,
+              },
+            },
+          },
+          {
+            $addFields: {
+              cashSum: {
+                $sum: '$orders.cashPrice',
+              },
+              worksSum: {
+                $sum: '$orders.worksPrice',
+              },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              office: '$_id',
+              orders: 1,
+              ordersTotal: 1,
+              cashSum: 1,
+              worksSum: 1,
+            },
+          },
+        ],
+      }),
     }
 
     try {
@@ -687,6 +882,25 @@ export class OrdersController implements IOrdersController {
             $exists: true,
           },
         })
+      } else if (params.type === 'daily') {
+        aggregate = reports.daily(
+          {
+            createdAt: {
+              $gte: new Date(params.date[0]),
+              $lt: new Date(params.date[1]),
+            },
+            status: {
+              $not: new RegExp('Закрыт', 'i'),
+            },
+          },
+          {
+            closedAt: {
+              $gte: new Date(params.date[0]),
+              $lt: new Date(params.date[1]),
+            },
+            status: 'Закрыт',
+          }
+        )
       } else {
         aggregate = reports.default({
           status: { $in: params.status },
@@ -699,7 +913,14 @@ export class OrdersController implements IOrdersController {
         })
       }
 
-      const aggregated = await this.order.aggregate(aggregate)
+      let aggregated = {}
+      if (isArray(aggregate)) {
+        aggregated = await this.order.aggregate(aggregate)
+      } else if (isObject(aggregate)) {
+        for (const key in aggregate) {
+          aggregated[key] = await this.order.aggregate(aggregate[key])
+        }
+      }
 
       response.status(200)
       response.send(aggregated)
