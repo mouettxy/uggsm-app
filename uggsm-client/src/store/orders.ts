@@ -158,7 +158,7 @@ export default class Orders extends VuexModule {
   }
 
   @Action
-  async generateReport(payload: any) {
+  async generateReport(payload: any & { type: string }) {
     try {
       const response = await axios.get('/order/reports/report', { params: payload })
 

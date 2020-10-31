@@ -391,10 +391,10 @@ export class OrdersController implements IOrdersController {
     response: express.Response,
     next: NextFunction
   ): Promise<void> => {
-    const params = request.query as { date: string | string[]; office: string; status: string }
+    const params = request.query as { date: string | string[]; office: string; status: string; type: string }
 
-    try {
-      const aggregated = await this.order.aggregate([
+    const reports = {
+      default: (match) => [
         {
           $lookup: {
             from: 'offices',
@@ -443,15 +443,7 @@ export class OrdersController implements IOrdersController {
           },
         },
         {
-          $match: {
-            status: { $in: params.status },
-            'office.code': params.office,
-            closedAt: {
-              $gte: new Date(params.date[0]),
-              $lt: new Date(params.date[1]),
-            },
-            statusWork: { $gte: [] },
-          },
+          $match: match,
         },
         {
           $unwind: {
@@ -516,7 +508,76 @@ export class OrdersController implements IOrdersController {
             total: 1,
           },
         },
-      ])
+      ],
+      count: (match) => [
+        {
+          $lookup: {
+            from: 'offices',
+            localField: 'office',
+            foreignField: '_id',
+            as: 'office',
+          },
+        },
+        {
+          $unwind: {
+            path: '$office',
+          },
+        },
+        {
+          $match: match,
+        },
+        {
+          $group: {
+            _id: {
+              $concat: ['$office.code', '|', '$office.name'],
+            },
+            count: {
+              $sum: 1,
+            },
+            statuses: {
+              $addToSet: '$status',
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            office: '$_id',
+            count: 1,
+            statuses: 1,
+          },
+        },
+      ],
+    }
+
+    try {
+      let aggregate
+      if (params.type === 'count') {
+        const options: { createdAt: any; status?: any } = {
+          createdAt: {
+            $gte: new Date(params.date[0]),
+            $lt: new Date(params.date[1]),
+          },
+        }
+
+        if (params.status) {
+          options.status = { $in: options.status }
+        }
+
+        aggregate = reports.count(options)
+      } else {
+        aggregate = reports.default({
+          status: { $in: params.status },
+          'office.code': params.office,
+          closedAt: {
+            $gte: new Date(params.date[0]),
+            $lt: new Date(params.date[1]),
+          },
+          statusWork: { $gte: [] },
+        })
+      }
+
+      const aggregated = await this.order.aggregate(aggregate)
 
       response.status(200)
       response.send(aggregated)
