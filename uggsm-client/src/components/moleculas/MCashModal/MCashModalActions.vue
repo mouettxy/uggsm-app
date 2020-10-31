@@ -38,6 +38,7 @@ a-center-modal(
           label='Имя клиента',
           hide-details,
           endpoint='/customer-name',
+          disallow-free-type,
           dense
         )
         m-cash-modal-check.my-8(

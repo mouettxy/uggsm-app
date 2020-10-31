@@ -39,6 +39,7 @@ export default class AAutocomplete extends Vue {
   @Prop(Array) predefinedItems: any
   @Prop(Boolean) returnObject!: boolean
   @Prop(Boolean) hideDetails!: boolean
+  @Prop(Boolean) disallowFreeType!: boolean
 
   public items: Array<any> = []
   public query = ''
@@ -50,7 +51,7 @@ export default class AAutocomplete extends Vue {
 
       this.items = items
 
-      if (isEmpty(this.items)) {
+      if (isEmpty(this.items) && !this.disallowFreeType) {
         this.items.push({ value: this.query, text: this.query })
       }
     }
@@ -100,6 +101,7 @@ export default class AAutocomplete extends Vue {
   mounted() {
     if (this.predefinedItems) {
       this.items = this.predefinedItems
+      console.log(this.items, this.predefinedItems)
     }
   }
 }
