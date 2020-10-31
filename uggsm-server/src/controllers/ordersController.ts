@@ -548,6 +548,109 @@ export class OrdersController implements IOrdersController {
           },
         },
       ],
+      withoutWork: (match) => [
+        {
+          $lookup: {
+            from: 'offices',
+            localField: 'office',
+            foreignField: '_id',
+            as: 'office',
+          },
+        },
+        {
+          $unwind: {
+            path: '$office',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'master',
+            foreignField: '_id',
+            as: 'master',
+          },
+        },
+        {
+          $unwind: {
+            path: '$master',
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'manager',
+            foreignField: '_id',
+            as: 'manager',
+          },
+        },
+        {
+          $unwind: {
+            path: '$manager',
+          },
+        },
+        {
+          $lookup: {
+            from: 'cashes',
+            localField: 'id',
+            foreignField: 'orderid',
+            as: 'cash',
+          },
+        },
+        {
+          $addFields: {
+            cashIncome: {
+              $sum: '$cash.income',
+            },
+          },
+        },
+        {
+          $match: match,
+        },
+        {
+          $addFields: {
+            idString: {
+              $toString: '$id',
+            },
+          },
+        },
+        {
+          $project: {
+            office: {
+              $concat: ['$office.code', '|', '$office.name'],
+            },
+            master: '$master.credentials',
+            manager: '$manager.credentials',
+            createdAt: '$createdAt',
+            closedAt: '$closedAt',
+            id: '$id',
+            product: {
+              $concat: ['Заказ №', '$idString', ' ', '$phoneModel', ' (', '$serialNumber', ')'],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: '$office',
+            orders: {
+              $push: {
+                master: '$master',
+                manager: '$manager',
+                createdAt: '$createdAt',
+                closedAt: '$closedAt',
+                id: '$id',
+                product: '$product',
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            office: '$_id',
+            orders: '$orders',
+          },
+        },
+      ],
     }
 
     try {
@@ -565,6 +668,25 @@ export class OrdersController implements IOrdersController {
         }
 
         aggregate = reports.count(options)
+      } else if (params.type === 'without-work') {
+        aggregate = reports.withoutWork({
+          status: { $in: params.status },
+          $or: [
+            {
+              statusWork: [],
+            },
+            {
+              cashIncome: 0,
+            },
+          ],
+          closedAt: {
+            $gte: new Date(params.date[0]),
+            $lt: new Date(params.date[1]),
+          },
+          createdAt: {
+            $exists: true,
+          },
+        })
       } else {
         aggregate = reports.default({
           status: { $in: params.status },
