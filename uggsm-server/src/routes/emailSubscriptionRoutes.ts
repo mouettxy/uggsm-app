@@ -3,7 +3,7 @@ import BaseRouter from './heplers/BaseRouter'
 
 export class EmailSubscriptionRouter extends BaseRouter {
   constructor() {
-    super(EmailSubscriptionController, 'email-subscriptions')
+    super(EmailSubscriptionController, '/email-subscriptions')
   }
 
   initializeRoutes() {

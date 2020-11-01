@@ -83,4 +83,10 @@ export const settingsMenu = [
     icon: 'mdi-office-building-marker',
     divider: true,
   },
+  {
+    linkName: 'settingsManageDailySubscriptions',
+    title: 'Управление ежедневными отчётами',
+    icon: 'mdi-calendar',
+    divider: true,
+  },
 ]
