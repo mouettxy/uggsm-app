@@ -457,7 +457,7 @@ export const aggregationsList = {
 }
 
 export default async function (
-  params: { date: string | string[]; office: string; status: string; type: string },
+  params: { date?: string | string[]; office?: string; status?: string; type?: string },
   model: any
 ) {
   let aggregate
