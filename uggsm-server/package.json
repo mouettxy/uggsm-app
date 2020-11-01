@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --fix ./src/**/*.ts",
-    "dev": "nodemon --watch src -e ts --exec ts-node ./src/server.ts",
+    "dev": "nodemon --watch src -e ts,pug,env,css --exec ts-node ./src/server.ts",
     "start": "npm-run-all clean lint compile start:server",
     "start:server": "node ./dist/server.js",
     "clean": "rimraf dist/*",
@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@typegoose/typegoose": "^7.4.0",
+    "@types/email-templates": "^7.1.0",
     "agenda": "^3.1.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
@@ -34,6 +35,7 @@
     "mongoose-paginate-v2": "^1.3.9",
     "mongoose-partial-search": "^1.0.5",
     "mongoose-sequence": "^5.2.2",
+    "pug": "^3.0.0",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^2.3.0"
   },
