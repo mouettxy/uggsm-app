@@ -1,0 +1,253 @@
+[
+  {
+    "timestamp": 1604265319334,
+    "files": [
+      {
+        "filename": "css/app.0852e52a.css",
+        "previous": 0,
+        "size": 2396,
+        "diff": 2396
+      },
+      {
+        "filename": "js/app.********.js",
+        "previous": 0,
+        "size": 304032,
+        "diff": 304032
+      },
+      {
+        "filename": "css/chunk-1a90f890.2ac1f8d2.css",
+        "previous": 0,
+        "size": 199,
+        "diff": 199
+      },
+      {
+        "filename": "js/chunk-1a90f890.********.js",
+        "previous": 0,
+        "size": 1289,
+        "diff": 1289
+      },
+      {
+        "filename": "css/chunk-4768f777.1ce35ec5.css",
+        "previous": 0,
+        "size": 199,
+        "diff": 199
+      },
+      {
+        "filename": "js/chunk-4768f777.********.js",
+        "previous": 0,
+        "size": 1309,
+        "diff": 1309
+      },
+      {
+        "filename": "css/chunk-5f9b2196.2ac1f8d2.css",
+        "previous": 0,
+        "size": 199,
+        "diff": 199
+      },
+      {
+        "filename": "js/chunk-5f9b2196.********.js",
+        "previous": 0,
+        "size": 1310,
+        "diff": 1310
+      },
+      {
+        "filename": "css/chunk-e32507c4.2ac1f8d2.css",
+        "previous": 0,
+        "size": 199,
+        "diff": 199
+      },
+      {
+        "filename": "js/chunk-e32507c4.********.js",
+        "previous": 0,
+        "size": 1333,
+        "diff": 1333
+      },
+      {
+        "filename": "css/chunk-e4df013a.2ac1f8d2.css",
+        "previous": 0,
+        "size": 199,
+        "diff": 199
+      },
+      {
+        "filename": "js/chunk-e4df013a.********.js",
+        "previous": 0,
+        "size": 1301,
+        "diff": 1301
+      },
+      {
+        "filename": "js/page-analytic.********.js",
+        "previous": 0,
+        "size": 567,
+        "diff": 567
+      },
+      {
+        "filename": "js/page-cash.********.js",
+        "previous": 0,
+        "size": 402,
+        "diff": 402
+      },
+      {
+        "filename": "js/page-clients.********.js",
+        "previous": 0,
+        "size": 407,
+        "diff": 407
+      },
+      {
+        "filename": "js/page-index.********.js",
+        "previous": 0,
+        "size": 1773,
+        "diff": 1773
+      },
+      {
+        "filename": "css/page-login.3e35a67c.css",
+        "previous": 0,
+        "size": 43,
+        "diff": 43
+      },
+      {
+        "filename": "js/page-login.********.js",
+        "previous": 0,
+        "size": 486,
+        "diff": 486
+      },
+      {
+        "filename": "css/page-reports-index.99ff20c1.css",
+        "previous": 0,
+        "size": 44,
+        "diff": 44
+      },
+      {
+        "filename": "js/page-reports-index.********.js",
+        "previous": 0,
+        "size": 467,
+        "diff": 467
+      },
+      {
+        "filename": "css/page-reports-orders.4e11dcbf.css",
+        "previous": 0,
+        "size": 52,
+        "diff": 52
+      },
+      {
+        "filename": "js/page-reports-orders.********.js",
+        "previous": 0,
+        "size": 461,
+        "diff": 461
+      },
+      {
+        "filename": "css/page-reports-orders-closed-incorrect.df8b8fac.css",
+        "previous": 0,
+        "size": 65,
+        "diff": 65
+      },
+      {
+        "filename": "js/page-reports-orders-closed-incorrect.********.js",
+        "previous": 0,
+        "size": 477,
+        "diff": 477
+      },
+      {
+        "filename": "css/page-reports-orders-count.0c203d90.css",
+        "previous": 0,
+        "size": 58,
+        "diff": 58
+      },
+      {
+        "filename": "js/page-reports-orders-count.********.js",
+        "previous": 0,
+        "size": 457,
+        "diff": 457
+      },
+      {
+        "filename": "css/page-reports-orders-daily.0fda71e7.css",
+        "previous": 0,
+        "size": 58,
+        "diff": 58
+      },
+      {
+        "filename": "js/page-reports-orders-daily.********.js",
+        "previous": 0,
+        "size": 459,
+        "diff": 459
+      },
+      {
+        "filename": "js/page-settings-index.********.js",
+        "previous": 0,
+        "size": 428,
+        "diff": 428
+      },
+      {
+        "filename": "css/page-settings-manage-daily-subscriptions.12305772.css",
+        "previous": 0,
+        "size": 79,
+        "diff": 79
+      },
+      {
+        "filename": "js/page-settings-manage-daily-subscriptions.********.js",
+        "previous": 0,
+        "size": 485,
+        "diff": 485
+      },
+      {
+        "filename": "css/page-settings-new-office.6d6beb56.css",
+        "previous": 0,
+        "size": 65,
+        "diff": 65
+      },
+      {
+        "filename": "js/page-settings-new-office.********.js",
+        "previous": 0,
+        "size": 464,
+        "diff": 464
+      },
+      {
+        "filename": "css/page-settings-new-user.01bcb364.css",
+        "previous": 0,
+        "size": 63,
+        "diff": 63
+      },
+      {
+        "filename": "js/page-settings-new-user.********.js",
+        "previous": 0,
+        "size": 458,
+        "diff": 458
+      },
+      {
+        "filename": "js/runtime~app.********.js",
+        "previous": 0,
+        "size": 2038,
+        "diff": 2038
+      },
+      {
+        "filename": "css/vuetify.95740b42.css",
+        "previous": 0,
+        "size": 3093,
+        "diff": 3093
+      },
+      {
+        "filename": "js/vuetify.********.js",
+        "previous": 0,
+        "size": 83191,
+        "diff": 83191
+      },
+      {
+        "filename": "index.html",
+        "previous": 0,
+        "size": 1373,
+        "diff": 1373
+      },
+      {
+        "filename": "precache-manifest.5a8e9e6649e178b4f73bf674310a8937.js",
+        "previous": 0,
+        "size": 1344,
+        "diff": 1344
+      },
+      {
+        "filename": "service-worker.js",
+        "previous": 0,
+        "size": 628,
+        "diff": 628
+      }
+    ]
+  }
+]
