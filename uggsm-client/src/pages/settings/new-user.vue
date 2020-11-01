@@ -9,7 +9,7 @@
 
 <template lang="pug">
 .page-settings-new-user
-  t-settings-new-user
+  t-register-main
 </template>
 
 <script lang="ts">
