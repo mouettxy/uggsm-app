@@ -52,11 +52,6 @@ module.exports = {
       isProductionEnvFlag ? new SizePlugin() : () => {},
       isProductionEnvFlag ? new DuplicatePackageCheckerPlugin() : () => {},
       isProductionEnvFlag
-        ? new PurgecssPlugin({
-            paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true }),
-          })
-        : () => {},
-      isProductionEnvFlag
         ? new CompressionPlugin({
             filename: '[path][base].gz',
             algorithm: 'gzip',
