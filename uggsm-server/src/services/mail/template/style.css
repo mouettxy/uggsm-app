@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;900&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #fafafa;
+}
+
+h3 {
+  font-size: 20px;
+  text-align: center;
+  font-weight: 900;
+}
+
+section {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.toggle {
+  display: none;
+}
+
+.report {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.22);
+  padding: 12px;
+}
+
+.office-toolbar {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 8px 12px 8px 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 3px 0 rgba(0,0,0,0.20);
+}
+
+.office-toolbar:hover {
+  background: #f1f1f1;
+  opacity: .9;
+}
+
+.office-toolbar:active {
+  background: #f0f0f0;
+  opacity: .7;
+}
+
+.office-toolbar .office-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1859a1;
+}
+
+.office-toolbar .office-count {
+  font-size: 18px;
+  font-weight: 500;
+  color: #ff6961;
+  text-align: right;
+}
+
+.collapsible-content__inner {
+  padding: 24px 24px 32px 24px;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.table-head .table-head__cell {
+  border-bottom: 1px solid #757575;
+  padding: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.table-body .table-body__cell {
+  padding: 6px;
+  text-align: left;
+  font-weight: 300;
+  font-size: 12px;
+  border-bottom: 1px solid #858585
+}
+
+.overview-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center
+}
+
+.overview-table .overview__cell {
+  padding: 6px;
+}

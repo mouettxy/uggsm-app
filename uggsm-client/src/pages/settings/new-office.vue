@@ -9,7 +9,7 @@
 
 <template lang="pug">
 .page-settings-new-office
-  t-office-main
+  t-settings-new-office
 </template>
 
 <script lang="ts">
