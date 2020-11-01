@@ -10,9 +10,11 @@ import {
   CashRouter,
   AdversitementRouter,
   AutocompleteRouter,
+  EmailSubscriptionRouter,
 } from './routes'
 import { ClientRouter } from './routes/clientRoutes'
 import { validateEnv } from './utils'
+import './services/jobs'
 
 validateEnv()
 
@@ -25,6 +27,7 @@ export const api = new RestApi([
   new ClientRouter(),
   new AdversitementRouter(),
   new AutocompleteRouter(),
+  new EmailSubscriptionRouter(),
 ])
 
 api.io.on('connection', () => {
