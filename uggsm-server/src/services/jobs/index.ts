@@ -22,5 +22,5 @@ agenda.define('send daily order reports', async (job) => {
   // IIFE to give access to async/await
   await agenda.start()
 
-  await agenda.every('17 20 * * *', 'send daily order reports')
+  await agenda.every('00 20 * * *', 'send daily order reports')
 })()

@@ -10,10 +10,7 @@ export async function sendDailyReport(to: string) {
   const report: any = await generateReport(
     {
       type: 'daily',
-      date: [
-        moment('11.10.2020', 'DD.MM.YYYY').startOf('day').toISOString(),
-        moment('30.10.2020', 'DD.MM.YYYY').endOf('day').toISOString(),
-      ],
+      date: [moment().startOf('day').toISOString(), moment().endOf('day').toISOString()],
     },
     OrderModel
   )
@@ -43,6 +40,7 @@ export async function sendDailyReport(to: string) {
         relativeTo: path.resolve('src/services/mail/template'),
       },
     },
+    preview: false,
     /* preview: {
       id: 'testEmail',
       dir: __dirname,
