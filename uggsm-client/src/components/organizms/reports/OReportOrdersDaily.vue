@@ -11,7 +11,10 @@
         ) Обновить
     template(v-if='reports && reports.new.length && reports.closed.length')
       v-container(fluid)
-        v-expansion-panels
+        v-expansion-panels(
+          v-model='panels',
+          multiple
+        )
           v-expansion-panel
             v-expansion-panel-header
               strong Созданы сегодня
@@ -86,6 +89,7 @@ import JsonExcel from 'vue-json-excel'
 })
 export default class OReportsOrdersDaily extends Vue {
   public reports: any = null
+  public panels = [0, 1]
 
   public tableNewHeaders = [
     {
