@@ -28,6 +28,7 @@
       :dense='dense',
       :hint='hint',
       validate-on-blur,
+      v-mask='phoneMask',
       outlined,
       clearable
     )
@@ -51,6 +52,7 @@ export default class AInput extends Vue {
   @Prop(String) type: any
   @Prop(Boolean) dense: any
   @Prop(Boolean) hideDetails!: boolean
+  @Prop({ type: Boolean, default: false }) phone!: boolean
   @Ref('input') input: any
 
   get model() {
@@ -58,12 +60,15 @@ export default class AInput extends Vue {
   }
 
   set model(value) {
-    /**
-     * Emits changed input
-     *
-     * @property {string} value - changed string
-     */
     this.$emit('input', value)
+  }
+
+  get phoneMask() {
+    if (this.phone) {
+      return '+7 (###) ###-##-##'
+    } else {
+      return false
+    }
   }
 
   @Emit('change')
