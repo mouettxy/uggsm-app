@@ -1,21 +1,19 @@
 <template lang="pug">
 .right-modal
-  slot(
-    name='activator',
-    :click='toggleModal'
-  )
   v-dialog(
-    v-model='value',
+    v-model='model',
     transition='dialog-bottom-transition',
     persistent,
-    overlay-opacity='0.8',
     content-class='right-modal'
   )
-    v-card.card
+    template(#activator='{on, attrs}')
       slot(
-        name='content',
-        :close='toggleModal'
+        name='activator',
+        :on='on',
+        :attrs='attrs'
       )
+    v-card
+      slot(name='content')
 </template>
 
 <script lang="ts">
@@ -23,19 +21,22 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class ARightModal extends Vue {
-  value = false
-  @Prop(String) title: any
-  @Prop(Boolean) active: any
+  @Prop(Boolean) value!: boolean
 
-  toggleModal() {
-    this.value = !this.value
-    document.documentElement.classList.remove('overflow-y-hidden')
+  get model() {
+    return this.value
+  }
+
+  set model(value) {
+    if (!value) {
+      document.documentElement.classList.remove('overflow-y-hidden')
+    } else {
+      document.documentElement.classList.add('overflow-y-hidden')
+    }
+    this.$emit('input', value)
   }
 
   mounted() {
-    if (this.active) {
-      this.value = true
-    }
     document.documentElement.classList.add('overflow-y-hidden')
   }
 }
@@ -45,9 +46,9 @@ export default class ARightModal extends Vue {
 .v-dialog.right-modal
   position: absolute
   height: 100vh
-  width: 65vw !important
+  width: 50vw !important
   top: 0
-  left: 35vw
+  left: 50vw
   border-radius: 0px !important
   max-height: 100%
   margin: 0
