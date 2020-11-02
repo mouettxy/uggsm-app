@@ -219,7 +219,7 @@ export default class MOrderModalWorks extends Vue {
     try {
       if (this.order) {
         if (!this.model.user) {
-          this.model.user = { text: authModule.user?.credentials, value: authModule.user?.id }
+          this.model.user = { text: this.order.master.credentials, value: this.order.master.id }
         }
 
         this.model.userid = this.model.user.value
