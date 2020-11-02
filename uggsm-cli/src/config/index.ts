@@ -1,4 +1,5 @@
 export const config = {
+  githubToken: 'cb558a31c39373bd7867eee0376d9e907f0d41a9',
   folders: {
     buildedServer: `${__dirname}/uggsm-server/dist`,
     buildedServerPackage: `${__dirname}/uggsm-server/package.json`,
