@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build-backup-system": "cd uggsm-backup-system && npm run compile",
     "build-client": "cd uggsm-client && npm run build",
     "dev-client": "cd uggsm-client && npm run serve",
     "build-server": "cd uggsm-server && npm run compile",

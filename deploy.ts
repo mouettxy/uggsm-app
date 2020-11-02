@@ -14,11 +14,15 @@ const config = {
     buildedServer: `${__dirname}/uggsm-server/dist`,
     buildedServerPackage: `${__dirname}/uggsm-server/package.json`,
     buildedClient: `${__dirname}/uggsm-client/dist`,
+    buildedBackupSystem: `${__dirname}/uggsm-backup-system/dist`,
+    buildedBackupSystemPackage: `${__dirname}/uggsm-backup-system/package.json`,
   },
   server: {
     serverFolder: '/var/www/api',
     serverFolderPackage: '/var/www/api/package.json',
     clientFolder: '/var/www/app',
+    backupSystemFolder: '/var/uggsm-backup',
+    backupSystemFolderPackage: '/var/uggsm-backup/package.json',
   },
 }
 
@@ -61,6 +65,15 @@ function logScopeCommands(message: string) {
   }
 }
 
+function logScopeBackupSystem(message: string) {
+  if (!currentSpinnerInstance) {
+    currentSpinnerInstance = ora('[BACKUP SYSTEM] ' + message).start()
+  } else {
+    currentSpinnerInstance.stop()
+    currentSpinnerInstance = ora('[BACKUP SYSTEM] ' + message).start()
+  }
+}
+
 function logScopeGlobal(message: string) {
   if (!currentSpinnerInstance) {
     currentSpinnerInstance = ora('[GLOBAL] ' + message).start()
@@ -90,6 +103,30 @@ async function deployServer(ssh: NodeSSH, config: any) {
   logScopeClient('Removing local dist folder...')
   fs.rmdirSync(config.folders.buildedServer, { recursive: true })
   logScopeClient('Local dist folder succesefully removed')
+
+  return Promise.resolve(true)
+}
+
+async function deployBackupSystem(ssh: NodeSSH, config: any) {
+  logScopeBackupSystem('Build started ...')
+  await exec('npm run build-backup-system')
+  logScopeBackupSystem('Build completed')
+  await ssh.execCommand(`rm -rf /var/uggsm-backup`, { cwd: '/' })
+  logScopeBackupSystem('Folder removed')
+  await ssh.putDirectory(config.folders.buildedBackupSystem, config.server.backupSystemFolder, {
+    recursive: true,
+    concurrency: 10,
+  })
+  logScopeBackupSystem('Folder putted in')
+  await ssh.putFile(config.folders.buildedBackupSystemPackage, config.server.backupSystemFolderPackage)
+  logScopeBackupSystem('Package file putted in')
+  logScopeBackupSystem('Installing modules on server ...')
+  await ssh.execCommand('npm i', { cwd: config.server.backupSystemFolder })
+  logScopeBackupSystem('Packages installed')
+  logScopeBackupSystem('Deployed succesefully')
+  logScopeBackupSystem('Removing local dist folder...')
+  fs.rmdirSync(config.folders.buildedBackupSystem, { recursive: true })
+  logScopeBackupSystem('Local dist folder succesefully removed')
 
   return Promise.resolve(true)
 }
@@ -135,6 +172,12 @@ async function run(scope: string) {
     await deployClient(ssh, config)
 
     logScopeGlobal('Client and server deployed succesefully')
+  }
+
+  if (scope === 'deploy-backup-system') {
+    await deployBackupSystem(ssh, config)
+
+    logScopeGlobal('Backup system deployed succesefully')
   }
 
   process.exit()
@@ -195,8 +238,23 @@ async function runCommands(command: string) {
       nginx: (await ssh.execCommand('systemctl status nginx')).stdout,
     }
     logScopeCommands('Current status got succesefully')
-  } else if (command === 'backup') {
-    console.log('ahahahahh')
+  } else if (command === 'restart-backup') {
+    logScopeCommands('Run nginx restart...')
+    await ssh.execCommand('systemctl restart uggsm-backup')
+    logScopeCommands('Restarted succesefully')
+    logScopeCommands('Waiting to startup...')
+    await sleep(10000)
+    logScopeCommands('Geting current status...')
+    result = {
+      uggsmBackup: (await ssh.execCommand('systemctl status uggsm-backup')).stdout,
+    }
+    logScopeCommands('Current status got succesefully')
+  } else if (command === 'create-backup') {
+    await ssh.execCommand('cd /var/uggsm-backup && /usr/bin/node index.js --dump')
+
+    result = {
+      backup: 'created succesefully',
+    }
   }
 
   for (const key in result) {
@@ -247,6 +305,10 @@ async function cli() {
             name: 'Только сервер',
             value: 'deploy-only-server',
           },
+          {
+            name: 'Только система бэкапов',
+            value: 'deploy-backup-system',
+          },
         ],
       },
     ])
@@ -267,7 +329,7 @@ async function cli() {
           },
           {
             name: 'Бэкап',
-            value: 'backup',
+            value: 'create-backup',
           },
           {
             name: 'Рестарт сервера',
@@ -280,6 +342,10 @@ async function cli() {
           {
             name: 'Рестарт нгинкс',
             value: 'restart-nginx',
+          },
+          {
+            name: 'Рестарт бэкап системы',
+            value: 'restart-backup',
           },
         ],
       },
