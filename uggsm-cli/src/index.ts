@@ -1,38 +1,49 @@
+import { each } from 'lodash'
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { NodeSSH } from 'node-ssh'
 import * as fs from 'fs'
 import * as inquirer from 'inquirer'
 import { exec } from 'promisify-child-process'
-import ora from 'ora'
 import config from './config'
-import { connectSSH, sleep } from './helpers'
+import { connectSSH, sleep, downloadFile, getFolderFrom } from './helpers'
 import { log } from './helpers/logging'
+import * as temp from 'temp'
+import decompress from 'decompress'
+import decompressTargz from 'decompress-targz'
+import * as path from 'path'
 
+temp.track()
 const currentSpinnerInstance = null
 
 async function deployServer(ssh: NodeSSH, config: any) {
   log('server', 'Собираем проект ...', currentSpinnerInstance)
-  await exec('npm run build-server')
+  try {
+    const folder = await getFolderFrom('server', temp, config.githubToken)
+
+    console.log(folder)
+  } catch (error) {
+    console.log(error)
+  }
   log('server', 'Сборка завершена', currentSpinnerInstance)
 
   log('server', 'Удаляем файлы старой сборки ...', currentSpinnerInstance)
-  await ssh.execCommand(`rm -rf /var/www/api`, { cwd: '/' })
+  //await ssh.execCommand(`rm -rf /var/www/api`, { cwd: '/' })
   log('server', 'Файлы старой сборки удалены успешно', currentSpinnerInstance)
 
   log('server', 'Размещаем файлы новой сборки ...', currentSpinnerInstance)
-  await ssh.putDirectory(config.folders.buildedServer, config.server.serverFolder, {
+  /* await ssh.putDirectory(config.folders.buildedServer, config.server.serverFolder, {
     recursive: true,
     concurrency: 10,
-  })
+  }) */
   log('server', 'Файлы новой сборки размещены успешно', currentSpinnerInstance)
 
   log('server', 'Устанавливаем зависимости на сервере ...', currentSpinnerInstance)
-  await ssh.putFile(config.folders.buildedServerPackage, config.server.serverFolderPackage)
-  await ssh.execCommand('npm i', { cwd: config.server.serverFolder })
+  /* await ssh.putFile(config.folders.buildedServerPackage, config.server.serverFolderPackage)
+  await ssh.execCommand('npm i', { cwd: config.server.serverFolder }) */
   log('server', 'Зависимости установлены успешно', currentSpinnerInstance)
 
   log('server', 'Удаляем временные файлы проекта ...', currentSpinnerInstance)
-  fs.rmdirSync(config.folders.buildedServer, { recursive: true })
+  /* fs.rmdirSync(config.folders.buildedServer, { recursive: true }) */
   log('server', 'Временные файлы удалены успешно', currentSpinnerInstance)
 
   return Promise.resolve(true)
@@ -87,9 +98,9 @@ async function deployClient(ssh: NodeSSH, config: any) {
 
 async function run(scope: string) {
   const ssh = await connectSSH(new NodeSSH(), {
-    host: process.env.DEPLOY_HOST,
-    username: process.env.DEPLOY_USER,
-    password: process.env.DEPLOY_PASSWD,
+    host: '194.58.120.238',
+    username: 'default_user',
+    password: 'xBfk55TUxqmBKMWC',
   })
 
   if (scope === 'deploy-only-server') {
@@ -311,4 +322,6 @@ async function cli() {
   }
 }
 
-cli()
+/* cli() */
+
+run('deploy-only-server')
