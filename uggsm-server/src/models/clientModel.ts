@@ -1,3 +1,4 @@
+import { trim, startsWith } from 'lodash'
 import { getModelForClass, prop, plugin, ReturnModelType, Ref, pre } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
@@ -20,9 +21,37 @@ export class ClientPhone {
 }
 
 @pre<Client>('save', async function () {
-  // if (!this.adversitement) {
-  //   // this.adversitement = (await AdversitementModel.findOne({ name: 'default' }))._id
-  // }
+  if (this.phone) {
+    for (const key in this.phone) {
+      let phone = this.phone[key].phone
+
+      phone = trim(phone)
+
+      if (startsWith(phone, '+7')) {
+        phone = phone.slice(2)
+      }
+
+      if (startsWith(phone, '7')) {
+        phone = phone.slice(1)
+      }
+
+      if (startsWith(phone, '8')) {
+        phone = phone.slice(1)
+      }
+
+      phone = phone.replace(/[^0-9]/g, '')
+
+      if (phone.length < 10) {
+        phone = ''
+      }
+
+      if (phone.length > 10) {
+        phone = phone.substring(0, 10)
+      }
+
+      this.phone[key].phone = phone
+    }
+  }
 })
 @plugin(mongoosePaginate)
 @plugin(AutoIncrement as any, {

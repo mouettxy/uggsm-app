@@ -58,7 +58,7 @@
             v-on='on',
             v-bind='attrs',
             :href='`tel:+7${v.phone}`'
-          ) +7 {{ v.phone }}
+          ) {{ v.phone | VMask("+7 (###) ###-##-##") }}
         span {{ v.comment }}
     template(#item.notifications='{value}')
       v-icon.pa-2(
