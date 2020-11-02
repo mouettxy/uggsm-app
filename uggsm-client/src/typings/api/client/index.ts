@@ -18,7 +18,7 @@ export type Client = {
   isConflict: boolean
   _id: string
   name: string
-  phone: [ClientPhone]
+  phone: ClientPhone[]
   id: number
 }
 
