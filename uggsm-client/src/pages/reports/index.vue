@@ -2,14 +2,14 @@
 {
   "name": "reports",
   "meta": {
-    "header": "Отчёты"
+    "header": "Ежедневный отчёт"
   }
 }
 </route>
 
 <template lang="pug">
 .page-orders
-  t-reports-main
+  t-reports-orders-daily
 </template>
 
 <script lang="ts">

@@ -62,12 +62,6 @@ export const reportsMenu = [
     icon: 'mdi-counter',
     divider: false,
   },
-  {
-    linkName: 'reportsOrdersDaily',
-    title: 'Ежедневный отчёт',
-    icon: 'mdi-calendar',
-    divider: false,
-  },
 ]
 
 export const settingsMenu = [
