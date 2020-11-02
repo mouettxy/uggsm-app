@@ -2,7 +2,7 @@
 {
   "name": "reportsOrdersWithoutWork",
   "meta": {
-    "header": "Отчёт по заявкам без работы"
+    "header": "Создано"
   }
 }
 </route>

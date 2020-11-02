@@ -46,19 +46,19 @@ export const defaultMenu = [
 export const reportsMenu = [
   {
     linkName: 'reportsOrders',
-    title: 'Заявки',
+    title: 'Закрыто',
     icon: 'mdi-bat',
     divider: false,
   },
   {
     linkName: 'reportsOrdersWithoutWork',
-    title: 'Заявки без работы',
+    title: 'Создано',
     icon: 'mdi-account-cancel',
     divider: false,
   },
   {
     linkName: 'reportsOrdersCount',
-    title: 'Отчёт по количеству',
+    title: 'В работе',
     icon: 'mdi-counter',
     divider: false,
   },

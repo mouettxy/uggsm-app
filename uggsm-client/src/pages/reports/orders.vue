@@ -2,7 +2,7 @@
 {
   "name": "reportsOrders",
   "meta": {
-    "header": "Отчёт по заявкам"
+    "header": "Закрыто"
   }
 }
 </route>
