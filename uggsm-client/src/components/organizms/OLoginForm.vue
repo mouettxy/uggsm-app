@@ -4,13 +4,13 @@ v-form.login-form(
   v-model='valid',
   @submit.prevent='onLogin'
 )
-  a-input(
+  a-input.mb-1(
     v-model='user.username',
     :validate='usernameRules',
     label='Логин',
     icon='mdi-account'
   )
-  a-input(
+  a-input.mb-1(
     v-model='user.password',
     :validate='passwordRules',
     type='password',

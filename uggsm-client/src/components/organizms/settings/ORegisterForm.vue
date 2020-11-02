@@ -4,14 +4,14 @@ v-form.register-form(
   v-model='valid',
   @submit.prevent='onRegister'
 )
-  a-input(
+  a-input.mb-1(
     v-model.trim='user.username',
     :validate='usernameRules',
     label='Логин',
     icon='mdi-account',
     dense
   )
-  a-input(
+  a-input.mb-1(
     v-model.trim='user.password',
     :validate='passwordRules',
     type='password',
@@ -19,7 +19,7 @@ v-form.register-form(
     icon='mdi-lock',
     dense
   )
-  a-input(
+  a-input.mb-1(
     v-model.trim='user.credentials',
     :validate='credentialsRules',
     type='text',
@@ -27,18 +27,18 @@ v-form.register-form(
     icon='mdi-rename-box',
     dense
   )
-  a-select(
+  a-select.mb-1(
     v-model.trim='user.role',
     :items='["Администратор", "Мастер", "Менеджер"]',
     label='Роль пользователя в системе',
     icon='mdi-account-hard-hat',
     dense
   )
-  m-office-switcher(
+  m-office-switcher.mb-1(
     v-model='user.office',
     :items='offices'
   )
-  a-input.mt-6(
+  a-input.mb-1(
     v-model.trim='user.masterPwd',
     :validate='masterPwdRules',
     label='Мастер пароль',
