@@ -4,6 +4,7 @@ import { settingsModule } from '.'
 import { Client as ClientType } from '@/typings/api/client'
 import { clientAPI } from '@/api'
 import moment from 'moment'
+import axios from '@/plugins/axios'
 @Module({
   namespaced: true,
   name: 'client',
@@ -85,6 +86,81 @@ export default class Client extends VuexModule {
 
     this.context.commit('SET_CLIENTS', await clientAPI().getPaginated(query))
     this.context.commit('SET_LOADING', false)
+  }
+
+  @Action
+  async getOneById(id: number | string) {
+    try {
+      const response = await axios.get(`/client/${id}`)
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  }
+
+  @Action
+  async getOneByName(name: string) {
+    try {
+      const response = await axios.get(`/client/name/${name}`)
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  }
+
+  @Action
+  async create(payload: ClientType) {
+    try {
+      const response = await axios.post(`/client/`, payload)
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  }
+
+  @Action
+  async updateById(payload: ClientType) {
+    try {
+      const response = await axios.put(`/client/${payload.id}`, payload)
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  }
+
+  @Action
+  async deleteById(id: number | string) {
+    try {
+      const response = await axios.delete(`/client/${id}`)
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
   }
 
   @Action
