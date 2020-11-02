@@ -136,7 +136,7 @@ export default class MOrderModalWorks extends Vue {
   ]
 
   public model: any = {
-    user: { text: authModule.user?.credentials, value: authModule.user?.id },
+    user: { text: this.order?.master.credentials, value: this.order?.master.id },
     username: '',
     header: '',
     message: '',
@@ -151,7 +151,7 @@ export default class MOrderModalWorks extends Vue {
   @Watch('modelUser')
   onModelUserChange(value: any) {
     if (!value) {
-      this.model.user = { text: authModule.user?.credentials, value: authModule.user?.id }
+      this.model.user = { text: this.order?.master.credentials, value: this.order?.master.id }
     }
   }
 
