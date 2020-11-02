@@ -68,3 +68,4 @@ bh_unicode_properties.cache
 GitHub.sublime-settings
 size-plugin.json
 size-plugin_bak.json
+dist/
