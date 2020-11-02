@@ -118,6 +118,7 @@ export class ClientController implements IClientController {
         res.status(200)
         api.io.emit('updated client', response)
         api.io.emit('update clients')
+        res.send(response)
       } else {
         next(new ObjectNotFoundException(this.model.modelName, id))
       }

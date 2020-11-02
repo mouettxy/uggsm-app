@@ -1,28 +1,20 @@
-import express from 'express'
 import { ClientController } from '../controllers'
-import { IClientController, Router } from '../interfaces'
-import { authenticationMiddleware } from '../middlewares'
 import * as validateClient from '../middlewares/validators/validateClient'
+import BaseRouter from './heplers/BaseRouter'
 
-export class ClientRouter implements Router {
-  public expressRouter: express.Router = express.Router()
-
+export class ClientRouter extends BaseRouter {
   constructor() {
-    const clientController = new ClientController()
-    this.initializeRoutes(clientController)
+    super(ClientController, '/client')
   }
 
-  public initializeRoutes(controller: IClientController): void {
-    const path = '/client'
-
+  initializeRoutes() {
     this.expressRouter
-      .all(`${path}*`, authenticationMiddleware)
-      .get(path, controller.getAll)
-      .get(`${path}/paginated`, controller.getPaginated)
-      .get(`${path}/:id`, controller.getById)
-      .get(`${path}/name/:name`, controller.getByName)
-      .post(`${path}`, validateClient.client, controller.create)
-      .put(`${path}/:id`, validateClient.client, controller.updateById)
-      .delete(`${path}/:id`, controller.deleteById)
+      .get(this.basePath, this.controller.getAll)
+      .get(`${this.basePath}/paginated`, this.controller.getPaginated)
+      .get(`${this.basePath}/:id`, this.controller.getById)
+      .get(`${this.basePath}/name/:name`, this.controller.getByName)
+      .post(`${this.basePath}`, validateClient.client, this.controller.create)
+      .put(`${this.basePath}/:id`, validateClient.client, this.controller.updateById)
+      .delete(`${this.basePath}/:id`, this.controller.deleteById)
   }
 }
