@@ -1,0 +1,35 @@
+{
+  "name": "uggsm-cli",
+  "version": "1.0.0",
+  "description": "Приложение для управления сервисами uggsm",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "compile": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newfox79/uggsm-app.git"
+  },
+  "author": "https://github.com/newfox79",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/newfox79/uggsm-app/issues"
+  },
+  "homepage": "https://github.com/newfox79/uggsm-app#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1",
+    "promisify-child-process": "^4.1.1",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.3.3",
+    "winston": "^3.3.3",
+    "yandex-disk": "0.0.8",
+    "yargs": "^16.1.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.164",
+    "@types/yargs": "^15.0.9"
+  }
+}
