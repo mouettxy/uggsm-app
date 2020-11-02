@@ -71,6 +71,8 @@
         size='1.4rem',
         color='success'
       ) mdi-message
+    template(#item.id='{value}')
+      o-client-modal(:clientid='value')
   v-pagination.mt-4(
     v-model='options.page',
     :length='Math.round(totalItems / options.itemsPerPage)',
