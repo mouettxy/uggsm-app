@@ -9,7 +9,7 @@
 
 <template lang="pug">
 .page-orders
-  t-reports-orders-daily
+  t-reports-orders-daily(from='reports')
 </template>
 
 <script lang="ts">
