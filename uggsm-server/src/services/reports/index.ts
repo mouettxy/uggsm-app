@@ -500,9 +500,6 @@ export default async function (
           $gte: new Date(params.date[0]),
           $lt: new Date(params.date[1]),
         },
-        status: {
-          $not: new RegExp('Закрыт', 'i'),
-        },
       },
       {
         closedAt: {
