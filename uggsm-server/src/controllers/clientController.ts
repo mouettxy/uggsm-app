@@ -1,186 +1,147 @@
 import { api } from './../server'
-import { NextFunction } from 'connect'
-import express from 'express'
 import { parsePaginateResponse } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IClientController } from '../interfaces'
 import { ClientModel } from '../models'
+import { ControllerMethod } from '../interfaces/controller'
 
 export class ClientController implements IClientController {
   private model = ClientModel
 
-  public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
-    await this.model
-      .find({})
-      .then((orders) => {
-        response.status(200)
-        response.send(orders)
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
-  }
-
-  public getPaginated = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const { query, options } = parsePaginateResponse(request.query, false, this.model)
+  public getAll: ControllerMethod = async (req, res, next) => {
     try {
-      // @ts-ignore
-      const clients = await this.model.paginate(query, options)
-      response.status(200)
-      response.send(clients)
+      const response = await this.model.find()
+
+      if (response) {
+        res.status(200)
+        res.send(response)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, ''))
+      }
     } catch (error) {
       next(new HttpException(500, error.message))
     }
   }
 
-  public getByName = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const name = request.params.name
-    await this.model
-      .findOne({ name })
-      .then((user) => {
-        response.status(200)
-        response.send(user)
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
+  public getPaginated: ControllerMethod = async (req, res, next) => {
+    const { query, options } = parsePaginateResponse(req.query, false, this.model)
+
+    try {
+      // @ts-ignore
+      const clients = await this.model.paginate(query, options)
+      res.status(200)
+      res.send(clients)
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 
-  public getById = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
-    const id = request.params.id
-    await this.model
-      .findById(id)
-      .then((order) => {
-        if (order) {
-          response.status(200)
-          response.send(order)
-        } else {
-          next(new ObjectNotFoundException(this.model.modelName, id))
-        }
-      })
-      .catch(() =>
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      )
+  public getByName: ControllerMethod = async (req, res, next) => {
+    const name = req.params.name
+
+    try {
+      const response = await this.model.findOne({ name })
+
+      if (response) {
+        res.status(200)
+        res.send(response)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, name))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 
-  public getByCode = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const code = request.params.code
-    await this.model
-      .find({ code: code })
-      .then((order) => {
-        if (order) {
-          response.status(200)
-          response.send(order)
-        } else {
-          next(new ObjectNotFoundException(this.model.modelName, code))
-        }
-      })
-      .catch(() =>
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      )
+  public getById: ControllerMethod = async (req, res, next) => {
+    const id = req.params.id
+
+    try {
+      const response = await this.model.findOne({ id })
+
+      if (response) {
+        res.status(200)
+        res.send(response)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, id))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 
-  public create = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
-    const clientData = request.body
+  public getByCode: ControllerMethod = async (req, res, next) => {
+    const code = req.params.code
 
-    const createdClient = new this.model({
-      ...clientData,
-    })
-    await createdClient
-      .save()
-      .then((savedOrder) => {
-        response.status(200)
-        api.io.emit('created client', savedOrder)
+    try {
+      const response = await this.model.findOne({ code })
+
+      if (response) {
+        res.status(200)
+        res.send(response)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, code))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
+  public create: ControllerMethod = async (req, res, next) => {
+    try {
+      const client = new this.model({
+        ...req.body,
+      })
+
+      const response = await client.save()
+
+      if (response) {
+        res.status(200)
+        api.io.emit('created client', response)
         api.io.emit('update clients')
-        response.send(savedOrder)
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, ''))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 
-  public updateById = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const id: string = request.params.id
-    const clientData = request.body
-    await this.model
-      .findByIdAndUpdate(id, clientData, {
-        new: true,
-      })
-      .then((updatedOrder) => {
-        if (updatedOrder) {
-          response.status(200)
-          api.io.emit('updated client', updatedOrder)
-          api.io.emit('update clients')
-          response.send(updatedOrder)
-        } else {
-          next(new ObjectNotFoundException(this.model.modelName, id))
-        }
-      })
-      .catch(() => {
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      })
+  public updateById: ControllerMethod = async (req, res, next) => {
+    const id = req.params.id
+
+    try {
+      const response = await this.model.findOneAndUpdate({ id }, req.body, { new: true })
+
+      if (response) {
+        res.status(200)
+        api.io.emit('updated client', response)
+        api.io.emit('update clients')
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, id))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 
-  public deleteById = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const id = request.params.id
-    await this.model
-      .findByIdAndDelete(id)
-      .then((successResponse) => {
-        if (successResponse) {
-          response.status(200)
-          api.io.emit('deleted client', id)
-          api.io.emit('update clients')
-          response.json({
-            message: `Оффис с ${id} был успешно удалён`,
-          })
-          response.send()
-        } else {
-          next(new ObjectNotFoundException(this.model.modelName, id))
-        }
-      })
-      .catch(() => {
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      })
+  public deleteById: ControllerMethod = async (req, res, next) => {
+    const id = req.params.id
+
+    try {
+      const response = await this.model.findOneAndDelete({ id })
+
+      if (response) {
+        api.io.emit('deleted client', id, response)
+        api.io.emit('update clients')
+        res.status(200)
+        res.send(id)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, id))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 }
