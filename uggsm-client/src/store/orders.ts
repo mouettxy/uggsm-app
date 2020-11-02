@@ -56,6 +56,7 @@ export default class Orders extends VuexModule {
         declaredDefect: e.declaredDefect,
         quick: e.quick,
         client: e.customerName,
+        clientId: e.customer ? e.customer.id : false,
         totalWorks,
       }
     })

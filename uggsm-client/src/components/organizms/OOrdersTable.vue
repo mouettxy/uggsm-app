@@ -71,6 +71,21 @@
       )
         v-icon(left) mdi-pencil
         span {{ value }}
+    template(#item.client='{value, item}')
+      template(v-if='item.clientId')
+        o-client-modal(:clientid='item.clientId')
+          template(#activator='{on, attrs}')
+            div(
+              v-on='on',
+              v-bind='attrs'
+            )
+              v-icon(
+                size='1.1rem',
+                color='dark'
+              ) mdi-pencil
+              span {{ value }}
+      template(v-else)
+        span.error--text {{ value }}
     template(#item.status='{value, item}')
       m-order-status-switcher(
         :status='value',

@@ -65,6 +65,9 @@ export default class OClientModal extends Mixins(Responsive) {
           : await clientModule.getOneById(this.clientid)
       if (client && typeof client !== 'boolean') {
         this.client = client
+      } else {
+        this.$notification.error('Не удалось получить клиента')
+        this.modal = false
       }
     } else {
       this.client = null
