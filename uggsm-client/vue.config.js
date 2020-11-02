@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
-const path = require('path')
 const SizePlugin = require('size-plugin')
 const zlib = require('zlib')
 
@@ -9,11 +8,11 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const isProductionEnvFlag = process.env.NODE_ENV === 'production'
 const TerserPlugin = require('terser-webpack-plugin')
 var DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin')
-const PurgecssPlugin = require('purgecss-webpack-plugin')
-const glob = require('glob')
 
-module.exports = {
-  chainWebpack: (config) => {
+let production = {}
+
+if (isProductionEnvFlag) {
+  production.chainWebpack = (config) => {
     const splitOptions = config.optimization.get('splitChunks')
     config.optimization.splitChunks(
       Object.assign({}, splitOptions, {
@@ -45,9 +44,9 @@ module.exports = {
     if (process.env.npm_config_report) {
       config.plugin('webpack-bundle-analyzer').use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
     }
-  },
+  }
 
-  configureWebpack: {
+  production.configureWebpack = {
     plugins: [
       isProductionEnvFlag ? new SizePlugin() : () => {},
       isProductionEnvFlag ? new DuplicatePackageCheckerPlugin() : () => {},
@@ -79,18 +78,24 @@ module.exports = {
     optimization: {
       minimize: true,
       minimizer: [
-        new TerserPlugin({
-          terserOptions: {
-            format: {
-              comments: false,
-            },
-          },
-          parallel: 4,
-          extractComments: false,
-        }),
+        isProductionEnvFlag
+          ? new TerserPlugin({
+              terserOptions: {
+                format: {
+                  comments: false,
+                },
+              },
+              parallel: 4,
+              extractComments: false,
+            })
+          : () => {},
       ],
     },
-  },
+  }
+}
+
+module.exports = {
+  ...production,
 
   transpileDependencies: ['vuetify'],
 
