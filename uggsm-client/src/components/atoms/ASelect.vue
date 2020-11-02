@@ -30,10 +30,10 @@ export default class ASelect extends Vue {
   @Prop(String) icon: any
   @Prop(String) label: any
   @Prop(String) hint: any
-  @Prop(Boolean) dense: any
-  @Prop(Boolean) readonly: any
-  @Prop(Boolean) multiple!: boolean
-  @Prop(Boolean) chips!: boolean
+  @Prop({ type: Boolean, default: true }) dense: any
+  @Prop({ type: Boolean, default: false }) readonly: any
+  @Prop({ type: Boolean, default: false }) multiple!: boolean
+  @Prop({ type: Boolean, default: false }) chips!: boolean
   @Prop({ default: true, type: Boolean }) clearable: any
 
   get model() {

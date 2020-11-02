@@ -2,7 +2,8 @@
 v-switch(
   v-model='model',
   :prepend-icon='icon',
-  :label='label'
+  :label='label',
+  hide-details='auto'
 )
 </template>
 
