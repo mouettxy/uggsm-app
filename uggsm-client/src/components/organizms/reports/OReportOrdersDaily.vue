@@ -36,6 +36,14 @@
                       light,
                       hide-default-footer
                     )
+                      template(#item.id='{item}')
+                        template(v-if='item.id')
+                          v-btn(
+                            :to='{ name: "orderModal", params: { id: item.id }, query: { from: from } }',
+                            text
+                          )
+                            v-icon(left) mdi-eye
+                            span {{ item.id }}
           v-expansion-panel
             v-expansion-panel-header
               strong Закрыты сегодня
@@ -59,6 +67,14 @@
                       light,
                       hide-default-footer
                     )
+                      template(#item.id='{item}')
+                        template(v-if='item.id')
+                          v-btn(
+                            :to='{ name: "orderModal", params: { id: item.id }, query: { from: from } }',
+                            text
+                          )
+                            v-icon(left) mdi-eye
+                            span {{ item.id }}
         v-card.mt-4
           .text-center
             v-row
@@ -76,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import moment from 'moment'
 import { settingsModule, ordersModule } from '@/store'
 import { cloneDeep, groupBy, sum, map, reduce, join } from 'lodash'
@@ -88,6 +104,8 @@ import JsonExcel from 'vue-json-excel'
   },
 })
 export default class OReportsOrdersDaily extends Vue {
+  @Prop(String) from!: string
+
   public reports: any = null
   public panels = [0, 1]
 
