@@ -1,0 +1,36 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdversitementModel = exports.Adversitement = void 0;
+const typegoose_1 = require("@typegoose/typegoose");
+const utils_1 = require("../utils");
+let Adversitement = class Adversitement {
+};
+__decorate([
+    typegoose_1.prop({ default: new Date() }),
+    __metadata("design:type", Date)
+], Adversitement.prototype, "createdAt", void 0);
+__decorate([
+    typegoose_1.prop({ required: true }),
+    __metadata("design:type", String)
+], Adversitement.prototype, "name", void 0);
+__decorate([
+    typegoose_1.prop({ required: true }),
+    __metadata("design:type", String)
+], Adversitement.prototype, "title", void 0);
+Adversitement = __decorate([
+    typegoose_1.plugin(utils_1.AutoIncrement, {
+        id: 'adversitement_id',
+        inc_field: 'id',
+    })
+], Adversitement);
+exports.Adversitement = Adversitement;
+exports.AdversitementModel = typegoose_1.getModelForClass(Adversitement);
