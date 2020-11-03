@@ -187,7 +187,6 @@ export default class OOrdersTable extends Vue {
 
   @Watch('headers', { deep: true })
   onHeadersChange(value: any) {
-    console.log(value)
     localStorage.setItem('orders-headers', JSON.stringify(value))
   }
 

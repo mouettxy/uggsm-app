@@ -206,8 +206,6 @@ export class OrdersController implements IOrdersController {
     try {
       const message: MessageItem = req.body
 
-      console.log(message)
-
       let order = await this.model.findOne({
         statusSms: {
           $elemMatch: {
@@ -215,8 +213,6 @@ export class OrdersController implements IOrdersController {
           },
         },
       })
-
-      console.log(order)
 
       order.statusSms = map(order.statusSms, (e) => {
         if (e.uuid === message.uuid) {

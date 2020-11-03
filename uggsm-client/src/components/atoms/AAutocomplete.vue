@@ -122,7 +122,6 @@ export default class AAutocomplete extends Vue {
   mounted() {
     if (this.predefinedItems) {
       this.items = this.predefinedItems
-      console.log(this.items, this.predefinedItems)
     }
   }
 }
