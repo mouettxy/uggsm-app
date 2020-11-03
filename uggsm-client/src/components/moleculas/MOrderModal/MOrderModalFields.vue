@@ -121,7 +121,21 @@
     v-list
       v-list-item(two-line)
         v-list-item-content
-          v-list-item-title {{ model.customerName }}
+          v-list-item-title
+            template(v-if='model.customer && model.customer.id')
+              o-client-modal(:clientid='model.customer.id')
+                template(#activator='{on, attrs}')
+                  div(
+                    v-on='on',
+                    v-bind='attrs'
+                  )
+                    v-icon(
+                      size='1.1rem',
+                      color='dark'
+                    ) mdi-pencil
+                    span {{ model.customer.name }}
+            template(v-else)
+              span.error--text {{ model.customerName }}
           v-list-item-subtitle Имя клиента
       v-list-item(two-line)
         v-list-item-content
