@@ -1,6 +1,4 @@
 import { api } from './../server'
-import { NextFunction } from 'connect'
-import express from 'express'
 import { generateOrderId, parsePaginateResponse } from '../utils/helpers'
 import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
@@ -8,119 +6,99 @@ import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
 import { filter } from 'lodash'
 import generateReport from '../services/reports'
+import { ControllerMethod } from 'src/interfaces/controller'
 
 export class OrdersController implements IOrdersController {
-  private order = OrderModel
+  private model = OrderModel
+  private socket = api.io
 
-  public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
-    await this.order
-      .find({})
-      .then((orders) => {
-        response.status(200)
-        response.send(orders)
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
-  }
-
-  public getAllByOffice = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const code = request.params.code
-    await this.order
-      .find()
-      .populate({
-        path: 'office',
-        match: {
-          code,
-        },
-      })
-      .then((orders) => {
-        response.status(200)
-        orders = orders.filter(function (order) {
-          return order.office
-        })
-        response.send(orders)
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
-  }
-
-  public getAllWithParams = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const { query, options } = parsePaginateResponse(request.query, true, this.order)
+  public getAll: ControllerMethod = async (req, res, next) => {
     try {
-      // @ts-ignore
-      const orders = await this.order.paginate(query, options)
-      response.status(200)
-      response.send(orders)
+      const response = await this.model.find()
+
+      res.status(200)
+      res.send(response)
     } catch (error) {
       next(new HttpException(500, error.message))
     }
   }
 
-  public getById = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
-    const id = request.params.id
-    await this.order
-      .findOne({ id })
-      .then((order) => {
-        if (order) {
-          response.status(200)
-          response.send(order)
-        } else {
-          next(new ObjectNotFoundException(this.order.modelName, id))
-        }
-      })
-      .catch(() =>
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      )
-  }
-
-  public create = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
-    const orderData = request.body
-
-    const createdOrder = new this.order({
-      ...orderData,
-      orderCreationDate: new Date(),
-    })
-    await createdOrder
-      .save()
-      .then((savedOrder) => {
-        response.status(200)
-        api.io.emit('created order', savedOrder)
-        response.send(savedOrder)
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
-  }
-
-  public async addCompletedWork(
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> {
+  public getAllByOffice: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.addCompletedWork(request.params.id, request.body)
+      const code = req.params.code
+      let response = await this.model.find().populate({
+        path: 'office',
+        match: {
+          code,
+        },
+      })
+
+      response = response.filter(function (order) {
+        return order.office
+      })
+
+      res.status(200)
+      res.send(response)
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
+  public getAllWithParams: ControllerMethod = async (req, res, next) => {
+    try {
+      const { query, options } = parsePaginateResponse(req.query, true, this.model)
+      // @ts-ignore
+      const response = await this.model.paginate(query, options)
+
+      res.status(200)
+      res.send(response)
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
+  public getById: ControllerMethod = async (req, res, next) => {
+    try {
+      const id = req.params.id
+      const response = await this.model.findOne({ id })
+
+      if (response) {
+        res.status(200)
+        res.send(response)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, id))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
+  public create: ControllerMethod = async (req, res, next) => {
+    try {
+      let response = new this.model({
+        ...req.body,
+      })
+
+      response = await response.save()
+
+      res.status(200)
+      this.socket.emit('created order', response)
+      res.send(response)
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
+  }
+
+  public addCompletedWork: ControllerMethod = async (req, res, next) => {
+    try {
+      const order = await this.model.addCompletedWork(req.params.id, req.body)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order completed work', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order completed work', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -129,26 +107,22 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public async deleteCompletedWork(
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> {
+  public deleteCompletedWork: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.findOne({ id: request.params.id })
+      const order = await this.model.findOne({ id: req.params.id })
 
-      const completedWorks = filter(order.statusWork, (e) => e.id != parseInt(request.params.workId))
+      const completedWorks = filter(order.statusWork, (e) => e.id != parseInt(req.params.workId))
 
       order.statusWork = completedWorks
 
       await order.save()
 
       if (order) {
-        response.status(200)
-        api.io.emit('deleted order completed work', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('deleted order completed work', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -157,16 +131,16 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public async addSms(request: express.Request, response: express.Response, next: NextFunction): Promise<void> {
+  public addSms: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.addSmsMessage(request.params.id, request.body)
+      const order = await this.model.addSmsMessage(req.params.id, req.body)
 
       // TODO: sms sending through gate
       if (order) {
-        response.status(200)
-        api.io.emit('added order sms', order.id)
-        api.io.emit('update order', order.id)
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order sms', order.id)
+        this.socket.emit('update order', order.id)
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -175,18 +149,14 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public addMasterComment = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public addMasterComment: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.addMasterComment(request.params.id, request.body)
+      const order = await this.model.addMasterComment(req.params.id, req.body)
       if (order) {
-        response.status(200)
-        api.io.emit('added order masterComment', order.id)
-        api.io.emit('update order', order.id)
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order masterComment', order.id)
+        this.socket.emit('update order', order.id)
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -195,19 +165,15 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public addManagerComment = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public addManagerComment: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.addManagerComment(request.params.id, request.body)
+      const order = await this.model.addManagerComment(req.params.id, req.body)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order manager comment', order.id)
-        api.io.emit('update order', order.id)
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order manager comment', order.id)
+        this.socket.emit('update order', order.id)
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -216,19 +182,15 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public addWorkflow = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public addWorkflow: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.addWorkflow(request.params.id, request.body)
+      const order = await this.model.addWorkflow(req.params.id, req.body)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order workflow', order.id)
-        api.io.emit('update order', order.id)
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order workflow', order.id)
+        this.socket.emit('update order', order.id)
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -237,20 +199,16 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public setStatus = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public setStatus: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.setStatus(request.params.id, request.body.status, request.body.userid)
+      const order = await this.model.setStatus(req.params.id, req.body.status, req.body.userid)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order status', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order status', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -259,16 +217,16 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public setPayed = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
+  public setPayed: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.setPayed(request.params.id, request.body.payed, request.body.userid)
+      const order = await this.model.setPayed(req.params.id, req.body.payed, req.body.userid)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order payed', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order payed', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -277,20 +235,16 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public setMaster = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public setMaster: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.setMaster(request.params.id, request.body.master, request.body.userid)
+      const order = await this.model.setMaster(req.params.id, req.body.master, req.body.userid)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order master', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order master', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -299,20 +253,16 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public setManager = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public setManager: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.setManager(request.params.id, request.body.manager, request.body.userid)
+      const order = await this.model.setManager(req.params.id, req.body.manager, req.body.userid)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order manager', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order manager', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -321,20 +271,16 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public setOffice = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
+  public setOffice: ControllerMethod = async (req, res, next) => {
     try {
-      const order = await OrderModel.setOffice(request.params.id, request.body.office, request.body.userid)
+      const order = await this.model.setOffice(req.params.id, req.body.office, req.body.userid)
 
       if (order) {
-        response.status(200)
-        api.io.emit('added order office', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        response.send(order)
+        res.status(200)
+        this.socket.emit('added order office', order.id)
+        this.socket.emit('update order', order.id)
+        this.socket.emit('update orders')
+        res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
       }
@@ -343,13 +289,9 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public createByOffice = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const orderData = request.body
-    const officeCode = request.params.code
+  public createByOffice: ControllerMethod = async (req, res, next) => {
+    const orderData = req.body
+    const officeCode = req.params.code
 
     try {
       const office = await OfficeModel.getOneByCode(officeCode)
@@ -358,7 +300,7 @@ export class OrdersController implements IOrdersController {
         next(new CannotFindOfficeException(officeCode))
       }
 
-      const order = new this.order({
+      const order = new this.model({
         ...orderData,
         office: office._id,
       })
@@ -373,10 +315,10 @@ export class OrdersController implements IOrdersController {
 
           saved = await doc.save()
 
-          response.status(200)
-          api.io.emit('created order', saved)
-          api.io.emit('update orders')
-          response.send(saved)
+          res.status(200)
+          this.socket.emit('created order', saved)
+          this.socket.emit('update orders')
+          res.send(saved)
         })
       } else {
         next(new HttpException(500, 'Ошибка валидации полей.'))
@@ -386,32 +328,24 @@ export class OrdersController implements IOrdersController {
     }
   }
 
-  public generateReport = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const params = request.query as { date: string | string[]; office: string; status: string; type: string }
+  public generateReport: ControllerMethod = async (req, res, next) => {
+    const params = req.query as { date: string | string[]; office: string; status: string; type: string }
 
     try {
-      const aggregated = await generateReport(params, this.order)
+      const aggregated = await generateReport(params, this.model)
 
-      response.status(200)
-      response.send(aggregated)
+      res.status(200)
+      res.send(aggregated)
     } catch (e) {
       next(new HttpException(500, e.message))
     }
   }
 
-  public updateById = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const id: string = request.params.id
-    const orderData = request.body
+  public updateById: ControllerMethod = async (req, res, next) => {
+    const id: string = req.params.id
+    const orderData = req.body
 
-    const order = await this.order.findById(id)
+    const order = await this.model.findById(id)
     // @ts-ignore
     const oldMaster = order.master ? order.master._id : ''
     // @ts-ignore
@@ -420,69 +354,52 @@ export class OrdersController implements IOrdersController {
     if (oldMaster.toString() !== orderData.master) {
       const newMaster = orderData.master
 
-      await this.order.setMaster(order.id, newMaster, orderData.userid)
+      await this.model.setMaster(order.id, newMaster, orderData.userid)
     }
     if (oldManager.toString() !== orderData.manager) {
       const newManager = orderData.manager
 
-      await this.order.setManager(order.id, newManager, orderData.userid)
+      await this.model.setManager(order.id, newManager, orderData.userid)
     }
 
     delete orderData.master
     delete orderData.manager
 
-    await this.order
-      .findByIdAndUpdate(id, orderData, {
-        new: true,
-      })
-      .then((updatedOrder) => {
-        if (updatedOrder) {
-          response.status(200)
-          api.io.emit('updated order', updatedOrder)
-          api.io.emit('update orders')
-          response.send(updatedOrder)
-        } else {
-          next(new ObjectNotFoundException(this.order.modelName, id))
-        }
-      })
-      .catch((err) => {
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      })
+    try {
+      const response = await this.model.findByIdAndUpdate(id, req.body, { new: true })
+
+      if (response) {
+        res.status(200)
+        this.socket.emit('updated order', response)
+        this.socket.emit('update orders')
+        res.send(response)
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, id))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 
-  public deleteById = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const id = request.params.id
-    await this.order
-      .findByIdAndDelete(id)
-      .then((successResponse) => {
-        if (successResponse) {
-          response.status(200)
-          api.io.emit('deleted order', id)
-          api.io.emit('update orders')
-          response.json({
-            message: `the order with id: ${id} was deleted successfully`,
-          })
-          response.send()
-        } else {
-          next(new ObjectNotFoundException(this.order.modelName, id))
-        }
-      })
-      .catch(() => {
-        next(
-          new HttpException(
-            422,
-            'Unprocessable entity. The request was well-formed but was unable to be followed due to semantic errors.'
-          )
-        )
-      })
+  public deleteById: ControllerMethod = async (req, res, next) => {
+    const id = req.params.id
+
+    try {
+      const response = await this.model.findByIdAndDelete(id)
+
+      if (response) {
+        res.status(200)
+        this.socket.emit('deleted order', id)
+        this.socket.emit('update orders')
+        res.json({
+          message: `the order with id: ${id} was deleted successfully`,
+        })
+        res.send()
+      } else {
+        next(new ObjectNotFoundException(this.model.modelName, id))
+      }
+    } catch (error) {
+      next(new HttpException(500, error.message))
+    }
   }
 }

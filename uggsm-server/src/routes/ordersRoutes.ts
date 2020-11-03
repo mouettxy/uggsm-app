@@ -1,41 +1,37 @@
-import express from 'express'
 import { OrdersController } from '../controllers'
-import { IOrdersController, Router } from '../interfaces'
-import { authenticationMiddleware } from '../middlewares'
 import * as validateOrder from '../middlewares/validators/validateOrder'
+import BaseRouter from './heplers/BaseRouter'
 
-export class OrdersRouter implements Router {
-  public expressRouter: express.Router = express.Router()
-
+export class OrdersRouter extends BaseRouter {
   constructor() {
-    const orderController = new OrdersController()
-    this.initializeRoutes(orderController)
+    super(OrdersController, '/order')
   }
 
-  public initializeRoutes(controller: IOrdersController): void {
-    const path = '/order'
-
+  initializeRoutes() {
     this.expressRouter
-      .all(`${path}*`, authenticationMiddleware)
-      .get(path, controller.getAll)
-      .get(`${path}/reports/report`, controller.generateReport)
-      .get(`${path}/office/:code`, controller.getAllByOffice)
-      .get(`${path}/paginate/`, controller.getAllWithParams)
-      .get(`${path}/:id`, controller.getById)
-      .post(path, validateOrder.order, controller.create)
-      .post(`${path}/office/:code`, validateOrder.order, controller.createByOffice)
-      .put(`${path}/:id/sms`, validateOrder.sms, controller.addSms)
-      .put(`${path}/:id/completed-work`, validateOrder.completedWork, controller.addCompletedWork)
-      .put(`${path}/:id/master-comment`, validateOrder.masterComment, controller.addMasterComment)
-      .put(`${path}/:id/manager-comment`, validateOrder.managerComment, controller.addManagerComment)
-      .put(`${path}/:id/workflow`, validateOrder.workflow, controller.addWorkflow)
-      .put(`${path}/:id/status`, validateOrder.status, controller.setStatus)
-      .put(`${path}/:id/payed`, validateOrder.payed, controller.setPayed)
-      .put(`${path}/:id/master`, validateOrder.master, controller.setMaster)
-      .put(`${path}/:id/manager`, validateOrder.manager, controller.setManager)
-      .put(`${path}/:id/office`, validateOrder.office, controller.setOffice)
-      .put(`${path}/:id`, controller.updateById)
-      .delete(`${path}/:id`, controller.deleteById)
-      .delete(`${path}/:id/completed-work/:workId`, controller.deleteCompletedWork)
+      .get(this.basePath, this.controller.getAll)
+      .get(`${this.basePath}/sms/callback`, this.controller.smsCallback)
+      .get(`${this.basePath}/reports/report`, this.controller.generateReport)
+      .get(`${this.basePath}/office/:code`, this.controller.getAllByOffice)
+      .get(`${this.basePath}/paginate/`, this.controller.getAllWithParams)
+      .get(`${this.basePath}/:id`, this.controller.getById)
+
+      .post(this.basePath, validateOrder.order, this.controller.create)
+      .post(`${this.basePath}/office/:code`, validateOrder.order, this.controller.createByOffice)
+
+      .put(`${this.basePath}/:id/sms`, validateOrder.sms, this.controller.addSms)
+      .put(`${this.basePath}/:id/completed-work`, validateOrder.completedWork, this.controller.addCompletedWork)
+      .put(`${this.basePath}/:id/master-comment`, validateOrder.masterComment, this.controller.addMasterComment)
+      .put(`${this.basePath}/:id/manager-comment`, validateOrder.managerComment, this.controller.addManagerComment)
+      .put(`${this.basePath}/:id/workflow`, validateOrder.workflow, this.controller.addWorkflow)
+      .put(`${this.basePath}/:id/status`, validateOrder.status, this.controller.setStatus)
+      .put(`${this.basePath}/:id/payed`, validateOrder.payed, this.controller.setPayed)
+      .put(`${this.basePath}/:id/master`, validateOrder.master, this.controller.setMaster)
+      .put(`${this.basePath}/:id/manager`, validateOrder.manager, this.controller.setManager)
+      .put(`${this.basePath}/:id/office`, validateOrder.office, this.controller.setOffice)
+      .put(`${this.basePath}/:id`, this.controller.updateById)
+
+      .delete(`${this.basePath}/:id`, this.controller.deleteById)
+      .delete(`${this.basePath}/:id/completed-work/:workId`, this.controller.deleteCompletedWork)
   }
 }
