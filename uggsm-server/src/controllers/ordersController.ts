@@ -1,16 +1,18 @@
+import { MessageInput, MessageItem } from './../services/sms/RedSmsClient'
 import { api } from './../server'
 import { generateOrderId, parsePaginateResponse } from '../utils/helpers'
 import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
-import { filter } from 'lodash'
+import { filter, map, join, each } from 'lodash'
 import generateReport from '../services/reports'
-import { ControllerMethod } from 'src/interfaces/controller'
+import { ControllerMethod } from '../interfaces/controller'
+import { RedSmsClient } from '../services/sms/RedSmsClient'
 
 export class OrdersController implements IOrdersController {
   private model = OrderModel
-  private socket = api.io
+  private smsClient = new RedSmsClient()
 
   public getAll: ControllerMethod = async (req, res, next) => {
     try {
@@ -82,7 +84,7 @@ export class OrdersController implements IOrdersController {
       response = await response.save()
 
       res.status(200)
-      this.socket.emit('created order', response)
+      api.io.emit('created order', response)
       res.send(response)
     } catch (error) {
       next(new HttpException(500, error.message))
@@ -95,9 +97,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order completed work', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('added order completed work', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -119,9 +121,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('deleted order completed work', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('deleted order completed work', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -132,17 +134,106 @@ export class OrdersController implements IOrdersController {
   }
 
   public addSms: ControllerMethod = async (req, res, next) => {
-    try {
-      const order = await this.model.addSmsMessage(req.params.id, req.body)
+    const type: 'order-created' | 'order-closed' | 'order-closed-without-work' | 'message' = req.body.type
+    const id = req.params.id
+    const model = req.body.model
+    const price = req.body.price
+    const phone = req.body.phone
+    const from = 'top-service'
+    delete req.body.type
 
-      // TODO: sms sending through gate
+    let message: MessageInput
+    if (type === 'order-created') {
+      message = {
+        from,
+        to: phone,
+        text: `Заказ на ремонт №${id} (${model}) создан`,
+      }
+    } else if (type === 'order-closed') {
+      message = {
+        from,
+        to: phone,
+        text: `Заказ №${id} (${model}) Готов! К оплате ${price} руб.`,
+      }
+    } else if (type === 'order-closed-without-work') {
+      message = {
+        from,
+        to: phone,
+        text: `Заказ №${id} (${model}) Готов без ремонта! ${price} руб.`,
+      }
+    } else {
+      message = {
+        from,
+        to: phone,
+        text: req.body.message,
+      }
+    }
+
+    try {
+      const sms = await this.smsClient.sendSms(message)
+
+      if (sms.success) {
+        const uuid = sms.items[0].uuid
+
+        const order = await this.model.addSmsMessage(id, {
+          message: message.text,
+          uuid,
+        })
+
+        if (order) {
+          res.status(200)
+          api.io.emit('added order sms', order.id)
+          api.io.emit('update order', order.id)
+          res.send(order)
+        }
+      } else {
+        next(
+          new HttpException(
+            500,
+            join(
+              map(sms.errors, (e) => e.message),
+              ', '
+            )
+          )
+        )
+      }
+    } catch (e) {
+      next(new HttpException(500, e.message))
+    }
+  }
+
+  public smsCallback: ControllerMethod = async (req, res, next) => {
+    try {
+      const message: MessageItem = req.body
+
+      console.log(message)
+
+      let order = await this.model.findOne({
+        statusSms: {
+          $elemMatch: {
+            uuid: message.uuid,
+          },
+        },
+      })
+
+      console.log(order)
+
+      order.statusSms = map(order.statusSms, (e) => {
+        if (e.uuid === message.uuid) {
+          return {
+            ...e,
+            sended: true,
+          }
+        }
+      })
+
+      order = await order.save()
+
       if (order) {
         res.status(200)
-        this.socket.emit('added order sms', order.id)
-        this.socket.emit('update order', order.id)
+        api.io.emit('verified order sms', message, order.id)
+        api.io.emit('update order', order.id)
         res.send(order)
-      } else {
-        throw new Error('Не удалось обработать данные')
       }
     } catch (e) {
       next(new HttpException(500, e.message))
@@ -154,8 +245,8 @@ export class OrdersController implements IOrdersController {
       const order = await this.model.addMasterComment(req.params.id, req.body)
       if (order) {
         res.status(200)
-        this.socket.emit('added order masterComment', order.id)
-        this.socket.emit('update order', order.id)
+        api.io.emit('added order masterComment', order.id)
+        api.io.emit('update order', order.id)
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -171,8 +262,8 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order manager comment', order.id)
-        this.socket.emit('update order', order.id)
+        api.io.emit('added order manager comment', order.id)
+        api.io.emit('update order', order.id)
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -188,8 +279,8 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order workflow', order.id)
-        this.socket.emit('update order', order.id)
+        api.io.emit('added order workflow', order.id)
+        api.io.emit('update order', order.id)
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -205,9 +296,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order status', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('added order status', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -223,9 +314,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order payed', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('added order payed', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -241,9 +332,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order master', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('added order master', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -259,9 +350,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order manager', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('added order manager', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -277,9 +368,9 @@ export class OrdersController implements IOrdersController {
 
       if (order) {
         res.status(200)
-        this.socket.emit('added order office', order.id)
-        this.socket.emit('update order', order.id)
-        this.socket.emit('update orders')
+        api.io.emit('added order office', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
         res.send(order)
       } else {
         throw new Error('Не удалось обработать данные')
@@ -316,8 +407,8 @@ export class OrdersController implements IOrdersController {
           saved = await doc.save()
 
           res.status(200)
-          this.socket.emit('created order', saved)
-          this.socket.emit('update orders')
+          api.io.emit('created order', saved)
+          api.io.emit('update orders')
           res.send(saved)
         })
       } else {
@@ -370,8 +461,8 @@ export class OrdersController implements IOrdersController {
 
       if (response) {
         res.status(200)
-        this.socket.emit('updated order', response)
-        this.socket.emit('update orders')
+        api.io.emit('updated order', response)
+        api.io.emit('update orders')
         res.send(response)
       } else {
         next(new ObjectNotFoundException(this.model.modelName, id))
@@ -389,8 +480,8 @@ export class OrdersController implements IOrdersController {
 
       if (response) {
         res.status(200)
-        this.socket.emit('deleted order', id)
-        this.socket.emit('update orders')
+        api.io.emit('deleted order', id)
+        api.io.emit('update orders')
         res.json({
           message: `the order with id: ${id} was deleted successfully`,
         })

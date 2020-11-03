@@ -25,7 +25,7 @@ const badRequestHelper = () => {
   }
 }
 
-export const sms: RequestHandlerParams = [...requiredFieldsHelper('message'), badRequestHelper()]
+export const sms: RequestHandlerParams = [...requiredFieldsHelper('type'), badRequestHelper()]
 
 export const completedWork: RequestHandlerParams = [...requiredFieldsHelper('message'), badRequestHelper()]
 

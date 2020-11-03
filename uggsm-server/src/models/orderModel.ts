@@ -37,25 +37,28 @@ export class CompletedWork {
 
 export class SmsMessage {
   @prop()
-  public id: number
+  public id?: number
 
   @prop()
-  public userid: number
+  public uuid: string
 
   @prop()
-  public username: string
+  public userid?: number
 
   @prop()
-  public header: string
+  public username?: string
+
+  @prop()
+  public header?: string
 
   @prop()
   public message: string
 
   @prop({ default: false })
-  public sended: boolean
+  public sended?: boolean
 
   @prop({ default: Date.now })
-  public date: Date
+  public date?: Date
 }
 
 export class Comment {
