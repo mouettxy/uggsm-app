@@ -13,6 +13,15 @@ function getTime(date: any) {
   return `${m.format('DD.MM.YYYY')} ${m.format('HH:mm')}`
 }
 
+export type SendSMSInput = {
+  id?: number | string
+  type?: 'order-created' | 'order-closed' | 'order-closed-without-work' | 'message'
+  phone: string
+  model: string
+  price?: number
+  message?: string
+}
+
 @Module({
   namespaced: true,
   name: 'orders',
@@ -173,13 +182,56 @@ export default class Orders extends VuexModule {
   }
 
   @Action
+  async sendSms(payload: SendSMSInput) {
+    try {
+      if (!payload.type) {
+        payload.type = 'message'
+      }
+
+      const response = await axios.put(`/order/${payload.id}/sms`, payload)
+
+      if (response.status === 200) {
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    }
+  }
+
+  @Action
+  async sendSmsOnCreated(payload: SendSMSInput) {
+    return await this.context.dispatch('sendSms', {
+      ...payload,
+      type: 'order-created',
+    })
+  }
+
+  @Action
+  async sendSmsOnClosed(payload: SendSMSInput) {
+    return await this.context.dispatch('sendSms', {
+      ...payload,
+      type: 'order-closed',
+    })
+  }
+
+  @Action
+  async sendSmsOnClosedWithoutWork(payload: SendSMSInput) {
+    return await this.context.dispatch('sendSms', {
+      ...payload,
+      type: 'order-closed-without-work',
+    })
+  }
+
+  @Action
   async createOrder(payload: any) {
     this.context.commit('SET_LOADING', true)
     try {
       const response = await ordersAPI(payload.office).createByOffice(payload)
 
       if (response) {
-        return true
+        return response
       } else {
         return false
       }

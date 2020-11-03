@@ -213,6 +213,9 @@ export default class MOrderModalWorkflow extends Vue {
         } else if (e.header === 'Смена статуса оплаты') {
           color = '#FF5252'
           icon = 'mdi-cash'
+        } else if (e.header === 'Новое сообщение') {
+          color = '#bcf5bc'
+          icon = 'mdi-message-bulleted'
         }
 
         const workflow = {

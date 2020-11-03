@@ -156,6 +156,13 @@ export default class MOrderModal extends Vue {
 
         if (sendedOrder) {
           this.$notification.success('Заявка успешно создана')
+
+          await ordersModule.sendSmsOnCreated({
+            id: sendedOrder.id,
+            phone: '8' + sendedOrder.customerPhone || '',
+            model: `${sendedOrder.phoneBrand} ${sendedOrder.phoneModel}`,
+          })
+
           this.clearCurrentOrder()
         } else {
           this.$notification.error('Ошибка при создании заказа')

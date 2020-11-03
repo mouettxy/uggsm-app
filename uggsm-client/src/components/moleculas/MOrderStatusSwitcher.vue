@@ -43,6 +43,7 @@ import { filter, each, reduce, includes } from 'lodash'
 import { getCorrectTextColor } from '@/api/helpers'
 import { ordersModule, authModule, cashModule } from '@/store'
 import { ordersAPI } from '@/api'
+import { Order } from '@/typings/api/order'
 
 @Component
 export default class MOrderStatusSwitcher extends Vue {
@@ -185,71 +186,97 @@ export default class MOrderStatusSwitcher extends Vue {
     }
   }
 
-  async setCash() {
-    try {
-      let skipCash = false
-      let order
-      if (this.order) {
-        order = this.order
-      } else if (this.orderid) {
-        const order_ = await ordersAPI(this.orderid).getById()
+  async getCashPrepay(order: Order) {
+    let skipCash = false
+    let income = reduce(
+      order.statusWork,
+      (a, e) => {
+        a += e.price
+        return a
+      },
+      0
+    )
 
-        if (order_) {
-          order = order_
-        } else {
-          this.$notification.error(
-            '[Клиент] Не удалось получить заказ, попробуйте сменить статус заказа из редактирования заказа'
-          )
-          return Promise.reject(false)
-        }
-      }
+    const cash = await cashModule.getCash(order.id)
 
-      let income = reduce(
-        order.statusWork,
+    let consumption
+    if (cash.length > 0) {
+      const prepaySum = reduce(
+        cash,
         (a, e) => {
-          a += e.price
+          a += e.income
           return a
         },
         0
       )
 
-      const cash = await cashModule.getCash(order.id)
+      const difference = prepaySum - income
 
-      let consumption
-      if (cash.length > 0) {
-        const prepaySum = reduce(
-          cash,
-          (a, e) => {
-            a += e.income
-            return a
-          },
-          0
+      if (income === 0 && prepaySum > 0) {
+        consumption = prepaySum
+      } else if (prepaySum > income && difference > 0) {
+        income = difference
+      } else if (difference < 0) {
+        consumption = difference
+      } else if (prepaySum === income) {
+        skipCash = true
+      }
+
+      return {
+        income,
+        consumption,
+        skipCash,
+        difference,
+      }
+    }
+
+    return {
+      income,
+      consumption,
+      skipCash,
+      difference: income,
+    }
+  }
+
+  async getOrder(): Promise<Order | boolean> {
+    let order: Order | null = null
+    if (this.order) {
+      return this.order
+    } else if (this.orderid) {
+      const order_ = await ordersAPI(this.orderid).getById()
+
+      if (order_) {
+        return order_
+      } else {
+        return false
+      }
+    }
+
+    return false
+  }
+
+  async setCash() {
+    try {
+      const order = await this.getOrder()
+
+      if (!order || typeof order === 'boolean') {
+        this.$notification.error(
+          '[Клиент] Не удалось получить заказ, попробуйте сменить статус заказа из редактирования заказа'
         )
-
-        const difference = prepaySum - income
-
-        if (income === 0 && prepaySum > 0) {
-          consumption = prepaySum
-        } else if (prepaySum > income && difference > 0) {
-          income = difference
-        } else if (difference < 0) {
-          consumption = difference
-        } else if (prepaySum === income) {
-          skipCash = true
+        return {
+          price: 0,
         }
       }
 
+      let { income, consumption, skipCash, difference } = await this.getCashPrepay(order)
+
+      const payload: any = {
+        orderid: order.id,
+        client: order.customer._id,
+        cashier: authModule.user?._id,
+      }
+
       if (!skipCash) {
-        if (this.orderid) {
-          cashModule.clearCash()
-        }
-
-        const payload: any = {
-          orderid: order.id,
-          client: order.customer._id,
-          cashier: authModule.user?._id,
-        }
-
         if (consumption) {
           payload.consumption = consumption
         } else {
@@ -261,15 +288,31 @@ export default class MOrderStatusSwitcher extends Vue {
         if (response) {
           this.$notification.success(`Касса по заказу №${order.id} успешно закрыта`)
           await this.setPayed(order)
+          return {
+            price: Math.abs(difference),
+          }
         } else {
           this.$notification.error('[Клиент] Произошла ошбика при закрытии кассы')
         }
       } else {
         this.$notification.success(`Касса по заказу №${order.id} успешно закрыта`)
         await this.setPayed(order)
+        return {
+          price: reduce(
+            order.statusWork,
+            (a, e) => {
+              a += e.price
+              return a
+            },
+            0
+          ),
+        }
       }
     } catch (error) {
       this.$notification.error(`[Сервер] ${error.message}`)
+      return {
+        price: 0,
+      }
     }
   }
 
@@ -282,11 +325,42 @@ export default class MOrderStatusSwitcher extends Vue {
         response = await ordersAPI(this.orderid).setStatus({ status })
       }
 
+      const order = await this.getOrder()
+
+      if (!order || typeof order === 'boolean') {
+        this.$notification.error(
+          '[Клиент] Не удалось получить заказ, попробуйте сменить статус заказа из редактирования заказа'
+        )
+        return false
+      }
+
       if (response) {
         this.$notification.success('Успешная смена статуса')
 
         if (status === 'Закрыт') {
-          await this.setCash()
+          const cash = await this.setCash()
+          if (order.customer && order.customer.phone[0].phone)
+            await ordersModule.sendSmsOnClosed({
+              id: order.id,
+              phone: '8' + order.customer.phone[0].phone,
+              model: `${order.phoneBrand} ${order.phoneModel}`,
+              price: cash?.price || 0,
+            })
+        } else if (status === 'Готов, без ремонта') {
+          if (order.customer && order.customer.phone[0].phone)
+            await ordersModule.sendSmsOnClosedWithoutWork({
+              id: order.id,
+              phone: '8' + order.customer.phone[0].phone,
+              model: `${order.phoneBrand} ${order.phoneModel}`,
+              price: reduce(
+                order.statusWork,
+                (a, e) => {
+                  a += e.price
+                  return a
+                },
+                0
+              ),
+            })
         }
       } else {
         this.$notification.error('[Клиент] Произошла ошбика при смене статуса')
