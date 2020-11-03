@@ -3,7 +3,7 @@
   v-card
     v-row.fill-height.orders-report__row
       v-col(cols='1')
-        v-card-title Заявки
+        v-card-title Закрыто
       v-col(cols='3')
         a-datetime-picker-2(
           v-model='search.date',

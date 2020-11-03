@@ -3,6 +3,7 @@ import { UserModel } from '../models'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { body, validationResult } from 'express-validator/check'
+import e from 'express'
 
 export function getAnonymousAnimal() {
   const animals = [
@@ -215,8 +216,12 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     query.master = requestQuery.master
   }
 
-  if (requestQuery.hideStatuses) {
-    query.status = { $not: { $in: requestQuery.hideStatuses } }
+  if (requestQuery.statuses && requestQuery.excludeStatuses) {
+    query.status = { $in: requestQuery.statuses }
+  } else if (requestQuery.excludeStatuses) {
+    query.status = { $not: { $in: requestQuery.excludeStatuses } }
+  } else if (requestQuery.statuses) {
+    query.status = { $in: requestQuery.statuses }
   }
 
   return {

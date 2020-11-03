@@ -30,6 +30,8 @@ export default class Orders extends VuexModule {
     mustSort: false,
     multiSort: true,
     hideClosed: true,
+    status: [],
+    excludeStatus: ['Закрыт'],
   }
 
   get ordersTable() {
@@ -102,7 +104,8 @@ export default class Orders extends VuexModule {
       page: payload.page,
       limit: payload.itemsPerPage,
       office,
-      hideStatuses: [payload.hideClosed ? 'Закрыт' : ''],
+      statuses: payload.status,
+      excludeStatuses: payload.excludeStatus,
     }
 
     if (settingsModule.search) {

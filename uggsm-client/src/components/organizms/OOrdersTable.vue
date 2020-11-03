@@ -20,6 +20,17 @@
         left
       ) mdi-check
       span Скрыть закрытые
+    a-select.mx-2(
+      v-model='statusFilter',
+      :items='statusList',
+      @change='onStatusFilter',
+      multiple,
+      label='Статус',
+      dense
+    )
+    div(:style='{ fontSize: "1.2rem" }')
+      span Всего:&nbsp;
+      span.success--text {{ totalItems }}
     v-spacer
     v-menu(
       v-model='columnsMenu',
@@ -180,6 +191,25 @@ export default class OOrdersTable extends Vue {
     localStorage.setItem('orders-headers', JSON.stringify(value))
   }
 
+  public statusFilter = []
+  public statusList = [
+    'Отремонтирован',
+    'Новый',
+    'В работе',
+    'На тестировании',
+    'На уточнении',
+    'Позвонить повторно',
+    'Ждёт запчасть',
+    'Нужно решить',
+    'Готов',
+    'Готов, без ремонта',
+    'На продаже',
+    'Закрыт',
+    'Выкуплен СЦ',
+    'Обещали найти',
+    'Закрыт с вопросом',
+  ]
+
   get headersFormatted() {
     return filter(this.headers, (e) => {
       return e.show
@@ -210,12 +240,29 @@ export default class OOrdersTable extends Vue {
     this.loadItems()
   }
 
+  onStatusFilter() {
+    this.options = {
+      ...this.options,
+      status: this.statusFilter,
+    }
+
+    this.loadItems()
+  }
+
   async hideClosedOrders() {
     this.isHideClosedOrders = !this.isHideClosedOrders
 
+    let status: any = [...this.options.excludeStatus]
+
+    if (this.isHideClosedOrders) {
+      status.push('Закрыт')
+    } else {
+      status = []
+    }
+
     this.options = {
       ...this.options,
-      hideClosed: this.isHideClosedOrders,
+      excludeStatus: status,
     }
 
     this.loadItems()

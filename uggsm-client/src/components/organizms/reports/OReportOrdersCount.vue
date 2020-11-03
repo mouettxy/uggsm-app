@@ -3,7 +3,7 @@
   v-card
     v-row.fill-height.report-orders-count__toolbar
       v-col(cols='2')
-        v-card-title Количество заявок
+        v-card-title Создано
       v-col(cols='3')
         a-datetime-picker-2(
           v-model='search.date',

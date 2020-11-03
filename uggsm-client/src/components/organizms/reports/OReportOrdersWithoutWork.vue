@@ -3,7 +3,7 @@
   v-card
     v-row.fill-height.report-orders-without-work__toolbar
       v-col(cols='2')
-        v-card-title Заявки без работы
+        v-card-title Закрыто на 0
       v-col(cols='3')
         a-datetime-picker-2(
           v-model='search.date',

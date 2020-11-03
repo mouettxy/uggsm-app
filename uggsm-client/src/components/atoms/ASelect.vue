@@ -10,6 +10,7 @@ v-select(
   :clearable='clearable',
   :chips='chips',
   :hint='hint',
+  @change='onChange',
   outlined,
   hide-details='auto'
 )
@@ -47,6 +48,10 @@ export default class ASelect extends Vue {
      * @property {string} value - changed string
      */
     this.$emit('input', value)
+  }
+
+  onChange() {
+    this.$emit('change', this.model)
   }
 }
 </script>
