@@ -10,6 +10,7 @@ v-autocomplete(
   :disabled='disabled',
   :dense='dense',
   @focus.stop='onAutocompleteFocus',
+  v-mask='phoneMask',
   outlined,
   no-filter,
   no-data-text='Нет доступных данных',
@@ -24,7 +25,9 @@ v-autocomplete(
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
-import { isEmpty } from 'lodash'
+import { isEmpty, map } from 'lodash'
+
+import { VueMaskFilter } from 'v-mask'
 
 @Component
 export default class AAutocomplete extends Vue {
@@ -40,6 +43,7 @@ export default class AAutocomplete extends Vue {
   @Prop(Boolean) returnObject!: boolean
   @Prop(Boolean) hideDetails!: boolean
   @Prop(Boolean) disallowFreeType!: boolean
+  @Prop(Boolean) phone!: boolean
 
   public items: Array<any> = []
   public query = ''
@@ -51,9 +55,26 @@ export default class AAutocomplete extends Vue {
 
       this.items = items
 
+      if (this.phone) {
+        this.items = map(this.items, (e) => {
+          return {
+            value: e.value,
+            text: VueMaskFilter(e.text, '+7 (###) ###-##-##'),
+          }
+        })
+      }
+
       if (isEmpty(this.items) && !this.disallowFreeType) {
         this.items.push({ value: this.query, text: this.query })
       }
+    }
+  }
+
+  get phoneMask() {
+    if (this.phone) {
+      return '+7 (###) ###-##-##'
+    } else {
+      return false
     }
   }
 

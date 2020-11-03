@@ -20,6 +20,7 @@
     a-autocomplete(
       v-model='model.customerPhone',
       :replaceSearchWith='model.customerName',
+      phone,
       label='Телефон клиента',
       icon='mdi-phone',
       endpoint='/customer-phone',
@@ -32,7 +33,7 @@
       dense
     )
     .text-h5.my-4 Заказ
-    a-input(
+    a-input.mb-6(
       v-model='model.serialNumber',
       label='Серийный номер',
       icon='mdi-fingerprint',
@@ -128,7 +129,7 @@
           v-list-item-subtitle Номер клиента
     .text-h5 Заказ
       .ml-4.mt-8
-        a-input(
+        a-input.mb-6(
           v-model='model.serialNumber',
           label='Серийный номер',
           icon='mdi-fingerprint',
