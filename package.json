@@ -7,7 +7,7 @@
     "build-backup-system": "cd uggsm-backup-system && npm run compile",
     "build-client": "cd uggsm-client && npm run build",
     "dev-client": "cd uggsm-client && npm run serve",
-    "build-server": "cd uggsm-server && npm run compile",
+    "build-server": "cd uggsm-server && npm run compile && npm run copy-email",
     "dev-server": "cd uggsm-server && npm run dev",
     "run-server": "cd uggsm-server && npm run compile && node dist/server.js",
     "lint-server": "cd uggsm-server && npm run lint",

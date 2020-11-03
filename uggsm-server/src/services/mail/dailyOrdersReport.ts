@@ -24,6 +24,10 @@ export async function sendDailyReport(to: string) {
   })
 
   const template = 'template'
+  const dir =
+    process.env.NODE_ENV === 'production'
+      ? path.resolve('services/mail/template')
+      : path.resolve('src/services/mail/template')
   const opts = {
     message: {
       from: 'daily@uggsm.ru',
@@ -37,7 +41,7 @@ export async function sendDailyReport(to: string) {
       applyStyleTags: true,
       preserveImportant: true,
       webResources: {
-        relativeTo: path.resolve('src/services/mail/template'),
+        relativeTo: dir,
       },
     },
     preview: false,
