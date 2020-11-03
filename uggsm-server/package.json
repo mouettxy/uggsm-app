@@ -19,6 +19,7 @@
     "@typegoose/typegoose": "^7.4.0",
     "@types/email-templates": "^7.1.0",
     "agenda": "^3.1.0",
+    "axios": "^0.21.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.4",
