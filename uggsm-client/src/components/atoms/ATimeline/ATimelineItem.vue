@@ -73,7 +73,8 @@ export default class ATimelineItem extends Vue {
 
   &__icon
     border-radius: 4px
-    height: 28px
+    padding: 4px
+    height: 32px
     z-index: 100
     white-space: pre
 
