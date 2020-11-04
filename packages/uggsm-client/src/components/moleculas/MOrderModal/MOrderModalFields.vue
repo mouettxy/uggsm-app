@@ -60,22 +60,6 @@
       endpoint='/declared-defect',
       dense
     )
-    a-autocomplete(
-      v-model='model.appearance',
-      :predefined-items='[{ value: "царапины и потёртости", text: "царапины и потёртости" }]',
-      label='Внешний вид',
-      icon='mdi-cellphone-text',
-      endpoint='/appearance',
-      dense
-    )
-    a-autocomplete(
-      v-model='model.kit',
-      :predefined-items='[{ value: "устройство без сим карты, чехла, карты памяти", text: "устройство без сим карты, чехла, карты памяти" }]',
-      label='Комплектация',
-      icon='mdi-cellphone-cog',
-      endpoint='/kit',
-      dense
-    )
     a-input(
       v-model='model.declaredPrice',
       label='Ориентировочная цена',
@@ -92,12 +76,29 @@
       label='Дата готовности',
       icon='mdi-alarm-check'
     )
+    a-autocomplete(
+      v-model='model.appearance',
+      :predefined-items='[{ value: "царапины и потёртости", text: "царапины и потёртости" }]',
+      label='Внешний вид',
+      icon='mdi-cellphone-text',
+      endpoint='/appearance',
+      dense
+    )
+    a-autocomplete(
+      v-model='model.kit',
+      :predefined-items='[{ value: "устройство без сим карты, чехла, карты памяти", text: "устройство без сим карты, чехла, карты памяти" }]',
+      label='Комплектация',
+      icon='mdi-cellphone-cog',
+      endpoint='/kit',
+      dense
+    )
     v-divider.mb-8
     a-autocomplete(
       v-model='model.master',
       label='Мастер',
       icon='mdi-account-hard-hat',
       endpoint='/master',
+      disallow-free-type,
       dense
     )
     a-autocomplete(
@@ -107,6 +108,7 @@
       label='Менеджер',
       icon='mdi-account-cowboy-hat',
       endpoint='/manager',
+      disallow-free-type,
       dense
     )
   template(v-if='!newOrder')
@@ -173,6 +175,18 @@
           endpoint='/declared-defect',
           dense
         )
+        a-input(
+          v-model='model.declaredPrice',
+          type='number',
+          label='Ориентировочная цена',
+          icon='mdi-cash',
+          dense
+        )
+        a-switch.mb-6(
+          v-model='model.quick',
+          label='Срочно',
+          icon='mdi-alarm-light'
+        )
         a-autocomplete(
           v-model='model.appearance',
           :predefined-items='model.appearance ? [{ text: model.appearance, value: model.appearance }] : []',
@@ -189,18 +203,6 @@
           endpoint='/kit',
           dense
         )
-        a-input(
-          v-model='model.declaredPrice',
-          type='number',
-          label='Ориентировочная цена',
-          icon='mdi-cash',
-          dense
-        )
-        a-switch.mb-6(
-          v-model='model.quick',
-          label='Срочно',
-          icon='mdi-alarm-light'
-        )
         a-datetime-picker(
           v-model='model.estimatedCloseAt',
           label='Дата готовности',
@@ -213,6 +215,7 @@
           label='Мастер',
           icon='mdi-account-hard-hat',
           endpoint='/master',
+          disallow-free-type,
           dense
         )
         a-autocomplete(
@@ -222,6 +225,7 @@
           label='Менеджер',
           icon='mdi-account-cowboy-hat',
           endpoint='/manager',
+          disallow-free-type,
           dense
         )
 </template>
