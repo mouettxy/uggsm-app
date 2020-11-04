@@ -13,6 +13,7 @@ import { RedSmsClient } from '../services/sms/RedSmsClient'
 export class OrdersController implements IOrdersController {
   private model = OrderModel
   private smsClient = new RedSmsClient()
+  private disableSmsClient = true
 
   public getAll: ControllerMethod = async (req, res, next) => {
     try {
@@ -134,71 +135,76 @@ export class OrdersController implements IOrdersController {
   }
 
   public addSms: ControllerMethod = async (req, res, next) => {
-    const type: 'order-created' | 'order-closed' | 'order-closed-without-work' | 'message' = req.body.type
-    const id = req.params.id
-    const model = req.body.model
-    const price = req.body.price
-    const phone = req.body.phone
-    const from = 'top-service'
-    delete req.body.type
+    if (!this.disableSmsClient) {
+      const type: 'order-created' | 'order-closed' | 'order-closed-without-work' | 'message' = req.body.type
+      const id = req.params.id
+      const model = req.body.model
+      const price = req.body.price
+      const phone = req.body.phone
+      const from = 'top-service'
+      delete req.body.type
 
-    let message: MessageInput
-    if (type === 'order-created') {
-      message = {
-        from,
-        to: phone,
-        text: `Заказ на ремонт №${id} (${model}) создан`,
-      }
-    } else if (type === 'order-closed') {
-      message = {
-        from,
-        to: phone,
-        text: `Заказ №${id} (${model}) Готов! К оплате ${price} руб.`,
-      }
-    } else if (type === 'order-closed-without-work') {
-      message = {
-        from,
-        to: phone,
-        text: `Заказ №${id} (${model}) Готов без ремонта! ${price} руб.`,
-      }
-    } else {
-      message = {
-        from,
-        to: phone,
-        text: req.body.message,
-      }
-    }
-
-    try {
-      const sms = await this.smsClient.sendSms(message)
-
-      if (sms.success) {
-        const uuid = sms.items[0].uuid
-
-        const order = await this.model.addSmsMessage(id, {
-          message: message.text,
-          uuid,
-        })
-
-        if (order) {
-          res.status(200)
-          api.io.emit('added order sms', order.id)
-          api.io.emit('update order', order.id)
-          res.send(order)
+      let message: MessageInput
+      if (type === 'order-created') {
+        message = {
+          from,
+          to: phone,
+          text: `Заказ на ремонт №${id} (${model}) создан`,
+        }
+      } else if (type === 'order-closed') {
+        message = {
+          from,
+          to: phone,
+          text: `Заказ №${id} (${model}) Готов! К оплате ${price} руб.`,
+        }
+      } else if (type === 'order-closed-without-work') {
+        message = {
+          from,
+          to: phone,
+          text: `Заказ №${id} (${model}) Готов без ремонта! ${price} руб.`,
         }
       } else {
-        next(
-          new HttpException(
-            500,
-            join(
-              map(sms.errors, (e) => e.message),
-              ', '
+        message = {
+          from,
+          to: phone,
+          text: req.body.message,
+        }
+      }
+
+      try {
+        const sms = await this.smsClient.sendSms(message)
+
+        if (sms.success) {
+          const uuid = sms.items[0].uuid
+
+          const order = await this.model.addSmsMessage(id, {
+            message: message.text,
+            uuid,
+          })
+
+          if (order) {
+            res.status(200)
+            api.io.emit('added order sms', order.id)
+            api.io.emit('update order', order.id)
+            res.send(order)
+          }
+        } else {
+          next(
+            new HttpException(
+              500,
+              join(
+                map(sms.errors, (e) => e.message),
+                ', '
+              )
             )
           )
-        )
+        }
+      } catch (e) {
+        next(new HttpException(500, e.message))
       }
-    } catch (e) {
-      next(new HttpException(500, e.message))
+    } else {
+      res.status(200)
+      res.send()
     }
   }
 
