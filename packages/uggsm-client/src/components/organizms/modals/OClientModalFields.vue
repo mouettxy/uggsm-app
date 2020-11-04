@@ -217,7 +217,6 @@ export default class OClientModalFields extends Vue {
 <style lang="sass">
 .client-modal-fields
   .fields-section
-    &__info
     &__phone
       &-text
         display: flex

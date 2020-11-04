@@ -177,14 +177,10 @@ export default class MOrderModal extends Vue {
     if (this.order) {
       if (settingsModule.office) {
         const copyOfOrder = cloneDeep(this.order)
+
         delete copyOfOrder._id
-        delete copyOfOrder.workflow
-        delete copyOfOrder.id
         delete copyOfOrder.__v
-        delete copyOfOrder.statusWork
-        delete copyOfOrder.statusSms
-        delete copyOfOrder.masterComments
-        delete copyOfOrder.managerComments
+
         copyOfOrder.master = (copyOfOrder.master._id as unknown) as User
         copyOfOrder.manager = (copyOfOrder.manager._id as unknown) as User
         copyOfOrder.office = (copyOfOrder.office._id as unknown) as Office

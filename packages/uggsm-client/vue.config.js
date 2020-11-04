@@ -3,7 +3,6 @@
 
 const SizePlugin = require('size-plugin')
 const zlib = require('zlib')
-
 const CompressionPlugin = require('compression-webpack-plugin')
 const isProductionEnvFlag = process.env.NODE_ENV === 'production'
 const TerserPlugin = require('terser-webpack-plugin')
@@ -13,13 +12,7 @@ let production = {}
 
 if (isProductionEnvFlag) {
   production.chainWebpack = (config) => {
-    config.plugins.delete('progress')
-
-    config.plugin('simple-progress-webpack-plugin').use(require.resolve('simple-progress-webpack-plugin'), [
-      {
-        format: 'minimal', // options are minimal, compact, expanded, verbose
-      },
-    ])
+    config.resolve.symlinks(false)
 
     const splitOptions = config.optimization.get('splitChunks')
     config.optimization.splitChunks(
@@ -107,6 +100,10 @@ module.exports = {
 
   devServer: {
     progress: false,
+    overlay: {
+      warnings: false,
+      errors: true,
+    },
   },
 
   transpileDependencies: ['vuetify'],

@@ -65,8 +65,8 @@ export type Workflow = {
 }
 export type Order = {
   id: number
-  _id: string
-  __v: any
+  _id?: string
+  __v?: any
 
   customer: Client
 

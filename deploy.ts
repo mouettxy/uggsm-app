@@ -1,359 +1,296 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import * as dotenv from 'dotenv'
-import betterLogging from 'better-logging'
 import { NodeSSH } from 'node-ssh'
 import * as fs from 'fs'
 import * as inquirer from 'inquirer'
 import { exec } from 'promisify-child-process'
 import ora from 'ora'
+import chalk from 'chalk'
 
 dotenv.config()
 
-const config = {
-  folders: {
-    buildedServer: `${__dirname}/uggsm-server/dist`,
-    buildedServerPackage: `${__dirname}/uggsm-server/package.json`,
-    buildedClient: `${__dirname}/uggsm-client/dist`,
-    buildedBackupSystem: `${__dirname}/uggsm-backup-system/dist`,
-    buildedBackupSystemPackage: `${__dirname}/uggsm-backup-system/package.json`,
+export type Config = {
+  b: {
+    app: string
+    appPckg: string
+    srv: string
+    srvPckg: string
+    bckp: string
+    bckpPckg: string
+    cli: string
+    cliPckg: string
+  }
+  d: {
+    srv: string
+    srvPckg: string
+    app: string
+    bckp: string
+    bckpPckg: string
+  }
+}
+
+const config: Config = {
+  b: {
+    app: `${__dirname}/packages/uggsm-client/dist`,
+    appPckg: `${__dirname}/packages/uggsm-client/package.json`,
+    srv: `${__dirname}/packages/uggsm-server/dist`,
+    srvPckg: `${__dirname}/packages/uggsm-server/package.json`,
+    bckp: `${__dirname}/packages/uggsm-backup-system/dist`,
+    bckpPckg: `${__dirname}/packages/uggsm-backup-system/package.json`,
+    cli: `${__dirname}/packages/uggsm-cli/dist`,
+    cliPckg: `${__dirname}/packages/uggsm-cli/package.json`,
   },
-  server: {
-    serverFolder: '/var/www/api',
-    serverFolderPackage: '/var/www/api/package.json',
-    clientFolder: '/var/www/app',
-    backupSystemFolder: '/var/uggsm-backup',
-    backupSystemFolderPackage: '/var/uggsm-backup/package.json',
+  d: {
+    srv: '/var/www/api',
+    srvPckg: '/var/www/api/package.json',
+    app: '/var/www/app',
+    bckp: '/var/uggsm-backup',
+    bckpPckg: '/var/uggsm-backup/package.json',
   },
 }
+class Deploy {
+  private spinner = null
+  public scope = ''
+  public sshConnection: NodeSSH
+  public queue: Promise<any>
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
+  public commentsShortcuts: Record<string, string> = {
+    buildStart: 'Собираем проект...',
+    buildEnd: 'Проект успешно собран!',
+    putBuildFolderStart: 'Размещаем проект на сервере...',
+    putBuildFolderEnd: 'Проект успешно размещён!',
+    putDependenciesFileStart: 'Размещаем файл зависимостей на сервере...',
+    putDependenciesFileEnd: 'Файл успешно размещён!',
+    setupDependenciesStart: 'Устанавливаем зависимости...',
+    setupDependenciesEnd: 'Зависимости установлены!',
+    deleteLocalStart: 'Удаляем локальную копию сборки...',
+    deleteLocalEnd: 'Локальная копия успешно удалена!',
+  }
 
-async function connectSSH(instance: NodeSSH, credentials: { host: string; username: string; password: string }) {
-  await instance.connect(credentials)
+  constructor(ssh: NodeSSH) {
+    this.sshConnection = ssh
 
-  return instance
-}
+    this.queue = Promise.resolve()
+  }
 
-let currentSpinnerInstance = null
+  then(callback: (queue: any) => any) {
+    callback(this.queue)
+  }
 
-function logScopeServer(message: string) {
-  if (!currentSpinnerInstance) {
-    currentSpinnerInstance = ora('[SERVER] ' + message).start()
-  } else {
-    currentSpinnerInstance.stop()
-    currentSpinnerInstance = ora('[SERVER] ' + message).start()
+  chain(callback: (queue: any) => any) {
+    return (this.queue = this.queue.then(callback))
+  }
+
+  public setScope(scope: string) {
+    this.scope = scope.toUpperCase()
+
+    return this
+  }
+
+  public log(message: string) {
+    this.chain(async () => {
+      return new Promise((resolve) => {
+        if (this.commentsShortcuts[message]) {
+          message = this.commentsShortcuts[message]
+        }
+
+        message = `${chalk.white.bold.bgBlackBright(`${this.scope}`)} ${chalk.white(message)}`
+
+        if (!this.spinner) {
+          console.log(message)
+          this.spinner = ora(message).start()
+        } else {
+          this.spinner.stop()
+          console.log(message)
+          this.spinner = ora(message).start()
+        }
+
+        resolve(message)
+      })
+    })
+
+    return this
+  }
+
+  public exec(command: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await exec(command)
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public sshExec(command: string, cwd: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await this.sshConnection.execCommand(command, { cwd })
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public sshPutDir(origin: string, destination: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await this.sshConnection.putDirectory(origin, destination, {
+        recursive: true,
+        concurrency: 10,
+      })
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public sshPutFile(origin: string, destination: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await this.sshConnection.putFile(origin, destination)
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public rmDir(path: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(() => {
+      return new Promise((resolve) => {
+        fs.rmdirSync(path, { recursive: true })
+        resolve(path)
+      })
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
   }
 }
 
-function logScopeClient(message: string) {
-  if (!currentSpinnerInstance) {
-    currentSpinnerInstance = ora('[CLIENT] ' + message).start()
-  } else {
-    currentSpinnerInstance.stop()
-    currentSpinnerInstance = ora('[CLIENT] ' + message).start()
+async function deployment(deploy: Deploy, config: Config) {
+  return {
+    async server() {
+      await deploy
+        .setScope('server')
+        .exec('yarn build:server', 'buildStart', 'buildEnd')
+        .sshPutDir(config.b.srv, config.d.srv, 'putBuildFolderStart', 'putBuildFolderEnd')
+        .sshPutFile(config.b.srvPckg, config.d.srvPckg, 'putDependenciesFileStart', 'putDependenciesFileEnd')
+        .sshExec('npm i', config.d.srv, 'setupDependenciesStart', 'setupDependenciesEnd')
+        .rmDir(config.b.srv, 'deleteLocalStart', 'deleteLocalEnd')
+    },
+    async client() {
+      await deploy
+        .setScope('application')
+        .exec('yarn build:app', 'buildStart', 'buildEnd')
+        .sshPutDir(config.b.app, config.d.app, 'putBuildFolderStart', 'putBuildFolderEnd')
+        .rmDir(config.b.app, 'deleteLocalStart', 'deleteLocalEnd')
+    },
+    async bckpSystem() {
+      await deploy
+        .setScope('backup system')
+        .exec('yarn build:backup-system', 'buildStart', 'buildEnd')
+        .sshPutDir(config.b.bckp, config.d.bckp, 'putBuildFolderStart', 'putBuildFolderEnd')
+        .sshPutFile(config.b.bckpPckg, config.d.bckpPckg, 'putDependenciesFileStart', 'putDependenciesFileEnd')
+        .sshExec('npm i', config.d.bckp, 'setupDependenciesStart', 'setupDependenciesEnd')
+        .rmDir(config.b.bckp, 'deleteLocalStart', 'deleteLocalEnd')
+    },
   }
 }
 
-function logScopeCommands(message: string) {
-  if (!currentSpinnerInstance) {
-    currentSpinnerInstance = ora('[COMMAND] ' + message).start()
-  } else {
-    currentSpinnerInstance.stop()
-    currentSpinnerInstance = ora('[COMMAND] ' + message).start()
-  }
-}
-
-function logScopeBackupSystem(message: string) {
-  if (!currentSpinnerInstance) {
-    currentSpinnerInstance = ora('[BACKUP SYSTEM] ' + message).start()
-  } else {
-    currentSpinnerInstance.stop()
-    currentSpinnerInstance = ora('[BACKUP SYSTEM] ' + message).start()
-  }
-}
-
-function logScopeGlobal(message: string) {
-  if (!currentSpinnerInstance) {
-    currentSpinnerInstance = ora('[GLOBAL] ' + message).start()
-  } else {
-    currentSpinnerInstance.stop()
-    currentSpinnerInstance = ora('[GLOBAL] ' + message).start()
-  }
-}
-
-async function deployServer(ssh: NodeSSH, config: any) {
-  logScopeServer('Build started ...')
-  await exec('npm run build-server')
-  logScopeServer('Build completed')
-  await ssh.execCommand(`rm -rf /var/www/api`, { cwd: '/' })
-  logScopeServer('Folder removed')
-  await ssh.putDirectory(config.folders.buildedServer, config.server.serverFolder, {
-    recursive: true,
-    concurrency: 10,
-  })
-  logScopeServer('Folder putted in')
-  await ssh.putFile(config.folders.buildedServerPackage, config.server.serverFolderPackage)
-  logScopeServer('Package file putted in')
-  logScopeServer('Installing modules on server ...')
-  await ssh.execCommand('npm i', { cwd: config.server.serverFolder })
-  logScopeServer('Packages installed')
-  logScopeServer('Deployed succesefully')
-  logScopeClient('Removing local dist folder...')
-  fs.rmdirSync(config.folders.buildedServer, { recursive: true })
-  logScopeClient('Local dist folder succesefully removed')
-
-  return Promise.resolve(true)
-}
-
-async function deployBackupSystem(ssh: NodeSSH, config: any) {
-  logScopeBackupSystem('Build started ...')
-  await exec('npm run build-backup-system')
-  logScopeBackupSystem('Build completed')
-  await ssh.execCommand(`rm -rf /var/uggsm-backup`, { cwd: '/' })
-  logScopeBackupSystem('Folder removed')
-  await ssh.putDirectory(config.folders.buildedBackupSystem, config.server.backupSystemFolder, {
-    recursive: true,
-    concurrency: 10,
-  })
-  logScopeBackupSystem('Folder putted in')
-  await ssh.putFile(config.folders.buildedBackupSystemPackage, config.server.backupSystemFolderPackage)
-  logScopeBackupSystem('Package file putted in')
-  logScopeBackupSystem('Installing modules on server ...')
-  await ssh.execCommand('npm i', { cwd: config.server.backupSystemFolder })
-  logScopeBackupSystem('Packages installed')
-  logScopeBackupSystem('Deployed succesefully')
-  logScopeBackupSystem('Removing local dist folder...')
-  fs.rmdirSync(config.folders.buildedBackupSystem, { recursive: true })
-  logScopeBackupSystem('Local dist folder succesefully removed')
-
-  return Promise.resolve(true)
-}
-
-async function deployClient(ssh: NodeSSH, config: any) {
-  logScopeClient('Build started ...')
-  await exec('npm run build-client')
-  logScopeClient('Build completed')
-  await ssh.putDirectory(config.folders.buildedClient, config.server.clientFolder, {
-    recursive: true,
-    concurrency: 10,
-  })
-  logScopeClient('Deployed succesefully')
-
-  logScopeClient('Removing local dist folder...')
-  fs.rmdirSync(config.folders.buildedClient, { recursive: true })
-  logScopeClient('Local dist folder succesefully removed')
-
-  return Promise.resolve(true)
-}
-
-async function run(scope: string) {
-  const ssh = await connectSSH(new NodeSSH(), {
+async function run(
+  scope: 'deploy-only-server' | 'deploy-only-client' | 'deploy-client-and-server' | 'deploy-backup-system'
+) {
+  const ssh = await new NodeSSH().connect({
     host: process.env.DEPLOY_HOST,
     username: process.env.DEPLOY_USER,
     password: process.env.DEPLOY_PASSWD,
   })
 
-  if (scope === 'deploy-only-server') {
-    await deployServer(ssh, config)
+  const deploy = new Deploy(ssh)
 
-    logScopeGlobal('Server deployed succesefully')
-  }
+  const d = await deployment(deploy, config)
 
-  if (scope === 'deploy-only-client') {
-    await deployClient(ssh, config)
-
-    logScopeGlobal('Client deployed succesefully')
-  }
-
-  if (scope === 'deploy-client-and-server') {
-    await deployServer(ssh, config)
-    await deployClient(ssh, config)
-
-    logScopeGlobal('Client and server deployed succesefully')
-  }
-
-  if (scope === 'deploy-backup-system') {
-    await deployBackupSystem(ssh, config)
-
-    logScopeGlobal('Backup system deployed succesefully')
-  }
-
-  process.exit()
-}
-
-async function runCommands(command: string) {
-  const ssh = await connectSSH(new NodeSSH(), {
-    host: process.env.DEPLOY_HOST,
-    username: process.env.ROOT_USERNAME,
-    password: process.env.ROOT_PASSWORD,
-  })
-
-  let result
-
-  if (command === 'restart') {
-    logScopeCommands('Run global restart...')
-    await ssh.execCommand('systemctl restart uggsm-api && systemctl restart mongod && systemctl restart nginx')
-    logScopeCommands('Restarted succesefully')
-    logScopeCommands('Waiting to startup...')
-    await sleep(10000)
-    logScopeCommands('Geting current status...')
-    result = {
-      api: (await ssh.execCommand('systemctl status uggsm-api')).stdout,
-      mongod: (await ssh.execCommand('systemctl status mongod')).stdout,
-      nginx: (await ssh.execCommand('systemctl status nginx')).stdout,
-    }
-    logScopeCommands('Current status got succesefully')
-  } else if (command === 'restart-server') {
-    logScopeCommands('Run server restart...')
-    await ssh.execCommand('systemctl restart uggsm-api')
-    logScopeCommands('Restarted succesefully')
-    logScopeCommands('Waiting to startup...')
-    await sleep(10000)
-    logScopeCommands('Geting current status...')
-    result = {
-      api: (await ssh.execCommand('systemctl status uggsm-api')).stdout,
-    }
-    logScopeCommands('Current status got succesefully')
-  } else if (command === 'restart-mongod') {
-    logScopeCommands('Run mongod restart...')
-    await ssh.execCommand('systemctl restart mongod')
-    logScopeCommands('Restarted succesefully')
-    logScopeCommands('Waiting to startup...')
-    await sleep(10000)
-    logScopeCommands('Geting current status...')
-    result = {
-      mongod: (await ssh.execCommand('systemctl status mongod')).stdout,
-    }
-    logScopeCommands('Current status got succesefully')
-  } else if (command === 'restart-nginx') {
-    logScopeCommands('Run nginx restart...')
-    await ssh.execCommand('systemctl restart nginx')
-    logScopeCommands('Restarted succesefully')
-    logScopeCommands('Waiting to startup...')
-    await sleep(10000)
-    logScopeCommands('Geting current status...')
-    result = {
-      nginx: (await ssh.execCommand('systemctl status nginx')).stdout,
-    }
-    logScopeCommands('Current status got succesefully')
-  } else if (command === 'restart-backup') {
-    logScopeCommands('Run nginx restart...')
-    await ssh.execCommand('systemctl restart uggsm-backup')
-    logScopeCommands('Restarted succesefully')
-    logScopeCommands('Waiting to startup...')
-    await sleep(10000)
-    logScopeCommands('Geting current status...')
-    result = {
-      uggsmBackup: (await ssh.execCommand('systemctl status uggsm-backup')).stdout,
-    }
-    logScopeCommands('Current status got succesefully')
-  } else if (command === 'create-backup') {
-    await ssh.execCommand('cd /var/uggsm-backup && /usr/bin/node index.js --dump')
-
-    result = {
-      backup: 'created succesefully',
-    }
-  }
-
-  for (const key in result) {
-    console.log(`[${key.toUpperCase()}]`)
-    console.log(result[key])
+  switch (scope) {
+    case 'deploy-only-server':
+      await d.server()
+      break
+    case 'deploy-only-client':
+      await d.client()
+      break
+    case 'deploy-backup-system':
+      await d.bckpSystem()
+      break
+    case 'deploy-client-and-server':
+      await d.client()
+      await d.server()
+      break
   }
 
   process.exit()
 }
 
 async function cli() {
-  const firstQuestion = await inquirer.prompt([
+  const secondQuestion = await inquirer.prompt([
     {
       type: 'list',
-      name: 'mode',
-      message: 'Режим работы',
-      default: 'Деплой',
+      name: 'scope',
+      message: 'Что деплоим?',
+      default: 'Только клиент',
       choices: [
         {
-          name: 'Деплой',
-          value: 'deploy',
+          name: 'Клиент и Сервер',
+          value: 'deploy-client-and-server',
         },
         {
-          name: 'Комманды серверу',
-          value: 'commands',
+          name: 'Только клиент',
+          value: 'deploy-only-client',
+        },
+        {
+          name: 'Только сервер',
+          value: 'deploy-only-server',
+        },
+        {
+          name: 'Только система бэкапов',
+          value: 'deploy-backup-system',
         },
       ],
     },
   ])
 
-  if (firstQuestion.mode === 'deploy') {
-    const secondQuestion = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'scope',
-        message: 'Что деплоим?',
-        default: 'Только клиент',
-        choices: [
-          {
-            name: 'Клиент и Сервер',
-            value: 'deploy-client-and-server',
-          },
-          {
-            name: 'Только клиент',
-            value: 'deploy-only-client',
-          },
-          {
-            name: 'Только сервер',
-            value: 'deploy-only-server',
-          },
-          {
-            name: 'Только система бэкапов',
-            value: 'deploy-backup-system',
-          },
-        ],
-      },
-    ])
-
-    if (secondQuestion.scope) {
-      run(secondQuestion.scope)
-    }
-  } else if (firstQuestion.mode === 'commands') {
-    const secondQuestion = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'command',
-        message: 'Что делаем',
-        choices: [
-          {
-            name: 'Рестарт сервера, базы, нгинкс',
-            value: 'restart',
-          },
-          {
-            name: 'Бэкап',
-            value: 'create-backup',
-          },
-          {
-            name: 'Рестарт сервера',
-            value: 'restart-server',
-          },
-          {
-            name: 'Рестарт базы',
-            value: 'restart-mongod',
-          },
-          {
-            name: 'Рестарт нгинкс',
-            value: 'restart-nginx',
-          },
-          {
-            name: 'Рестарт бэкап системы',
-            value: 'restart-backup',
-          },
-        ],
-      },
-    ])
-
-    if (secondQuestion.command) {
-      runCommands(secondQuestion.command)
-    }
+  if (secondQuestion.scope) {
+    run(secondQuestion.scope)
   }
 }
 
