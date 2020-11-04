@@ -64,7 +64,7 @@ export default class AAutocomplete extends Vue {
         })
       }
 
-      if (isEmpty(this.items) && !this.disallowFreeType) {
+      if (!this.disallowFreeType) {
         this.items.push({ value: this.query, text: this.query })
       }
     }
