@@ -1,4 +1,4 @@
-import { api } from './../server'
+import { api } from '../server'
 import { parsePaginateResponse } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'

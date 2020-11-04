@@ -1,10 +1,12 @@
 {
-  "name": "uggsm-backup-system",
+  "name": "@uggsm/backup-system",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "run": "ts-node src/index.ts",
-    "compile": "tsc"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "exit 0",
+    "lint": "exit 0"
   },
   "author": "",
   "license": "ISC",

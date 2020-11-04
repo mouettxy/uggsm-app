@@ -1,11 +1,13 @@
 {
-  "name": "uggsm-cli",
+  "name": "@uggsm/cli",
   "version": "1.0.0",
   "description": "Приложение для управления сервисами uggsm",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "compile": "tsc"
+    "build": "tsc",
+    "test": "exit 0",
+    "lint": "exit 0"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-import { api } from './../server'
+import { api } from '../server'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { ObjectNotFoundException } from '../exceptions'

@@ -1,5 +1,5 @@
-import { MessageInput, MessageItem } from './../services/sms/RedSmsClient'
-import { api } from './../server'
+import { MessageInput, MessageItem } from '../services/sms/RedSmsClient'
+import { api } from '../server'
 import { generateOrderId, parsePaginateResponse } from '../utils/helpers'
 import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'

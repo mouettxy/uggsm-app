@@ -1,5 +1,5 @@
 {
-  "name": "uggsm-app",
+  "name": "@uggsm/server",
   "version": "1.1.0",
   "description": "",
   "private": true,
@@ -7,11 +7,9 @@
     "test": "jest",
     "lint": "eslint --fix ./src/**/*.ts",
     "dev": "nodemon --watch src -e ts,pug,env,css --exec ts-node ./src/server.ts",
-    "copy-email": "copyfiles src/services/mail/template/**/*.pug src/services/mail/template/**/*.css dist/services/mail/template -f",
-    "start": "npm-run-all clean lint compile start:server",
-    "start:server": "node ./dist/server.js",
-    "clean": "rimraf dist/*",
-    "compile": "tsc"
+    "build": "tsc && yarn workspace @uggsm/server copy:email",
+
+    "copy:email": "copyfiles src/services/mail/template/**/*.pug src/services/mail/template/**/*.css dist/services/mail/template -f"
   },
   "husky": {},
   "author": "newfox79",

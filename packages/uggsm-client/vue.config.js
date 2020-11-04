@@ -13,6 +13,14 @@ let production = {}
 
 if (isProductionEnvFlag) {
   production.chainWebpack = (config) => {
+    config.plugins.delete('progress')
+
+    config.plugin('simple-progress-webpack-plugin').use(require.resolve('simple-progress-webpack-plugin'), [
+      {
+        format: 'minimal', // options are minimal, compact, expanded, verbose
+      },
+    ])
+
     const splitOptions = config.optimization.get('splitChunks')
     config.optimization.splitChunks(
       Object.assign({}, splitOptions, {
@@ -96,6 +104,10 @@ if (isProductionEnvFlag) {
 
 module.exports = {
   ...production,
+
+  devServer: {
+    progress: false,
+  },
 
   transpileDependencies: ['vuetify'],
 

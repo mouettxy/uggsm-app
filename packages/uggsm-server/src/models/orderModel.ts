@@ -1,4 +1,4 @@
-import { user } from './../middlewares/validators/validateUser'
+import { user } from '../middlewares/validators/validateUser'
 import { Office, OfficeModel, UserModel } from '.'
 import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType, mongoose, index } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'

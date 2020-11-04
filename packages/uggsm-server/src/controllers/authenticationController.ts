@@ -1,4 +1,4 @@
-import { api } from './../server'
+import { api } from '../server'
 import bcrypt from 'bcrypt'
 import { NextFunction } from 'connect'
 import express from 'express'

@@ -1,22 +1,37 @@
 {
-  "name": "uggsm-app",
+  "name": "uggsm",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": "true",
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build-backup-system": "cd uggsm-backup-system && npm run compile",
-    "build-client": "cd uggsm-client && npm run build",
-    "dev-client": "cd uggsm-client && npm run serve",
-    "build-server": "cd uggsm-server && npm run compile && npm run copy-email",
-    "dev-server": "cd uggsm-server && npm run dev",
-    "run-server": "cd uggsm-server && npm run compile && node dist/server.js",
-    "lint-server": "cd uggsm-server && npm run lint",
-    "lint-client": "cd uggsm-client && npm run lint",
-    "deploy": "ts-node deploy",
-    "lint": "npm run lint-server && npm run lint-client",
-    "dev": "concurrently --kill-others \"npm:dev-server\" \"npm:dev-client\"",
-    "build": "npm run build-server && npm run build-client",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "yarn workspaces run build",
+    "build:backup-system": "yarn workspace @uggsm/backup-system build",
+    "build:app": "yarn workspace @uggsm/app build",
+    "build:server": "yarn workspace @uggsm/server build",
+    "build:cli": "yarn workspace @uggsm/cli build",
+    "dev": "yarn workspaces run dev",
+    "dev:app-server": "concurrently --kill-others \"yarn dev:server\" \"yarn dev:app\" --prefix \"[{time}:{name}|{pid}]\" --names \"SERVER,APP\" --prefix-colors \"yellow.bold,green.bold\" --timestamp-format \"HH:mm:ss\"",
+    "dev:backup-system": "yarn workspace @uggsm/backup-system dev",
+    "dev:app": "yarn workspace @uggsm/app dev",
+    "dev:server": "yarn workspace @uggsm/server dev",
+    "dev:cli": "yarn workspace @uggsm/cli dev",
+    "lint": "yarn workspaces run lint",
+    "lint:backup-system": "yarn workspace @uggsm/backup-system lint",
+    "lint:app": "yarn workspace @uggsm/app lint",
+    "lint:server": "yarn workspace @uggsm/server lint",
+    "lint:cli": "yarn workspace @uggsm/cli lint",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:backup-system": "echo \"Error: no test specified\" && exit 1",
+    "test:app": "echo \"Error: no test specified\" && exit 1",
+    "test:server": "echo \"Error: no test specified\" && exit 1",
+    "test:cli": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "ts-node deploy"
   },
   "repository": {
     "type": "git",
@@ -29,7 +44,7 @@
   },
   "lint-staged": {
     "./*.{js,jsx,ts,tsx}": [
-      "npm run lint"
+      "yarn lint"
     ]
   },
   "author": "newfox79",
@@ -40,18 +55,21 @@
   "homepage": "https://github.com/newfox79/uggsm-app#readme",
   "devDependencies": {
     "@types/node": "^14.14.6",
-    "concurrently": "^5.3.0"
+    "concurrently": "^5.3.0",
+    "lerna": "^3.22.1"
   },
   "dependencies": {
+    "@octokit/core": "3",
     "@prettier/plugin-pug": "^1.8.1",
-    "@typescript-eslint/eslint-plugin": "^4.4.0",
-    "@typescript-eslint/parser": "^4.4.0",
+    "@typescript-eslint/eslint-plugin": "3.10.1",
+    "@typescript-eslint/parser": "3.10.1",
+    "@vue/cli-plugin-typescript": "^4.5.8",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^6.0.0",
     "better-logging": "^4.4.0",
     "child_process": "^1.0.2",
     "dotenv": "^8.2.0",
-    "eslint": "^7.10.0",
+    "eslint": "6",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^7.0.1",
     "husky": "^4.3.0",
@@ -62,6 +80,7 @@
     "ora": "^5.1.0",
     "prettier": "^2.1.2",
     "promisify-child-process": "^4.1.1",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "webpack": "4.36.0"
   }
 }

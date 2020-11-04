@@ -1,7 +1,7 @@
 import express from 'express'
 import { authenticationMiddleware } from '../../middlewares'
 import { mongoose } from '@typegoose/typegoose'
-import { Router } from '../../interfaces/'
+import { Router } from '../../interfaces'
 
 export class BaseRouter implements Router {
   public expressRouter: express.Router = express.Router()
