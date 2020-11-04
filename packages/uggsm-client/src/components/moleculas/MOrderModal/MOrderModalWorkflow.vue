@@ -179,7 +179,7 @@ export default class MOrderModalWorkflow extends Vue {
           e.header = e.message
           if (includes(['Новый', 'Отремонтирован'], e.header)) {
             color = '#1859a1'
-          } else if (includes(['В работе', 'На тестировании', 'На уточнении'], e.header)) {
+          } else if (includes(['В работе', 'На тестировании'], e.header)) {
             color = '#689f38'
           } else if (includes(['Позвонить повторно', 'Ждёт запчасть', 'Нужно решить'], e.header)) {
             color = '#FB8C00'
@@ -189,6 +189,8 @@ export default class MOrderModalWorkflow extends Vue {
             color = '#b9b9b9'
           } else if (includes(['Закрыт', 'Обещали найти', 'Выкуплен СЦ'], e.header)) {
             color = '#626262'
+          } else if (includes(['Пересогласовать'], e.header)) {
+            color = '#ff6961'
           }
         }
 

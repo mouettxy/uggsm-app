@@ -81,6 +81,15 @@ export default class MOrderStatusSwitcher extends Vue {
         ],
       },
       {
+        text: 'Инвентаризация',
+        statuses: [
+          {
+            color: '#ff6961',
+            status: 'Пересогласовать',
+          },
+        ],
+      },
+      {
         text: 'На исполнении',
         statuses: [
           {
@@ -90,10 +99,6 @@ export default class MOrderStatusSwitcher extends Vue {
           {
             color: '#689f38',
             status: 'На тестировании',
-          },
-          {
-            color: '#689f38',
-            status: 'На уточнении',
           },
         ],
       },

@@ -75,7 +75,6 @@ export default class OReportsOrdersCount extends Vue {
     'Новый',
     'В работе',
     'На тестировании',
-    'На уточнении',
     'Позвонить повторно',
     'Ждёт запчасть',
     'Нужно решить',
@@ -86,6 +85,7 @@ export default class OReportsOrdersCount extends Vue {
     'Выкуплен СЦ',
     'Обещали найти',
     'Закрыт с вопросом',
+    'Пересогласовать',
   ]
 
   get reportExcel() {
