@@ -10,6 +10,7 @@ v-autocomplete(
   :disabled='disabled',
   :dense='dense',
   @focus.stop='onAutocompleteFocus',
+  @blur.stop='onBlur',
   v-mask='phoneMask',
   outlined,
   no-filter,
@@ -88,6 +89,12 @@ export default class AAutocomplete extends Vue {
 
   set model(value) {
     this.$emit('input', value)
+  }
+
+  onBlur() {
+    if (!this.disallowFreeType && !this.returnObject) {
+      this.model = this.query
+    }
   }
 
   async getItems() {
