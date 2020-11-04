@@ -15,12 +15,14 @@
     "build:app": "yarn workspace @uggsm/app build",
     "build:server": "yarn workspace @uggsm/server build",
     "build:cli": "yarn workspace @uggsm/cli build",
+
     "dev": "yarn workspaces run dev",
     "dev:app-server": "concurrently --kill-others \"yarn dev:server\" \"yarn dev:app\" --prefix \"[{time}:{name}|{pid}]\" --names \"SERVER,APP\" --prefix-colors \"yellow.bold,green.bold\" --timestamp-format \"HH:mm:ss\"",
     "dev:backup-system": "yarn workspace @uggsm/backup-system dev",
     "dev:app": "yarn workspace @uggsm/app dev",
     "dev:server": "yarn workspace @uggsm/server dev",
     "dev:cli": "yarn workspace @uggsm/cli dev",
+
     "lint": "yarn workspaces run lint",
     "lint:backup-system": "yarn workspace @uggsm/backup-system lint",
     "lint:app": "yarn workspace @uggsm/app lint",
@@ -43,7 +45,7 @@
     }
   },
   "lint-staged": {
-    "./*.{js,jsx,ts,tsx}": [
+    "./packages/*.{js,jsx,ts,tsx}": [
       "yarn lint"
     ]
   },

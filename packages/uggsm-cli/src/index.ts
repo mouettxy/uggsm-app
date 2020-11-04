@@ -4,131 +4,234 @@ import { NodeSSH } from 'node-ssh'
 import * as fs from 'fs'
 import * as inquirer from 'inquirer'
 import { exec } from 'promisify-child-process'
-import config from './config'
-import { connectSSH, sleep, downloadFile, getFolderFrom } from './helpers'
-import { log } from './helpers/logging'
-import * as temp from 'temp'
-import decompress from 'decompress'
-import decompressTargz from 'decompress-targz'
-import * as path from 'path'
+import { connectSSH } from './helpers'
+import ora from 'ora'
+import chalk from 'chalk'
+import dotenv from 'dotenv'
 
-temp.track()
-const currentSpinnerInstance = null
+dotenv.config()
 
-async function deployServer(ssh: NodeSSH, config: any) {
-  log('server', 'Собираем проект ...', currentSpinnerInstance)
-  try {
-    const folder = await getFolderFrom('server', temp, config.githubToken)
+class Commands {
+  private spinner = null
+  public scope = ''
+  public sshConnection: NodeSSH
+  public queue: Promise<any>
 
-    console.log(folder)
-  } catch (error) {
-    console.log(error)
+  public commentsShortcuts: Record<string, string> = {
+    buildStart: 'Собираем проект...',
+    buildEnd: 'Проект успешно собран!',
+    putBuildFolderStart: 'Размещаем проект на сервере...',
+    putBuildFolderEnd: 'Проект успешно размещён!',
+    putDependenciesFileStart: 'Размещаем файл зависимостей на сервере...',
+    putDependenciesFileEnd: 'Файл успешно размещён!',
+    setupDependenciesStart: 'Устанавливаем зависимости...',
+    setupDependenciesEnd: 'Зависимости установлены!',
+    deleteLocalStart: 'Удаляем локальную копию сборки...',
+    deleteLocalEnd: 'Локальная копия успешно удалена!',
+    sysctlRestartStart: 'Начинаем рестарт демона...',
+    sysctlRestartEnd: 'Демон успешно перезапущен!',
+    sysctlStatusStart: 'Получаем статус демона...',
+    sysctlStatusEnd: 'Статус успешно получен!',
+    backupStart: 'Начинаем сборку бэкапа...',
+    backupEnd: 'Бэкап успешно собран!',
+    sleepStart: 'Ожидаем результатов...',
+    sleepEnd: 'Результаты получены!',
   }
-  log('server', 'Сборка завершена', currentSpinnerInstance)
 
-  log('server', 'Удаляем файлы старой сборки ...', currentSpinnerInstance)
-  //await ssh.execCommand(`rm -rf /var/www/api`, { cwd: '/' })
-  log('server', 'Файлы старой сборки удалены успешно', currentSpinnerInstance)
+  constructor(ssh: NodeSSH) {
+    this.sshConnection = ssh
 
-  log('server', 'Размещаем файлы новой сборки ...', currentSpinnerInstance)
-  /* await ssh.putDirectory(config.folders.buildedServer, config.server.serverFolder, {
-    recursive: true,
-    concurrency: 10,
-  }) */
-  log('server', 'Файлы новой сборки размещены успешно', currentSpinnerInstance)
+    this.queue = Promise.resolve()
+  }
 
-  log('server', 'Устанавливаем зависимости на сервере ...', currentSpinnerInstance)
-  /* await ssh.putFile(config.folders.buildedServerPackage, config.server.serverFolderPackage)
-  await ssh.execCommand('npm i', { cwd: config.server.serverFolder }) */
-  log('server', 'Зависимости установлены успешно', currentSpinnerInstance)
+  then(callback: (queue: any) => any) {
+    callback(this.queue)
+  }
 
-  log('server', 'Удаляем временные файлы проекта ...', currentSpinnerInstance)
-  /* fs.rmdirSync(config.folders.buildedServer, { recursive: true }) */
-  log('server', 'Временные файлы удалены успешно', currentSpinnerInstance)
+  chain(callback: (queue: any) => any) {
+    return (this.queue = this.queue.then(callback))
+  }
 
-  return Promise.resolve(true)
+  public sleep(time: number, logBefore: string, logAfter: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      return new Promise((resolve) => setTimeout(resolve, time))
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public setScope(scope: string) {
+    this.scope = scope.toUpperCase()
+
+    return this
+  }
+
+  public clear() {
+    this.spinner.stop()
+    this.scope = ''
+
+    return this
+  }
+
+  public log(message: string) {
+    this.chain(async () => {
+      return new Promise((resolve) => {
+        if (this.commentsShortcuts[message]) {
+          message = this.commentsShortcuts[message]
+        }
+
+        message = `${chalk.white.bold.bgBlackBright(`${this.scope}`)} ${chalk.white(message)}`
+
+        if (!this.spinner) {
+          console.log(message)
+          this.spinner = ora(message).start()
+        } else {
+          this.spinner.stop()
+          console.log(message)
+          this.spinner = ora(message).start()
+        }
+
+        resolve(message)
+      })
+    })
+
+    return this
+  }
+
+  public exec(command: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await exec(command)
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public sshExec(command: string, cwd: string, logBefore?: string, logAfter?: string, printStdOut?: boolean) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      const { stdout } = await this.sshConnection.execCommand(command, { cwd })
+      this.log(stdout)
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public sshPutDir(origin: string, destination: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await this.sshConnection.putDirectory(origin, destination, {
+        recursive: true,
+        concurrency: 10,
+      })
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public sshPutFile(origin: string, destination: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(async () => {
+      await this.sshConnection.putFile(origin, destination)
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
+
+  public rmDir(path: string, logBefore?: string, logAfter?: string) {
+    if (logBefore) {
+      this.log(logBefore)
+    }
+
+    this.chain(() => {
+      return new Promise((resolve) => {
+        fs.rmdirSync(path, { recursive: true })
+        resolve(path)
+      })
+    })
+
+    if (logAfter) {
+      this.log(logAfter)
+    }
+
+    return this
+  }
 }
 
-async function deployBackupSystem(ssh: NodeSSH, config: any) {
-  log('backup system', 'Собираем проект ...', currentSpinnerInstance)
-  await exec('npm run build-backup-system')
-  log('backup system', 'Проект собран успешно', currentSpinnerInstance)
-
-  log('backup system', 'Удаляем файлы старой сборки ...', currentSpinnerInstance)
-  await ssh.execCommand(`rm -rf /var/uggsm-backup`, { cwd: '/' })
-  log('backup system', 'Файлы старой сборки удалены успешно', currentSpinnerInstance)
-
-  log('backup system', 'Размещаем файлы новой сборки ...', currentSpinnerInstance)
-  await ssh.putDirectory(config.folders.buildedBackupSystem, config.server.backupSystemFolder, {
-    recursive: true,
-    concurrency: 10,
-  })
-  log('backup system', 'Файлы новой сборки размещены успешно', currentSpinnerInstance)
-
-  log('backup system', 'Устанавливаем зависимости на сервере ...', currentSpinnerInstance)
-  await ssh.putFile(config.folders.buildedBackupSystemPackage, config.server.backupSystemFolderPackage)
-  await ssh.execCommand('npm i', { cwd: config.server.backupSystemFolder })
-  log('backup system', 'Зависимости установлены успешно', currentSpinnerInstance)
-
-  log('backup system', 'Удаляем временные файлы проекта ...', currentSpinnerInstance)
-  fs.rmdirSync(config.folders.buildedBackupSystem, { recursive: true })
-  log('backup system', 'Временные файлы удалены успешно', currentSpinnerInstance)
-
-  return Promise.resolve(true)
-}
-
-async function deployClient(ssh: NodeSSH, config: any) {
-  log('backup system', 'Собираем проект ...', currentSpinnerInstance)
-  await exec('npm run build-client')
-  log('backup system', 'Проект собран успешно', currentSpinnerInstance)
-
-  log('backup system', 'Размещаем файлы новой сборки ...', currentSpinnerInstance)
-  await ssh.putDirectory(config.folders.buildedClient, config.server.clientFolder, {
-    recursive: true,
-    concurrency: 10,
-  })
-  log('backup system', 'Файлы новой сборки размещены успешно', currentSpinnerInstance)
-
-  log('backup system', 'Удаляем временные файлы проекта ...', currentSpinnerInstance)
-  fs.rmdirSync(config.folders.buildedClient, { recursive: true })
-  log('backup system', 'Временные файлы удалены успешно', currentSpinnerInstance)
-
-  return Promise.resolve(true)
-}
-
-async function run(scope: string) {
-  const ssh = await connectSSH(new NodeSSH(), {
-    host: '194.58.120.238',
-    username: 'default_user',
-    password: 'xBfk55TUxqmBKMWC',
-  })
-
-  if (scope === 'deploy-only-server') {
-    await deployServer(ssh, config)
-
-    log('global', 'Сервер успешно собран и выгружен', currentSpinnerInstance)
+async function commandPallet(commands: Commands) {
+  const restartService = async (scope: string, daemon: string) => {
+    await commands
+      .setScope(scope)
+      .sshExec(`systemctl restart ${daemon}`, '/', 'sysctlRestartStart', 'sysctlRestartEnd')
+      .sleep(5000, 'sleepStart', 'sleepEnd')
+      .sshExec(`systemctl restart ${daemon}`, '/', 'sysctlStatusStart', 'sysctlStatusEnd', true)
   }
 
-  if (scope === 'deploy-only-client') {
-    await deployClient(ssh, config)
-
-    log('global', 'Клиент успешно собран и выгружен', currentSpinnerInstance)
+  const restartServer = async () => {
+    await restartService('server', 'uggsm-api')
   }
 
-  if (scope === 'deploy-client-and-server') {
-    await deployServer(ssh, config)
-    await deployClient(ssh, config)
-
-    log('global', 'Клиент и Сервер успешно собраны и выгружены', currentSpinnerInstance)
+  const restartDatabase = async () => {
+    await restartService('database', 'mongod')
   }
 
-  if (scope === 'deploy-backup-system') {
-    await deployBackupSystem(ssh, config)
-
-    log('global', 'Система бэкапов успешно собрана и выгружена', currentSpinnerInstance)
+  const restartNginx = async () => {
+    await restartService('nginx', 'nginx')
   }
 
-  process.exit()
+  const restartBackup = async () => {
+    await restartService('backup system', 'uggsm-backup')
+  }
+
+  const createBackup = async () => {
+    await commands
+      .setScope('create backup')
+      .sshExec('/usr/bin/node index.js --dump', '/var/uggsm-backup', 'backupStart', 'backupEnd')
+  }
+
+  return {
+    restartServer,
+    restartDatabase,
+    restartNginx,
+    restartBackup,
+    createBackup,
+  }
 }
 
 async function runCommands(command: string) {
@@ -137,191 +240,121 @@ async function runCommands(command: string) {
     username: process.env.ROOT_USERNAME,
     password: process.env.ROOT_PASSWORD,
   })
+  const commands = new Commands(ssh)
+  const palett = await commandPallet(commands)
 
-  let result
-
-  if (command === 'restart') {
-    log('command', 'Запуск рестарта демонов ...', currentSpinnerInstance)
-    await ssh.execCommand('systemctl restart uggsm-api && systemctl restart mongod && systemctl restart nginx')
-    log('command', 'Успешный рестарт', currentSpinnerInstance)
-
-    log('command', 'Ожидаем запуска ...', currentSpinnerInstance)
-
-    await sleep(10000)
-
-    log('command', 'Получаем текущий статус ...', currentSpinnerInstance)
-    result = {
-      api: (await ssh.execCommand('systemctl status uggsm-api')).stdout,
-      mongod: (await ssh.execCommand('systemctl status mongod')).stdout,
-      nginx: (await ssh.execCommand('systemctl status nginx')).stdout,
-    }
-    log('command', 'Текущий статус успешно получен', currentSpinnerInstance)
-  } else if (command === 'restart-server') {
-    log('command', 'Запуск рестарта сервера ...', currentSpinnerInstance)
-    await ssh.execCommand('systemctl restart uggsm-api')
-    log('command', 'Успешный рестарт', currentSpinnerInstance)
-
-    log('command', 'Ожидаем запуска ...', currentSpinnerInstance)
-
-    await sleep(10000)
-
-    log('command', 'Получаем текущий статус ...', currentSpinnerInstance)
-    result = {
-      api: (await ssh.execCommand('systemctl status uggsm-api')).stdout,
-    }
-    log('command', 'Текущий статус успешно получен', currentSpinnerInstance)
-  } else if (command === 'restart-mongod') {
-    log('command', 'Запуск рестарта базы данных ...', currentSpinnerInstance)
-    await ssh.execCommand('systemctl restart mongod')
-    log('command', 'Успешный рестарт', currentSpinnerInstance)
-
-    log('command', 'Ожидаем запуска ...', currentSpinnerInstance)
-
-    await sleep(10000)
-
-    log('command', 'Получаем текущий статус ...', currentSpinnerInstance)
-    result = {
-      mongod: (await ssh.execCommand('systemctl status mongod')).stdout,
-    }
-    log('command', 'Текущий статус успешно получен', currentSpinnerInstance)
-  } else if (command === 'restart-nginx') {
-    log('command', 'Запуск рестарта сервера статики ...', currentSpinnerInstance)
-    await ssh.execCommand('systemctl restart nginx')
-    log('command', 'Успешный рестарт', currentSpinnerInstance)
-
-    log('command', 'Ожидаем запуска ...', currentSpinnerInstance)
-
-    await sleep(10000)
-
-    log('command', 'Получаем текущий статус ...', currentSpinnerInstance)
-    result = {
-      nginx: (await ssh.execCommand('systemctl status nginx')).stdout,
-    }
-    log('command', 'Текущий статус успешно получен', currentSpinnerInstance)
-  } else if (command === 'restart-backup') {
-    log('command', 'Запуск рестарта сервиса резервного копирования ...', currentSpinnerInstance)
-    await ssh.execCommand('systemctl restart uggsm-backup')
-    log('command', 'Успешный рестарт', currentSpinnerInstance)
-
-    log('command', 'Ожидаем запуска ...', currentSpinnerInstance)
-
-    await sleep(10000)
-
-    log('command', 'Получаем текущий статус ...', currentSpinnerInstance)
-    result = {
-      uggsmBackup: (await ssh.execCommand('systemctl status uggsm-backup')).stdout,
-    }
-    log('command', 'Текущий статус успешно получен', currentSpinnerInstance)
-  } else if (command === 'create-backup') {
-    log('command', 'Запускаем внеплановую резервную копию базы данных ...', currentSpinnerInstance)
-    await ssh.execCommand('cd /var/uggsm-backup && /usr/bin/node index.js --dump')
-    log('command', 'Резервная копия успешно создана', currentSpinnerInstance)
-
-    result = false
+  switch (command) {
+    case 'restart':
+      await palett.restartServer()
+      await palett.restartDatabase()
+      await palett.restartNginx()
+      break
+    case 'restart-server':
+      await palett.restartServer()
+      break
+    case 'restart-mongod':
+      await palett.restartDatabase()
+      break
+    case 'restart-nginx':
+      await palett.restartNginx()
+      break
+    case 'restart-backup':
+      await palett.restartBackup()
+      break
+    case 'create-backup':
+      await palett.createBackup()
+      break
+    case 'quit':
+      process.exit()
   }
 
-  if (result) {
-    for (const key in result) {
-      console.log(`[${key.toUpperCase()}]`)
-      console.log(result[key])
-    }
-  }
+  await commands.clear()
 
-  process.exit()
-}
-
-async function cli() {
-  const firstQuestion = await inquirer.prompt([
+  const question = await inquirer.prompt([
     {
       type: 'list',
-      name: 'mode',
-      message: 'Режим работы',
-      default: 'Сборка и выгрузка',
+      name: 'command',
+      message: 'Что делаем',
       choices: [
         {
-          name: 'Сборка и выгрузка',
-          value: 'deploy',
+          name: 'Рестарт сервера, базы данных, сервера статики',
+          value: 'restart',
         },
         {
-          name: 'Комманды серверу',
-          value: 'commands',
+          name: 'Создать внеплановую резервную копию базы данных',
+          value: 'create-backup',
+        },
+        {
+          name: 'Рестарт сервера',
+          value: 'restart-server',
+        },
+        {
+          name: 'Рестарт базы',
+          value: 'restart-mongod',
+        },
+        {
+          name: 'Рестарт сервера статики',
+          value: 'restart-nginx',
+        },
+        {
+          name: 'Рестарт бэкап системы',
+          value: 'restart-backup',
+        },
+        {
+          name: 'Выход',
+          value: 'quit',
         },
       ],
     },
   ])
 
-  if (firstQuestion.mode === 'deploy') {
-    const secondQuestion = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'scope',
-        message: 'Что собрать и выгрузить',
-        default: 'Только клиент',
-        choices: [
-          {
-            name: 'Клиент и Сервер',
-            value: 'deploy-client-and-server',
-          },
-          {
-            name: 'Только клиент',
-            value: 'deploy-only-client',
-          },
-          {
-            name: 'Только сервер',
-            value: 'deploy-only-server',
-          },
-          {
-            name: 'Только система бэкапов',
-            value: 'deploy-backup-system',
-          },
-        ],
-      },
-    ])
-
-    if (secondQuestion.scope) {
-      run(secondQuestion.scope)
-    }
-  } else if (firstQuestion.mode === 'commands') {
-    const secondQuestion = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'command',
-        message: 'Что делаем',
-        choices: [
-          {
-            name: 'Рестарт сервера, базы данных, сервера статики',
-            value: 'restart',
-          },
-          {
-            name: 'Создать внеплановую резервную копию базы данных',
-            value: 'create-backup',
-          },
-          {
-            name: 'Рестарт сервера',
-            value: 'restart-server',
-          },
-          {
-            name: 'Рестарт базы',
-            value: 'restart-mongod',
-          },
-          {
-            name: 'Рестарт сервера статики',
-            value: 'restart-nginx',
-          },
-          {
-            name: 'Рестарт бэкап системы',
-            value: 'restart-backup',
-          },
-        ],
-      },
-    ])
-
-    if (secondQuestion.command) {
-      runCommands(secondQuestion.command)
-    }
+  if (question.command) {
+    runCommands(question.command)
   }
 }
 
-/* cli() */
+async function cli() {
+  const question = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'command',
+      message: 'Что делаем',
+      choices: [
+        {
+          name: 'Рестарт сервера, базы данных, сервера статики',
+          value: 'restart',
+        },
+        {
+          name: 'Создать внеплановую резервную копию базы данных',
+          value: 'create-backup',
+        },
+        {
+          name: 'Рестарт сервера',
+          value: 'restart-server',
+        },
+        {
+          name: 'Рестарт базы',
+          value: 'restart-mongod',
+        },
+        {
+          name: 'Рестарт сервера статики',
+          value: 'restart-nginx',
+        },
+        {
+          name: 'Рестарт бэкап системы',
+          value: 'restart-backup',
+        },
+        {
+          name: 'Выход',
+          value: 'quit',
+        },
+      ],
+    },
+  ])
 
-run('deploy-only-server')
+  if (question.command) {
+    runCommands(question.command)
+  }
+}
+
+cli()
