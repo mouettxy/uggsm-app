@@ -7,6 +7,7 @@
     label='Выполненная работа',
     icon='mdi-hammer-screwdriver',
     endpoint='/completed-work',
+    disallow-free-type,
     dense
   )
   v-slide-y-transition
@@ -172,6 +173,7 @@ export default class OOrderModalWorks extends Vue {
   @Watch('work')
   onWorkChange() {
     if (this.work) {
+      console.log(this.model)
       if (typeof this.work === 'string') {
         this.model.header = this.work
       } else {
@@ -290,7 +292,7 @@ export default class OOrderModalWorks extends Vue {
 
   resetModels() {
     this.model = {
-      userid: null,
+      user: { text: this.order?.master.credentials, value: this.order?.master.id },
       username: '',
       header: '',
       message: '',

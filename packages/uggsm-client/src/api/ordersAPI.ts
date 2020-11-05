@@ -10,6 +10,7 @@ export const ordersEndpoints = (code?: string | number, ...args: any): OrdersEnd
   create: { method: 'post', link: `/order` },
   createByOffice: { method: 'post', link: `/order/office/${code}` },
   addSms: { method: 'put', link: `/order/${code}/sms` },
+  setEstimatedCloseAt: { method: 'put', link: `/order/${code}/estimated-close-time` },
   addCompletedWork: { method: 'put', link: `/order/${code}/completed-work` },
   deleteCompletedWork: { method: 'delete', link: `/order/${code}/completed-work/${args[0]}` },
   addMasterComment: { method: 'put', link: `/order/${code}/master-comment` },
@@ -206,6 +207,20 @@ export const ordersAPI = (code?: string | number): OrdersAPI => ({
     try {
       data.userid = authModule.user?.id
       const response = await sendRequest(ordersEndpoints(code).setPayed, data)
+
+      if (response.status === 200) {
+        return Promise.resolve(response.data)
+      } else {
+        return Promise.resolve(null)
+      }
+    } catch (error) {
+      return Promise.resolve(null)
+    }
+  },
+  setEstimatedCloseAt: async (data) => {
+    try {
+      data.userid = authModule.user?.id
+      const response = await sendRequest(ordersEndpoints(code).setEstimatedCloseAt, data)
 
       if (response.status === 200) {
         return Promise.resolve(response.data)

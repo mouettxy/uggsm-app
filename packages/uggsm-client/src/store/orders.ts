@@ -217,6 +217,17 @@ export default class Orders extends VuexModule {
   }
 
   @Action
+  async setEstimatedCloseAt(payload: { orderid: string | number; time: string }) {
+    const response = await ordersAPI(payload.orderid).setEstimatedCloseAt({ time: payload.time })
+
+    if (response) {
+      return response
+    } else {
+      return false
+    }
+  }
+
+  @Action
   async createOrder(payload: any) {
     this.context.commit('SET_LOADING', true)
     try {

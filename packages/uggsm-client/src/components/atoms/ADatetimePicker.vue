@@ -8,13 +8,18 @@ v-dialog(
       v-on='on',
       v-bind='textFieldProps',
       :value='selectedDatetime',
+      :single-line='small',
       :prepend-inner-icon='icon',
+      :outlined='!small',
       :loading='loading',
-      :label='label',
+      :hide-details='small',
+      :filled='small',
       :disabled='disabled',
+      :color='fill',
+      :class='{ "a-datetime-picker--small": small, [fill]: fill }',
       readonly,
-      outlined,
-      dense
+      dense,
+      color='primary'
     )
       template(#progress)
         slot(name='progress')
@@ -93,7 +98,11 @@ export default class ADatetimePicker extends Vue {
   @Prop({ type: Boolean }) disabled: any
   @Prop({ type: Boolean }) loading: any
   @Prop({ type: String, default: '' }) label: any
+  @Prop() add!: number
+  @Prop() type!: 'hour' | 'day' | 'week' | 'month'
   @Prop(String) icon: any
+  @Prop() small!: boolean
+  @Prop({}) fill!: string
 
   @Ref('timer') timer: any
 
@@ -134,7 +143,12 @@ export default class ADatetimePicker extends Vue {
 
   init() {
     if (!this.datetime) {
-      const m = moment().add(7, 'days')
+      let m
+      if (this.add && this.type) {
+        m = moment().add(this.add, this.type)
+      } else {
+        m = moment().add(7, 'days')
+      }
       this.date = m.format('YYYY-MM-DD')
       this.time = m.format('HH:mm')
       this.$emit('input', this.dateToDb)
@@ -152,7 +166,12 @@ export default class ADatetimePicker extends Vue {
 
   clearHandler() {
     this.resetPicker()
-    const m = moment().add(7, 'days')
+    let m
+    if (this.add && this.type) {
+      m = moment().add(this.add, this.type)
+    } else {
+      m = moment().add(7, 'days')
+    }
     this.date = m.format('YYYY-MM-DD')
     this.time = m.format('HH:mm')
     this.$emit('input', this.dateToDb)
@@ -175,3 +194,10 @@ export default class ADatetimePicker extends Vue {
   }
 }
 </script>
+
+<style lang="sass">
+.a-datetime-picker--small
+  transform: scale(0.73)
+  transform-origin: inherit
+  margin-left: -27px !important
+</style>

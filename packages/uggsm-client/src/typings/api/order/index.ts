@@ -132,6 +132,7 @@ export type Order = {
 
 export type OrdersAPI = {
   getAll(): Promise<any | null>
+  setEstimatedCloseAt(data: any): Promise<any | null>
   getAllByOffice(): Promise<any | null>
   getById(): Promise<any | null>
   getPaginated(data: any): Promise<any | null>
@@ -156,6 +157,7 @@ export type OrdersEndpoints = {
   getAll: Endpoint
   getPaginated: Endpoint
   getAllByOffice: Endpoint
+  setEstimatedCloseAt: Endpoint
   getById: Endpoint
   create: Endpoint
   createByOffice: Endpoint

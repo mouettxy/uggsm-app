@@ -11,6 +11,7 @@ import { User } from './userModel'
 import mongoosePaginate from 'mongoose-paginate-v2'
 import { statuses } from '../utils/enums'
 import mongooseSearch from 'mongoose-partial-search'
+import moment from 'moment'
 
 export class CompletedWork {
   @prop()
@@ -403,7 +404,7 @@ export class Order {
     } else {
       const newMaster = await UserModel.findById(master)
 
-      order.workflow = await await this.setHelper(
+      order.workflow = await this.setHelper(
         'workflow',
         order.workflow,
         'Назначен мастер',
@@ -412,6 +413,29 @@ export class Order {
       )
     }
     order.master = master
+    return await order.save()
+  }
+
+  public static async setEstimatedCloseAt(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    time: string,
+    userid: string | number
+  ) {
+    const order = await this.findOne({ id })
+
+    order.workflow = await this.setHelper(
+      'workflow',
+      order.workflow,
+      'Смена срока заказа',
+      `Изменён с "${moment(order.estimatedCloseAt).format('DD.MM.YYYY HH:mm')}" на "${moment(time).format(
+        'DD.MM.YYYY HH:mm'
+      )}"`,
+      parseInt(userid as string)
+    )
+
+    order.estimatedCloseAt = new Date(time)
+
     return await order.save()
   }
 

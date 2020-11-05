@@ -39,14 +39,23 @@ export default class ADatetimePicker2 extends Vue {
   @Prop({ default: 'DD.MM.YYYY' }) format!: string
   @Prop({ default: 'date' }) type!: string
   @Prop({ default: 'За дату' }) label!: string
+  @Prop() returnIsoString!: boolean
   @Prop() icon!: string
 
   get model() {
+    if (this.returnIsoString) {
+      return moment(this.value as string).format(this.format)
+    }
+
     return this.value
   }
 
   set model(value) {
-    this.$emit('input', value)
+    if (this.returnIsoString) {
+      this.$emit('input', moment(value as string, this.format).toISOString())
+    } else {
+      this.$emit('input', value)
+    }
   }
 }
 </script>

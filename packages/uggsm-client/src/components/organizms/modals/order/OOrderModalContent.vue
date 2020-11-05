@@ -31,6 +31,14 @@
                 color='grey'
               ) {{ order.password }}
           span Пароль
+        m-order-time-label(
+          :time='order.estimatedCloseAt',
+          :style='{ paddingTop: "5px" }',
+          :orderid='order.id',
+          :order-status='order.status',
+          path='estimatedCloseAt',
+          editable
+        )
 
   template(v-if='!newOrder && order === null')
     v-progress-circular(

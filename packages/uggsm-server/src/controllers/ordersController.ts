@@ -317,6 +317,24 @@ export class OrdersController implements IOrdersController {
     }
   }
 
+  public setEstimatedCloseAt: ControllerMethod = async (req, res, next) => {
+    try {
+      const order = await this.model.setEstimatedCloseAt(req.params.id, req.body.time, req.body.userid)
+
+      if (order) {
+        res.status(200)
+        api.io.emit('added order estimated close time', order.id)
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
+        res.send(order)
+      } else {
+        throw new Error('Не удалось обработать данные')
+      }
+    } catch (e) {
+      next(new HttpException(500, e.message))
+    }
+  }
+
   public setPayed: ControllerMethod = async (req, res, next) => {
     try {
       const order = await this.model.setPayed(req.params.id, req.body.payed, req.body.userid)

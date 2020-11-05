@@ -59,7 +59,8 @@
             v-on='on',
             v-bind='attrs',
             :style='{ background: item.quick ? "rgba(255, 82, 82, .4)" : "" }',
-            text
+            text,
+            small
           )
             v-icon(left) mdi-pencil
             span {{ value }}
@@ -70,16 +71,12 @@
         scope='table'
       )
     template(#item.estimatedCloseAt='{value, item}')
-      template(v-if='isExpired(value, item)')
-        v-chip(
-          small,
-          color='error'
-        ) {{ value }}
-      template(v-else)
-        v-chip(
-          small,
-          color='softgrey'
-        ) {{ value }}
+      m-order-time-label(
+        :time='value',
+        :order-status='item.status',
+        small,
+        path='estimatedCloseAt'
+      )
 </template>
 
 <script lang="ts">
@@ -101,13 +98,6 @@ export default class OOrdersTable extends Vue {
 
   get store() {
     return ordersModule
-  }
-
-  isExpired(date: string, item: Order) {
-    return (
-      moment(date, 'DD.MM.YYYY HH:mm').isBefore(moment()) &&
-      !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
-    )
   }
 
   onStatusFilter() {

@@ -91,11 +91,8 @@ export default class OOrderModal extends Vue {
   async onModalStateChange(modal: boolean) {
     if (modal) {
       this.getOrder()
-
-      this.model.estimatedCloseAt = moment().add('24', 'hours').format('DD.MM.YYYY HH:mm')
     } else {
       this.order = null
-      this.model.estimatedCloseAt = ''
     }
   }
 
@@ -159,7 +156,6 @@ export default class OOrderModal extends Vue {
         const sendedOrder = await ordersModule.createOrder({
           ...this.model,
           office: settingsModule.office.code,
-          estimatedCloseAt: moment(this.model.estimatedCloseAt, 'DD.MM.YYYY HH:mm').toISOString(),
         })
 
         if (sendedOrder) {
@@ -192,8 +188,6 @@ export default class OOrderModal extends Vue {
         copyOfOrder.manager = (copyOfOrder.manager._id as unknown) as User
         copyOfOrder.office = (copyOfOrder.office._id as unknown) as Office
         copyOfOrder.customer = (copyOfOrder.customer._id as unknown) as Client
-
-        copyOfOrder.estimatedCloseAt = moment(copyOfOrder.estimatedCloseAt, 'DD.MM.YYYY HH:mm').toISOString()
 
         const sendedOrder = await ordersModule.updateOrder({ id: this.order._id, order: copyOfOrder })
 

@@ -1,11 +1,12 @@
 import { ControllerMethod } from './controller'
 
-export interface IOrdersController {
+export type IOrdersController = {
   getAll: ControllerMethod
   getAllByOffice: ControllerMethod
   getById: ControllerMethod
   addCompletedWork: ControllerMethod
   deleteCompletedWork: ControllerMethod
+  setEstimatedCloseAt: ControllerMethod
   addSms: ControllerMethod
   generateReport: ControllerMethod
   getAllWithParams: ControllerMethod

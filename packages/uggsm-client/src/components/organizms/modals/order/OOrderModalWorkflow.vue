@@ -145,6 +145,9 @@ export default class OOrderModalWorkflow extends Vue {
         } else if (e.header === 'Новое сообщение') {
           color = '#bcf5bc'
           icon = 'mdi-message-bulleted'
+        } else if (e.header === 'Смена срока заказа') {
+          color = '#4BB543'
+          icon = 'mdi-clock-check'
         }
 
         const workflow = {

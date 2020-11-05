@@ -71,12 +71,12 @@
       label='Срочно',
       icon='mdi-alarm-light'
     )
-    a-datetime-picker-2.mb-6.d-block(
+    a-datetime-picker(
       v-model='model.estimatedCloseAt',
-      type='datetime',
-      label='Ориентировочная дата готовности',
-      icon='mdi-alarm-check',
-      format='DD.MM.YYYY HH:mm'
+      :add='24',
+      type='hours',
+      label='Дата готовности',
+      icon='mdi-alarm-check'
     )
     a-autocomplete(
       v-model='model.appearance',
@@ -205,13 +205,6 @@
           endpoint='/kit',
           dense
         )
-        a-datetime-picker-2.mb-6.d-block(
-          v-model='model.estimatedCloseAt',
-          type='datetime',
-          label='Ориентировочная дата готовности',
-          icon='mdi-alarm-check',
-          format='DD.MM.YYYY HH:mm'
-        )
         v-divider.mb-8
         a-autocomplete(
           v-model='model.master._id',
@@ -286,9 +279,6 @@ export default class OOrderModalFields extends Vue {
   }
 
   created() {
-    if (!this.newOrder) {
-      this.model.estimatedCloseAt = moment(this.model.estimatedCloseAt).format('DD.MM.YYYY HH:mm')
-    }
     if (!this.model.manager) {
       if (this.newOrder) {
         this.model.manager = {
