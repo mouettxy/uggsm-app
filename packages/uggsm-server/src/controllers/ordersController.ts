@@ -5,7 +5,7 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { OfficeModel, OrderModel } from '../models'
-import { filter, map, join, each } from 'lodash'
+import { filter, map, join } from 'lodash'
 import generateReport from '../services/reports'
 import { ControllerMethod } from '../interfaces/controller'
 import { RedSmsClient } from '../services/sms/RedSmsClient'
@@ -13,7 +13,7 @@ import { RedSmsClient } from '../services/sms/RedSmsClient'
 export class OrdersController implements IOrdersController {
   private model = OrderModel
   private smsClient = new RedSmsClient()
-  private disableSmsClient = true
+  private disableSmsClient = process.env.NODE_ENV !== 'production'
 
   public getAll: ControllerMethod = async (req, res, next) => {
     try {
