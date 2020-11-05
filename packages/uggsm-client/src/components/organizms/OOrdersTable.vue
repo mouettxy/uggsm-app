@@ -69,13 +69,31 @@
         :orderid='item.id',
         scope='table'
       )
+    template(#item.estimatedCloseAt='{value, item}')
+      template(v-if='isToday(value, item)')
+        v-chip(
+          small,
+          color='error'
+        ) {{ value }}
+      template(v-else-if='isBefore(value, item)')
+        v-chip(
+          small,
+          color='warning'
+        ) {{ value }}
+      template(v-else)
+        v-chip(
+          small,
+          color='softgrey'
+        ) {{ value }}
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { ordersModule } from '@/store'
-import { filter } from 'lodash'
+import { filter, includes } from 'lodash'
 import { statuses } from '@/api/helpers/enums'
+import moment from 'moment'
+import { Order } from '@/typings/api/order'
 
 @Component
 export default class OOrdersTable extends Vue {
@@ -88,6 +106,27 @@ export default class OOrdersTable extends Vue {
 
   get store() {
     return ordersModule
+  }
+
+  isToday(date: string, item: Order) {
+    return (
+      moment(date, 'DD.MM.YYYY HH:mm').isSame(moment(), 'day') &&
+      !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
+    )
+  }
+
+  isAfter(date: string, item: Order) {
+    return (
+      moment(date, 'DD.MM.YYYY HH:mm').isAfter(moment(), 'day') &&
+      !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
+    )
+  }
+
+  isBefore(date: string, item: Order) {
+    return (
+      moment(date, 'DD.MM.YYYY HH:mm').isBefore(moment()) &&
+      !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
+    )
   }
 
   onStatusFilter() {

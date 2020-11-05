@@ -71,10 +71,12 @@
       label='Срочно',
       icon='mdi-alarm-light'
     )
-    a-datetime-picker(
+    a-datetime-picker-2.mb-6.d-block(
       v-model='model.estimatedCloseAt',
-      label='Дата готовности',
-      icon='mdi-alarm-check'
+      type='datetime',
+      label='Ориентировочная дата готовности',
+      icon='mdi-alarm-check',
+      format='DD.MM.YYYY HH:mm'
     )
     a-autocomplete(
       v-model='model.appearance',

@@ -109,7 +109,7 @@ export type Order = {
 
   password: string
 
-  estimatedCloseAt: Date
+  estimatedCloseAt: Date | string
 
   closedAt: Date
 

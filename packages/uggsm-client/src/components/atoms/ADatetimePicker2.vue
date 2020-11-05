@@ -1,16 +1,18 @@
 <template lang="pug">
 date-picker.datetime-picker-2(
   v-model='model',
+  :type='type',
   :range='range',
+  :format='format',
   :clearable='false',
   value-type='format',
-  placeholder='дату',
-  format='DD.MM.YYYY'
+  placeholder='дату'
 )
   template(#input='{props}')
     a-input(
       v-model='props.value',
-      label='За дату',
+      :label='label',
+      :icon='icon',
       hide-details,
       dense
     )
@@ -34,6 +36,10 @@ import { isArray } from 'lodash'
 export default class ADatetimePicker2 extends Vue {
   @Prop({ type: [String, Date, Array] }) value!: string | Date | Array<string | Date>
   @Prop({ type: Boolean }) range!: boolean
+  @Prop({ default: 'DD.MM.YYYY' }) format!: string
+  @Prop({ default: 'date' }) type!: string
+  @Prop({ default: 'За дату' }) label!: string
+  @Prop() icon!: string
 
   get model() {
     return this.value
