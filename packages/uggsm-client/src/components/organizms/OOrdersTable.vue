@@ -1,78 +1,50 @@
 <template lang="pug">
 .orders-table
-  v-toolbar.orders-table-toolbar(flat)
-    v-btn(
-      to='/orders/new',
-      color='primary'
-    )
-      v-icon(left) mdi-plus
-      span Новый заказ
-    v-btn.mx-2(
-      @click='hideClosedOrders',
-      color='secondary'
-    )
-      v-icon(
-        v-if='!isHideClosedOrders',
-        left
-      ) mdi-close
-      v-icon(
-        v-else,
-        left
-      ) mdi-check
-      span Скрыть закрытые
-    a-select.mx-2(
-      v-model='statusFilter',
-      :items='statusList',
-      @change='onStatusFilter',
-      multiple,
-      label='Статус',
-      dense
-    )
-    div(:style='{ fontSize: "1.2rem" }')
-      span Всего:&nbsp;
-      span.success--text {{ totalItems }}
-    v-spacer
-    v-menu(
-      v-model='columnsMenu',
-      :close-on-content-click='false',
-      offset-x=''
-    )
-      template(#activator='{ on, attrs }')
+  m-remote-table(:store='store')
+    template(#top-toolbar='{store}')
+      .success--text {{ store.tableRows }}
+    template(#main-toolbar)
+      v-col(cols='auto')
         v-btn(
-          v-on='on',
-          v-bind='attrs',
-          icon
+          to='/orders/new',
+          color='primary'
         )
-          v-icon mdi-table-large
-      v-card
-        v-list
-          v-list-item(
-            v-for='header in headers',
-            :key='header.value'
-          )
-            v-list-item-action
-              v-switch(v-model='header.show')
-            v-list-item-title {{ header.text }}
-  v-data-table(
-    :server-items-length='totalItems',
-    :options.sync='options',
-    :loading='isLoading',
-    :items='items',
-    :headers='headersFormatted',
-    :calculate-widths='true',
-    @update:sort-desc='update',
-    @update:sort-by='update',
-    @update:page='update',
-    @update:items-per-page='update',
-    no-data-text='Не найдено заявок',
-    multi-sort,
-    locale='ru',
-    loading-text='Загружаем заявки...',
-    items-per-page-text='asd',
-    item-key='id',
-    hide-default-footer,
-    height='calc(100vh - 230px)'
-  )
+          v-icon(left) mdi-plus
+          span Новый
+      v-col(cols='auto')
+        v-btn.mx-2(
+          @click='onClosedFilter',
+          color='secondary'
+        )
+          v-icon(
+            v-if='displayClosedOrders',
+            left
+          ) mdi-check
+          v-icon(
+            v-else,
+            left
+          ) mdi-close
+          span Закрытые
+      v-col(cols='auto')
+        a-select.mx-2(
+          v-model='statusFilter',
+          :items='statuses',
+          @change='onStatusFilter',
+          multiple,
+          label='Статус',
+          dense
+        )
+          template(#selection='{ item, index }')
+            v-chip(
+              v-if='index === 0',
+              small
+            )
+              span {{ item }}
+            v-chip(
+              v-if='index === 1',
+              small
+            )
+              | (+{{ statusFilter.length - 1 }})
     template(#item.id='{value, item}')
       v-btn(
         :to='{ name: "orderModal", params: { id: value } }',
@@ -88,182 +60,45 @@
         :orderid='item.id',
         scope='table'
       )
-  v-pagination.mt-4(
-    v-model='options.page',
-    :length='Math.round(totalItems / options.itemsPerPage)',
-    :current-page='options.page',
-    total-visible='9'
-  )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { ordersModule } from '@/store'
 import { filter } from 'lodash'
+import { statuses } from '@/api/helpers/enums'
 
 @Component
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
-  public isHideClosedOrders = true
+  public displayClosedOrders = false
   public page = 1
 
-  public headers: any = [
-    {
-      text: 'Заказ №',
-      value: 'id',
-      show: true,
-    },
-    {
-      text: 'Срок заказа',
-      value: 'estimatedCloseAt',
-      show: true,
-    },
-    {
-      text: 'Статус',
-      value: 'status',
-      show: true,
-    },
-    {
-      text: 'Клиент',
-      value: 'client',
-      show: true,
-    },
-    {
-      text: 'Создан',
-      value: 'created',
-      show: true,
-    },
-    {
-      text: 'Бренд',
-      value: 'phoneBrand',
-      show: true,
-    },
-    {
-      text: 'Устройство',
-      value: 'phoneModel',
-      show: true,
-    },
-    {
-      text: 'Неисправность',
-      value: 'declaredDefect',
-      show: true,
-    },
-    {
-      text: 'Сумма работ',
-      value: 'totalWorks',
-      show: true,
-    },
-    {
-      text: 'Пароль',
-      value: 'password',
-      show: true,
-    },
-    {
-      text: 'Уведомления',
-      value: 'notifications',
-      show: true,
-    },
-    {
-      text: 'Рекламная кампания',
-      value: 'adversitement',
-      show: true,
-    },
-  ]
-
-  @Watch('headers', { deep: true })
-  onHeadersChange(value: any) {
-    localStorage.setItem('orders-headers', JSON.stringify(value))
-  }
-
+  public statuses = statuses
   public statusFilter = []
-  public statusList = [
-    'Отремонтирован',
-    'Новый',
-    'В работе',
-    'На тестировании',
-    'Пересогласовать',
-    'Позвонить повторно',
-    'Ждёт запчасть',
-    'Нужно решить',
-    'Готов',
-    'Готов, без ремонта',
-    'На продаже',
-    'Закрыт',
-    'Выкуплен СЦ',
-    'Обещали найти',
-    'Закрыт с вопросом',
-  ]
 
-  get headersFormatted() {
-    return filter(this.headers, (e) => {
-      return e.show
-    })
-  }
-
-  get isLoading() {
-    return ordersModule.isLoading
-  }
-
-  get items() {
-    return ordersModule.ordersTable
-  }
-
-  get options() {
-    return ordersModule.options
-  }
-
-  set options(value) {
-    ordersModule.setOptions(value)
-  }
-
-  get totalItems() {
-    return ordersModule.countRows
-  }
-
-  update() {
-    this.loadItems()
+  get store() {
+    return ordersModule
   }
 
   onStatusFilter() {
-    this.options = {
-      ...this.options,
+    this.store.setTableOptions({
+      ...this.store.tableOptions,
       status: this.statusFilter,
-    }
+    })
 
-    this.loadItems()
+    this.store.fetchTable()
   }
 
-  async hideClosedOrders() {
-    this.isHideClosedOrders = !this.isHideClosedOrders
+  onClosedFilter() {
+    this.displayClosedOrders = !this.displayClosedOrders
 
-    let status: any = [...this.options.excludeStatus]
+    this.store.setTableOptions({
+      ...this.store.tableOptions,
+      excludeStatus: this.displayClosedOrders ? [] : ['Закрыт'],
+    })
 
-    if (this.isHideClosedOrders) {
-      status.push('Закрыт')
-    } else {
-      status = []
-    }
-
-    this.options = {
-      ...this.options,
-      excludeStatus: status,
-    }
-
-    this.loadItems()
-  }
-
-  async loadItems() {
-    await ordersModule.fetch()
-  }
-
-  created() {
-    this.loadItems()
-
-    const savedHeaders = localStorage.getItem('orders-headers')
-
-    if (savedHeaders) {
-      this.headers = JSON.parse(savedHeaders)
-    }
+    this.store.fetchTable()
   }
 }
 </script>

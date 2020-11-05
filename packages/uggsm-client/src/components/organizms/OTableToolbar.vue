@@ -1,15 +1,13 @@
 <template lang="pug">
-.table-toolbar
-  v-toolbar.toolbar(
-    height='72',
-    elevation='1'
-  )
-    template(v-if='!hideOffices')
-      m-office-switcher(v-model='defaultOffice')
-    template(v-else)
-      .text-h5 {{ $route.meta.header }}
-    v-spacer
-    m-search-field(:type='$route.name')
+.table-toolbar.elevation-1
+  v-row.justify-space-between(no-gutters)
+    v-col(cols='auto')
+      template(v-if='!hideOffices')
+        m-office-switcher(v-model='defaultOffice')
+      template(v-else)
+        .text-h5 {{ $route.meta.header }}
+    v-col(cols='auto')
+      m-search-field(:type='$route.name')
 </template>
 
 <script lang="ts">
@@ -47,11 +45,5 @@ export default class OTableToolbar extends Vue {
 
 <style lang="sass">
 .table-toolbar
-  height: 73px !important
-
-  .toolbar
-    height: 73px !important
-
-    .v-toolbar__content
-      height: 100%
+  padding: 8px
 </style>

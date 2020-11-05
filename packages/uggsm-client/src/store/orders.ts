@@ -1,12 +1,12 @@
 import { Order as OrderType } from '@/typings/api/order'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { ordersAPI } from '@/api'
-import { map, reduce, zip } from 'lodash'
+import { map, reduce } from 'lodash'
 
 import moment from 'moment'
-import { authModule, settingsModule } from '.'
-import { fromPairs } from 'lodash'
+import { authModule } from '.'
 import axios from '@/plugins/axios'
+import { TableHelpers } from './helpers'
 
 function getTime(date: any) {
   const m = moment(date)
@@ -27,24 +27,39 @@ export type SendSMSInput = {
   name: 'orders',
 })
 export default class Orders extends VuexModule {
-  public orders: Array<OrderType> | null = null
-  public currentOrder: OrderType | null = null
-  public isLoading = false
-  public countRows = 0
-  public options = {
-    page: 1,
-    itemsPerPage: 25,
-    sortBy: ['id'],
-    sortDesc: [true],
-    mustSort: false,
-    multiSort: true,
-    hideClosed: true,
-    status: [],
-    excludeStatus: ['Закрыт'],
-  }
+  /* -------------------------------------------------------------------------- */
+  /*                                    TABLE                                   */
+  /* -------------------------------------------------------------------------- */
 
-  get ordersTable() {
-    return map(this.orders, (e) => {
+  public table: Array<OrderType> | null = null
+  public isLoading = false
+  public tableRows = 0
+  public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id', (options) => {
+    return {
+      ...options,
+      status: [],
+      excludeStatus: ['Закрыт'],
+    }
+  })
+  public tableHeaders = TableHelpers.generateHeaders(
+    {
+      id: '№',
+      estimatedCloseAt: 'Срок заказа',
+      status: 'Статус',
+      client: 'Клиент',
+      created: 'Создан',
+      phoneBrand: 'Бренд',
+      phoneModel: 'Устройство',
+      declaredDefect: 'Неисправность',
+      totalWorks: 'Сумма работ',
+      password: 'Пароль',
+      notifications: 'Уведомления',
+      adversitement: 'Рекламная кампания',
+    },
+    'orders-headers'
+  )
+  get tableItems() {
+    return map(this.table, (e) => {
       const closeTime = getTime(e.estimatedCloseAt)
       const createTime = getTime(e.createdAt)
       const totalWorks = reduce(
@@ -72,95 +87,88 @@ export default class Orders extends VuexModule {
       }
     })
   }
-
+  get tableHeadersFormatted() {
+    return TableHelpers.excludeNotShownHeaders(this.tableHeaders)
+  }
   @Mutation
   SET_LOADING(payload: boolean) {
     this.isLoading = payload
   }
-
   @Mutation
-  SET_ORDERS(payload: any) {
-    this.orders = payload.docs
-    this.countRows = payload.totalDocs
+  SET_TABLE(payload: any) {
+    this.table = payload.docs
+    this.tableRows = payload.totalDocs
   }
-
   @Mutation
-  SET_ORDER(payload: any) {
-    this.currentOrder = payload
+  SET_TABLE_OPTIONS(payload: any) {
+    this.tableOptions = payload
   }
-
   @Mutation
-  SET_OPTIONS(payload: any) {
-    this.options = payload
+  SET_TABLE_HEADERS(payload: any) {
+    this.tableHeaders = payload
   }
-
-  @Mutation
-  CLEAR_CURRENT_ORDER() {
-    this.currentOrder = null
-  }
-
   @Action
-  setOptions(payload: any) {
-    this.context.commit('SET_OPTIONS', payload)
+  setTableOptions(payload: any) {
+    this.context.commit('SET_TABLE_OPTIONS', payload)
   }
-
   @Action
-  async fetch() {
+  setTableHeaders(payload: any) {
+    localStorage.setItem('orders-headers', JSON.stringify(payload))
+    this.context.commit('SET_TABLE_HEADERS', payload)
+  }
+  @Action
+  async fetchTable() {
     this.context.commit('SET_LOADING', true)
-    const payload = this.options
-    const office = settingsModule.office?._id
-    const query: any = {
-      page: payload.page,
-      limit: payload.itemsPerPage,
-      office,
-      statuses: payload.status,
-      excludeStatuses: payload.excludeStatus,
-    }
 
-    if (settingsModule.search) {
-      query.search = settingsModule.search
-    }
+    const response = await ordersAPI().getPaginated(
+      TableHelpers.processQuery(this.tableOptions, (query) => {
+        const query_: any = {
+          statuses: this.tableOptions.status,
+          excludeStatuses: this.tableOptions.excludeStatus,
+        }
 
-    const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))
+        if (authModule.user?.role === 'master') {
+          query_.master = authModule.user._id
+        }
 
-    query.sort = fromPairs(zip(payload.sortBy, sortDesc))
+        return {
+          ...query,
+          ...query_,
+        }
+      })
+    )
 
-    if (authModule.user?.role === 'master') {
-      query.master = authModule.user._id
-    }
-
-    this.context.commit('SET_ORDERS', await ordersAPI().getPaginated(query))
+    this.context.commit('SET_TABLE', response)
     this.context.commit('SET_LOADING', false)
   }
 
   @Action
-  async getOrder(id: number | string | undefined) {
+  async getOrder(id: number | string | undefined): Promise<OrderType> {
     this.context.commit('SET_LOADING', true)
-    this.context.commit('SET_ORDER', await ordersAPI(id).getById())
+    const response = await ordersAPI(id).getById()
     this.context.commit('SET_LOADING', false)
+    return response
   }
-
-  @Action
-  async clearOrder() {
-    this.context.commit('CLEAR_CURRENT_ORDER')
-  }
+  /* -------------------------------------------------------------------------- */
+  /*                                   SOCKETS                                  */
+  /* -------------------------------------------------------------------------- */
 
   @Action
   async socket_updateOrders() {
-    this.fetch()
+    this.fetchTable()
     console.log('updated orders by socket')
   }
 
-  @Action
+  /* @Action
   async socket_updatedOrder(evt: OrderType) {
     if (this.currentOrder) {
       if (this.currentOrder.id == evt.id) {
         console.log('updated order ' + evt.id + ' by socket')
       }
     }
-  }
+  } */
 
-  @Action
+  /* @Action
   async socket_updateOrder(evt: string | number) {
     if (this.currentOrder) {
       if (this.currentOrder.id == evt) {
@@ -168,7 +176,11 @@ export default class Orders extends VuexModule {
         console.log('update order ' + evt + ' by socket')
       }
     }
-  }
+  } */
+
+  /* -------------------------------------------------------------------------- */
+  /*                                     API                                    */
+  /* -------------------------------------------------------------------------- */
 
   @Action
   async generateReport(payload: any & { type: string }) {

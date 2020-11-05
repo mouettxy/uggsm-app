@@ -1,8 +1,6 @@
 <template lang="pug">
 .orders-main
-  o-table-toolbar
-  .orders-main__content.pa-4
-    o-orders-table
+  o-orders-table
 </template>
 
 <script lang="ts">
