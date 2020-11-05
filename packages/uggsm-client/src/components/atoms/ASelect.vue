@@ -49,6 +49,7 @@ export default class ASelect extends Vue {
   @Prop({ default: false }) hideSelected!: boolean
   @Prop({ default: false }) deletableChips!: boolean
   @Prop({ default: true, type: Boolean }) clearable: any
+  @Prop() cache!: string
 
   get model() {
     return this.value
@@ -61,10 +62,26 @@ export default class ASelect extends Vue {
      * @property {string} value - changed string
      */
     this.$emit('input', value)
+
+    if (this.cache) {
+      localStorage.setItem(this.cache, JSON.stringify(value))
+    }
   }
 
   onChange() {
     this.$emit('change', this.model)
+  }
+
+  mounted() {
+    if (this.cache) {
+      const cached = localStorage.getItem(this.cache)
+
+      if (cached) {
+        const items = JSON.parse(cached)
+        this.model = items
+        this.$emit('change', items)
+      }
+    }
   }
 }
 </script>

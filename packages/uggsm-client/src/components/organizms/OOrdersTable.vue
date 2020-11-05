@@ -35,7 +35,8 @@
           @change='onStatusFilter',
           multiple,
           label='Статус',
-          dense
+          dense,
+          cache='orders-status-filter'
         )
           template(#selection='{ item, index }')
             v-chip(
