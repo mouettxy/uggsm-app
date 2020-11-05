@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuetify, { VApp, VNavigationDrawer, VFooter, VToolbar, VFadeTransition } from 'vuetify/lib'
 import { ClickOutside, Intersect, Mutate, Resize, Ripple, Scroll, Touch } from 'vuetify/lib/directives'
+import ru from 'vuetify/src/locale/ru'
 
 Vue.use(Vuetify, {
   components: {
@@ -23,6 +24,10 @@ Vue.use(Vuetify, {
 
 const vuetifyOpts = {
   rtl: false,
+  lang: {
+    locales: { ru },
+    current: 'ru',
+  },
   theme: {
     dark: false,
     options: {
