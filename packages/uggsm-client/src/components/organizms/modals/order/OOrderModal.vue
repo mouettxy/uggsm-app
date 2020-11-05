@@ -1,35 +1,36 @@
 <template lang="pug">
 .order-modal
-  a-fullscreen-modal(
-    :active='active',
-    title='Новая заявка'
-  )
-    template(#activator='{click}')
+  a-fullscreen-modal-2(v-model='modal')
+    template(#activator='{on, attrs}')
       slot(
         name='activator',
-        :click='click'
+        :on='on',
+        :attrs='attrs'
       )
-        template(v-if='!btnHided')
-          v-btn(
-            @click='click',
-            color='primary'
-          )
-            v-icon(left) mdi-plus
-            span Новый
+        v-btn(
+          v-on='on',
+          v-bind='attrs',
+          color='primary'
+        )
+          span {{ orderid }}
 
-    template(#content='{close}')
+    template(#content)
       v-container.order-modal__container(
         :class='{ "order-modal__container--payed": order ? order.payed : false }',
         fluid
       )
         v-row(no-gutters)
           v-col.order-modal__container-item(cols='8')
-            m-order-modal-content(
-              v-model='model',
-              :new-order='newOrder'
+            o-order-modal-content(
+              :order='order',
+              :new-order='newOrder',
+              :model='model'
             )
           v-col.order-modal__container-item(cols='4')
-            m-order-modal-workflow(:new-order='newOrder')
+            o-order-modal-workflow(
+              :order='order',
+              :new-order='newOrder'
+            )
       v-footer.order-modal-footer
         template(v-if='newOrder')
           v-btn.mr-2(
@@ -39,7 +40,7 @@
             v-icon(left) mdi-content-save
             span Создать
           v-btn(
-            :to='{ name: "orders" }',
+            @click='close',
             text
           )
             v-icon(left) mdi-close
@@ -52,7 +53,7 @@
             v-icon(left) mdi-content-save-edit
             span Обновить
           v-btn(
-            @click='clearCurrentOrder(close)',
+            @click='close',
             text
           )
             v-icon(left) mdi-close
@@ -73,16 +74,25 @@ import { cloneDeep } from 'lodash'
 import { User } from '@/typings/api/auth'
 import { Office } from '@/typings/api/office'
 import { Client } from '@/typings/api/client'
+import { Order } from '@/typings/api/order'
+import { Socket } from 'vue-socket.io-extended'
+import { Cash } from '@/typings/api/cash'
 
 @Component
-export default class MOrderModal extends Vue {
-  @Prop({ default: true, type: Boolean }) newOrder: any
-  @Prop({ default: null, type: Number }) orderid: any
-  @Prop(Boolean) active: any
-  @Prop(Boolean) btnHided: any
+export default class OOrderModal extends Vue {
+  @Prop({ default: true }) newOrder!: boolean
+  @Prop({}) orderid!: number | string
 
-  get order() {
-    return ordersModule.currentOrder
+  public modal = false
+  public order: Order | null = null
+
+  @Watch('modal')
+  async onModalStateChange(modal: boolean) {
+    if (modal) {
+      this.getOrder()
+    } else {
+      this.order = null
+    }
   }
 
   public model = {
@@ -139,16 +149,6 @@ export default class MOrderModal extends Vue {
     return true
   }
 
-  clearCurrentOrder(close?: any) {
-    ordersModule.clearOrder()
-    cashModule.clearCash()
-    if (this.$route.query.from) {
-      this.$router.push({ name: this.$route.query.from as string })
-    } else {
-      this.$router.push({ name: 'orders' })
-    }
-  }
-
   async createOrder() {
     if (this.checkOrder(this.model)) {
       if (settingsModule.office) {
@@ -162,8 +162,7 @@ export default class MOrderModal extends Vue {
             phone: '8' + sendedOrder.customerPhone || '',
             model: `${sendedOrder.phoneBrand} ${sendedOrder.phoneModel}`,
           })
-
-          this.clearCurrentOrder()
+          this.close()
         } else {
           this.$notification.error('Ошибка при создании заказа')
         }
@@ -190,7 +189,7 @@ export default class MOrderModal extends Vue {
 
         if (sendedOrder) {
           this.$notification.success('Заявка обновлена успешно')
-          this.clearCurrentOrder()
+          this.close()
         } else {
           this.$notification.error('Ошибка при обновлении заявки')
         }
@@ -200,10 +199,32 @@ export default class MOrderModal extends Vue {
     }
   }
 
-  created() {
-    if (!this.newOrder && this.$route.params?.id) {
-      ordersModule.getOrder(this.$route.params.id)
+  async getOrder() {
+    if (this.orderid && this.modal) {
+      this.order = await ordersModule.getOrder(this.orderid)
+
+      if (!this.order) {
+        this.$notification.error('Не удалось получить заказ')
+        this.modal = false
+      }
     }
+  }
+
+  close() {
+    this.order = null
+    this.modal = false
+  }
+
+  @Socket('update order')
+  async onSocketUpdateOrder(model: number) {
+    console.log(model)
+    if (model === this.order?.id && this.modal) {
+      this.order = await ordersModule.getOrder(model)
+    }
+  }
+
+  mounted() {
+    this.getOrder()
   }
 }
 </script>

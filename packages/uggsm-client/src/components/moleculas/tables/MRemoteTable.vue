@@ -118,6 +118,12 @@ export default class MRemoteTable extends Vue {
     }
   }
 
+  set defaultOffice(value) {
+    if (this.$route.name === 'orders' || this.$route.name === 'cash') {
+      settingsModule.setOffice({ office: value, type: this.$route.name })
+    }
+  }
+
   get tableTotalItems() {
     return this.store.tableRows
   }

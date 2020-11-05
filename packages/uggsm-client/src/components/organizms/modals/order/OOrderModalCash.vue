@@ -42,13 +42,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { ordersModule, cashModule, authModule } from '@/store'
-import { reduce } from 'lodash'
+import { map, reduce } from 'lodash'
 import { ordersAPI } from '@/api'
+import { Order } from '@/typings/api/order'
+import moment from 'moment'
 
 @Component
-export default class MOrderModalCash extends Vue {
+export default class OOrderModalCash extends Vue {
+  @Prop({}) order!: Order
+
   public headers: any = [
     {
       text: 'Дата',
@@ -67,12 +71,16 @@ export default class MOrderModalCash extends Vue {
     },
   ]
 
-  get order() {
-    return ordersModule.currentOrder
-  }
-
   get cashes() {
-    return cashModule.cashTableDense
+    return map(this.order.cash, (e) => {
+      return {
+        id: e.id,
+        createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
+        comment: e.comment,
+        total: e.income - e.consumption,
+        orderid: e.orderid,
+      }
+    })
   }
 
   get total() {
@@ -113,12 +121,6 @@ export default class MOrderModalCash extends Vue {
       }
     } catch (error) {
       this.$notification.error('[Сервер] ' + error.message)
-    }
-  }
-
-  mounted() {
-    if (this.order?.id) {
-      cashModule.getCash(this.order.id)
     }
   }
 }

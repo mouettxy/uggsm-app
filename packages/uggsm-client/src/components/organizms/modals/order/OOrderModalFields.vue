@@ -236,9 +236,9 @@ import { getAnonymousAnimal } from '@/api/helpers'
 import { authModule } from '@/store'
 
 @Component
-export default class MOrderModalFields extends Vue {
-  @Prop(Boolean) newOrder: any
-  @Prop(Object) value: any
+export default class OOrderModalFields extends Vue {
+  @Prop({ default: true }) newOrder!: boolean
+  @Prop({ required: true }) value!: any
 
   public customerNameIcon = 'mdi-account-plus'
   @Watch('customerName')

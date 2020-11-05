@@ -38,12 +38,17 @@
                     )
                       template(#item.id='{item}')
                         template(v-if='item.id')
-                          v-btn(
-                            :to='{ name: "orderModal", params: { id: item.id }, query: { from: from } }',
-                            text
+                          o-order-modal(
+                            :orderid='item.id',
+                            :new-order='false'
                           )
-                            v-icon(left) mdi-eye
-                            span {{ item.id }}
+                            template(#activator='{on, attrs}')
+                              v-btn(
+                                v-on='on',
+                                v-bind='attrs',
+                                icon
+                              )
+                                v-icon mdi-eye
           v-expansion-panel
             v-expansion-panel-header
               strong Закрыты сегодня
@@ -69,13 +74,18 @@
                     )
                       template(#item.id='{item}')
                         template(v-if='item.id')
-                          v-btn(
-                            :to='{ name: "orderModal", params: { id: item.id }, query: { from: from } }',
-                            text
+                          o-order-modal(
+                            :orderid='item.id',
+                            :new-order='false'
                           )
-                            v-icon(left) mdi-eye
-                            span {{ item.id }}
-        v-card.mt-4
+                            template(#activator='{on, attrs}')
+                              v-btn(
+                                v-on='on',
+                                v-bind='attrs',
+                                icon
+                              )
+                                v-icon mdi-eye
+          v-card.mt-4
           .text-center
             v-row
               v-col

@@ -1,10 +1,11 @@
+import { order } from './../middlewares/validators/validateOrder'
 import { MessageInput, MessageItem } from '../services/sms/RedSmsClient'
 import { api } from '../server'
 import { generateOrderId, parsePaginateResponse } from '../utils/helpers'
 import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
-import { OfficeModel, OrderModel } from '../models'
+import { CashModel, OfficeModel, OrderModel } from '../models'
 import { filter, map, join } from 'lodash'
 import generateReport from '../services/reports'
 import { ControllerMethod } from '../interfaces/controller'
@@ -63,9 +64,15 @@ export class OrdersController implements IOrdersController {
   public getById: ControllerMethod = async (req, res, next) => {
     try {
       const id = req.params.id
-      const response = await this.model.findOne({ id })
+      let response = await this.model.findOne({ id })
+      response = response.toObject()
 
       if (response) {
+        const cash = await CashModel.find({ orderid: parseInt(id) })
+
+        //@ts-ignore
+        response.cash = cash
+
         res.status(200)
         res.send(response)
       } else {

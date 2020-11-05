@@ -2,7 +2,6 @@
 v-main.layout-default(app)
   o-navigation(:items='items')
   router-view
-  router-view(name='modal')
 </template>
 
 <script lang="ts">

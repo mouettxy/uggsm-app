@@ -67,11 +67,6 @@ export default class Cash extends VuexModule {
   }
 
   @Mutation
-  SET_CASH(payload: Array<CashType>) {
-    this.currentCash = payload
-  }
-
-  @Mutation
   SET_OPTIONS(payload: any) {
     this.options = payload
   }
@@ -79,11 +74,6 @@ export default class Cash extends VuexModule {
   @Mutation
   SET_BALANCE(payload: any) {
     this.balance = payload
-  }
-
-  @Mutation
-  CLEAR_CURRENT_CASH() {
-    this.currentCash = null
   }
 
   @Action
@@ -119,7 +109,6 @@ export default class Cash extends VuexModule {
   async getCash(id: string | number) {
     this.context.commit('SET_LOADING', true)
     const cash = await cashAPI(id).getByOrder()
-    this.context.commit('SET_CASH', cash)
     this.context.commit('SET_LOADING', false)
     return cash
   }
@@ -130,22 +119,8 @@ export default class Cash extends VuexModule {
   }
 
   @Action
-  async socket_createdCash(evt: CashType) {
-    if (ordersModule.currentOrder && !isNull(this.currentCash)) {
-      if (evt.orderid && evt.orderid === ordersModule.currentOrder.id) {
-        this.currentCash.push(evt)
-      }
-    }
-  }
-
-  @Action
   async getBalance() {
     this.context.commit('SET_BALANCE', await cashAPI(settingsModule.office?._id).getBalance())
-  }
-
-  @Action
-  async clearCash() {
-    this.context.commit('CLEAR_CURRENT_CASH')
   }
 
   @Action

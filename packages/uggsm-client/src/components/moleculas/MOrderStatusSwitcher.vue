@@ -44,12 +44,15 @@ import { getCorrectTextColor } from '@/api/helpers'
 import { ordersModule, authModule, cashModule } from '@/store'
 import { ordersAPI } from '@/api'
 import { Order } from '@/typings/api/order'
+import { groupedStatuses } from '@/api/helpers/enums'
 
 @Component
 export default class MOrderStatusSwitcher extends Vue {
   @Prop({ required: true, type: String }) status!: string
   @Prop({ default: 'modal', type: String }) scope!: string
   @Prop({ type: [String, Number] }) orderid!: string | number
+
+  public order: Order | null = null
 
   get statusList() {
     if (this.status === 'Закрыт' && authModule.user?.role !== 'administrator') {
@@ -66,107 +69,7 @@ export default class MOrderStatusSwitcher extends Vue {
       ]
     }
 
-    return [
-      {
-        text: 'Новые',
-        statuses: [
-          {
-            color: '#1858a1',
-            status: 'Отремонтирован',
-          },
-          {
-            color: '#1858a1',
-            status: 'Новый',
-          },
-        ],
-      },
-      {
-        text: 'Инвентаризация',
-        statuses: [
-          {
-            color: '#ff6961',
-            status: 'Пересогласовать',
-          },
-        ],
-      },
-      {
-        text: 'На исполнении',
-        statuses: [
-          {
-            color: '#689f38',
-            status: 'В работе',
-          },
-          {
-            color: '#689f38',
-            status: 'На тестировании',
-          },
-        ],
-      },
-      {
-        text: 'Отложенные',
-        statuses: [
-          {
-            color: '#FB8C00',
-            status: 'Позвонить повторно',
-          },
-          {
-            color: '#FB8C00',
-            status: 'Ждёт запчасть',
-          },
-          {
-            color: '#FB8C00',
-            status: 'Нужно решить',
-          },
-        ],
-      },
-      {
-        text: 'Готовые',
-        statuses: [
-          {
-            color: '#525252',
-            status: 'Готов',
-          },
-          {
-            color: '#525252',
-            status: 'Готов, без ремонта',
-          },
-          {
-            color: '#525252',
-            status: 'На продаже',
-          },
-        ],
-      },
-      {
-        text: 'Закрытые успешно',
-        statuses: [
-          {
-            color: '#626262',
-            status: 'Закрыт',
-          },
-          {
-            color: '#626262',
-            status: 'Выкуплен СЦ',
-          },
-          {
-            color: '#626262',
-            status: 'Обещали найти',
-          },
-        ],
-      },
-      {
-        text: 'Закрытые неуспешно',
-        statuses: [
-          {
-            color: '#b9b9b9',
-            status: 'Закрыт с вопросом',
-          },
-        ],
-      },
-    ]
-  }
-
-  get order() {
-    return ordersModule.currentOrder
+    return groupedStatuses
   }
 
   accessibleColor(hex: string) {
@@ -202,7 +105,7 @@ export default class MOrderStatusSwitcher extends Vue {
       0
     )
 
-    const cash = await cashModule.getCash(order.id)
+    const cash = order.cash
 
     let consumption
     if (cash.length > 0) {
@@ -243,21 +146,8 @@ export default class MOrderStatusSwitcher extends Vue {
     }
   }
 
-  async getOrder(): Promise<Order | boolean> {
-    let order: Order | null = null
-    if (this.order) {
-      return this.order
-    } else if (this.orderid) {
-      const order_ = await ordersAPI(this.orderid).getById()
-
-      if (order_) {
-        return order_
-      } else {
-        return false
-      }
-    }
-
-    return false
+  async getOrder(): Promise<Order> {
+    return await ordersAPI(this.orderid).getById()
   }
 
   async setCash() {
@@ -323,16 +213,11 @@ export default class MOrderStatusSwitcher extends Vue {
 
   async setStatus(status: string) {
     try {
-      let response
-      if (this.order) {
-        response = await ordersAPI(this.order.id).setStatus({ status })
-      } else if (this.orderid) {
-        response = await ordersAPI(this.orderid).setStatus({ status })
-      }
+      const response = await ordersAPI(this.orderid).setStatus({ status })
 
       const order = await this.getOrder()
 
-      if (!order || typeof order === 'boolean') {
+      if (!order) {
         this.$notification.error(
           '[Клиент] Не удалось получить заказ, попробуйте сменить статус заказа из редактирования заказа'
         )

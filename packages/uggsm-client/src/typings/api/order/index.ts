@@ -1,3 +1,4 @@
+import { Cash } from '@/typings/api/cash'
 import { Adversitement } from '@/typings/api/adversitement'
 import { User } from '@/typings/api/auth'
 import { Client } from '@/typings/api/client'
@@ -67,6 +68,8 @@ export type Order = {
   id: number
   _id?: string
   __v?: any
+
+  cash: Array<Cash>
 
   customer: Client
 

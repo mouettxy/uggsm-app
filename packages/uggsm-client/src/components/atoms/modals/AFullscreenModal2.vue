@@ -21,7 +21,6 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component
 export default class AFullscreenModal extends Vue {
   @Prop(Boolean) value!: boolean
-  @Prop(String) title!: string
 
   get model() {
     return this.value

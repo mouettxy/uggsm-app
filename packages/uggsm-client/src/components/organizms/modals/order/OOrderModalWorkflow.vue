@@ -3,110 +3,39 @@
   v-if='!newOrder',
   :class='{ "order-modal-workflow--payed": order ? order.payed : false }'
 )
-  .d-none(v-if='order')
-    m-print-receipt(
-      :serial-number='order.serialNumber',
-      :phone-model='order.phoneModel',
-      :password='order.password',
-      :order-id='order.id',
-      :kit='order.kit',
-      :estimated-close-at='order.estimatedCloseAt',
-      :declared-price='order.declaredPrice',
-      :declared-deffect='order.declaredDefect',
-      :customer-phone='order.customerPhone',
-      :customer-name='order.customerName',
-      :created-at='order.createdAt',
-      :appearance='order.appearance',
-      avance='200'
-    )
-    m-print-warranty(
-      :serial-number='order.serialNumber',
-      :phone-model='order.phoneModel',
-      :order-id='order.id',
-      :declared-deffect='order.declaredDefect',
-      :customer-phone='order.customerPhone',
-      :customer-name='order.customerName',
-      :created-at='order.createdAt'
-    )
-    m-print-check(
-      :works='order.statusWork',
-      :order-id='order.id',
-      :customer-name='order.customerName'
-    )
-    m-print-repair-contract-i-market(
-      :serial-number='order.serialNumber',
-      :password='order.password',
-      :model='order.phoneModel',
-      :kit='order.kit',
-      :declared-defect='order.declaredDeffect',
-      :client-phone='order.customerPhone',
-      :client-name='order.customerName',
-      :appearance='order.appearance'
-    )
-    m-print-warranty-i-market
-  v-toolbar.order-modal-workflow__header(
-    flat,
-    dense
-  )
-    v-menu(
-      close-on-click,
-      bottom
-    )
-      template(v-slot:activator='{ on, attrs }')
-        v-btn(
-          v-on='on',
-          v-bind='attrs',
-          small,
-          color='secondary'
-        )
-          v-icon mdi-printer
-      v-list(dense)
-        v-list-item-group
-          v-list-item(@click='$htmlToPaper("print-warranty")')
-            v-list-item-content
-              v-list-item-title Гарантия
-          v-list-item(@click='$htmlToPaper("print-receipt")')
-            v-list-item-content
-              v-list-item-title Приемная квитанция
-          v-list-item(@click='$htmlToPaper("print-check")')
-            v-list-item-content
-              v-list-item-title Товарный чек
-          v-list-item(@click='$htmlToPaper("print-warranty-i-market")')
-            v-list-item-content
-              v-list-item-title Гарантий талон iMarket
-          v-list-item(@click='$htmlToPaper("print-repair-contract-i-market")')
-            v-list-item-content
-              v-list-item-title Акт приема iMarket
-    v-spacer
-    v-menu(
-      close-on-click,
-      bottom
-    )
-      template(v-slot:activator='{ on, attrs }')
-        v-btn(
-          v-on='on',
-          v-bind='attrs',
-          small,
-          color='secondary'
-        )
-          v-icon mdi-swap-horizontal
-      v-list(dense)
-        v-list-item-group
-          v-list-item(
-            v-for='office in offices',
-            :key='office.id',
-            @click='changeOffice(office.code)'
+  v-row.order-modal-workflow__header(no-gutters)
+    v-col(cols='auto')
+      o-order-modal-printer(:order='order')
+    v-col(cols='auto')
+      v-menu(
+        close-on-click,
+        bottom
+      )
+        template(v-slot:activator='{ on, attrs }')
+          v-btn(
+            v-on='on',
+            v-bind='attrs',
+            small,
+            color='secondary'
           )
-            v-list-item-content
-              v-list-item-title {{ office.code }}|{{ office.name }}
-    v-spacer
-    // TODO: add modal sms
-    v-btn(
-      small,
-      color='secondary'
-    )
-      v-icon(left) mdi-cellphone
-      span SMS
+            v-icon mdi-swap-horizontal
+        v-list(dense)
+          v-list-item-group
+            v-list-item(
+              v-for='office in offices',
+              :key='office.id',
+              @click='changeOffice(office.code)'
+            )
+              v-list-item-content
+                v-list-item-title {{ office.code }}|{{ office.name }}
+    v-col(cols='auto')
+      v-btn(
+        small,
+        color='secondary'
+      )
+        v-icon(left) mdi-cellphone
+        span SMS
+
   .order-modal-workflow__content
     a-timeline
       template(v-for='workflow in workflows')
@@ -129,14 +58,12 @@ import moment from 'moment'
 import { each, cloneDeep, find, includes } from 'lodash'
 import { ordersAPI } from '@/api'
 import { getCorrectTextColor } from '@/api/helpers'
+import { Order } from '@/typings/api/order'
 
 @Component
-export default class MOrderModalWorkflow extends Vue {
-  @Prop(Boolean) newOrder: any
-
-  get order() {
-    return ordersModule.currentOrder
-  }
+export default class OOrderModalWorkflow extends Vue {
+  @Prop({ default: true }) newOrder!: boolean
+  @Prop({ default: null }) order!: Order | null
 
   get offices() {
     return officesModule.offices
@@ -269,6 +196,8 @@ export default class MOrderModalWorkflow extends Vue {
 .order-modal-workflow
   height: calc(100vh - 60px)
   overflow-y: scroll
+  &__header
+    justify-content: space-between
   &--payed
     height: calc(100vh - 80px)
 </style>

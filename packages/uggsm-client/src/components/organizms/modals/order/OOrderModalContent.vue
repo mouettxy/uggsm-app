@@ -17,7 +17,10 @@
               ) {{ order.office.code }}
           span {{ order.office.name }}
         .text-h5.pa-1
-          m-order-status-switcher(:status='order.status')
+          m-order-status-switcher(
+            :status='order.status',
+            :orderid='order.id'
+          )
         v-tooltip(bottom)
           template(#activator='{on, attrs}')
             .text-h5(style='padding: 5px')
@@ -56,7 +59,7 @@
         .order-modal-content__item__content(
           :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
         )
-          m-order-modal-fields(
+          o-order-modal-fields(
             v-model='newOrder ? model : order',
             :new-order='newOrder'
           )
@@ -64,37 +67,33 @@
         .order-modal-content__item__content(
           :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
         )
-          m-order-modal-works(:new-order='newOrder')
+          o-order-modal-works(
+            :order='order',
+            :new-order='newOrder'
+          )
 
       v-tab-item.order-modal-content__item(key='payments')
         .order-modal-content__item__content(
           :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
         )
-          m-order-modal-cash(:new-order='newOrder')
+          o-order-modal-cash(
+            :order='order',
+            :new-order='newOrder'
+          )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { ordersModule } from '@/store'
+import { Order } from '@/typings/api/order'
 
 @Component
-export default class MOrderModalContent extends Vue {
-  @Prop({ default: false, type: Boolean }) newOrder: any
-  @Prop(Object) value: any
-
-  get order() {
-    return ordersModule.currentOrder
-  }
+export default class OOrderModalContent extends Vue {
+  @Prop({ default: null }) order!: Order | null
+  @Prop({ default: false }) newOrder: any
+  @Prop({ default: null }) model!: Record<string, any> | null
 
   public currentTab = 0
-
-  get model() {
-    return this.value
-  }
-
-  set model(value) {
-    this.$emit('input', value)
-  }
 }
 </script>
 

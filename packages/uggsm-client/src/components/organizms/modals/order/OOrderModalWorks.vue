@@ -104,12 +104,14 @@ import { Component, Vue, Prop, Watch, Ref } from 'vue-property-decorator'
 import { ordersModule, authModule } from '@/store'
 import { ordersAPI } from '@/api'
 import { find, reduce } from 'lodash'
+import { Order } from '@/typings/api/order'
 
 @Component
-export default class MOrderModalWorks extends Vue {
+export default class OOrderModalWorks extends Vue {
   @Ref('form') form!: any
   @Ref('commentForm') commentForm!: any
-  @Prop({ required: true, type: Boolean }) newOrder!: boolean
+  @Prop({ required: true }) newOrder!: boolean
+  @Prop({ required: true, default: null }) order!: Order | null
 
   public work = null
   public tableHeaders = [
@@ -197,10 +199,6 @@ export default class MOrderModalWorks extends Vue {
     } else {
       return 0
     }
-  }
-
-  get order() {
-    return ordersModule.currentOrder
   }
 
   get user() {

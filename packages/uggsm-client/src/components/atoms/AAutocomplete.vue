@@ -9,6 +9,7 @@ v-autocomplete(
   :hide-details='hideDetails',
   :disabled='disabled',
   :dense='dense',
+  @update:search-input='onChange',
   @focus.stop='onAutocompleteFocus',
   @blur.stop='onBlur',
   v-mask='phoneMask',
@@ -48,10 +49,10 @@ export default class AAutocomplete extends Vue {
 
   public items: Array<any> = []
   public query = ''
+  public allowItemsFetch = false
 
-  @Watch('query')
-  async onValueChange() {
-    if (this.query) {
+  async onChange() {
+    if (this.query && this.allowItemsFetch) {
       const items = await this.getItems()
 
       this.items = items
@@ -80,6 +81,7 @@ export default class AAutocomplete extends Vue {
   }
 
   async onAutocompleteFocus() {
+    this.allowItemsFetch = true
     this.items = await this.getItems()
   }
 
@@ -92,6 +94,7 @@ export default class AAutocomplete extends Vue {
   }
 
   onBlur() {
+    this.allowItemsFetch = false
     if (!this.disallowFreeType && !this.returnObject) {
       this.model = this.query
     }

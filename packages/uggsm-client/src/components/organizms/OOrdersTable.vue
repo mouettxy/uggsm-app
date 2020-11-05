@@ -5,12 +5,15 @@
       .success--text {{ store.tableRows }}
     template(#main-toolbar)
       v-col(cols='auto')
-        v-btn(
-          to='/orders/new',
-          color='primary'
-        )
-          v-icon(left) mdi-plus
-          span Новый
+        o-order-modal
+          template(#activator='{on, attrs}')
+            v-btn(
+              v-on='on',
+              v-bind='attrs',
+              color='primary'
+            )
+              v-icon(left) mdi-plus
+              span Новый
       v-col(cols='auto')
         v-btn.mx-2(
           @click='onClosedFilter',
@@ -46,14 +49,19 @@
             )
               | (+{{ statusFilter.length - 1 }})
     template(#item.id='{value, item}')
-      v-btn(
-        :to='{ name: "orderModal", params: { id: value } }',
-        :style='{ background: item.quick ? "rgba(255, 82, 82, .1)" : "" }',
-        :new-order='false',
-        text
+      o-order-modal(
+        :orderid='value',
+        :new-order='false'
       )
-        v-icon(left) mdi-pencil
-        span {{ value }}
+        template(#activator='{on, attrs}')
+          v-btn(
+            v-on='on',
+            v-bind='attrs',
+            :style='{ background: item.quick ? "rgba(255, 82, 82, .1)" : "" }',
+            text
+          )
+            v-icon(left) mdi-pencil
+            span {{ value }}
     template(#item.status='{value, item}')
       m-order-status-switcher(
         :status='value',
