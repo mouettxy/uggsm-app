@@ -3,7 +3,7 @@ import { parsePaginateResponse } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IClientController } from '../interfaces'
-import { ClientModel } from '../models'
+import { ClientModel, OrderModel } from '../models'
 import { ControllerMethod } from '../interfaces/controller'
 
 export class ClientController implements IClientController {
@@ -112,6 +112,22 @@ export class ClientController implements IClientController {
     const id = req.params.id
 
     try {
+      const client = await this.model.findOne({ id })
+
+      if (client.name !== req.body.name) {
+        const orders = await OrderModel.find({ customerName: client.name })
+
+        for (const key in orders) {
+          const order = orders[key]
+
+          order.customerName = req.body.name
+
+          await order.save()
+          api.io.emit('update order', order.id)
+          api.io.emit('update orders')
+        }
+      }
+
       const response = await this.model.findOneAndUpdate({ id }, req.body, { new: true })
 
       if (response) {
