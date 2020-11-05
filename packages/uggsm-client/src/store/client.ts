@@ -166,6 +166,5 @@ export default class Client extends VuexModule {
   @Action
   async socket_updateClients() {
     this.fetch()
-    console.log('update clients by socket')
   }
 }

@@ -156,27 +156,7 @@ export default class Orders extends VuexModule {
   @Action
   async socket_updateOrders() {
     this.fetchTable()
-    console.log('updated orders by socket')
   }
-
-  /* @Action
-  async socket_updatedOrder(evt: OrderType) {
-    if (this.currentOrder) {
-      if (this.currentOrder.id == evt.id) {
-        console.log('updated order ' + evt.id + ' by socket')
-      }
-    }
-  } */
-
-  /* @Action
-  async socket_updateOrder(evt: string | number) {
-    if (this.currentOrder) {
-      if (this.currentOrder.id == evt) {
-        this.getOrder(evt)
-        console.log('update order ' + evt + ' by socket')
-      }
-    }
-  } */
 
   /* -------------------------------------------------------------------------- */
   /*                                     API                                    */

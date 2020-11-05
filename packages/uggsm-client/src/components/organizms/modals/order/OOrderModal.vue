@@ -227,7 +227,6 @@ export default class OOrderModal extends Vue {
 
   @Socket('update order')
   async onSocketUpdateOrder(model: number) {
-    console.log(model)
     if (model === this.order?.id && this.modal) {
       this.order = await ordersModule.getOrder(model)
     }

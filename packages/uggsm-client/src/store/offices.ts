@@ -22,7 +22,6 @@ export default class Offices extends VuexModule {
   @Action
   async socket_updateOffices() {
     this.fetch()
-    console.log('update offices by socket')
   }
 
   @Action
