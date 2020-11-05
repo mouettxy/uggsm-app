@@ -70,15 +70,10 @@
         scope='table'
       )
     template(#item.estimatedCloseAt='{value, item}')
-      template(v-if='isToday(value, item)')
+      template(v-if='isExpired(value, item)')
         v-chip(
           small,
           color='error'
-        ) {{ value }}
-      template(v-else-if='isBefore(value, item)')
-        v-chip(
-          small,
-          color='warning'
         ) {{ value }}
       template(v-else)
         v-chip(
@@ -108,21 +103,7 @@ export default class OOrdersTable extends Vue {
     return ordersModule
   }
 
-  isToday(date: string, item: Order) {
-    return (
-      moment(date, 'DD.MM.YYYY HH:mm').isSame(moment(), 'day') &&
-      !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
-    )
-  }
-
-  isAfter(date: string, item: Order) {
-    return (
-      moment(date, 'DD.MM.YYYY HH:mm').isAfter(moment(), 'day') &&
-      !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
-    )
-  }
-
-  isBefore(date: string, item: Order) {
+  isExpired(date: string, item: Order) {
     return (
       moment(date, 'DD.MM.YYYY HH:mm').isBefore(moment()) &&
       !includes(['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'], item.status)
