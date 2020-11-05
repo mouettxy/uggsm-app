@@ -58,7 +58,7 @@
           v-btn(
             v-on='on',
             v-bind='attrs',
-            :style='{ background: item.quick ? "rgba(255, 82, 82, .1)" : "" }',
+            :style='{ background: item.quick ? "rgba(255, 82, 82, .4)" : "" }',
             text
           )
             v-icon(left) mdi-pencil

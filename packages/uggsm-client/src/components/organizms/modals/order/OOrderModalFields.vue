@@ -205,10 +205,12 @@
           endpoint='/kit',
           dense
         )
-        a-datetime-picker(
+        a-datetime-picker-2.mb-6.d-block(
           v-model='model.estimatedCloseAt',
-          label='Дата готовности',
-          icon='mdi-alarm-check'
+          type='datetime',
+          label='Ориентировочная дата готовности',
+          icon='mdi-alarm-check',
+          format='DD.MM.YYYY HH:mm'
         )
         v-divider.mb-8
         a-autocomplete(
@@ -236,6 +238,7 @@
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { getAnonymousAnimal } from '@/api/helpers'
 import { authModule } from '@/store'
+import moment from 'moment'
 
 @Component
 export default class OOrderModalFields extends Vue {
@@ -283,6 +286,9 @@ export default class OOrderModalFields extends Vue {
   }
 
   created() {
+    if (!this.newOrder) {
+      this.model.estimatedCloseAt = moment(this.model.estimatedCloseAt).format('DD.MM.YYYY HH:mm')
+    }
     if (!this.model.manager) {
       if (this.newOrder) {
         this.model.manager = {
