@@ -114,45 +114,54 @@
       dense
     )
   template(v-if='!newOrder')
-    a-select(
-      v-model='model.orderType',
-      :items='[model.orderType]',
-      :clearable='false',
-      readonly,
-      dense
-    )
     .text-h5 Клиент
-    v-list
-      v-list-item(two-line)
-        v-list-item-content
-          v-list-item-title
-            template(v-if='model.customer && model.customer.id')
-              o-client-modal(:clientid='model.customer.id')
-                template(#activator='{on, attrs}')
-                  div(
-                    v-on='on',
-                    v-bind='attrs'
-                  )
-                    v-icon(
-                      size='1.1rem',
-                      color='dark'
-                    ) mdi-pencil
-                    span {{ model.customer.name }}
-            template(v-else)
-              span.error--text {{ model.customerName }}
-          v-list-item-subtitle Имя клиента
-      v-list-item(two-line)
-        v-list-item-content
-          v-list-item-title {{ model.customerPhone }}
-          v-list-item-subtitle Номер клиента
-    .text-h5 Заказ
-      .ml-4.mt-8
+    v-row(no-gutters)
+      v-col(cols='6')
+        v-list-item(two-line)
+          v-list-item-content
+            v-list-item-title
+              template(v-if='model.customer && model.customer.id')
+                o-client-modal(:clientid='model.customer.id')
+                  template(#activator='{on, attrs}')
+                    div(
+                      v-on='on',
+                      v-bind='attrs'
+                    )
+                      v-icon(
+                        size='1.1rem',
+                        color='dark'
+                      ) mdi-pencil
+                      span {{ model.customer.name }}
+              template(v-else)
+                span.error--text {{ model.customerName }}
+            v-list-item-subtitle Имя клиента
+      v-col(cols='6')
+        v-list-item(two-line)
+          v-list-item-content
+            v-list-item-title {{ model.customerPhone | VMask("+7 (###) ###-##-##") }}
+            v-list-item-subtitle Номер клиента
+    v-divider.mb-2
+    .text-h5.mb-2 Заказ
+
+    v-row.px-4(no-gutters)
+      v-col(cols='6')
         a-input.mb-6(
           v-model='model.serialNumber',
           label='Серийный номер',
           icon='mdi-fingerprint',
           dense
         )
+      v-col.pl-1(cols='6')
+        a-input(
+          v-model='model.declaredPrice',
+          type='number',
+          label='Ориентировочная цена',
+          icon='mdi-cash',
+          dense
+        )
+
+    v-row.px-4(no-gutters)
+      v-col(cols='6')
         a-autocomplete(
           v-model='model.phoneBrand',
           :predefined-items='model.phoneBrand ? [{ text: model.phoneBrand, value: model.phoneBrand }] : []',
@@ -161,6 +170,7 @@
           endpoint='/phone-brand',
           dense
         )
+      v-col.pl-1(cols='6')
         a-autocomplete(
           v-model='model.phoneModel',
           :predefined-items='model.phoneModel ? [{ text: model.phoneModel, value: model.phoneModel }] : []',
@@ -169,6 +179,9 @@
           endpoint='/phone-model',
           dense
         )
+
+    v-row.px-4(no-gutters)
+      v-col(cols='6')
         a-autocomplete(
           v-model='model.declaredDefect',
           :predefined-items='model.declaredDefect ? [{ text: model.declaredDefect, value: model.declaredDefect }] : []',
@@ -177,19 +190,8 @@
           endpoint='/declared-defect',
           dense
         )
-        a-input(
-          v-model='model.declaredPrice',
-          type='number',
-          label='Ориентировочная цена',
-          icon='mdi-cash',
-          dense
-        )
-        a-switch.mb-6(
-          v-model='model.quick',
-          label='Срочно',
-          icon='mdi-alarm-light'
-        )
-        a-autocomplete(
+      v-col(cols='6')
+        a-autocomplete.pl-1(
           v-model='model.appearance',
           :predefined-items='model.appearance ? [{ text: model.appearance, value: model.appearance }] : []',
           label='Внешний вид',
@@ -197,6 +199,8 @@
           endpoint='/appearance',
           dense
         )
+    v-row.px-4(no-gutters)
+      v-col(cols='6')
         a-autocomplete(
           v-model='model.kit',
           :predefined-items='model.kit ? [{ text: model.kit, value: model.kit }] : []',
@@ -205,7 +209,14 @@
           endpoint='/kit',
           dense
         )
-        v-divider.mb-8
+      v-col.pl-1(cols='6')
+        a-switch.mt-1(
+          v-model='model.quick',
+          label='Срочно',
+          icon='mdi-alarm-light'
+        )
+    v-row.px-4(no-gutters)
+      v-col(cols='6')
         a-autocomplete(
           v-model='model.master._id',
           :predefined-items='model.master ? [{ text: model.master.credentials, value: model.master._id }] : []',
@@ -215,7 +226,8 @@
           disallow-free-type,
           dense
         )
-        a-autocomplete(
+      v-col(cols='6')
+        a-autocomplete.pl-1(
           v-model='model.manager._id',
           :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
           :disabled='isObjectId(model.manager._id)',

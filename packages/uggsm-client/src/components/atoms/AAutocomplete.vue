@@ -4,6 +4,7 @@ v-autocomplete(
   :search-input.sync='query',
   :return-object='returnObject',
   :prepend-inner-icon='icon',
+  :menu-props='{ allowOverflow: true, bottom: true, maxHeight: 204 }',
   :label='label',
   :items='items',
   :hide-details='hideDetails',

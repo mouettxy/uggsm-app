@@ -31,6 +31,16 @@
                 color='grey'
               ) {{ order.password }}
           span Пароль
+        v-tooltip(bottom)
+          template(#activator='{on, attrs}')
+            .text-h5(style='padding: 5px')
+              v-btn(
+                v-on='on',
+                v-bind='attrs',
+                small,
+                color='success'
+              ) {{ order.orderType }}
+          span Тип заказа
         m-order-time-label(
           :time='order.estimatedCloseAt',
           :style='{ paddingTop: "5px" }',
