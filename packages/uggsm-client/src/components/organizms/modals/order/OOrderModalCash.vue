@@ -1,5 +1,5 @@
 <template lang="pug">
-.order-modal-cash
+.order-modal-cash(v-if='order')
   .text-h5.mb-4 Оплата
   v-toolbar(
     flat,

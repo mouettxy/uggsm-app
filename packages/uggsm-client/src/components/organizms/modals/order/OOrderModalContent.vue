@@ -49,7 +49,7 @@
           path='estimatedCloseAt',
           editable
         )
-  template(v-if='order')
+  template(v-if='order || newOrder')
     v-tabs(v-model='currentTab')
       v-tab(key='information') Информация о заказе
       v-tab(
