@@ -163,7 +163,7 @@ export default class OOrderModalWorks extends Vue {
       return false
     }
 
-    if (this.order?.closedAt) {
+    if (this.order?.status === 'Закрыт') {
       return true
     } else {
       return false
