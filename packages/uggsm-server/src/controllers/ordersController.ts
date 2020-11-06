@@ -227,22 +227,24 @@ export class OrdersController implements IOrdersController {
         },
       })
 
-      order.statusSms = map(order.statusSms, (e) => {
-        if (e.uuid === message.uuid) {
-          return {
-            ...e,
-            sended: true,
-          }
-        }
-      })
-
-      order = await order.save()
-
       if (order) {
-        res.status(200)
-        api.io.emit('verified order sms', message, order.id)
-        api.io.emit('update order', order.id)
-        res.send(order)
+        order.statusSms = map(order.statusSms, (e) => {
+          if (e.uuid === message.uuid) {
+            return {
+              ...e,
+              sended: true,
+            }
+          }
+        })
+
+        order = await order.save()
+
+        if (order) {
+          res.status(200)
+          api.io.emit('verified order sms', message, order.id)
+          api.io.emit('update order', order.id)
+          res.send(order)
+        }
       }
     } catch (e) {
       next(new HttpException(500, e.message))

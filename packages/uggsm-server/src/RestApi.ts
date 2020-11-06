@@ -12,7 +12,6 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 
 expressWinston.requestWhitelist.push('body', 'params')
-expressWinston.responseWhitelist.push('body')
 
 class RestApi {
   public expressApp: express.Application = express()
@@ -58,10 +57,7 @@ class RestApi {
           winston.format.splat(),
           winston.format.prettyPrint()
         ),
-        transports: [
-          process.env.NODE_ENV !== 'production' ? new winston.transports.Console() : null,
-          new winston.transports.File({ filename: 'uggsm-http.log' }),
-        ],
+        transports: [new winston.transports.File({ filename: 'uggsm-http.log' })],
         msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}',
         expressFormat: true,
       })
@@ -71,10 +67,7 @@ class RestApi {
   private initializeErrorHandling(): void {
     this.expressApp.use(
       expressWinston.errorLogger({
-        transports: [
-          process.env.NODE_ENV !== 'production' ? new winston.transports.Console() : null,
-          new winston.transports.File({ filename: 'uggsm-http-error.log' }),
-        ],
+        transports: [new winston.transports.File({ filename: 'uggsm-http-error.log' })],
         format: winston.format.combine(winston.format.colorize(), winston.format.json()),
       })
     )
