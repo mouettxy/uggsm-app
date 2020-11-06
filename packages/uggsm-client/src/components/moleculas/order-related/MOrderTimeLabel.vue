@@ -3,12 +3,20 @@
   template(v-if='editable')
     v-slide-y-reverse-transition(leave-absolute)
       .order-time-label__editable-text(v-if='!editMode')
-        v-chip(
-          :small='small',
-          :color='chipColor',
-          @click='enableEditMode',
-          label
-        ) {{ dateString }}
+        template(v-if='invalidDate')
+          v-chip(
+            :small='small',
+            @click='enableEditMode',
+            label,
+            color='warning'
+          ) Некорректная дата
+        template(v-else)
+          v-chip(
+            :small='small',
+            :color='chipColor',
+            @click='enableEditMode',
+            label
+          ) {{ dateString }}
     v-slide-y-transition(
       leave-absolute,
       hide-on-leave
@@ -46,15 +54,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import moment from 'moment'
 import { includes } from 'lodash'
 import { Order } from '@/typings/api/order'
 import { ordersModule } from '@/store'
 
 @Component
-export default class OOrderModalHeaderTime extends Vue {
-  @Prop({ required: true }) time!: string
+export default class MOrderTimeLabel extends Vue {
+  @Prop({ required: true }) time!: string | null
   @Prop({ required: true }) orderStatus!: string
   @Prop({ default: false }) small!: boolean
   @Prop() path!: string
@@ -63,6 +71,15 @@ export default class OOrderModalHeaderTime extends Vue {
 
   public invalidDate = false
   public editMode = false
+
+  @Watch('time')
+  onTimeUpdate(value: string) {
+    if (value === 'Invalid date' || value === 'Invalid date Invalid date' || value === null) {
+      this.invalidDate = true
+    } else {
+      this.invalidDate = false
+    }
+  }
 
   get model() {
     return this.time
@@ -107,7 +124,7 @@ export default class OOrderModalHeaderTime extends Vue {
   }
 
   mounted() {
-    if (this.time === 'Invalid date' || this.time === 'Invalid date Invalid date') {
+    if (this.time === 'Invalid date' || this.time === 'Invalid date Invalid date' || this.time === null) {
       this.invalidDate = true
     }
   }

@@ -73,6 +73,7 @@
     template(#item.estimatedCloseAt='{value, item}')
       m-order-time-label(
         :time='value',
+        :orderid='item.id',
         :order-status='item.status',
         small,
         path='estimatedCloseAt'

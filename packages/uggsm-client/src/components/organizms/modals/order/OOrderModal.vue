@@ -7,12 +7,6 @@
         :on='on',
         :attrs='attrs'
       )
-        v-btn(
-          v-on='on',
-          v-bind='attrs',
-          color='primary'
-        )
-          span {{ orderid }}
 
     template(#content)
       v-container.order-modal__container(
@@ -224,10 +218,6 @@ export default class OOrderModal extends Vue {
     if (model === this.order?.id && this.modal) {
       this.order = await ordersModule.getOrder(model)
     }
-  }
-
-  mounted() {
-    this.getOrder()
   }
 }
 </script>

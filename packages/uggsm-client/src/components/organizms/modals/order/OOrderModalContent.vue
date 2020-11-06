@@ -1,5 +1,5 @@
 <template lang="pug">
-.order-modal-content(:class='{ "order-modal-content__loading": !newOrder && order === null }')
+.order-modal-content
   header.order-modal-content__header
     template(v-if='newOrder')
       h5.text-h5 Новый заказ
@@ -49,15 +49,7 @@
           path='estimatedCloseAt',
           editable
         )
-
-  template(v-if='!newOrder && order === null')
-    v-progress-circular(
-      size='64',
-      indeterminate,
-      color='primary'
-    )
-
-  template(v-else)
+  template(v-if='order')
     v-tabs(v-model='currentTab')
       v-tab(key='information') Информация о заказе
       v-tab(
@@ -68,7 +60,6 @@
         key='payments',
         :disabled='newOrder'
       ) Платежи
-
     v-tabs-items(
       v-model='currentTab',
       touchless
@@ -91,13 +82,13 @@
           )
 
       v-tab-item.order-modal-content__item(key='payments')
-        .order-modal-content__item__content(
-          :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
+      .order-modal-content__item__content(
+        :class='{ "order-modal-content__item__content--payed": order ? order.payed : false }'
+      )
+        o-order-modal-cash(
+          :order='order',
+          :new-order='newOrder'
         )
-          o-order-modal-cash(
-            :order='order',
-            :new-order='newOrder'
-          )
 </template>
 
 <script lang="ts">
