@@ -1,6 +1,4 @@
-import { mongoose } from '@typegoose/typegoose'
 import 'reflect-metadata'
-import { seedDatabase } from './faker'
 import RestApi from './RestApi'
 import {
   AuthenticationRouter,
@@ -11,6 +9,7 @@ import {
   AdversitementRouter,
   AutocompleteRouter,
   EmailSubscriptionRouter,
+  CallsRouter,
 } from './routes'
 import { ClientRouter } from './routes/clientRoutes'
 import { validateEnv } from './utils'
@@ -28,6 +27,7 @@ export const api = new RestApi([
   new AdversitementRouter(),
   new AutocompleteRouter(),
   new EmailSubscriptionRouter(),
+  new CallsRouter(),
 ])
 
 api.io.on('connection', () => {
@@ -35,11 +35,3 @@ api.io.on('connection', () => {
 })
 
 api.listen()
-
-/* async function seed() {
-  await mongoose.connection.dropDatabase()
-
-  seedDatabase()
-}
-
-seed() */
