@@ -60,7 +60,6 @@ export default class Orders extends VuexModule {
   )
   get tableItems() {
     return map(this.table, (e) => {
-      const closeTime = getTime(e.estimatedCloseAt)
       const createTime = getTime(e.createdAt)
       const totalWorks = reduce(
         e.statusWork,
@@ -73,7 +72,7 @@ export default class Orders extends VuexModule {
 
       return {
         id: e.id,
-        estimatedCloseAt: closeTime,
+        estimatedCloseAt: e.estimatedCloseAt,
         status: e.status,
         created: createTime,
         phoneModel: e.phoneModel,
