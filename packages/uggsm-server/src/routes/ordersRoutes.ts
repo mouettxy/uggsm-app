@@ -1,8 +1,9 @@
+import { IOrdersController } from 'src/interfaces'
 import { OrdersController } from '../controllers'
 import * as validateOrder from '../middlewares/validators/validateOrder'
 import BaseRouter from './heplers/BaseRouter'
 
-export class OrdersRouter extends BaseRouter {
+export class OrdersRouter extends BaseRouter<IOrdersController> {
   constructor() {
     super(OrdersController, '/order')
   }

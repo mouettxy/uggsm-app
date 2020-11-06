@@ -1,7 +1,8 @@
+import { IEmailSubscriptionController } from './../interfaces/IEmailSubscriptionController'
 import { EmailSubscriptionController } from '../controllers'
 import BaseRouter from './heplers/BaseRouter'
 
-export class EmailSubscriptionRouter extends BaseRouter {
+export class EmailSubscriptionRouter extends BaseRouter<IEmailSubscriptionController> {
   constructor() {
     super(EmailSubscriptionController, '/email-subscriptions')
   }

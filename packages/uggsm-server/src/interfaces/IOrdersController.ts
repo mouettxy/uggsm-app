@@ -4,6 +4,7 @@ export type IOrdersController = {
   getAll: ControllerMethod
   getAllByOffice: ControllerMethod
   getById: ControllerMethod
+  smsCallback: ControllerMethod
   addCompletedWork: ControllerMethod
   deleteCompletedWork: ControllerMethod
   setEstimatedCloseAt: ControllerMethod
