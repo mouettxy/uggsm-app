@@ -1,8 +1,9 @@
+import { IClientController } from 'src/interfaces'
 import { ClientController } from '../controllers'
 import * as validateClient from '../middlewares/validators/validateClient'
 import BaseRouter from './heplers/BaseRouter'
 
-export class ClientRouter extends BaseRouter {
+export class ClientRouter extends BaseRouter<IClientController> {
   constructor() {
     super(ClientController, '/client')
   }
