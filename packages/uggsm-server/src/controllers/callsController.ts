@@ -2,6 +2,7 @@ import { HttpException } from './../exceptions/HttpException'
 import { ControllerMethod } from './../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
 import { NextFunction } from 'express'
+import logger from '../services/logger'
 
 class BaseController {
   public criticalError(next: NextFunction, message = 'Ошибка сервера') {
@@ -54,14 +55,26 @@ type CallsWebhookCallFinish = CallsWebhookRequest<CallsWebhookCallStandart & Cal
 
 export class CallsController extends BaseController implements ICallsController {
   public callbackCallStart: ControllerMethod = async (req, res, next) => {
+    logger.info({
+      message: 'callback call start',
+      meta: req.body,
+    })
     this.criticalError(next)
   }
 
   public callbackCallAnswer: ControllerMethod = async (req, res, next) => {
+    logger.info({
+      message: 'callback call answer',
+      meta: req.body,
+    })
     this.criticalError(next)
   }
 
   public callbackCallFinish: ControllerMethod = async (req, res, next) => {
+    logger.info({
+      message: 'callback call finish',
+      meta: req.body,
+    })
     this.criticalError(next)
   }
 }

@@ -14,6 +14,7 @@ import {
 import { ClientRouter } from './routes/clientRoutes'
 import { validateEnv } from './utils'
 import './services/jobs'
+import './services/logger'
 
 validateEnv()
 

@@ -8,6 +8,11 @@ import { connectToDatabase } from './utils'
 import SocketIO from 'socket.io'
 import http from 'http'
 import cors from 'cors'
+import winston from 'winston'
+import expressWinston from 'express-winston'
+
+expressWinston.requestWhitelist.push('body', 'params')
+expressWinston.responseWhitelist.push('body')
 
 class RestApi {
   public expressApp: express.Application = express()
@@ -43,9 +48,36 @@ class RestApi {
     this.expressApp.use(cors())
     this.expressApp.use(bodyParser.json())
     this.expressApp.use(cookieParser())
+    this.expressApp.use(
+      expressWinston.logger({
+        format: winston.format.combine(
+          winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss',
+          }),
+          winston.format.errors({ stack: true }),
+          winston.format.splat(),
+          winston.format.prettyPrint()
+        ),
+        transports: [
+          process.env.NODE_ENV !== 'production' ? new winston.transports.Console() : null,
+          new winston.transports.File({ filename: 'uggsm-http.log' }),
+        ],
+        msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}',
+        expressFormat: true,
+      })
+    )
   }
 
   private initializeErrorHandling(): void {
+    this.expressApp.use(
+      expressWinston.errorLogger({
+        transports: [
+          process.env.NODE_ENV !== 'production' ? new winston.transports.Console() : null,
+          new winston.transports.File({ filename: 'uggsm-http-error.log' }),
+        ],
+        format: winston.format.combine(winston.format.colorize(), winston.format.json()),
+      })
+    )
     this.expressApp.use(endpointValidationMiddleware.endpoint)
     this.expressApp.use(errorMiddleware)
   }
