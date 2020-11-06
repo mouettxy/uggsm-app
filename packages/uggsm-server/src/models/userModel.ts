@@ -24,6 +24,9 @@ export class User {
 
   @prop({ autopopulate: true, ref: 'Office' })
   public office: Ref<Office>
+
+  @prop({ default: [] })
+  public tokens: string[]
 }
 
 export const UserModel = getModelForClass(User)

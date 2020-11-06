@@ -16,20 +16,30 @@ import { OfficeModel, UserModel } from '../models'
 export class AuthenticationController implements IAuthentificationController {
   private user = UserModel
 
-  private static createToken(user: Document): TokenData {
-    const expiresIn = 60 * 60 * 24 * 7 // 7 days
-    const secret = process.env.JWT_SECRET
+  private static createAccessToken(user: Document): TokenData {
+    const expiresIn = parseInt(process.env.ACCESS_TOKEN_LIFE)
+    const secret = process.env.ACCESS_TOKEN_SECRET
     const dataStoredInToken: DataStoredInToken = {
       _id: user.get('_id'),
     }
+
     return {
       expiresIn,
       token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
     }
   }
 
-  private static createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`
+  private static createRefreshToken(user: Document): TokenData {
+    const expiresIn = parseInt(process.env.REFRESH_TOKEN_LIFE)
+    const secret = process.env.REFRESH_TOKEN_SECRET
+    const dataStoredInToken: DataStoredInToken = {
+      _id: user.get('_id'),
+    }
+
+    return {
+      expiresIn,
+      token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
+    }
   }
 
   public register = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
@@ -38,28 +48,25 @@ export class AuthenticationController implements IAuthentificationController {
       next(new UserWithThatUsernameAlreadyExistsException(userData.username))
     } else {
       try {
-        if (userData.masterPwd === process.env.REGISTER_USER_MASTER_PWD) {
-          const hashedPassword = await bcrypt.hash(userData.password, 10)
-          const office = await OfficeModel.getOneByCode(userData.office)
+        const hashedPassword = await bcrypt.hash(userData.password, 10)
+        const office = await OfficeModel.getOneByCode(userData.office)
 
-          if (!office) {
-            next(new CannotFindOfficeException(userData.office))
-          }
-
-          userData.office = office._id
-          userData.password = hashedPassword
-
-          const user = await this.user.create({
-            ...userData,
-          })
-
-          user.set('password', undefined)
-          api.io.emit('created new user', user.credentials)
-          api.io.emit('update users')
-          res.send(user)
-        } else {
-          next(new HttpException(500, 'Master pwd incorrect'))
+        if (!office) {
+          next(new CannotFindOfficeException(userData.office))
         }
+
+        userData.office = office._id
+        userData.password = hashedPassword
+
+        const user = await this.user.create({
+          ...userData,
+        })
+
+        user.set('password', undefined)
+
+        api.io.emit('created new user', user.credentials)
+        api.io.emit('update users')
+        res.send(user)
       } catch (error) {
         next(new HttpException(500, error.message))
       }
@@ -73,9 +80,12 @@ export class AuthenticationController implements IAuthentificationController {
       const matchedPassword = await bcrypt.compare(loginData.password, user.get('password'))
 
       if (matchedPassword) {
+        const accessToken = AuthenticationController.createAccessToken(user)
+        const refreshToken = AuthenticationController.createRefreshToken(user)
+        user.tokens.push(refreshToken.token)
+        await user.save()
         user.set('password', undefined)
-        const tokenData = AuthenticationController.createToken(user)
-        res.setHeader('Set-Cookie', [AuthenticationController.createCookie(tokenData)])
+        res.cookie('jwt', accessToken.token, { domain: '.uggsm.ru' })
         res.send(user)
       } else {
         next(new WrongCredentialsException())
@@ -86,7 +96,6 @@ export class AuthenticationController implements IAuthentificationController {
   }
 
   public logout = async (request: express.Request, response: express.Response): Promise<void> => {
-    response.setHeader('Set-Cookie', 'Authorization=;Max-age=0')
     response.status(200).send({ status: 200, message: 'logout successfully' })
   }
 }
