@@ -1,26 +1,28 @@
 import express from 'express'
 import { authenticationMiddleware } from '../../middlewares'
-import { mongoose } from '@typegoose/typegoose'
 import { Router } from '../../interfaces'
-
-export class BaseRouter implements Router {
+export class BaseRouter<T> implements Router {
   public expressRouter: express.Router = express.Router()
   public basePath = ''
-  public controller = null
+  public controller: T | null = null
 
-  constructor(controller: any, basePath: string) {
-    if (controller && basePath) {
+  constructor(Controller: new () => T | null, basePath: string) {
+    if (Controller && basePath) {
       this.basePath = basePath
-      this.controller = new controller()
+      this.controller = new Controller()
       this.expressRouter.all(`${this.basePath}*`, authenticationMiddleware)
       this.initializeRoutes()
     } else {
-      throw new Error('Controller not specified')
+      throw new Error('Controller or base path is not specified')
     }
   }
 
   initializeRoutes() {
     throw new Error('Routes not specified')
+  }
+
+  prefixed(route: string) {
+    return `${this.basePath}/${route}`
   }
 }
 
