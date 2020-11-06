@@ -68,7 +68,14 @@ class RestApi {
     this.expressApp.use(
       expressWinston.errorLogger({
         transports: [new winston.transports.File({ filename: 'uggsm-http-error.log' })],
-        format: winston.format.combine(winston.format.colorize(), winston.format.json()),
+        format: winston.format.combine(
+          winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss',
+          }),
+          winston.format.errors({ stack: true }),
+          winston.format.splat(),
+          winston.format.prettyPrint()
+        ),
       })
     )
     this.expressApp.use(endpointValidationMiddleware.endpoint)

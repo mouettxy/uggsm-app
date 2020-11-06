@@ -1,4 +1,3 @@
-import { user } from '../middlewares/validators/validateUser'
 import { Office, OfficeModel, UserModel } from '.'
 import { pre, plugin, getModelForClass, prop, Ref, ReturnModelType, mongoose, index } from '@typegoose/typegoose'
 import autopopulate from 'mongoose-autopopulate'
@@ -12,6 +11,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 import { statuses } from '../utils/enums'
 import mongooseSearch from 'mongoose-partial-search'
 import moment from 'moment'
+import { Call } from './callController'
 
 export class CompletedWork {
   @prop()
@@ -251,6 +251,9 @@ export class Order {
 
   @prop({ default: false })
   public payed: boolean
+
+  @prop({ ref: 'Call', autopopulate: true })
+  public statusCalls: Ref<Call>[]
 
   @prop({ type: () => [CompletedWork], _id: false })
   public statusWork: CompletedWork[]

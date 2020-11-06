@@ -1,9 +1,8 @@
-import { cloneDeep, last } from 'lodash'
+import { cloneDeep, last, trim, startsWith } from 'lodash'
 import { UserModel } from '../models'
 import { NextFunction } from 'connect'
 import express from 'express'
 import { body, validationResult } from 'express-validator/check'
-import e from 'express'
 
 export function getAnonymousAnimal() {
   const animals = [
@@ -228,4 +227,31 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     query,
     options,
   }
+}
+
+export function formatPhone(phone) {
+  phone = trim(phone)
+
+  if (startsWith(phone, '+7')) {
+    phone = phone.slice(2)
+  }
+
+  if (startsWith(phone, '7')) {
+    phone = phone.slice(1)
+  }
+
+  if (startsWith(phone, '8')) {
+    phone = phone.slice(1)
+  }
+
+  phone = phone.replace(/[^0-9]/g, '')
+
+  if (phone.length < 10) {
+    phone = ''
+  }
+
+  if (phone.length > 10) {
+    phone = phone.substring(0, 10)
+  }
+  return phone
 }

@@ -48,6 +48,20 @@
           :key='action.id',
           :item='action'
         )
+          template(#custom.content-body='{value}')
+            template(v-if='getCall(value)')
+              m-bottom-audio-player(
+                :title='getCall(value).manager',
+                :subtitle='getCall(value).managerNumber + " -> " + getCall(value).clientNumber',
+                :audio='getCall(value).record'
+              )
+                template(#activator='{on, attrs}')
+                  v-btn(
+                    v-on='on',
+                    v-bind='attrs',
+                    text,
+                    small
+                  ) Прослушать звонок
 </template>
 
 <script lang="ts">
@@ -64,6 +78,14 @@ import { Order } from '@/typings/api/order'
 export default class OOrderModalWorkflow extends Vue {
   @Prop({ default: true }) newOrder!: boolean
   @Prop({ default: null }) order!: Order | null
+
+  getCall(id: string) {
+    if (this.order) {
+      return find(this.order.statusCalls, { _id: id })
+    }
+
+    return ''
+  }
 
   get offices() {
     return officesModule.offices
@@ -148,6 +170,12 @@ export default class OOrderModalWorkflow extends Vue {
         } else if (e.header === 'Смена срока заказа') {
           color = '#4BB543'
           icon = 'mdi-clock-check'
+        }
+
+        if (e.header === 'Исходящий звонок' || e.header === 'Входящий звонок') {
+          type = 'slot'
+          color = '#d5f5ee'
+          icon = 'mdi-phone-alert'
         }
 
         const workflow = {

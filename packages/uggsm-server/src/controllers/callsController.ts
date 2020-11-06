@@ -1,80 +1,96 @@
-import { HttpException } from './../exceptions/HttpException'
-import { ControllerMethod } from './../interfaces/controller'
+import { ControllerMethod } from '../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
-import { NextFunction } from 'express'
-import logger from '../services/logger'
-
-class BaseController {
-  public criticalError(next: NextFunction, message = 'Ошибка сервера') {
-    next(new HttpException(500, message))
-  }
-}
-
-type CallsWebhookRequest<Event> = {
-  webhook: {
-    action: 'call.start' | 'call.finish' | 'call.answer'
-    account_id: string
-    account_name: string
-    user_id: string
-    user_login: string
-  }
-  event: Event
-}
-
-type CallsWebhookCallStandart = {
-  results_count: number
-  results_remains: number
-  results: [
-    {
-      direction: number
-      event_type: 1 | 2 | 4
-      client_number: string
-      client_name: string
-      event_age: number
-      event_created: number
-      event_pbx_call_id: string
-    }
-  ]
-}
-
-type CallsWebhookCallExtended = {
-  start_time: number
-  answer_time: number
-  end_time: number
-  duration: number
-  answered: 0 | 1
-  recording: string
-  db_call_id: number | string
-}
-
-type CallsWebhookCallStart = CallsWebhookRequest<CallsWebhookCallStandart>
-
-type CallsWebhookCallAnwer = CallsWebhookRequest<CallsWebhookCallStandart>
-
-type CallsWebhookCallFinish = CallsWebhookRequest<CallsWebhookCallStandart & CallsWebhookCallExtended>
+import { OrderModel } from '../models'
+import moment from 'moment'
+import { DocumentType } from '@typegoose/typegoose'
+import { api } from '../server'
+import { Call, CallModel } from '../models/callController'
+import { Order } from '../models'
+import { CallsWebhookCallStart, CallsWebhookCallAnswer, CallsWebhookCallFinish } from '../interfaces/CallsAPI'
+import { formatPhone } from '../utils/helpers'
+import BaseController from './base/BaseController'
 
 export class CallsController extends BaseController implements ICallsController {
   public callbackCallStart: ControllerMethod = async (req, res, next) => {
-    logger.info({
-      message: 'callback call start',
-      meta: req.body,
-    })
-    this.criticalError(next)
+    const body: CallsWebhookCallStart = req.body
+
+    this.success(res, body)
   }
 
   public callbackCallAnswer: ControllerMethod = async (req, res, next) => {
-    logger.info({
-      message: 'callback call answer',
-      meta: req.body,
-    })
-    this.criticalError(next)
+    const body: CallsWebhookCallAnswer = req.body
+
+    this.success(res, body)
   }
 
   public callbackCallFinish: ControllerMethod = async (req, res, next) => {
-    logger.info({
-      message: 'callback call finish',
-      meta: req.body,
-    })
-    this.criticalError(next)
+    const body: CallsWebhookCallFinish = req.body
+
+    try {
+      const customerPhone = formatPhone(body.event.client_number)
+
+      const orders = await OrderModel.find({
+        customerPhone,
+        status: { $not: { $in: ['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'] } },
+      }).sort({ id: -1 })
+
+      let order: DocumentType<Order> | undefined
+      if (orders) {
+        order = orders[0]
+      }
+
+      let call: DocumentType<Call>
+      if (order) {
+        // @ts-ignore
+        call = await CallModel.create({
+          relatedOrder: order._id,
+          dbId: body.event.db_call_id as number,
+          incoming: !!body.event.direction,
+          answered: !!body.event.answered,
+          clientNumber: customerPhone,
+          managerNumber: formatPhone(body.event.src_number),
+          manager: body.event.user_name,
+          record: body.event.recording,
+          startTime: moment(body.event.start_time).toDate(),
+          endTime: moment(body.event.end_time).toDate(),
+          answerTime: moment(body.event.answer_time).toDate(),
+        })
+
+        const workflowId = order.workflow.length + 1
+
+        const workflow = {
+          id: workflowId,
+          message: `${call._id}`,
+          username: '',
+          header: call.incoming ? 'Входящий звонок' : 'Исходящий звонок',
+        }
+
+        order.statusCalls.push(call._id)
+        order.workflow.push(workflow)
+
+        await order.save()
+
+        api.io.emit('added order call', order.id)
+        api.io.emit('update order', order.id)
+      } else {
+        call = await CallModel.create({
+          relatedOrder: null,
+          dbId: body.event.db_call_id as number,
+          incoming: !!body.event.direction,
+          answered: !!body.event.answered,
+          clientNumber: customerPhone,
+          managerNumber: formatPhone(body.event.src_number),
+          manager: body.event.user_name,
+          record: body.event.recording,
+          startTime: moment(body.event.start_time).toDate(),
+          endTime: moment(body.event.end_time).toDate(),
+          answerTime: moment(body.event.answer_time).toDate(),
+        })
+      }
+
+      this.success(res)
+    } catch (error) {
+      this.criticalError(next, error)
+    }
   }
 }

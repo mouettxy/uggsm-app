@@ -69,6 +69,8 @@ export type Order = {
   _id?: string
   __v?: any
 
+  statusCalls: Array<any>
+
   cash: Array<Cash>
 
   customer: Client

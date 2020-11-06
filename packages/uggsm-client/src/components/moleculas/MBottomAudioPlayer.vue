@@ -47,47 +47,48 @@
               v-list-item-subtitle {{ subtitle }}
         v-col.player-controls__duration(cols='6')
           span.grey--text {{ Math.ceil(currentTime) }}:{{ Math.ceil(duration) }}
-        v-col.player-controls__audio-controls(cols='3')
-          v-btn(
-            @click='fastBackward',
-            icon
-          )
-            v-icon mdi-rewind
-          v-btn(
-            @click='play',
-            icon=''
-          )
-            v-fab-transition(leave-absolute)
-              v-icon(v-if='isPaused') mdi-play
-            v-fab-transition(leave-absolute)
-              v-icon(v-if='!isPaused') mdi-pause
-          v-btn(
-            @click='fastForward',
-            icon
-          )
-            v-icon mdi-fast-forward
-          v-menu.player-controls__audio-controls__volume(
-            :close-on-content-click='false',
-            top,
-            offset-y,
-            content-class='player-controls__audio-controls__volume-content'
-          )
-            template(#activator='{on, attrs}')
-              v-btn(
-                v-on='on',
-                v-bind='attrs',
-                icon
-              )
-                v-icon mdi-volume-high
-            v-card
-              v-slider.elevation-1(
-                v-model='volume',
-                :step='0.01',
-                :min='0',
-                :max='1',
-                @change='changeVolume',
-                vertical
-              )
+        template(v-if='duration')
+          v-col.player-controls__audio-controls(cols='3')
+            v-btn(
+              @click='fastBackward',
+              icon
+            )
+              v-icon mdi-rewind
+            v-btn(
+              @click='play',
+              icon=''
+            )
+              v-fab-transition(leave-absolute)
+                v-icon(v-if='isPaused') mdi-play
+              v-fab-transition(leave-absolute)
+                v-icon(v-if='!isPaused') mdi-pause
+            v-btn(
+              @click='fastForward',
+              icon
+            )
+              v-icon mdi-fast-forward
+            v-menu.player-controls__audio-controls__volume(
+              :close-on-content-click='false',
+              top,
+              offset-y,
+              content-class='player-controls__audio-controls__volume-content'
+            )
+              template(#activator='{on, attrs}')
+                v-btn(
+                  v-on='on',
+                  v-bind='attrs',
+                  icon
+                )
+                  v-icon mdi-volume-high
+              v-card
+                v-slider.elevation-1(
+                  v-model='volume',
+                  :step='0.01',
+                  :min='0',
+                  :max='1',
+                  @change='changeVolume',
+                  vertical
+                )
 </template>
 
 <script lang="ts">
@@ -100,7 +101,7 @@ export default class MBottomAudioPlayer extends Vue {
   @Prop() title!: string
   @Prop() subtitle!: string
 
-  public sheet = true
+  public sheet = false
   public isPaused = true
   public isEnded = false
   public duration = 0

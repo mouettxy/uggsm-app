@@ -46,6 +46,42 @@
           span {{ item.date }}
       .timeline-item__content-body
         span {{ item.message }}
+  template(v-if='item.type === "slot"')
+    .timeline-item__icon(:style='{ backgroundColor: item.color }')
+      slot(
+        name='custom.icon',
+        :txtcolor='item.textColor',
+        :item='item',
+        :icon='item.icon',
+        :bgcolor='item.color'
+      )
+        v-icon(
+          :color='item.textColor',
+          size='1.5rem'
+        ) {{ item.icon }}
+    .timeline-item__content
+      .timeline-item__content-header
+        .timeline-item__content-header__title
+          slot(
+            name='custom.content-title',
+            :value='item.header',
+            :item='item'
+          )
+            span {{ item.header }}
+        .timeline-item__content-header__time
+          slot(
+            name='custom.content-date',
+            :value='item.date',
+            :item='item'
+          )
+            span {{ item.date }}
+      .timeline-item__content-body
+        slot(
+          name='custom.content-body',
+          :value='item.message',
+          :item='item'
+        )
+          span {{ item.message }}
 </template>
 
 <script lang="ts">
