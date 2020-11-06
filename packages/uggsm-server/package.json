@@ -8,7 +8,6 @@
     "lint": "eslint --fix ./src/**/*.ts",
     "dev": "nodemon --watch src -e ts,pug,env,css --exec ts-node ./src/server.ts",
     "build": "tsc && yarn workspace @uggsm/server copy:email",
-
     "copy:email": "copyfiles src/services/mail/template/**/*.pug src/services/mail/template/**/*.css dist/services/mail/template -f"
   },
   "husky": {},
@@ -35,10 +34,12 @@
     "mongoose-paginate-v2": "^1.3.9",
     "mongoose-partial-search": "^1.0.5",
     "mongoose-sequence": "^5.2.2",
+    "morgan": "^1.10.0",
     "node-cron": "^2.0.3",
     "pug": "^3.0.0",
     "reflect-metadata": "^0.1.13",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
