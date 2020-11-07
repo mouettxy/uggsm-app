@@ -99,9 +99,9 @@ export class CallsController extends BaseController implements ICallsController 
           managerNumber: formatPhone(body.event.src_number),
           manager: body.event.user_name,
           record: body.event.recording,
-          startTime: moment(body.event.start_time).toDate(),
-          endTime: moment(body.event.end_time).toDate(),
-          answerTime: moment(body.event.answer_time).toDate(),
+          startTime: moment.utc(body.event.start_time).toDate(),
+          endTime: moment.utc(body.event.end_time).toDate(),
+          answerTime: moment.utc(body.event.answer_time).toDate(),
         })
       }
 
