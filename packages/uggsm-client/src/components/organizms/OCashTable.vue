@@ -58,10 +58,7 @@
     template(#item.balance='{value}')
       strong {{ value }}
     template(#item.actions='{item}')
-      o-order-modal(
-        :orderid='item.orderid',
-        :new-order='false'
-      )
+      o-order-modal-regular(:orderid='item.orderid')
         template(#activator='{on, attrs}')
           v-btn(
             v-on='on',
