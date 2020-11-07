@@ -10,6 +10,7 @@ import http from 'http'
 import cors from 'cors'
 import winston from 'winston'
 import expressWinston from 'express-winston'
+import 'winston-daily-rotate-file'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
@@ -44,6 +45,14 @@ class RestApi {
   }
 
   private initializeMiddlewares(): void {
+    // @ts-ignore
+    const transport = new winston.transports.DailyRotateFile({
+      filename: 'uggsm-http-%DATE%.log',
+      datePattern: 'YYYY-MM-DD-HH',
+      zippedArchive: true,
+      maxSize: '20m',
+    })
+
     this.expressApp.use(cors())
     this.expressApp.use(bodyParser.json())
     this.expressApp.use(cookieParser())
@@ -53,11 +62,9 @@ class RestApi {
           winston.format.timestamp({
             format: 'YYYY-MM-DD HH:mm:ss',
           }),
-          winston.format.errors({ stack: true }),
-          winston.format.splat(),
-          winston.format.prettyPrint()
+          winston.format.errors({ stack: true })
         ),
-        transports: [new winston.transports.File({ filename: 'uggsm-http.log' })],
+        transports: [transport],
         msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}',
         expressFormat: true,
       })
@@ -65,9 +72,17 @@ class RestApi {
   }
 
   private initializeErrorHandling(): void {
+    // @ts-ignore
+    const transport = new winston.transports.DailyRotateFile({
+      filename: 'uggsm-http-error-%DATE%.log',
+      datePattern: 'YYYY-MM-DD-HH',
+      zippedArchive: true,
+      maxSize: '20m',
+    })
+
     this.expressApp.use(
       expressWinston.errorLogger({
-        transports: [new winston.transports.File({ filename: 'uggsm-http-error.log' })],
+        transports: [transport],
         format: winston.format.combine(
           winston.format.timestamp({
             format: 'YYYY-MM-DD HH:mm:ss',
@@ -78,6 +93,7 @@ class RestApi {
         ),
       })
     )
+
     this.expressApp.use(endpointValidationMiddleware.endpoint)
     this.expressApp.use(errorMiddleware)
   }
