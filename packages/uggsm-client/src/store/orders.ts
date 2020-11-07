@@ -1,12 +1,16 @@
 import { Order as OrderType } from '@/typings/api/order'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { ordersAPI } from '@/api'
-import { map, reduce } from 'lodash'
+import Vue from 'vue'
+import { cloneDeep, map, reduce } from 'lodash'
 
 import moment from 'moment'
-import { authModule } from '.'
+import { authModule, settingsModule } from '.'
 import axios from '@/plugins/axios'
 import { TableHelpers } from './helpers'
+import { User } from '@/typings/api/auth'
+import { Office } from '@/typings/api/office'
+import { Client } from '@/typings/api/client'
 
 function getTime(date: any) {
   const m = moment(date)
@@ -166,6 +170,8 @@ export default class Orders extends VuexModule {
     try {
       const response = await axios.get('/order/reports/report', { params: payload })
 
+      Vue.prototype.$notification.success('asf')
+
       return response.data
     } catch (e) {
       return false
@@ -227,35 +233,68 @@ export default class Orders extends VuexModule {
   }
 
   @Action
-  async createOrder(payload: any) {
+  async createOrder(payload: { model: any; comparator: boolean }) {
     this.context.commit('SET_LOADING', true)
-    try {
-      const response = await ordersAPI(payload.office).createByOffice(payload)
 
-      if (response) {
-        return response
+    const office = settingsModule.office.code
+
+    if (payload.comparator) {
+      if (office) {
+        try {
+          const response = await ordersAPI(office).createByOffice(payload.model)
+
+          if (response) {
+            Vue.prototype.$notification.success('Заявка успешно создана')
+
+            await this.context.dispatch('sendSmsOnCreated', {
+              id: response.id,
+              phone: '8' + response.customerPhone || '',
+              model: `${response.phoneBrand} ${response.phoneModel}`,
+            })
+
+            return true
+          } else {
+            Vue.prototype.$notification.error('[Клиент] Ошибка при создании заказа')
+            return false
+          }
+        } catch (error) {
+          Vue.prototype.$notification.error('[Сервер] Ошибка при создании заказа')
+          return false
+        } finally {
+          this.context.commit('SET_LOADING', false)
+        }
       } else {
-        return false
+        Vue.prototype.$notification.error('[Клиент] Выберите офис')
       }
-    } catch (error) {
-      return false
-    } finally {
-      this.context.commit('SET_LOADING', false)
     }
   }
 
   @Action
-  async updateOrder(payload: any) {
+  async updateOrder(payload: { model: OrderType }) {
+    const copyOfOrder = cloneDeep(payload.model)
+    const id = copyOfOrder._id
+
+    delete copyOfOrder._id
+    delete copyOfOrder.__v
+
+    copyOfOrder.master = (copyOfOrder.master._id as unknown) as User
+    copyOfOrder.manager = (copyOfOrder.manager._id as unknown) as User
+    copyOfOrder.office = (copyOfOrder.office._id as unknown) as Office
+    copyOfOrder.customer = (copyOfOrder.customer._id as unknown) as Client
+
     this.context.commit('SET_LOADING', true)
     try {
-      const response = await ordersAPI(payload.id).updateById(payload.order)
+      const response = await ordersAPI(id).updateById(copyOfOrder)
 
       if (response) {
+        Vue.prototype.$notification.success('Заявка обновлена успешно')
         return true
       } else {
+        Vue.prototype.$notification.error('[Клиент] Ошибка при обновлении заявки')
         return false
       }
     } catch (error) {
+      Vue.prototype.$notification.error('[Сервер] Ошибка при обновлении заявки')
       return false
     } finally {
       this.context.commit('SET_LOADING', false)

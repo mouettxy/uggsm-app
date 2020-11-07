@@ -5,7 +5,7 @@
       .success--text {{ store.tableRows }}
     template(#main-toolbar)
       v-col(cols='auto')
-        o-order-modal
+        o-order-modal-new
           template(#activator='{on, attrs}')
             v-btn(
               v-on='on',
@@ -50,7 +50,7 @@
             )
               | (+{{ statusFilter.length - 1 }})
     template(#item.id='{value, item}')
-      o-order-modal(
+      o-order-modal-regular(
         :orderid='value',
         :new-order='false'
       )

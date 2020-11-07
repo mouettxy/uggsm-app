@@ -14,6 +14,7 @@
         :attrs='attrs'
       )
     v-card
+      slot
       slot(name='content')
 </template>
 
@@ -47,7 +48,7 @@ export default class ARightModal extends Mixins(Responsive) {
 <style lang="sass">
 .v-dialog.right-modal
   position: absolute
-  height: 100vh
+  height: 100%
   width: 65vw !important
   top: 0
   left: 35vw
@@ -55,6 +56,6 @@ export default class ARightModal extends Mixins(Responsive) {
   max-height: 100%
   margin: 0
   &.is-mobile
-    width: 100vw !important
+    width: 100% !important
     left: 0
 </style>

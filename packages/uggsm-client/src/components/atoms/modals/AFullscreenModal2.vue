@@ -2,7 +2,8 @@
 .fullscreen-modal-2
   v-dialog(
     v-model='model',
-    transition='dialog-bottom-transition',
+    transition='slide-y-transition',
+    internal-activator,
     fullscreen
   )
     template(#activator='{on, attrs}')
@@ -12,6 +13,7 @@
         :attrs='attrs'
       )
     v-card
+      slot
       slot(name='content')
 </template>
 

@@ -1,5 +1,5 @@
 <template lang="pug">
-.order-modal-works.pa-2(v-if='!newOrder')
+.order-modal-works.pa-2
   .text-h5.mb-4 Выполненная работа
   a-autocomplete(
     v-if='!isOrderClosed',
@@ -108,10 +108,9 @@ import { find, reduce } from 'lodash'
 import { Order } from '@/typings/api/order'
 
 @Component
-export default class OOrderModalWorks extends Vue {
+export default class OOrderModalRegularWorks extends Vue {
   @Ref('form') form!: any
   @Ref('commentForm') commentForm!: any
-  @Prop({ required: true }) newOrder!: boolean
   @Prop({ required: true, default: null }) order!: Order | null
 
   public work = null

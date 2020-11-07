@@ -1,5 +1,5 @@
 <template lang="pug">
-.order-modal-cash(v-if='order')
+.order-modal-cash
   .text-h5.mb-4 Оплата
   v-toolbar(
     flat,
@@ -50,7 +50,7 @@ import { Order } from '@/typings/api/order'
 import moment from 'moment'
 
 @Component
-export default class OOrderModalCash extends Vue {
+export default class OOrderModalRegularCash extends Vue {
   @Prop({}) order!: Order
 
   public headers: any = [

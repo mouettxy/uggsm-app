@@ -1,11 +1,8 @@
 <template lang="pug">
-.order-modal-workflow(
-  v-if='!newOrder',
-  :class='{ "order-modal-workflow--payed": order ? order.payed : false }'
-)
+.order-modal-workflow(:class='{ "order-modal-workflow--payed": order ? order.payed : false }')
   v-row.order-modal-workflow__header(no-gutters)
     v-col(cols='auto')
-      o-order-modal-printer(:order='order')
+      o-order-modal-regular-printer(:order='order')
     v-col(cols='auto')
       v-menu(
         close-on-click,
@@ -63,8 +60,7 @@ import { getCorrectTextColor } from '@/api/helpers'
 import { Order } from '@/typings/api/order'
 
 @Component
-export default class OOrderModalWorkflow extends Vue {
-  @Prop({ default: true }) newOrder!: boolean
+export default class OOrderModalRegularWorkflow extends Vue {
   @Prop({ default: null }) order!: Order | null
 
   getCall(id: string) {
@@ -213,10 +209,13 @@ export default class OOrderModalWorkflow extends Vue {
 
 <style lang="sass">
 .order-modal-workflow
-  height: calc(100vh - 60px)
+  padding-top: 6px
+  height: calc(100vh - 48px)
   overflow-y: scroll
   &__header
     justify-content: space-between
+    padding-left: 14px
+    padding-right: 14px
   &--payed
     height: calc(100vh - 80px)
 </style>

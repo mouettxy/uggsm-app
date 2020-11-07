@@ -78,7 +78,7 @@ import { Order } from '@/typings/api/order'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
-export default class OOrderModalPrinter extends Vue {
+export default class OOrderModalRegularPrinter extends Vue {
   @Prop({ required: true }) order!: Order
 
   public printMenu = false
