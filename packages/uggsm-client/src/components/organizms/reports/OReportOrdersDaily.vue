@@ -38,10 +38,7 @@
                     )
                       template(#item.id='{item}')
                         template(v-if='item.id')
-                          o-order-modal(
-                            :orderid='item.id',
-                            :new-order='false'
-                          )
+                          o-order-modal-regular(:orderid='item.id')
                             template(#activator='{on, attrs}')
                               v-btn(
                                 v-on='on',
@@ -74,10 +71,7 @@
                     )
                       template(#item.id='{item}')
                         template(v-if='item.id')
-                          o-order-modal(
-                            :orderid='item.id',
-                            :new-order='false'
-                          )
+                          o-order-modal-regular(:orderid='item.id')
                             template(#activator='{on, attrs}')
                               v-btn(
                                 v-on='on',
