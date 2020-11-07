@@ -65,12 +65,15 @@ export class TableHelpers {
     return map(response, (e) => template(e))
   }
 
-  public static processQuery(options: any, modify?: (query: any) => any) {
+  public static processQuery(options: any, modify?: ((query: any) => any) | boolean, includeOffice = true) {
     const office = settingsModule.office?._id
     let query: any = {
       page: options.page,
       limit: options.itemsPerPage,
-      office,
+    }
+
+    if (includeOffice) {
+      query.office = office
     }
 
     if (settingsModule.search) {
@@ -85,7 +88,7 @@ export class TableHelpers {
 
     query.sort = fromPairs(zip(options.sortBy, sortDesc))
 
-    if (modify) {
+    if (modify && typeof modify !== 'boolean') {
       query = modify(query)
     }
 

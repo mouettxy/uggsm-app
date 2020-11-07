@@ -1,16 +1,33 @@
+import { parsePaginateResponse } from '../utils/helpers'
 import { ControllerMethod } from '../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
 import { OrderModel } from '../models'
 import moment from 'moment'
 import { DocumentType } from '@typegoose/typegoose'
 import { api } from '../server'
-import { Call, CallModel } from '../models/callController'
+import { Call, CallModel } from '../models/callModel'
 import { Order } from '../models'
 import { CallsWebhookCallStart, CallsWebhookCallAnswer, CallsWebhookCallFinish } from '../interfaces/CallsAPI'
 import { formatPhone } from '../utils/helpers'
 import BaseController from './base/BaseController'
+import { logger } from 'express-winston'
 
 export class CallsController extends BaseController implements ICallsController {
+  private model = CallModel
+  public getPaginated: ControllerMethod = async (req, res, next) => {
+    const { query, options } = parsePaginateResponse(req.query, false, this.model)
+
+    try {
+      // @ts-ignore
+      const response = await this.model.paginate(query, { ...options, populate: 'relatedOrder' })
+
+      res.status(200)
+      res.send(response)
+    } catch (error) {
+      console.log(error)
+      this.criticalError(next)
+    }
+  }
   public callbackCallStart: ControllerMethod = async (req, res, next) => {
     const body: CallsWebhookCallStart = req.body
 

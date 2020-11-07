@@ -11,7 +11,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 import { statuses } from '../utils/enums'
 import mongooseSearch from 'mongoose-partial-search'
 import moment from 'moment'
-import { Call } from './callController'
+import { Call } from './callModel'
 
 export class CompletedWork {
   @prop()

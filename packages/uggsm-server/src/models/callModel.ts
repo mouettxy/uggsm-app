@@ -20,13 +20,13 @@ export class Call {
   @prop()
   public answered: boolean
 
-  @prop()
+  @prop({ searchable: true })
   public clientNumber: string
 
-  @prop()
+  @prop({ searchable: true })
   public manager: string
 
-  @prop()
+  @prop({ searchable: true })
   public managerNumber: string
 
   @prop()

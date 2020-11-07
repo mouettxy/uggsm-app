@@ -21,6 +21,12 @@ export const defaultMenu = [
     linkName: 'cash',
     title: 'Касса',
     icon: 'mdi-cash-register',
+    divider: false,
+  },
+  {
+    linkName: 'calls',
+    title: 'Звонки',
+    icon: 'mdi-phone',
     divider: true,
   },
   {
