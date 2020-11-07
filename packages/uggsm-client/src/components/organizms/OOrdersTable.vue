@@ -29,6 +29,12 @@
           ) mdi-close
           span Закрытые
       v-col(cols='auto')
+        v-btn.mx-2(
+          :color='displayExpired ? "success" : "secondary"',
+          @click='onExpiredFilter'
+        )
+          span Просроченные
+      v-col(cols='auto')
         a-select.mx-2(
           v-model='statusFilter',
           :items='statuses',
@@ -92,6 +98,7 @@ import { Order } from '@/typings/api/order'
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
   public displayClosedOrders = false
+  public displayExpired = false
   public page = 1
 
   public statuses = statuses
@@ -105,6 +112,17 @@ export default class OOrdersTable extends Vue {
     this.store.setTableOptions({
       ...this.store.tableOptions,
       status: this.statusFilter,
+    })
+
+    this.store.fetchTable()
+  }
+
+  onExpiredFilter() {
+    this.displayExpired = !this.displayExpired
+
+    this.store.setTableOptions({
+      ...this.store.tableOptions,
+      orderDisplayOnlyExpired: this.displayExpired,
     })
 
     this.store.fetchTable()

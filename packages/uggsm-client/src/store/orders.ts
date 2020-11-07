@@ -43,6 +43,7 @@ export default class Orders extends VuexModule {
       ...options,
       status: [],
       excludeStatus: ['Закрыт'],
+      orderDisplayOnlyExpired: false,
     }
   })
   public tableHeaders = TableHelpers.generateHeaders(
@@ -128,6 +129,7 @@ export default class Orders extends VuexModule {
         const query_: any = {
           statuses: this.tableOptions.status,
           excludeStatuses: this.tableOptions.excludeStatus,
+          orderDisplayOnlyExpired: this.tableOptions.orderDisplayOnlyExpired,
         }
 
         if (authModule.user?.role === 'master') {

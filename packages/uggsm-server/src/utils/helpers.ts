@@ -223,6 +223,10 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     query.status = { $in: requestQuery.statuses }
   }
 
+  if (requestQuery.orderDisplayOnlyExpired === 'true') {
+    query.estimatedCloseAt = { $lte: new Date() }
+  }
+
   return {
     query,
     options,
