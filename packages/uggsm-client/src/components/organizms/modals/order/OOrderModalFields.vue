@@ -213,7 +213,8 @@
         a-switch.mt-1(
           v-model='model.quick',
           label='Срочно',
-          icon='mdi-alarm-light'
+          icon='mdi-alarm-light',
+          color='error'
         )
     v-row.px-4(no-gutters)
       v-col(cols='6')

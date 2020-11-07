@@ -49,19 +49,7 @@
           :item='action'
         )
           template(#custom.content-body='{value}')
-            template(v-if='getCall(value)')
-              m-bottom-audio-player(
-                :title='getCall(value).manager',
-                :subtitle='getCall(value).managerNumber + " -> " + getCall(value).clientNumber',
-                :audio='getCall(value).record'
-              )
-                template(#activator='{on, attrs}')
-                  v-btn(
-                    v-on='on',
-                    v-bind='attrs',
-                    text,
-                    small
-                  ) Прослушать звонок
+            m-order-modal-workflow-call(:call='getCall(value)')
 </template>
 
 <script lang="ts">

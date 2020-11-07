@@ -47,8 +47,9 @@
               v-list-item-subtitle {{ subtitle }}
         v-col.player-controls__duration(cols='6')
           span.grey--text {{ Math.ceil(currentTime) }}:{{ Math.ceil(duration) }}
-        template(v-if='duration')
-          v-col.player-controls__audio-controls(cols='3')
+
+        v-col.player-controls__audio-controls(cols='3')
+          template(v-if='duration')
             v-btn(
               @click='fastBackward',
               icon

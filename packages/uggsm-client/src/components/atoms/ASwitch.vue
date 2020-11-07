@@ -3,7 +3,8 @@ v-switch(
   v-model='model',
   :prepend-icon='icon',
   :label='label',
-  :hide-details='hideDetails'
+  :hide-details='hideDetails',
+  :color='color'
 )
 </template>
 
@@ -12,9 +13,10 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
 export default class ASwitch extends Vue {
-  @Prop(Boolean) value: any
-  @Prop(String) label: any
-  @Prop(String) icon: any
+  @Prop() value!: boolean
+  @Prop() label!: string
+  @Prop() icon!: string
+  @Prop() color!: string
   @Prop({ default: 'auto' }) hideDetails!: boolean | string
 
   get model() {
