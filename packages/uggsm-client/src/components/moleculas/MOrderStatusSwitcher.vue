@@ -228,14 +228,17 @@ export default class MOrderStatusSwitcher extends Vue {
         this.$notification.success('Успешная смена статуса')
 
         if (status === 'Закрыт') {
-          const cash = await this.setCash()
-          if (order.customer && order.customer.phone[0].phone)
+          await this.setCash()
+        } else if (status === 'Готов') {
+          if (order.customer && order.customer.phone[0].phone) {
+            const { difference } = await this.getCashPrepay(order)
             await ordersModule.sendSmsOnClosed({
               id: order.id,
               phone: '8' + order.customer.phone[0].phone,
               model: `${order.phoneBrand} ${order.phoneModel}`,
-              price: cash?.price || 0,
+              price: difference || 0,
             })
+          }
         } else if (status === 'Готов, без ремонта') {
           if (order.customer && order.customer.phone[0].phone)
             await ordersModule.sendSmsOnClosedWithoutWork({
