@@ -8,6 +8,8 @@
       :suffix='suffix',
       :rules='validate',
       :prepend-inner-icon='icon',
+      :prefix='prefix',
+      :placeholder='placeholder',
       :label='label',
       :hide-details='hideDetails ? "auto" : false',
       :dense='dense',
@@ -25,11 +27,14 @@
       :suffix='suffix',
       :rules='validate',
       :prepend-inner-icon='icon',
+      :prefix='prefix',
+      :placeholder='placeholder',
       :label='label',
       :hide-details='hideDetails ? "auto" : false',
       :dense='dense',
       :clearable='clearable',
       :hint='hint',
+      @change='onChange',
       validate-on-blur,
       v-mask='phoneMask',
       outlined
@@ -57,6 +62,8 @@ export default class AInput extends Vue {
   @Prop({ type: Boolean, default: true }) dense: any
   @Prop({ type: [Boolean, String], default: 'auto' }) hideDetails!: boolean | string
   @Prop({ type: Boolean, default: false }) phone!: boolean
+  @Prop() prefix!: string
+  @Prop() placeholder!: string
   @Ref('input') input: any
 
   get model() {

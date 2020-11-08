@@ -2,7 +2,10 @@
 .order-modal-content
   header.order-modal-content__header
     template(v-if='order')
-      .text-h5.pa-2 Заказ № {{ order.id }}
+      template(v-if='!order.isWarranty')
+        .text-h5.pa-2 Заказ № {{ order.id }}
+      template(v-else)
+        .text-h5.pa-2 Заказ № {{ order.warrantyOrderId }}/{{ order.warrantyCounter }}
       v-tooltip(bottom)
         template(#activator='{on, attrs}')
           .text-h5(style='padding: 5px')

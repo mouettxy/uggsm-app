@@ -15,7 +15,17 @@
               v-icon(left) mdi-plus
               span Новый
       v-col(cols='auto')
-        v-btn.mx-2(
+        o-order-modal-warranty
+          template(#activator='{on, attrs}')
+            v-btn.ml-2(
+              v-on='on',
+              v-bind='attrs',
+              color='primary'
+            )
+              v-icon(left) mdi-eye-plus
+              span гарантия
+      v-col(cols='auto')
+        v-btn.ml-2(
           @click='onClosedFilter',
           color='secondary'
         )
@@ -57,7 +67,7 @@
               | (+{{ statusFilter.length - 1 }})
     template(#item.id='{value, item}')
       o-order-modal-regular(
-        :orderid='value',
+        :orderid='item.trueId',
         :new-order='false'
       )
         template(#activator='{on, attrs}')

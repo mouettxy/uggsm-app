@@ -74,9 +74,14 @@ export default class Orders extends VuexModule {
         },
         0
       )
+      let id = String(e.id)
+      if (e.warrantyOrderId) {
+        id = `${e.warrantyOrderId}/${e.warrantyCounter}`
+      }
 
       return {
-        id: e.id,
+        id,
+        trueId: e.id,
         estimatedCloseAt: e.estimatedCloseAt,
         status: e.status,
         created: createTime,

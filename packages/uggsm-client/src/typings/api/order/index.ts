@@ -65,9 +65,19 @@ export type Workflow = {
   date?: Date
 }
 export type Order = {
-  id: number
+  id?: number
+
   _id?: string
+
   __v?: any
+
+  isWarranty: boolean
+
+  warrantyCounter: number
+
+  warrantyOrderId: number
+
+  warrantySaved: Array<{ declaredDefect: string }>
 
   statusCalls: Array<any>
 
@@ -107,7 +117,7 @@ export type Order = {
 
   kit: string
 
-  createdAt: Date
+  createdAt: string | Date
 
   password: string
 

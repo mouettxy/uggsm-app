@@ -102,11 +102,14 @@ export class Workflow {
   public date?: Date
 }
 
+export class WarrantySaved {
+  @prop()
+  public declaredDefect: string
+}
+
 @pre<Order>('save', async function () {
   if (this.isNew) {
-    if (!this.status) {
-      this.status = 'Новый'
-    }
+    this.status = 'Новый'
 
     this.workflow.push(
       extendArrayWithId(this.workflow, {
@@ -269,6 +272,21 @@ export class Order {
 
   @prop({ type: () => [Workflow], _id: false })
   public workflow: Workflow[]
+
+  // Warranty
+
+  @prop({ default: false })
+  public isWarranty: boolean
+
+  @prop({ default: 0 })
+  public warrantyCounter: number
+
+  @prop({ type: () => [WarrantySaved], _id: false })
+  // saved declared deffects
+  public warrantySaved: WarrantySaved[]
+
+  @prop()
+  public warrantyOrderId: number
 
   private static async addHelper(
     target: 'array' | 'workflow',
