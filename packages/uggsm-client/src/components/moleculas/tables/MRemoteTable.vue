@@ -10,7 +10,7 @@
       name='top-toolbar',
       :store='store'
     )
-    v-col(
+    v-col.top-toolbar__search(
       cols='auto',
       v-if='displaySearchField'
     )
@@ -163,7 +163,8 @@ export default class MRemoteTable extends Vue {
   .top-toolbar
     padding: 8px
     align-items: center
-    justify-content: space-between
+    &__search
+      padding-left: 16px
   .main-toolbar
     align-items: center
     justify-content: space-between
