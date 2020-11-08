@@ -172,8 +172,6 @@ export default class Orders extends VuexModule {
     try {
       const response = await axios.get('/order/reports/report', { params: payload })
 
-      Vue.prototype.$notification.success('asf')
-
       return response.data
     } catch (e) {
       return false
