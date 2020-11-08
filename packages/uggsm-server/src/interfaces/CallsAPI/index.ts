@@ -19,6 +19,7 @@ export type CallsWebhookCallStandart = {
   user_name: string
   event_pbx_call_id: string
   src_number: string
+  user_group_id: number
 }
 
 export type CallsWebhookCallExtended = {

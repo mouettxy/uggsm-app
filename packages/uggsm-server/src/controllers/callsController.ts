@@ -43,71 +43,76 @@ export class CallsController extends BaseController implements ICallsController 
   public callbackCallFinish: ControllerMethod = async (req, res, next) => {
     const body: CallsWebhookCallFinish = req.body
 
-    try {
-      const customerPhone = formatPhone(body.event.client_number)
+    // Группа Гаврилова Сервис
+    if (body.event.user_group_id) {
+      try {
+        const customerPhone = formatPhone(body.event.client_number)
 
-      const orders = await OrderModel.find({
-        customerPhone,
-        status: { $not: { $in: ['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'] } },
-      }).sort({ id: -1 })
+        const orders = await OrderModel.find({
+          customerPhone,
+          status: { $not: { $in: ['Закрыт', 'Выкуплен СЦ', 'Обещали найти', 'Закрыт с вопросом'] } },
+        }).sort({ id: -1 })
 
-      let order: DocumentType<Order> | undefined
-      if (orders) {
-        order = orders[0]
-      }
-
-      let call: DocumentType<Call>
-      if (order) {
-        // @ts-ignore
-        call = await CallModel.create({
-          relatedOrder: order._id,
-          dbId: body.event.db_call_id as number,
-          incoming: !!body.event.direction,
-          answered: !!body.event.answered,
-          clientNumber: customerPhone,
-          managerNumber: formatPhone(body.event.src_number),
-          manager: body.event.user_name,
-          record: body.event.recording,
-          startTime: moment(body.event.start_time).toDate(),
-          endTime: moment(body.event.end_time).toDate(),
-          answerTime: moment(body.event.answer_time).toDate(),
-        })
-
-        const workflowId = order.workflow.length + 1
-
-        const workflow = {
-          id: workflowId,
-          message: `${call._id}`,
-          username: '',
-          header: call.incoming ? 'Входящий звонок' : 'Исходящий звонок',
+        let order: DocumentType<Order> | undefined
+        if (orders) {
+          order = orders[0]
         }
 
-        order.statusCalls.push(call._id)
-        order.workflow.push(workflow)
+        let call: DocumentType<Call>
+        if (order) {
+          // @ts-ignore
+          call = await CallModel.create({
+            relatedOrder: order._id,
+            dbId: body.event.db_call_id as number,
+            incoming: !!body.event.direction,
+            answered: !!body.event.answered,
+            clientNumber: customerPhone,
+            managerNumber: formatPhone(body.event.src_number),
+            manager: body.event.user_name,
+            record: body.event.recording,
+            startTime: moment(body.event.start_time).toDate(),
+            endTime: moment(body.event.end_time).toDate(),
+            answerTime: moment(body.event.answer_time).toDate(),
+          })
 
-        await order.save()
+          const workflowId = order.workflow.length + 1
 
-        api.io.emit('added order call', order.id)
-        api.io.emit('update order', order.id)
-      } else {
-        call = await CallModel.create({
-          relatedOrder: null,
-          dbId: body.event.db_call_id as number,
-          incoming: !!body.event.direction,
-          answered: !!body.event.answered,
-          clientNumber: customerPhone,
-          managerNumber: formatPhone(body.event.src_number),
-          manager: body.event.user_name,
-          record: body.event.recording,
-          startTime: moment.utc(body.event.start_time).toDate(),
-          endTime: moment.utc(body.event.end_time).toDate(),
-          answerTime: moment.utc(body.event.answer_time).toDate(),
-        })
+          const workflow = {
+            id: workflowId,
+            message: `${call._id}`,
+            username: '',
+            header: call.incoming ? 'Входящий звонок' : 'Исходящий звонок',
+          }
+
+          order.statusCalls.push(call._id)
+          order.workflow.push(workflow)
+
+          await order.save()
+
+          api.io.emit('added order call', order.id)
+          api.io.emit('update order', order.id)
+        } else {
+          call = await CallModel.create({
+            relatedOrder: null,
+            dbId: body.event.db_call_id as number,
+            incoming: !!body.event.direction,
+            answered: !!body.event.answered,
+            clientNumber: customerPhone,
+            managerNumber: formatPhone(body.event.src_number),
+            manager: body.event.user_name,
+            record: body.event.recording,
+            startTime: moment.utc(body.event.start_time).toDate(),
+            endTime: moment.utc(body.event.end_time).toDate(),
+            answerTime: moment.utc(body.event.answer_time).toDate(),
+          })
+        }
+
+        this.success(res)
+      } catch (error) {
+        this.criticalError(next, error)
       }
-
-      this.success(res)
-    } catch (error) {
-      this.criticalError(next, error)
+    } else {
+      this.success(res, 'Invalid group id')
     }
   }
 }
