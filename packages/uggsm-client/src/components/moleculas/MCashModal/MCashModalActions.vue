@@ -13,7 +13,7 @@ a-center-modal(
       )
         v-icon(left) mdi-plus
         span Приход
-    template(v-if='isDisplayConsumption')
+    template(v-if='type === "consumption"')
       v-btn(
         v-on='on',
         v-bind='attrs',
@@ -85,10 +85,6 @@ export default class MCashModalActions extends Vue {
     price: 0,
     comment: '',
     cashier: '',
-  }
-
-  get isDisplayConsumption() {
-    return this.type === 'consumption' && authModule.user?.role === 'administrator'
   }
 
   get userCredentials() {
