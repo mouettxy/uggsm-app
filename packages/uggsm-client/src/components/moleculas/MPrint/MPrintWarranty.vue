@@ -17,7 +17,7 @@
         p(style='margin: 0') ИП Гергишан Андрей Владимирович.
         p(style='margin: 0') ИНН: 262410115637
         p(style='margin: 0') ОГРНИП:314231108300081.
-        p(style='margin: 0') ул. Гаврилова 100.
+        p(style='margin: 0') {{ address }}.
         p(style='margin: 0') Моб.: +7 (996) 407-61-78
   div(style='font-size: 14px')
     p(style='margin: 0') Заказчик: {{ customerName }}, {{ customerPhoneFormatted }} Устройство: {{ phoneModel }} Серийный номер: {{ serialNumber }}
@@ -54,6 +54,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import moment from 'moment'
+import { settingsModule } from '@/store'
 
 @Component
 export default class MPrintWarranty extends Vue {
@@ -71,6 +72,10 @@ export default class MPrintWarranty extends Vue {
 
   get customerPhoneFormatted() {
     return this.customerPhone
+  }
+
+  get address() {
+    return settingsModule.office.address
   }
 
   get createdAtFormatted() {

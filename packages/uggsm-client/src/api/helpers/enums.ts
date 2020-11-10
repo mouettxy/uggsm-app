@@ -11,9 +11,7 @@ export const statuses = [
   'Готов, без ремонта',
   'На продаже',
   'Закрыт',
-  'Выкуплен СЦ',
   'Обещали найти',
-  'Закрыт с вопросом',
 ]
 
 export const groupedStatuses = [
@@ -95,20 +93,7 @@ export const groupedStatuses = [
       },
       {
         color: '#626262',
-        status: 'Выкуплен СЦ',
-      },
-      {
-        color: '#626262',
         status: 'Обещали найти',
-      },
-    ],
-  },
-  {
-    text: 'Закрытые неуспешно',
-    statuses: [
-      {
-        color: '#b9b9b9',
-        status: 'Закрыт с вопросом',
       },
     ],
   },

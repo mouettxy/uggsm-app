@@ -7,7 +7,7 @@
         p(style='margin: 0') 8 (928) 841-26-76
       td(style='text-align: right')
         p(style='margin: 0') ИП Гергишан Андрей Владимирович. ИНН: 262410115637
-        p(style='margin: 0') ОГРНИП: 314231108300081 г.Краснодар, ул. Гаврилова 100
+        p(style='margin: 0') ОГРНИП: 314231108300081 {{ address }}
         p(style='margin: 0') График работы: понедельник-сбуббота:с 9 до 19 часов
         p(style='margin: 0') Воскресенье:с 10 до 15 часов
   div(style='font-size: 16px; text-align: center')
@@ -54,6 +54,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import moment from 'moment'
 import { reduce, round, trim } from 'lodash'
+import { settingsModule } from '@/store'
 
 @Component
 export default class MPrintCheck extends Vue {
@@ -274,6 +275,10 @@ export default class MPrintCheck extends Vue {
     }
 
     return helper(this.worksPrice)
+  }
+
+  get address() {
+    return settingsModule.office.address
   }
 }
 </script>

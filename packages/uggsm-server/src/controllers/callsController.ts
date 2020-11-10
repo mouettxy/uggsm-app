@@ -81,7 +81,7 @@ export class CallsController extends BaseController implements ICallsController 
             id: workflowId,
             message: `${call._id}`,
             username: '',
-            header: call.incoming ? 'Входящий звонок' : 'Исходящий звонок',
+            header: call.incoming ? 'Исходящий звонок' : 'Входящий звонок',
           }
 
           order.statusCalls.push(call._id)

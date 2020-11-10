@@ -2,7 +2,7 @@
 #print-repair-contract(style='width: 100%')
   div(style='font-size: 14px; text-align: right')
     p(style='margin: 0') ИП Гергишан Андрей Владимирович. ИНН: 262410115637 ОГРНИП: 314231108300081
-    p(style='margin: 0') г.Краснодар, ул. Гаврилова 100. Пн.-вс.:с 9 до 19 ч. Без выходных.
+    p(style='margin: 0') {{ address }}. Пн.-вс.:с 9 до 19 ч. Без выходных.
   div(style='font-size: 14px; text-align: center; text-decoration: underline')
     span Договор приема на ремонт электроники
       strong &nbsp;№{{ orderId }}&nbsp;
@@ -32,6 +32,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 import moment from 'moment'
+import { settingsModule } from '@/store'
 
 @Component
 export default class MPrintRepairContract extends Vue {
@@ -48,6 +49,10 @@ export default class MPrintRepairContract extends Vue {
   @Prop({ type: [String, Number] }) estimatedCloseAt!: string
   @Prop({ type: [String, Number] }) declaredPrice!: string
   @Prop({ type: [String, Number] }) avance!: string
+
+  get address() {
+    return settingsModule.office.address
+  }
 
   get year() {
     return new Date().getFullYear()

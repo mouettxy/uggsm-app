@@ -14,7 +14,7 @@
       :customer-name='order.customerName',
       :created-at='order.createdAt',
       :appearance='order.appearance',
-      avance='200'
+      avance=''
     )
     m-print-warranty(
       :serial-number='order.serialNumber',
