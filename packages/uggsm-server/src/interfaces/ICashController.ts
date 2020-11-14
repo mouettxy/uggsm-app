@@ -7,6 +7,7 @@ export interface ICashController {
   getPaginated: (req: Request, res: Response, next: NextFunction) => Promise<void>
   getBalance: (req: Request, res: Response, next: NextFunction) => Promise<void>
   getByOrder: (req: Request, res: Response, next: NextFunction) => Promise<void>
+  getTotalByFilter: (req: Request, res: Response, next: NextFunction) => Promise<void>
   getById: (req: Request, res: Response, next: NextFunction) => Promise<void>
   createByOffice: (req: Request, res: Response, next: NextFunction) => Promise<void>
   updateById: (req: Request, res: Response, next: NextFunction) => Promise<void>

@@ -1,28 +1,22 @@
-import express from 'express'
 import { CashController } from '../controllers/cashController'
-import { ICashController, Router } from '../interfaces'
-import { authenticationMiddleware } from '../middlewares'
+import { ICashController } from '../interfaces'
+import BaseRouter from './heplers/BaseRouter'
 
-export class CashRouter implements Router {
-  public expressRouter: express.Router = express.Router()
-
+export class CashRouter extends BaseRouter<ICashController> {
   constructor() {
-    const cashController = new CashController()
-    this.initializeRoutes(cashController)
+    super(CashController, '/cash')
   }
 
-  public initializeRoutes(controller: ICashController): void {
-    const path = '/cash'
-
+  public initializeRoutes() {
     this.expressRouter
-      .all(`${path}*`, authenticationMiddleware)
-      .get(path, controller.getAll)
-      .get(`${path}/paginated`, controller.getPaginated)
-      .get(`${path}/balance/:office`, controller.getBalance)
-      .get(`${path}/:code`, controller.getAllByOffice)
-      .get(`${path}/order/:id`, controller.getByOrder)
-      .post(`${path}/:code`, controller.createByOffice)
-      .put(`${path}/:id`, controller.updateById)
-      .delete(`${path}/:id`, controller.deleteById)
+      .get(this.basePath, this.controller.getAll)
+      .get(this.prefixed('paginated'), this.controller.getPaginated)
+      .get(this.prefixed('total-filtered'), this.controller.getTotalByFilter)
+      .get(this.prefixed('balance/:office'), this.controller.getBalance)
+      .get(this.prefixed(':code'), this.controller.getAllByOffice)
+      .get(this.prefixed('order/:id'), this.controller.getByOrder)
+      .post(this.prefixed(':code'), this.controller.createByOffice)
+      .put(this.prefixed(':id'), this.controller.updateById)
+      .delete(this.prefixed(':id'), this.controller.deleteById)
   }
 }

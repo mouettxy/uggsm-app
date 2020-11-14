@@ -1,3 +1,4 @@
+import axios from '@/plugins/axios'
 import { fromPairs, isNull, map, zip } from 'lodash'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { Cash as CashType } from '@/typings/api/cash'
@@ -6,29 +7,43 @@ import { settingsModule, ordersModule } from '@/store'
 import { cashAPI } from '@/api'
 import { CashInput } from '@/typings/api/cash'
 import { getAnonymousAnimal } from '@/api/helpers'
+import { TableHelpers } from './helpers'
+import { off } from 'process'
 
 @Module({
   namespaced: true,
   name: 'cash',
 })
 export default class Cash extends VuexModule {
-  public cashes: Array<CashType> | null = null
-  public currentCash: Array<CashType> | null = null
-  public balance: number | null = null
+  /* -------------------------------------------------------------------------- */
+  /*                                    TABLE                                   */
+  /* -------------------------------------------------------------------------- */
 
+  public table: Array<CashType> | null = null
   public isLoading = false
-  public countRows = 0
-  public options: any = {
-    page: 1,
-    itemsPerPage: 25,
-    sortBy: ['id'],
-    sortDesc: [true],
-    mustSort: false,
-    multiSort: true,
-  }
-
-  get cashTable() {
-    return map(this.cashes, (e) => {
+  public tableRows = 0
+  public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id', (options) => {
+    return {
+      ...options,
+      status: [],
+      excludeStatus: ['Закрыт'],
+      orderDisplayOnlyExpired: false,
+    }
+  })
+  public tableHeaders = TableHelpers.generateHeaders(
+    {
+      id: '№',
+      createdBy: 'Создал',
+      comment: 'Комментарий',
+      income: 'Приход',
+      consumption: 'Расход',
+      balance: 'Остаток',
+      actions: 'Действия',
+    },
+    'cash-headers'
+  )
+  get tableItems() {
+    return map(this.table, (e) => {
       const cashier = e.cashier ? e.cashier.credentials : getAnonymousAnimal()
       return {
         id: e.id,
@@ -42,66 +57,52 @@ export default class Cash extends VuexModule {
       }
     })
   }
-
-  get cashTableDense() {
-    return map(this.currentCash, (e) => {
-      return {
-        id: e.id,
-        createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
-        comment: e.comment,
-        total: e.income - e.consumption,
-        orderid: e.orderid,
-      }
-    })
+  get tableHeadersFormatted() {
+    return TableHelpers.excludeNotShownHeaders(this.tableHeaders)
   }
-
   @Mutation
   SET_LOADING(payload: boolean) {
     this.isLoading = payload
   }
-
   @Mutation
-  SET_CASHES(payload: any) {
-    this.cashes = payload.docs
-    this.countRows = payload.totalDocs
+  SET_TABLE(payload: any) {
+    this.table = payload.docs
+    this.tableRows = payload.totalDocs
   }
-
   @Mutation
-  SET_OPTIONS(payload: any) {
-    this.options = payload
+  SET_TABLE_OPTIONS(payload: any) {
+    this.tableOptions = payload
   }
-
   @Mutation
-  SET_BALANCE(payload: any) {
-    this.balance = payload
+  SET_TABLE_HEADERS(payload: any) {
+    this.tableHeaders = payload
   }
-
   @Action
-  setOptions(payload: any) {
-    this.context.commit('SET_OPTIONS', payload)
+  setTableOptions(payload: any) {
+    this.context.commit('SET_TABLE_OPTIONS', payload)
   }
-
   @Action
-  async fetch() {
+  setTableHeaders(payload: any) {
+    localStorage.setItem('cashes-headers', JSON.stringify(payload))
+    this.context.commit('SET_TABLE_HEADERS', payload)
+  }
+  @Action
+  async fetchTable() {
     this.context.commit('SET_LOADING', true)
 
-    const payload = this.options
-    const office = settingsModule.office?._id
-    const query: any = {
-      page: payload.page,
-      limit: payload.itemsPerPage,
-      office,
-    }
+    const response = await cashAPI().getPaginated(
+      TableHelpers.processQuery(this.tableOptions, (query: any) => {
+        if (this.tableOptions.cashFilter) {
+          query.cashFilter = this.tableOptions.cashFilter
+        }
 
-    if (settingsModule.search) {
-      query.search = settingsModule.search
-    }
+        return query
+      })
+    )
 
-    const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))
-
-    query.sort = fromPairs(zip(payload.sortBy, sortDesc))
     this.context.dispatch('getBalance')
-    this.context.commit('SET_CASHES', await cashAPI().getPaginated(query))
+
+    this.context.commit('SET_TABLE', response)
     this.context.commit('SET_LOADING', false)
   }
 
@@ -112,15 +113,53 @@ export default class Cash extends VuexModule {
     this.context.commit('SET_LOADING', false)
     return cash
   }
+  /* -------------------------------------------------------------------------- */
+  /*                                   SOCKETS                                  */
+  /* -------------------------------------------------------------------------- */
 
   @Action
   async socket_updateCashes() {
-    this.fetch()
+    this.fetchTable()
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                                     API                                    */
+  /* -------------------------------------------------------------------------- */
+
+  public balance: number | null = null
+
+  @Mutation
+  SET_BALANCE(payload: any) {
+    this.balance = payload
   }
 
   @Action
   async getBalance() {
     this.context.commit('SET_BALANCE', await cashAPI(settingsModule.office?._id).getBalance())
+  }
+
+  @Action
+  async getTotalByFilter(payload: any) {
+    this.context.commit('SET_LOADING', true)
+    try {
+      const office = settingsModule.office?._id
+      const response = await axios.get('/cash/total-filtered', {
+        params: {
+          office: office,
+          ...payload,
+        },
+      })
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return false
+      }
+    } catch (error) {
+      return false
+    } finally {
+      this.context.commit('SET_LOADING', false)
+    }
   }
 
   @Action

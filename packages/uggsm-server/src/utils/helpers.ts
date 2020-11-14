@@ -227,6 +227,17 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     query.estimatedCloseAt = { $lte: new Date() }
   }
 
+  if (requestQuery.cashFilter) {
+    const cashFilter = JSON.parse(requestQuery.cashFilter)
+
+    query.createdAt = {
+      $gte: new Date(cashFilter.date[0]),
+      $lt: new Date(cashFilter.date[1]),
+    }
+
+    query.cashier = cashFilter.cashier
+  }
+
   return {
     query,
     options,

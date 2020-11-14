@@ -1,51 +1,60 @@
 <template lang="pug">
 .cash-table
-  v-toolbar.orders-table-toolbar(flat)
-    m-cash-modal-actions(type='income')
-    m-cash-modal-actions(type='consumption')
-    .text-h5.ml-4 Касса: {{ balance }}
-    v-spacer
-    v-menu(
-      v-model='columnsMenu',
-      :close-on-content-click='false',
-      offset-x=''
-    )
-      template(#activator='{ on, attrs }')
-        v-btn(
-          v-on='on',
-          v-bind='attrs',
-          icon
+  m-remote-table(:store='store')
+    template(#main-toolbar)
+      v-col(cols='auto')
+        m-cash-modal-actions(type='income')
+      v-col(cols='auto')
+        m-cash-modal-actions(type='consumption')
+      v-col(cols='auto')
+        v-menu(:close-on-content-click='false')
+          template(#activator='{on, attrs}')
+            v-btn.ml-2(
+              v-on='on',
+              v-bind='attrs',
+              icon
+            )
+              v-icon mdi-filter
+          v-card
+            v-card-text
+              a-datetime-picker-2.mb-2(
+                v-model='search.date',
+                range
+              )
+              a-autocomplete.mb-2(
+                v-model='search.cashier',
+                label='Кассир',
+                hide-details,
+                endpoint='/manager',
+                disallow-free-type,
+                dense
+              )
+            v-card-actions.d-flex.justify-center
+              v-btn(
+                @click='restoreFilter',
+                color='error'
+              ) Очистить
+              v-btn(
+                @click='applyFilter',
+                color='primary'
+              ) Применить
+
+      v-col(cols='auto')
+        .text-h5.ml-2 Касса: {{ balance }}
+      v-slide-x-transition
+        v-col(
+          cols='auto',
+          v-if='incomeByFilter || consumptionByFilter'
         )
-          v-icon mdi-table-large
-      v-card
-        v-list
-          v-list-item(
-            v-for='header in headers',
-            :key='header.value'
-          )
-            v-list-item-action
-              v-switch(v-model='header.show')
-            v-list-item-title {{ header.text }}
-  v-data-table(
-    :server-items-length='totalItems',
-    :options.sync='options',
-    :loading='isLoading',
-    :items='items',
-    :headers='headersFormatted',
-    :calculate-widths='true',
-    @update:sort-desc='update',
-    @update:sort-by='update',
-    @update:page='update',
-    @update:items-per-page='update',
-    no-data-text='Не найдено заявок',
-    multi-sort,
-    loading-text='Загружаем кассу...',
-    items-per-page-text='asd',
-    item-key='id',
-    hide-default-footer,
-    height='calc(100vh - 230px)',
-    dense
-  )
+          v-tooltip(top)
+            template(#activator='{on, attrs}')
+              .text-h5.ml-2.warning--text(
+                v-on='on',
+                v-bind='attrs'
+              ) Всего: {{ incomeByFilter - consumptionByFilter }}
+            span.success--text(:style='{ fontSize: "1.2rem" }') {{ incomeByFilter }}
+            br
+            span.error--text(:style='{ fontSize: "1.2rem" }') {{ consumptionByFilter }}
     template(#item.createdBy='{value, item}')
       v-list-item
         v-list-item-content
@@ -63,103 +72,75 @@
           v-btn(
             v-on='on',
             v-bind='attrs',
+            small,
             icon
           )
             v-icon mdi-eye
-  v-pagination.mt-4(
-    v-model='options.page',
-    :length='Math.round(totalItems / options.itemsPerPage)',
-    :current-page='options.page',
-    total-visible='9'
-  )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { cashModule } from '@/store'
-import { filter } from 'lodash'
+import { cloneDeep, filter } from 'lodash'
+import moment from 'moment'
 
 @Component
 export default class OCashTable extends Vue {
-  public columnsMenu = false
-  public headers: any = [
-    {
-      text: '№',
-      value: 'id',
-      show: true,
-    },
-    {
-      text: 'Создал',
-      value: 'createdBy',
-      show: true,
-    },
-    {
-      text: 'Комментарий',
-      value: 'comment',
-      show: true,
-    },
-    {
-      text: 'Приход',
-      value: 'income',
-      show: true,
-    },
-    {
-      text: 'Расход',
-      value: 'consumption',
-      show: true,
-    },
-    {
-      text: 'Остаток',
-      value: 'balance',
-      show: true,
-    },
-    {
-      text: 'Действия',
-      value: 'actions',
-      show: true,
-    },
-  ]
+  public search = {
+    date: [moment().format('DD.MM.YYYY'), moment().format('DD.MM.YYYY')],
+    cashier: '',
+  }
+  public incomeByFilter = 0
+  public consumptionByFilter = 0
 
-  get headersFormatted() {
-    return filter(this.headers, (e) => {
-      return e.show
-    })
+  get store() {
+    return cashModule
   }
 
   get balance() {
-    return cashModule.balance
+    return this.store.balance
   }
 
-  get isLoading() {
-    return cashModule.isLoading
+  async applyFilter() {
+    const copy = cloneDeep(this.search)
+
+    copy.date[0] = moment(copy.date[0], 'DD.MM.YYYY').startOf('day').toISOString()
+    copy.date[1] = moment(copy.date[1], 'DD.MM.YYYY').endOf('day').toISOString()
+
+    this.store.setTableOptions({
+      ...this.store.tableOptions,
+      cashFilter: copy,
+    })
+
+    const total = await this.store.getTotalByFilter(copy)
+
+    if (total) {
+      this.incomeByFilter = total.income
+      this.consumptionByFilter = total.consumption
+    }
+
+    this.reFetch()
   }
 
-  get items() {
-    return cashModule.cashTable
+  restoreFilter() {
+    const copy = cloneDeep(this.store.tableOptions)
+
+    delete this.store.tableOptions.cashFilter
+
+    this.store.setTableOptions(copy)
+
+    this.incomeByFilter = 0
+    this.consumptionByFilter = 0
+
+    this.reFetch()
   }
 
-  get options() {
-    return cashModule.options
-  }
-
-  set options(value) {
-    cashModule.setOptions(value)
-  }
-
-  get totalItems() {
-    return cashModule.countRows
-  }
-
-  update() {
-    this.loadItems()
-  }
-
-  async loadItems() {
-    await cashModule.fetch()
+  reFetch() {
+    this.store.fetchTable()
   }
 
   created() {
-    this.loadItems()
+    this.store.getBalance()
   }
 }
 </script>

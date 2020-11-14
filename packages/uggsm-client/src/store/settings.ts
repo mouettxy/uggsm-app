@@ -41,7 +41,7 @@ export default class Settings extends VuexModule {
     if (payload.type === 'orders') {
       await ordersModule.fetchTable()
     } else if (payload.type === 'cash') {
-      await cashModule.fetch()
+      await cashModule.fetchTable()
     }
   }
 
@@ -52,7 +52,7 @@ export default class Settings extends VuexModule {
     if (payload.type === 'orders') {
       ordersModule.fetchTable()
     } else if (payload.type === 'cash') {
-      cashModule.fetch()
+      cashModule.fetchTable()
     } else if (payload.type === 'clients') {
       clientModule.fetch()
     }

@@ -1,3 +1,4 @@
+import { mongoose } from '@typegoose/typegoose'
 import { api } from '../server'
 import { NextFunction } from 'connect'
 import express from 'express'
@@ -7,8 +8,10 @@ import { HttpException } from '../exceptions'
 import { ICashController } from '../interfaces'
 import { OfficeModel } from '../models'
 import { parsePaginateResponse } from '../utils/helpers'
+import { ControllerMethod } from '../interfaces/controller'
+import BaseController from './base/BaseController'
 
-export class CashController implements ICashController {
+export class CashController extends BaseController implements ICashController {
   private cash = CashModel
 
   public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
@@ -23,24 +26,73 @@ export class CashController implements ICashController {
       })
   }
 
-  public getBalance = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const office = request.params.office
-    await this.cash
-      .find({ office })
-      .sort({
-        id: 'desc',
-      })
-      .then((cash) => {
-        response.status(200)
-        response.send({ balance: cash[0].balance || 0 })
-      })
-      .catch((err: Error) => {
-        next(new HttpException(500, err.message))
-      })
+  public getBalance: ControllerMethod = async (req, res, next) => {
+    const office = req.params.office
+
+    try {
+      const query: any = {
+        office,
+      }
+
+      const response = await this.cash.findOne(query, 'id balance').sort({ id: -1 })
+
+      this.success(res, { balance: response.balance || 0 })
+    } catch (error) {
+      this.criticalError(next, error.message)
+    }
+  }
+
+  public getTotalByFilter: ControllerMethod = async (req, res, next) => {
+    const office = req.query.office
+    const date = req.query.date
+    const cashier = req.query.cashier
+
+    try {
+      const query: Record<string, any> = {}
+
+      if (office) {
+        query.office = new mongoose.Types.ObjectId(office as string)
+      }
+
+      if (date) {
+        query.createdAt = {
+          $gte: new Date(date[0]),
+          $lt: new Date(date[1]),
+        }
+      }
+
+      if (cashier) {
+        query.cashier = new mongoose.Types.ObjectId(cashier as string)
+      }
+
+      const response = await this.cash.aggregate([
+        {
+          $match: query,
+        },
+        {
+          $group: {
+            _id: null,
+            income: {
+              $sum: '$income',
+            },
+            consumption: {
+              $sum: '$consumption',
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            income: 1,
+            consumption: 1,
+          },
+        },
+      ])
+
+      this.success(res, response[0] || { income: 0, consumption: 0 })
+    } catch (error) {
+      this.criticalError(next, error.message)
+    }
   }
 
   public getPaginated = async (
