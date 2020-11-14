@@ -36,9 +36,6 @@
       tr
         td.order-modal-cash__table__item.text-right Итого:
         td.order-modal-cash__table__item.text-right {{ total }}
-      tr
-        td.order-modal-cash__table__item.text-right Клиент должен нам:
-        td.order-modal-cash__table__item.text-right {{ order.declaredPrice - total }}
 </template>
 
 <script lang="ts">
@@ -78,6 +75,7 @@ export default class OOrderModalRegularCash extends Vue {
         createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
         comment: e.comment,
         total: e.income - e.consumption,
+        consumption: e.consumption,
         orderid: e.orderid,
       }
     })
@@ -88,6 +86,28 @@ export default class OOrderModalRegularCash extends Vue {
       this.cashes,
       (a, e) => {
         a += e.total
+        return a
+      },
+      0
+    )
+  }
+
+  get totalWorks() {
+    return reduce(
+      this.order.statusWork,
+      (a, e) => {
+        a += e.price
+        return a
+      },
+      0
+    )
+  }
+
+  get totalConsumption() {
+    return reduce(
+      this.cashes,
+      (a, e) => {
+        a += e.consumption
         return a
       },
       0

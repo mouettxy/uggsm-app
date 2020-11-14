@@ -32,15 +32,26 @@ a-center-modal(
         )
           v-icon mdi-close
       v-card-text.cash-modal-actions__card-text.pa-4
-        a-autocomplete(
-          v-model='model.customer',
-          :predefined-items='customerName ? [{ text: customerName, value: customerName }] : []',
-          label='Имя клиента',
-          hide-details,
-          endpoint='/customer-name',
-          disallow-free-type,
-          dense
-        )
+        v-row
+          v-col(cols='6')
+            a-autocomplete(
+              v-model='model.cashier',
+              :predefined-items='model.cashier ? [{ text: userCredentials, value: userId }] : []',
+              label='Кассир',
+              hide-details,
+              endpoint='/master',
+              dense
+            )
+          v-col(cols='6')
+            a-autocomplete(
+              v-model='model.customer',
+              :predefined-items='customerName ? [{ text: customerName, value: customerName }] : []',
+              label='Имя клиента',
+              hide-details,
+              endpoint='/customer-name',
+              disallow-free-type,
+              dense
+            )
         m-cash-modal-check.my-8(
           v-model='model.price',
           :type='type'
@@ -48,14 +59,6 @@ a-center-modal(
         a-textarea(
           v-model='model.comment',
           label='Комментарий',
-          dense
-        )
-        a-autocomplete(
-          v-model='model.cashier',
-          :predefined-items='model.cashier ? [{ text: userCredentials, value: userId }] : []',
-          label='Кассир',
-          hide-details,
-          endpoint='/manager',
           dense
         )
         .mt-8
@@ -111,9 +114,9 @@ export default class MCashModalActions extends Vue {
     }
 
     if (this.type === 'income') {
-      request.income = this.model.price
+      request.income = Math.abs(this.model.price)
     } else if (this.type === 'consumption') {
-      request.consumption = this.model.price
+      request.consumption = Math.abs(this.model.price)
     }
 
     if (this.model.customer) {

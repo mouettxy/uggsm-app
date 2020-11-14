@@ -1,8 +1,6 @@
 <template lang="pug">
 .cash-main
-  o-table-toolbar
-  .cash-main__content.pa-4
-    o-cash-table
+  o-cash-table
 </template>
 
 <script lang="ts">
