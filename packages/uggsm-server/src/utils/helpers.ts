@@ -187,7 +187,13 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     if (model) {
       const searchQuery = model.searchBuilder(requestQuery.search)
       if (parseInt(requestQuery.search)) {
-        searchQuery.$and[0].$or.push({ id: { $gte: requestQuery.search, $lte: requestQuery.search } })
+        searchQuery.$and[0].$or.push({
+          id: { $gte: requestQuery.search, $lte: requestQuery.search },
+        })
+
+        searchQuery.$and[0].$or.push({
+          warrantyOrderId: { $gte: requestQuery.search, $lte: requestQuery.search },
+        })
       }
       query = {
         ...query,
