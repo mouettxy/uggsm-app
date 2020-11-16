@@ -172,7 +172,6 @@ export default class OOrderModalRegularWorks extends Vue {
   @Watch('work')
   onWorkChange() {
     if (this.work) {
-      console.log(this.model)
       if (typeof this.work === 'string') {
         this.model.header = this.work
       } else {
