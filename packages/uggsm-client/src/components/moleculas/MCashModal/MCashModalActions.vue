@@ -37,9 +37,11 @@ a-center-modal(
             a-autocomplete(
               v-model='model.cashier',
               :predefined-items='model.cashier ? [{ text: userCredentials, value: userId }] : []',
+              :disabled='isCashierDisabled',
               label='Кассир',
               hide-details,
               endpoint='/master',
+              disallow-free-type,
               dense
             )
           v-col(cols='6')
@@ -71,8 +73,9 @@ a-center-modal(
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { authModule, settingsModule, cashModule } from '@/store'
+import { authModule, settingsModule, cashModule, ordersModule } from '@/store'
 import { cashAPI } from '@/api'
+import { Order } from '@/typings/api/order'
 
 @Component
 export default class MCashModalActions extends Vue {
@@ -81,6 +84,7 @@ export default class MCashModalActions extends Vue {
   @Prop({ type: Object }) customer: any
   @Prop({ type: Boolean, default: true }) enabled!: boolean
 
+  public order: Order | null = null
   public customerName = null
   public modal = false
   public model: any = {
@@ -90,12 +94,27 @@ export default class MCashModalActions extends Vue {
     cashier: '',
   }
 
-  get userCredentials() {
-    return authModule.user?.credentials
-  }
+  public userCredentials = ''
+  public userId = ''
 
-  get userId() {
-    return authModule.user?._id
+  get isCashierDisabled() {
+    const isAdmin = authModule.user?.role === 'administrator'
+
+    if (isAdmin) {
+      return false
+    }
+
+    if (this.order) {
+      if (this.order.status === 'Закрыт') {
+        return true
+      }
+
+      if (this.type === 'income') {
+        return true
+      }
+    }
+
+    return false
   }
 
   async sendCash() {
@@ -108,7 +127,7 @@ export default class MCashModalActions extends Vue {
       request.orderid = this.orderId
     }
 
-    if (!this.model.price || !parseInt(this.model.price)) {
+    if (!this.model.price || !parseInt(this.model.price) || !(this.model.price >= 0)) {
       this.$notification.error('[Клиент] Невозможно добавить запись с НЕ положительной ценой')
       return Promise.resolve(false)
     }
@@ -155,9 +174,19 @@ export default class MCashModalActions extends Vue {
     }
   }
 
-  mounted() {
-    if (this.userId) {
-      this.model.cashier = this.userId
+  async mounted() {
+    if (this.orderId) {
+      const order = await ordersModule.getOrder(this.orderId)
+      this.order = order
+      this.model.cashier = order.master._id
+      this.userId = order.master._id
+      this.userCredentials = order.master.credentials
+    } else {
+      this.model.cashier = authModule.user?._id
+      if (authModule.user) {
+        this.userId = authModule.user?._id
+        this.userCredentials = authModule.user?.credentials
+      }
     }
 
     if (this.customer) {
