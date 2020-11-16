@@ -217,11 +217,17 @@ export default class MOrderStatusSwitcher extends Vue {
 
       const order = await this.getOrder()
 
-      if (!order) {
+      if (!order || !order.id) {
         this.$notification.error(
           '[Клиент] Не удалось получить заказ, попробуйте сменить статус заказа из редактирования заказа'
         )
         return false
+      }
+
+      let orderid: string | number = order.id
+      // if order on warranty
+      if (order.isWarranty) {
+        orderid = `${order.warrantyOrderId}/${order.warrantyCounter}`
       }
 
       if (response) {
@@ -232,8 +238,9 @@ export default class MOrderStatusSwitcher extends Vue {
         } else if (status === 'Готов') {
           if (order.customer && order.customer.phone[0].phone) {
             const { difference } = await this.getCashPrepay(order)
+
             await ordersModule.sendSmsOnClosed({
-              id: order.id,
+              id: orderid,
               phone: '8' + order.customer.phone[0].phone,
               model: `${order.phoneBrand} ${order.phoneModel}`,
               price: difference || 0,
@@ -242,7 +249,7 @@ export default class MOrderStatusSwitcher extends Vue {
         } else if (status === 'Готов, без ремонта') {
           if (order.customer && order.customer.phone[0].phone)
             await ordersModule.sendSmsOnClosedWithoutWork({
-              id: order.id,
+              id: orderid,
               phone: '8' + order.customer.phone[0].phone,
               model: `${order.phoneBrand} ${order.phoneModel}`,
               price: reduce(
