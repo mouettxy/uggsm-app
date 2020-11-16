@@ -5,7 +5,7 @@
       :serial-number='order.serialNumber',
       :phone-model='order.phoneModel',
       :password='order.password',
-      :order-id='order.id',
+      :order-id='orderId',
       :kit='order.kit',
       :estimated-close-at='order.estimatedCloseAt',
       :declared-price='order.declaredPrice',
@@ -19,7 +19,7 @@
     m-print-warranty(
       :serial-number='order.serialNumber',
       :phone-model='order.phoneModel',
-      :order-id='order.id',
+      :order-id='orderId',
       :declared-deffect='order.declaredDefect',
       :customer-phone='order.customerPhone',
       :customer-name='order.customerName',
@@ -27,7 +27,7 @@
     )
     m-print-check(
       :works='order.statusWork',
-      :order-id='order.id',
+      :order-id='orderId',
       :customer-name='order.customerName'
     )
     m-print-repair-contract-i-market(
@@ -82,6 +82,14 @@ export default class OOrderModalRegularPrinter extends Vue {
   @Prop({ required: true }) order!: Order
 
   public printMenu = false
+
+  get orderId() {
+    if (this.order.isWarranty) {
+      return `${this.order.warrantyOrderId}/${this.order.warrantyCounter}`
+    }
+
+    return this.order.id
+  }
 }
 </script>
 
