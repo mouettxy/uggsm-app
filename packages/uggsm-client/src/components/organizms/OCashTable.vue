@@ -25,7 +25,7 @@
                 v-model='search.cashier',
                 label='Кассир',
                 hide-details,
-                endpoint='/manager',
+                endpoint='/master',
                 disallow-free-type,
                 dense
               )
@@ -125,7 +125,7 @@ export default class OCashTable extends Vue {
   restoreFilter() {
     const copy = cloneDeep(this.store.tableOptions)
 
-    delete this.store.tableOptions.cashFilter
+    delete copy.cashFilter
 
     this.store.setTableOptions(copy)
 
