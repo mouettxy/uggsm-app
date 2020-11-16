@@ -118,7 +118,7 @@ export default class MOrderStatusSwitcher extends Vue {
         0
       )
 
-      const difference = prepaySum - income
+      const difference = income - prepaySum
 
       if (income === 0 && prepaySum > 0) {
         consumption = prepaySum
@@ -173,9 +173,9 @@ export default class MOrderStatusSwitcher extends Vue {
 
       if (!skipCash) {
         if (consumption) {
-          payload.consumption = consumption
+          payload.consumption = Math.abs(consumption)
         } else {
-          payload.income = income
+          payload.income = difference
         }
 
         const response = await cashModule.createCash(payload)
