@@ -141,6 +141,10 @@ export default class Orders extends VuexModule {
           query_.master = authModule.user._id
         }
 
+        if (this.tableOptions.manager) {
+          query_.manager = this.tableOptions.manager
+        }
+
         return {
           ...query,
           ...query_,
