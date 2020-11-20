@@ -11,6 +11,7 @@ import cors from 'cors'
 import winston from 'winston'
 import expressWinston from 'express-winston'
 import 'winston-daily-rotate-file'
+import path from 'path'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
@@ -47,10 +48,12 @@ class RestApi {
   private initializeMiddlewares(): void {
     // @ts-ignore
     const transport = new winston.transports.DailyRotateFile({
-      filename: 'uggsm-http-%DATE%.log',
+      filename: path.join(__dirname, 'uggsm-%DATE%.log'),
       datePattern: 'YYYY-MM-DD-HH',
+      frequency: '24h',
       zippedArchive: true,
-      maxSize: '20m',
+      maxSize: '100m',
+      maxFiles: '7d',
     })
 
     this.expressApp.use(cors())
@@ -74,10 +77,12 @@ class RestApi {
   private initializeErrorHandling(): void {
     // @ts-ignore
     const transport = new winston.transports.DailyRotateFile({
-      filename: 'uggsm-http-error-%DATE%.log',
+      filename: path.join(__dirname, 'uggsm-error-%DATE%.log'),
       datePattern: 'YYYY-MM-DD-HH',
+      frequency: '24h',
       zippedArchive: true,
-      maxSize: '20m',
+      maxSize: '100m',
+      maxFiles: '7d',
     })
 
     this.expressApp.use(

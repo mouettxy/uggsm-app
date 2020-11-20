@@ -1,3 +1,4 @@
+*audit.json
 *.log.gz
 *.log
 node_modules/
