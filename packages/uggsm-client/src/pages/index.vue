@@ -16,6 +16,11 @@
     v-card-text
       template(v-for='item in news')
         .text--disabled.d-inline.ml-4(style='font-size: 1.1rem') {{ item.date }}
+        template(v-if='item.breaking')
+          a-alert.mt-2.ml-3.mb-n2(
+            type='error',
+            persistent
+          ) Важные изменения. Требуется перезагрузить страницу несколько раз.
         v-list
           template(v-for='child in item.items')
             template(v-if='child.link')
@@ -38,9 +43,23 @@ import moment from 'moment'
 
 @Component
 export default class PageIndex extends Vue {
-  public date = moment('01.11.2020', 'DD.MM.YYYY').format('DD MMMM YYYY')
+  public date = moment('20.11.2020', 'DD.MM.YYYY').format('DD MMMM YYYY')
 
   public news = [
+    {
+      date: moment('20.11.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      breaking: true,
+      items: [
+        {
+          type: 'feature',
+          text: 'В таблице заявок теперь видно мастера который указан в заявке.',
+        },
+        {
+          type: 'feature',
+          text: 'Возможность сортировки по мастеру/мастерам с сохранением при перезагрузке.',
+        },
+      ],
+    },
     {
       date: moment('01.11.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       items: [
