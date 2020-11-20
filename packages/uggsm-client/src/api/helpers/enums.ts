@@ -12,6 +12,7 @@ export const statuses = [
   'На продаже',
   'Закрыт',
   'Обещали найти',
+  'Согласовано',
 ]
 
 export const groupedStatuses = [
@@ -43,6 +44,10 @@ export const groupedStatuses = [
       {
         color: '#689f38',
         status: 'В работе',
+      },
+      {
+        color: '#689f38',
+        status: 'Согласовано',
       },
       {
         color: '#689f38',
