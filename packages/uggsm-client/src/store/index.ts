@@ -7,6 +7,7 @@ import orders from '@/store/orders'
 import cash from '@/store/cash'
 import client from '@/store/client'
 import calls from '@/store/calls'
+import users from '@/store/users'
 import emailSubscription from '@/store/emailSubscription'
 import createPersistedState from 'vuex-persistedstate'
 
@@ -26,6 +27,7 @@ export const store = new Vuex.Store({
     auth,
     orders,
     cash,
+    users,
     client,
     calls,
     emailSubscription,
@@ -41,5 +43,6 @@ export const cashModule = getModule(cash, store)
 export const clientModule = getModule(client, store)
 export const callModule = getModule(calls, store)
 export const emailSubscriptionModel = getModule(emailSubscription, store)
+export const usersModule = getModule(users, store)
 
 export default store

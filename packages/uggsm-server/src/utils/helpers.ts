@@ -218,7 +218,7 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
   }
 
   if (requestQuery.master) {
-    query.master = requestQuery.master
+    query.master = { $in: requestQuery.master }
   }
 
   if (requestQuery.manager) {

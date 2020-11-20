@@ -24,52 +24,103 @@
             )
               v-icon(left) mdi-eye-plus
               span гарантия
-      v-col(cols='auto')
-        v-btn.ml-2(
-          @click='onClosedFilter',
-          color='secondary'
-        )
-          v-icon(
-            v-if='displayClosedOrders',
-            left
-          ) mdi-check
-          v-icon(
-            v-else,
-            left
-          ) mdi-close
-          span Закрытые
-      v-col(cols='auto')
-        v-btn.ml-2(
-          :color='displayExpired ? "success" : "secondary"',
-          @click='onExpiredFilter'
-        )
-          span Просроченные
-      template(v-if='isManager || isAdmin')
-        v-btn.ml-2(
-          :color='displayManagerOrders ? "success" : "secondary"',
-          @click='onManagerFilter'
-        ) Мои заказы
-      v-col(cols='auto')
-        a-select.mx-2(
-          v-model='statusFilter',
-          :items='statuses',
-          @change='onStatusFilter',
-          multiple,
-          label='Статус',
-          dense,
-          cache='orders-status-filter'
-        )
-          template(#selection='{ item, index }')
-            v-chip(
-              v-if='index === 0',
-              small
-            )
-              span {{ item }}
-            v-chip(
-              v-if='index === 1',
-              small
-            )
-              | (+{{ statusFilter.length - 1 }})
+      v-menu(:close-on-content-click='false')
+        template(#activator='{on, attrs}')
+          v-btn.ml-2(
+            v-on='on',
+            v-bind='attrs',
+            icon,
+            color='black'
+          )
+            v-icon mdi-filter
+        v-card(dark)
+          v-card-text
+            v-row
+              v-col(cols='auto')
+                v-btn.ml-2(
+                  @click='onClosedFilter',
+                  color='secondary'
+                )
+                  v-icon(
+                    v-if='displayClosedOrders',
+                    left
+                  ) mdi-check
+                  v-icon(
+                    v-else,
+                    left
+                  ) mdi-close
+                  span Закрытые
+              v-col(cols='auto')
+                v-btn.ml-2(
+                  :color='displayExpired ? "success" : "secondary"',
+                  @click='onExpiredFilter'
+                )
+                  span Просроченные
+              template(v-if='isManager || isAdmin')
+                v-col(cols='auto')
+                  v-btn.ml-2(
+                    :color='displayManagerOrders ? "success" : "secondary"',
+                    @click='onManagerFilter'
+                  ) Мои заказы
+            v-row
+              v-col(cols='12')
+                a-select(
+                  v-model='statusFilter',
+                  :items='statuses',
+                  @change='onStatusFilter',
+                  multiple,
+                  label='Статус',
+                  dense,
+                  cache='orders-status-filter'
+                )
+                  template(#selection='{ item, index }')
+                    v-chip(
+                      v-if='index === 0',
+                      small
+                    )
+                      span {{ item }}
+                    v-menu(open-on-hover)
+                      template(#activator='{on, attrs}')
+                        v-chip(
+                          v-if='index === 1',
+                          v-on='on',
+                          v-bind='attrs',
+                          small
+                        )
+                          | (+{{ statusFilter.length - 1 }})
+                      v-card(dark)
+                        v-card-text
+                          span.white--text {{ joinArray(statusFilter.slice(1)) }}
+            v-row
+              template(v-if='isManager || isAdmin')
+                v-col(cols='12')
+                  a-select(
+                    v-model='masterFilter',
+                    :items='masters',
+                    @change='onMasterFilter',
+                    multiple,
+                    label='Мастер(-а)',
+                    dense,
+                    cache='orders-master-filter'
+                  )
+                    template(#selection='{ item, index }')
+                      v-chip(
+                        v-if='index === 0',
+                        small
+                      )
+                        span {{ item.text }}
+                      v-menu(open-on-hover)
+                        template(#activator='{on, attrs}')
+                          v-chip(
+                            v-if='index === 1',
+                            v-on='on',
+                            v-bind='attrs',
+                            small
+                          )
+                            | (+{{ masterFilter.length - 1 }})
+                        v-card(dark)
+                          v-card-text
+                            span.white--text {{ joinMasters(masterFilter.slice(1)) }}
     template(#item.id='{value, item}')
       o-order-modal-regular(
         :orderid='item.trueId',
@@ -103,12 +154,13 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { authModule, ordersModule } from '@/store'
-import { cloneDeep, filter, includes } from 'lodash'
+import { authModule, ordersModule, usersModule } from '@/store'
+import { cloneDeep, filter, includes, map, join, find } from 'lodash'
 import { statuses } from '@/api/helpers/enums'
 import moment from 'moment'
 import { Order } from '@/typings/api/order'
 import { authEnpoints } from '@/api'
+import { User } from '@/typings/api/auth'
 
 @Component
 export default class OOrdersTable extends Vue {
@@ -116,10 +168,12 @@ export default class OOrdersTable extends Vue {
   public displayClosedOrders = false
   public displayExpired = false
   public displayManagerOrders = false
+  public masterFilter = []
+  public statusFilter = []
   public page = 1
 
   public statuses = statuses
-  public statusFilter = []
+  public users: Array<User> | null = null
 
   get store() {
     return ordersModule
@@ -131,6 +185,36 @@ export default class OOrdersTable extends Vue {
 
   get isAdmin() {
     return authModule.user?.role === 'administrator'
+  }
+
+  get masters() {
+    if (this.users?.length) {
+      return map(this.users, (e) => ({
+        text: e.credentials,
+        value: e._id,
+      }))
+    }
+
+    return []
+  }
+
+  joinMasters(arr: string[]) {
+    return join(
+      map(arr, (e) => find(this.masters, { value: e })?.text || ''),
+      ', '
+    )
+  }
+
+  joinArray(arr: string[]) {
+    return join(arr, ', ')
+  }
+
+  onMasterFilter() {
+    this.store.setTableOptions({
+      ...this.store.tableOptions,
+      masters: this.masterFilter,
+    })
+    this.store.fetchTable()
   }
 
   onManagerFilter() {
@@ -181,6 +265,10 @@ export default class OOrdersTable extends Vue {
     })
 
     this.store.fetchTable()
+  }
+
+  async created() {
+    this.users = await usersModule.getAll()
   }
 }
 </script>

@@ -52,6 +52,7 @@ export default class Orders extends VuexModule {
       estimatedCloseAt: 'Срок заказа',
       status: 'Статус',
       client: 'Клиент',
+      master: 'Мастер',
       created: 'Создан',
       phoneBrand: 'Бренд',
       phoneModel: 'Устройство',
@@ -85,6 +86,7 @@ export default class Orders extends VuexModule {
         estimatedCloseAt: e.estimatedCloseAt,
         status: e.status,
         created: createTime,
+        master: e.master.credentials,
         phoneModel: e.phoneModel,
         phoneBrand: e.phoneBrand,
         password: e.password,
@@ -138,7 +140,11 @@ export default class Orders extends VuexModule {
         }
 
         if (authModule.user?.role === 'master') {
-          query_.master = authModule.user._id
+          query_.master = [authModule.user._id]
+        }
+
+        if (this.tableOptions.masters) {
+          query_.master = this.tableOptions.masters
         }
 
         if (this.tableOptions.manager) {
