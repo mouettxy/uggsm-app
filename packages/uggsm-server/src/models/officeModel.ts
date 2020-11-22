@@ -18,10 +18,14 @@ export class Office {
 
   public get ordersTemplateParsed() {
     const regExp = /(\d*)\{(\w*):(\d*)\}/g.exec(this.ordersTemplate)
-    return {
-      start: regExp[1],
-      modifier: regExp[2],
-      modifierCount: parseInt(regExp[3]),
+    if (regExp && regExp.length) {
+      return {
+        start: regExp[1],
+        modifier: regExp[2],
+        modifierCount: parseInt(regExp[3]),
+      }
+    } else {
+      return false
     }
   }
 

@@ -418,30 +418,40 @@ export class OrdersController implements IOrdersController {
 
       if (!office) {
         next(new CannotFindOfficeException(officeCode))
-      }
-
-      const order = new this.model({
-        ...orderData,
-        office: office._id,
-      })
-
-      let saved = await order.save()
-
-      if (saved) {
-        // @ts-ignore
-        saved.setNext('order_id', async (_err, doc) => {
-          const id = generateOrderId(office.ordersTemplateParsed, doc.id)
-          doc.id = id
-
-          saved = await doc.save()
-
-          res.status(200)
-          api.io.emit('created order', saved)
-          api.io.emit('update orders')
-          res.send(saved)
-        })
       } else {
-        next(new HttpException(500, 'Ошибка валидации полей.'))
+        const order = new this.model({
+          ...orderData,
+          office: office._id,
+        })
+
+        let saved = await order.save()
+
+        if (saved) {
+          // @ts-ignore
+          saved.setNext('order_id', async (_err, doc) => {
+            if (_err) {
+              await saved.remove()
+              next(new HttpException(500, 'Ошибка сервера'))
+            } else {
+              if (office.ordersTemplateParsed && typeof office.ordersTemplateParsed !== 'boolean') {
+                const id = generateOrderId(office.ordersTemplateParsed, doc.id)
+                doc.id = id
+
+                saved = await doc.save()
+
+                res.status(200)
+                api.io.emit('created order', saved)
+                api.io.emit('update orders')
+                res.send(saved)
+              } else {
+                await saved.remove()
+                next(new HttpException(500, 'Некорректный шаблон номера заказа в настройках офиса'))
+              }
+            }
+          })
+        } else {
+          next(new HttpException(500, 'Ошибка валидации полей.'))
+        }
       }
     } catch (error) {
       next(new HttpException(500, error.message))
