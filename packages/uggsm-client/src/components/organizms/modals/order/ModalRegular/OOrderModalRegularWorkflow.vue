@@ -5,7 +5,7 @@
       o-order-modal-regular-printer(:order='order')
     v-col(cols='auto')
       v-menu(
-        close-on-click,
+        :close-on-content-click='false',
         bottom
       )
         template(v-slot:activator='{ on, attrs }')
@@ -25,6 +25,14 @@
             )
               v-list-item-content
                 v-list-item-title {{ office.code }}|{{ office.name }}
+            v-list-item
+              v-list-item-content
+                v-list-item-title.px-2.py-2
+                  a-switch.order-modal-workflow__header__action-duplicate(
+                    v-model='duplicate',
+                    label='Дублировать',
+                    dense
+                  )
     v-col(cols='auto')
       v-btn(
         small,
@@ -62,6 +70,7 @@ import { Order } from '@/typings/api/order'
 @Component
 export default class OOrderModalRegularWorkflow extends Vue {
   @Prop({ default: null }) order!: Order | null
+  public duplicate = false
 
   getCall(id: string) {
     if (this.order) {
@@ -186,7 +195,7 @@ export default class OOrderModalRegularWorkflow extends Vue {
   async changeOffice(office: string) {
     try {
       if (this.order) {
-        const response = await ordersAPI(this.order.id).setOffice({ office })
+        const response = await ordersAPI(this.order.id).setOffice({ office, duplicate: this.duplicate })
 
         if (response) {
           this.$notification.success('Успешная смена офиса')
@@ -216,6 +225,13 @@ export default class OOrderModalRegularWorkflow extends Vue {
     justify-content: space-between
     padding-left: 14px
     padding-right: 14px
+    &__action
+      &-duplicate
+        margin: 0 !important
+        padding: 0 !important
+        .v-label
+          color: rgba(0, 0, 0, 0.87)
+          font-size: .8rem !important
   &--payed
     height: calc(100vh - 80px)
 </style>

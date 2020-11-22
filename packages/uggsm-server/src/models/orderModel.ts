@@ -109,6 +109,7 @@ export class WarrantySaved {
 
 @pre<Order>('save', async function () {
   if (this.isNew) {
+    console.log(this)
     this.status = 'Новый'
 
     this.workflow.push(

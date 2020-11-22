@@ -392,21 +392,119 @@ export class OrdersController implements IOrdersController {
   }
 
   public setOffice: ControllerMethod = async (req, res, next) => {
-    try {
-      const order = await this.model.setOffice(req.params.id, req.body.office, req.body.userid)
+    if (req.body.duplicate) {
+      try {
+        const order = await this.model.findOne({ id: req.params.id })
 
-      if (order) {
-        res.status(200)
-        api.io.emit('added order office', order.id)
-        api.io.emit('update order', order.id)
-        api.io.emit('update orders')
-        res.send(order)
-      } else {
-        throw new Error('Не удалось обработать данные')
+        const orderObj = order.toObject()
+
+        delete orderObj._id
+        delete orderObj.id
+
+        orderObj.customer = orderObj.customer._id
+        orderObj.manager = orderObj.manager._id
+        orderObj.master = orderObj.master._id
+        orderObj.office = orderObj.office._id
+
+        try {
+          const created: any = await this._createOrderHelper(orderObj, order.officeCode)
+
+          await this.model.setOffice(created.data.id, req.body.office, req.body.userid)
+
+          res.status(200)
+          api.io.emit('duplicated order', created.data.id)
+          api.io.emit('added order office', created.data.id)
+          api.io.emit('update order', created.data.id)
+          api.io.emit('update orders')
+          res.send(created.data)
+        } catch (error) {
+          next(new HttpException(500, error.data))
+        }
+      } catch (error) {
+        next(new HttpException(500, error.message))
       }
-    } catch (e) {
-      next(new HttpException(500, e.message))
+    } else {
+      try {
+        const order = await this.model.setOffice(req.params.id, req.body.office, req.body.userid)
+
+        if (order) {
+          res.status(200)
+          api.io.emit('added order office', order.id)
+          api.io.emit('update order', order.id)
+          api.io.emit('update orders')
+          res.send(order)
+        } else {
+          throw new Error('Не удалось обработать данные')
+        }
+      } catch (e) {
+        next(new HttpException(500, e.message))
+      }
     }
+  }
+
+  private _createOrderHelper(orderData: any, officeCode: any) {
+    return new Promise((resolve, reject) => {
+      try {
+        OfficeModel.getOneByCode(officeCode).then((office) => {
+          if (!office) {
+            reject({
+              status: 'ERROR',
+              data: 'Не удалось найти офис',
+            })
+          } else {
+            const order = new this.model({
+              ...orderData,
+              office: office._id,
+            })
+
+            order.save().then((saved) => {
+              if (saved) {
+                // @ts-ignore
+                saved.setNext('order_id', (_err, doc) => {
+                  if (_err) {
+                    saved.remove().then(() => {
+                      reject({
+                        status: 'ERROR',
+                        data: 'Ошибка сервера',
+                      })
+                    })
+                  } else {
+                    if (office.ordersTemplateParsed && typeof office.ordersTemplateParsed !== 'boolean') {
+                      const id = generateOrderId(office.ordersTemplateParsed, doc.id)
+                      doc.id = id
+
+                      doc.save().then((saved) => {
+                        resolve({
+                          status: 'OK',
+                          data: saved,
+                        })
+                      })
+                    } else {
+                      saved.remove().then(() => {
+                        reject({
+                          status: 'ERROR',
+                          data: 'Некорректный шаблон номера заказа в настройках офиса',
+                        })
+                      })
+                    }
+                  }
+                })
+              } else {
+                reject({
+                  status: 'ERROR',
+                  data: 'Некорректный шаблон номера заказа в настройках офиса',
+                })
+              }
+            })
+          }
+        })
+      } catch (error) {
+        reject({
+          status: 'ERROR',
+          data: error.message,
+        })
+      }
+    })
   }
 
   public createByOffice: ControllerMethod = async (req, res, next) => {
@@ -414,47 +512,14 @@ export class OrdersController implements IOrdersController {
     const officeCode = req.params.code
 
     try {
-      const office = await OfficeModel.getOneByCode(officeCode)
+      const created: any = await this._createOrderHelper(orderData, officeCode)
 
-      if (!office) {
-        next(new CannotFindOfficeException(officeCode))
-      } else {
-        const order = new this.model({
-          ...orderData,
-          office: office._id,
-        })
-
-        let saved = await order.save()
-
-        if (saved) {
-          // @ts-ignore
-          saved.setNext('order_id', async (_err, doc) => {
-            if (_err) {
-              await saved.remove()
-              next(new HttpException(500, 'Ошибка сервера'))
-            } else {
-              if (office.ordersTemplateParsed && typeof office.ordersTemplateParsed !== 'boolean') {
-                const id = generateOrderId(office.ordersTemplateParsed, doc.id)
-                doc.id = id
-
-                saved = await doc.save()
-
-                res.status(200)
-                api.io.emit('created order', saved)
-                api.io.emit('update orders')
-                res.send(saved)
-              } else {
-                await saved.remove()
-                next(new HttpException(500, 'Некорректный шаблон номера заказа в настройках офиса'))
-              }
-            }
-          })
-        } else {
-          next(new HttpException(500, 'Ошибка валидации полей.'))
-        }
-      }
+      res.status(200)
+      api.io.emit('created order', created.data)
+      api.io.emit('update orders')
+      res.send(created.data)
     } catch (error) {
-      next(new HttpException(500, error.message))
+      next(new HttpException(500, error.data))
     }
   }
 

@@ -4,8 +4,14 @@ v-switch(
   :prepend-icon='icon',
   :label='label',
   :hide-details='hideDetails',
+  :flat='flat',
+  :dense='dense',
   :color='color'
 )
+  slot(#label)
+    span Лабел
+    template(name='label')
+      span Лабел
 </template>
 
 <script lang="ts">
@@ -15,6 +21,8 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 export default class ASwitch extends Vue {
   @Prop() value!: boolean
   @Prop() label!: string
+  @Prop() dense!: boolean
+  @Prop() flat!: boolean
   @Prop() icon!: string
   @Prop() color!: string
   @Prop({ default: 'auto' }) hideDetails!: boolean | string
