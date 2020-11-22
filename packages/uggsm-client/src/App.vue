@@ -1,16 +1,28 @@
 <template lang="pug">
 v-app
   router-view
+  template(v-if='isUserHaveBirthday')
+    birthday-baloons
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { settingsModule } from './store'
+import { authModule, settingsModule } from './store'
 
 @Component
 export default class App extends Vue {
   get header() {
     return this.$route.meta.header
+  }
+
+  get isUserHaveBirthday() {
+    if (authModule.user) {
+      if (authModule.user.credentials === 'Роман Чайковский') {
+        return true
+      }
+    }
+
+    return false
   }
 
   @Watch('header')
