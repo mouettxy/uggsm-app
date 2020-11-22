@@ -1,8 +1,6 @@
 <template lang="pug">
 v-app
   router-view
-  template(v-if='isUserHaveBirthday')
-    birthday-baloons
 </template>
 
 <script lang="ts">
@@ -13,16 +11,6 @@ import { authModule, settingsModule } from './store'
 export default class App extends Vue {
   get header() {
     return this.$route.meta.header
-  }
-
-  get isUserHaveBirthday() {
-    if (authModule.user) {
-      if (authModule.user.credentials === 'Роман Чайковский') {
-        return true
-      }
-    }
-
-    return false
   }
 
   @Watch('header')
