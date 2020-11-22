@@ -24,91 +24,62 @@
             )
               v-icon(left) mdi-eye-plus
               span гарантия
-      v-menu(:close-on-content-click='false')
-        template(#activator='{on, attrs}')
-          v-btn.ml-2(
-            v-on='on',
-            v-bind='attrs',
-            icon,
-            color='black'
-          )
-            v-icon mdi-filter
-        v-card(dark)
-          v-card-text
-            v-row
-              v-col(cols='auto')
-                v-btn.ml-2(
-                  @click='onClosedFilter',
-                  color='secondary'
-                )
-                  v-icon(
-                    v-if='displayClosedOrders',
-                    left
-                  ) mdi-check
-                  v-icon(
-                    v-else,
-                    left
-                  ) mdi-close
-                  span Закрытые
-              v-col(cols='auto')
-                v-btn.ml-2(
-                  :color='displayExpired ? "success" : "secondary"',
-                  @click='onExpiredFilter'
-                )
-                  span Просроченные
-              template(v-if='isManager || isAdmin')
+      v-col(cols='auto')
+        v-btn.ml-2(
+          @click='onClosedFilter',
+          color='secondary'
+        )
+          v-icon(
+            v-if='displayClosedOrders',
+            left
+          ) mdi-check
+          v-icon(
+            v-else,
+            left
+          ) mdi-close
+          span Закрытые
+      v-col(cols='auto')
+        v-menu(:close-on-content-click='false')
+          template(#activator='{on, attrs}')
+            v-btn.ml-2(
+              v-on='on',
+              v-bind='attrs',
+              icon,
+              color='black'
+            )
+              v-icon mdi-filter
+          v-card(dark)
+            v-card-text
+              v-row
                 v-col(cols='auto')
                   v-btn.ml-2(
-                    :color='displayManagerOrders ? "success" : "secondary"',
-                    @click='onManagerFilter'
-                  ) Мои заказы
-            v-row
-              v-col(cols='12')
-                a-select(
-                  v-model='statusFilter',
-                  :items='statuses',
-                  @change='onStatusFilter',
-                  multiple,
-                  label='Статус',
-                  dense,
-                  cache='orders-status-filter'
-                )
-                  template(#selection='{ item, index }')
-                    v-chip(
-                      v-if='index === 0',
-                      small
-                    )
-                      span {{ item }}
-                    v-menu(open-on-hover)
-                      template(#activator='{on, attrs}')
-                        v-chip(
-                          v-if='index === 1',
-                          v-on='on',
-                          v-bind='attrs',
-                          small
-                        )
-                          | (+{{ statusFilter.length - 1 }})
-                      v-card(dark)
-                        v-card-text
-                          span.white--text {{ joinArray(statusFilter.slice(1)) }}
-            v-row
-              template(v-if='isManager || isAdmin')
+                    :color='displayExpired ? "success" : "secondary"',
+                    @click='onExpiredFilter'
+                  )
+                    span Просроченные
+                template(v-if='isManager || isAdmin')
+                  v-col(cols='auto')
+                    v-btn.ml-2(
+                      :color='displayManagerOrders ? "success" : "secondary"',
+                      @click='onManagerFilter'
+                    ) Мои заказы
+              v-row
                 v-col(cols='12')
                   a-select(
-                    v-model='masterFilter',
-                    :items='masters',
-                    @change='onMasterFilter',
+                    v-model='statusFilter',
+                    :items='statuses',
+                    @change='onStatusFilter',
                     multiple,
-                    label='Мастер(-а)',
+                    label='Статус',
                     dense,
-                    cache='orders-master-filter'
+                    cache='orders-status-filter'
                   )
                     template(#selection='{ item, index }')
                       v-chip(
                         v-if='index === 0',
                         small
                       )
-                        span {{ item.text }}
+                        span {{ item }}
                       v-menu(open-on-hover)
                         template(#activator='{on, attrs}')
                           v-chip(
@@ -117,10 +88,40 @@
                             v-bind='attrs',
                             small
                           )
-                            | (+{{ masterFilter.length - 1 }})
+                            | (+{{ statusFilter.length - 1 }})
                         v-card(dark)
                           v-card-text
-                            span.white--text {{ joinMasters(masterFilter.slice(1)) }}
+                            span.white--text {{ joinArray(statusFilter.slice(1)) }}
+              v-row
+                template(v-if='isManager || isAdmin')
+                  v-col(cols='12')
+                    a-select(
+                      v-model='masterFilter',
+                      :items='masters',
+                      @change='onMasterFilter',
+                      multiple,
+                      label='Мастер(-а)',
+                      dense,
+                      cache='orders-master-filter'
+                    )
+                      template(#selection='{ item, index }')
+                        v-chip(
+                          v-if='index === 0',
+                          small
+                        )
+                          span {{ item.text }}
+                        v-menu(open-on-hover)
+                          template(#activator='{on, attrs}')
+                            v-chip(
+                              v-if='index === 1',
+                              v-on='on',
+                              v-bind='attrs',
+                              small
+                            )
+                              | (+{{ masterFilter.length - 1 }})
+                          v-card(dark)
+                            v-card-text
+                              span.white--text {{ joinMasters(masterFilter.slice(1)) }}
     template(#item.id='{value, item}')
       o-order-modal-regular(
         :orderid='item.trueId',
