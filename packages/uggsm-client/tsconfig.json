@@ -14,7 +14,7 @@
     "baseUrl": ".",
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
-    "types": ["webpack-env", "vuetify", "vue-cookies", "webpack", "webpack-env"],
+    "types": ["webpack-env", "vuetify", "vue-cookies", "webpack"],
     "typeRoots": ["./src/typings", "./src/typings/api", "./src/typings/shims"],
     "paths": {
       "@/*": ["src/*"]
