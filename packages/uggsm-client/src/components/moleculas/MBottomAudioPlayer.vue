@@ -17,18 +17,21 @@
     content-class='bottom-audio-player__sheet'
   )
     template(v-slot:activator='{ on, attrs }')
-      slot(
-        name='activator',
-        :on='on',
-        :attrs='attrs'
-      )
-        v-btn(
-          v-on='on',
-          v-bind='attrs',
-          dark='',
-          color='red'
+      template(v-if='duration > 0')
+        slot(
+          name='activator',
+          :on='on',
+          :attrs='attrs'
         )
-          | Open Player
+          v-btn(
+            v-on='on',
+            v-bind='attrs',
+            dark,
+            color='red'
+          )
+            | Прослушать
+      template(v-else)
+        span.error--text Запись недоступна
     v-card(tile='')
       v-slider.mn-2(
         :value='progressBar',
