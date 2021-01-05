@@ -221,6 +221,10 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     query.master = { $in: requestQuery.master }
   }
 
+  if (requestQuery.managers) {
+    query.manager = { $in: requestQuery.managers }
+  }
+
   if (requestQuery.manager) {
     query.manager = requestQuery.manager
   }

@@ -95,33 +95,21 @@
               v-row
                 template(v-if='isManager || isAdmin')
                   v-col(cols='12')
-                    a-select(
+                    a-select-many(
                       v-model='masterFilter',
                       :items='masters',
-                      @change='onMasterFilter',
-                      multiple,
+                      @change='onMastersFilter',
                       label='Мастер(-а)',
-                      dense,
                       cache='orders-master-filter'
                     )
-                      template(#selection='{ item, index }')
-                        v-chip(
-                          v-if='index === 0',
-                          small
-                        )
-                          span {{ item.text }}
-                        v-menu(open-on-hover)
-                          template(#activator='{on, attrs}')
-                            v-chip(
-                              v-if='index === 1',
-                              v-on='on',
-                              v-bind='attrs',
-                              small
-                            )
-                              | (+{{ masterFilter.length - 1 }})
-                          v-card(dark)
-                            v-card-text
-                              span.white--text {{ joinMasters(masterFilter.slice(1)) }}
+                  v-col(cols='12')
+                    a-select-many(
+                      v-model='managerFilter',
+                      :items='managers',
+                      @change='onManagersFilter',
+                      label='Менеджеры(-а)',
+                      cache='orders-manager-filter'
+                    )
     template(#item.id='{value, item}')
       o-order-modal-regular(
         :orderid='item.trueId',
@@ -166,11 +154,15 @@ import { User } from '@/typings/api/auth'
 @Component
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
+
   public displayClosedOrders = false
   public displayExpired = false
   public displayManagerOrders = false
+
   public masterFilter = []
+  public managerFilter = []
   public statusFilter = []
+
   public page = 1
 
   public statuses = statuses
@@ -199,21 +191,33 @@ export default class OOrdersTable extends Vue {
     return []
   }
 
-  joinMasters(arr: string[]) {
-    return join(
-      map(arr, (e) => find(this.masters, { value: e })?.text || ''),
-      ', '
-    )
+  get managers() {
+    if (this.users?.length) {
+      return map(this.users, (e) => ({
+        text: e.credentials,
+        value: e._id,
+      }))
+    }
+
+    return []
   }
 
   joinArray(arr: string[]) {
     return join(arr, ', ')
   }
 
-  onMasterFilter() {
+  onMastersFilter() {
     this.store.setTableOptions({
       ...this.store.tableOptions,
       masters: this.masterFilter,
+    })
+    this.store.fetchTable()
+  }
+
+  onManagersFilter() {
+    this.store.setTableOptions({
+      ...this.store.tableOptions,
+      managers: this.managerFilter,
     })
     this.store.fetchTable()
   }
