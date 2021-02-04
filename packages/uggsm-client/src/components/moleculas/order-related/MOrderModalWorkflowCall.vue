@@ -7,13 +7,18 @@
         :subtitle='call.managerNumber + " -> " + call.clientNumber',
         :audio='call.record'
       )
-        template(#activator='{on, attrs}')
-          .workflow-call__item(
-            v-on='on',
-            v-bind='attrs'
-          )
-            v-icon mdi-play
-            span Прослушать запись
+        template(#activator='{on, attrs, duration}')
+          template(v-if='duration > 0')
+            .workflow-call__item(
+              v-on='on',
+              v-bind='attrs'
+            )
+              v-icon mdi-play
+              span Прослушать запись
+          template(v-else)
+            .workflow-call__item--red
+              v-icon mdi-stop
+              span Запись недоступна
     template(v-else)
       m-bottom-audio-player(
         :title='call.manager',

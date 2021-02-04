@@ -35,15 +35,20 @@
           :subtitle='item.managerNumber + " -> " + item.clientNumber',
           :audio='value'
         )
-          template(#activator='{on, attrs}')
-            v-btn(
+          template(#activator='{on, attrs, duration}')
+            div(
               v-on='on',
-              v-bind='attrs',
-              text,
-              small
+              v-bind='attrs'
             )
-              v-icon(left) mdi-play
-              span Прослушать
+              template(v-if='duration > 0')
+                v-btn(
+                  text,
+                  small
+                )
+                  v-icon(left) mdi-play
+                  span Прослушать
+              template(v-else)
+                span.error--text Запись недоступна
       template(v-else)
         span.error--text Не найдена
 </template>
