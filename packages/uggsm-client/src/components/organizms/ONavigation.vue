@@ -22,43 +22,45 @@ v-navigation-drawer.navigation(
         color='secondary'
       )
         m-navigation-auth
-        v-divider
-        m-navigation-list(:items='items')
-      v-navigation-drawer.grow(
-        :mini-variant='mini',
-        stateless,
-        permanent,
-        mini-variant-width='56',
-        color='secondary'
-      )
-        m-navigation-list(:items='secondItems')
+          template(v-if='isLoggedIn')
+            v-divider
+            m-navigation-list(:items='items')
+      template(v-if='isLoggedIn')
+        v-navigation-drawer.grow(
+          :mini-variant='mini',
+          stateless,
+          permanent,
+          mini-variant-width='56',
+          color='secondary'
+        )
+          m-navigation-list(:items='secondItems')
+          v-list.navigation-unminify(
+            nav,
+            dense
+          )
+            v-list-item
+              v-list-item-icon
+                v-icon(@click.stop='mini = !mini')
+                  template(v-if='mini') mdi-chevron-right
+                  template(v-else) mdi-chevron-left
+  template(v-else)
+    m-navigation-auth
+    template(v-if='isLoggedIn')
+      v-divider
+      m-navigation-list(:items='items')
+      template(v-if='mini')
         v-list.navigation-unminify(
           nav,
           dense
         )
           v-list-item
             v-list-item-icon
-              v-icon(@click.stop='mini = !mini')
-                template(v-if='mini') mdi-chevron-right
-                template(v-else) mdi-chevron-left
-  template(v-else)
-    m-navigation-auth
-    v-divider
-    m-navigation-list(:items='items')
-    template(v-if='mini')
-      v-list.navigation-unminify(
-        nav,
-        dense
-      )
-        v-list-item
-          v-list-item-icon
-            v-icon(@click.stop='mini = !mini') mdi-chevron-right
+              v-icon(@click.stop='mini = !mini') mdi-chevron-right
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { authModule, settingsModule } from '@/store'
-import { getAnonymousAnimal } from '@/api/helpers'
 
 @Component
 export default class ONavigation extends Vue {
@@ -66,6 +68,10 @@ export default class ONavigation extends Vue {
   @Prop({ type: Array, default: () => [] }) secondItems!: Array<any>
 
   public model = true
+
+  get isLoggedIn() {
+    return authModule.isLoggedIn
+  }
 
   get width() {
     let width
