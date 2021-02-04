@@ -8,7 +8,7 @@ export function validateEnv(): void {
     DB_CONNECTION_STRING: str(),
     DB_SERVER: str(),
     PORT: num(),
-    JWT_SECRET: str(),
-    REGISTER_USER_MASTER_PWD: str(),
+    JWT_TOKEN_LIFE: str(),
+    JWT_TOKEN_SECRET: str(),
   })
 }

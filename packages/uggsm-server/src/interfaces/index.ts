@@ -1,5 +1,5 @@
 export * from './IRouter'
-export * from './IToken'
+export * from './IAuthToken'
 export * from './IOrdersController'
 export * from './ICashController'
 export * from './IAdversitementController'

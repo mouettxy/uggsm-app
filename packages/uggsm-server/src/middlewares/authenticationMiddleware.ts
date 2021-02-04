@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import { NextFunction } from 'connect'
 import jwt from 'jsonwebtoken'
-import { DataStoredInToken } from 'src/interfaces'
+import { AuthTokenData } from 'src/interfaces'
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions'
 import { UserModel } from '../models'
 
@@ -10,16 +10,14 @@ export async function authenticationMiddleware(
   response: Response,
   next: NextFunction
 ): Promise<void> {
-  const cookies = request.cookies
-  next()
-  /* if (cookies && cookies.Authorization) {
-    //const secret = process.env.JWT_SECRET
+  const tokenData = request.headers.authorization.split(' ')
+  const tokenType = tokenData[0]
+  const token = tokenData[1]
+  if (tokenType === 'Bearer' && token) {
+    const secret = process.env.JWT_TOKEN_SECRET
     try {
-      next()
-      /* const verificationResponse = jwt.verify(
-        cookies.Authorization,
-        secret,
-      ) as DataStoredInToken
+      const verificationResponse = jwt.verify(token, secret) as AuthTokenData
+      console.log(verificationResponse)
       const id = verificationResponse._id
       const user = await UserModel.findById(id)
       if (user) {
@@ -32,5 +30,5 @@ export async function authenticationMiddleware(
     }
   } else {
     next(new AuthenticationTokenMissingException())
-  } */
+  }
 }

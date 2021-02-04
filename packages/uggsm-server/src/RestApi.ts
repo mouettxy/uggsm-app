@@ -1,3 +1,4 @@
+import { UserModel } from './models/userModel'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
@@ -12,6 +13,8 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 import 'winston-daily-rotate-file'
 import path from 'path'
+import mongoose from 'mongoose'
+import { each } from 'lodash'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
@@ -34,8 +37,11 @@ class RestApi {
     this.io = SocketIO(this.server, options)
   }
 
-  public listen(): void {
+  public async listen() {
     this.server.listen(process.env.PORT)
+
+    await UserModel.updateMany({}, { tokens: [] })
+
     console.log('server listens on ' + process.env.PORT + ' port')
   }
 

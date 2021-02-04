@@ -1,16 +1,16 @@
 import { AuthEndpoints, AuthInput, RegisterInput } from '@/typings/api/auth'
 import { sendRequest } from '@/api/helpers'
 
-export const authEnpoints = (): AuthEndpoints => ({
+export const authEnpoints: AuthEndpoints = {
   login: { method: 'post', link: `/auth/login` },
   logout: { method: 'post', link: `/auth/logout` },
   register: { method: 'post', link: `/auth/register` },
-})
+}
 
 export const authAPI = () => ({
   login: async (data: AuthInput) => {
     try {
-      const response = await sendRequest(authEnpoints().login, data)
+      const response = await sendRequest(authEnpoints.login, data)
 
       if (response.status === 200) {
         return response.data
@@ -21,9 +21,9 @@ export const authAPI = () => ({
       return null
     }
   },
-  logout: async () => {
+  logout: async (data: { id: string | undefined; token: string | null }) => {
     try {
-      const response = await sendRequest(authEnpoints().logout)
+      const response = await sendRequest(authEnpoints.logout, data)
 
       if (response.status === 200) {
         return response.data
@@ -36,7 +36,7 @@ export const authAPI = () => ({
   },
   register: async (data: RegisterInput) => {
     try {
-      const response = await sendRequest(authEnpoints().register, data)
+      const response = await sendRequest(authEnpoints.register, data)
 
       if (response.status === 200) {
         return response.data

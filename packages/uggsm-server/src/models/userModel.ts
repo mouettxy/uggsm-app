@@ -25,7 +25,7 @@ export class User {
   @prop({ autopopulate: true, ref: 'Office' })
   public office: Ref<Office>
 
-  @prop({ default: [] })
+  @prop({ default: [], type: String })
   public tokens: string[]
 }
 

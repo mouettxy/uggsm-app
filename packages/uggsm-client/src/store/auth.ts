@@ -2,6 +2,8 @@ import { User } from '@/typings/api/auth'
 import { authAPI } from '@/api'
 import { AuthInput } from '@/typings/api/auth'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import Vue from 'vue'
+import router from '@/router'
 
 @Module({
   namespaced: true,
@@ -28,7 +30,9 @@ export default class Auth extends VuexModule {
     const response = await authAPI().login(payload)
 
     if (response) {
-      this.context.commit('LOGIN', response)
+      Vue.$cookies.set('UUID', response.jwtData.token, '7d')
+
+      this.context.commit('LOGIN', response.user)
       return Promise.resolve(true)
     } else {
       return Promise.resolve(false)
@@ -36,11 +40,21 @@ export default class Auth extends VuexModule {
   }
 
   @Action
-  async logout() {
-    const response = await authAPI().logout()
+  async logout(reason?: string) {
+    let response
+
+    if (reason === 'rejected') {
+      response = await authAPI().logout({ id: this.user?._id, token: null })
+      if (router.currentRoute.name !== 'login') {
+        router.push({ name: 'login' })
+      }
+    } else {
+      response = await authAPI().logout({ id: this.user?._id, token: Vue.$cookies.get('UUID') })
+    }
 
     if (response) {
       this.context.commit('LOGOUT')
+      Vue.$cookies.remove('UUID')
       return Promise.resolve(true)
     } else {
       return Promise.resolve(false)
