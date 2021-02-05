@@ -9,6 +9,8 @@
     "test": "exit 0"
   },
   "dependencies": {
+    "@casl/ability": "^5.2.2",
+    "@casl/vue": "^2.0.2",
     "@kugatsu/vuenotification": "^1.1.4",
     "@mdi/font": "^5.6.55",
     "@vue/cli-plugin-typescript": "^4.5.8",
