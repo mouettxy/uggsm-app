@@ -10,22 +10,22 @@ v-navigation-drawer.navigation(
   color='secondary',
   app
 )
-  template(v-if='secondItemsExists')
-    v-row.fill-height(
-      :style='{ "min-width": width }',
-      no-gutters
-    )
-      v-navigation-drawer(
-        permanent,
-        mini-variant-width='56',
-        mini-variant,
-        color='secondary'
+  template(v-if='isLoggedIn')
+    template(v-if='secondItemsExists')
+      v-row.fill-height(
+        :style='{ "min-width": width }',
+        no-gutters
       )
-        m-navigation-auth
-          template(v-if='isLoggedIn')
-            v-divider
-            m-navigation-list(:items='items')
-      template(v-if='isLoggedIn')
+        v-navigation-drawer(
+          permanent,
+          mini-variant-width='56',
+          mini-variant,
+          color='secondary'
+        )
+          m-navigation-auth
+          v-divider
+          m-navigation-list(:items='items')
+
         v-navigation-drawer.grow(
           :mini-variant='mini',
           stateless,
@@ -43,9 +43,8 @@ v-navigation-drawer.navigation(
                 v-icon(@click.stop='mini = !mini')
                   template(v-if='mini') mdi-chevron-right
                   template(v-else) mdi-chevron-left
-  template(v-else)
-    m-navigation-auth
-    template(v-if='isLoggedIn')
+    template(v-else)
+      m-navigation-auth
       v-divider
       m-navigation-list(:items='items')
       template(v-if='mini')
@@ -56,6 +55,9 @@ v-navigation-drawer.navigation(
           v-list-item
             v-list-item-icon
               v-icon(@click.stop='mini = !mini') mdi-chevron-right
+  template(v-else)
+    m-navigation-auth
+      v-divider
 </template>
 
 <script lang="ts">
