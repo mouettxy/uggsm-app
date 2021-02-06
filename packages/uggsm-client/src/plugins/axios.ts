@@ -11,7 +11,7 @@ const baseURLVersion =
     ? process.env.VUE_APP_API_VERSION_PRODUCTION
     : process.env.VUE_APP_API_VERSION_DEVELOPEMENT
 
-const config = {
+export const config = {
   baseURL: `${baseURL}/${baseURLVersion}`,
   validateStatus: (status: any) => {
     return status < 500 // default
