@@ -10,6 +10,7 @@ import {
   AutocompleteRouter,
   EmailSubscriptionRouter,
   CallsRouter,
+  RolesRouter,
 } from './routes'
 import { ClientRouter } from './routes/clientRoutes'
 import { validateEnv } from './utils'
@@ -29,6 +30,7 @@ export const api = new RestApi([
   new AutocompleteRouter(),
   new EmailSubscriptionRouter(),
   new CallsRouter(),
+  new RolesRouter(),
 ])
 
 api.io.on('connection', () => {

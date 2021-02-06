@@ -17,7 +17,6 @@ export async function authenticationMiddleware(
     const secret = process.env.JWT_TOKEN_SECRET
     try {
       const verificationResponse = jwt.verify(token, secret) as AuthTokenData
-      console.log(verificationResponse)
       const id = verificationResponse._id
       const user = await UserModel.findById(id)
       if (user) {
