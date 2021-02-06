@@ -20,7 +20,7 @@ export class UsersRouter implements Router {
       .get(path, controller.getAll)
       .get(`${path}/:id`, controller.getById)
       .post(path, validateUser.user, controller.create)
-      .put(`${path}/:id`, validateUser.user, controller.updateById)
+      .put(`${path}/:id`, controller.updateById)
       .delete(`${path}/:id`, controller.deleteById)
   }
 }
