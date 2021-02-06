@@ -84,13 +84,11 @@ export class UsersController implements IUserController {
   ): Promise<void> => {
     const id: string = request.params.id
     const userData = request.body
-    const hashedPassword = await bcrypt.hash(userData.password, 10)
-    // @ts-ignore
-    await this.user.findOneAndUpdate(id, userData, { new: true }).then((user) => {
+
+    await this.user.findByIdAndUpdate(id, userData, { new: true }).then((user) => {
       if (user) {
         const updatedUser = {
           ...userData,
-          password: hashedPassword,
         }
         response.status(200)
         api.io.emit('updated user', updatedUser)
