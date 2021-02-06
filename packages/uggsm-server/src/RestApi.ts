@@ -13,8 +13,6 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 import 'winston-daily-rotate-file'
 import path from 'path'
-import mongoose from 'mongoose'
-import { each } from 'lodash'
 
 expressWinston.requestWhitelist.push('body', 'params')
 

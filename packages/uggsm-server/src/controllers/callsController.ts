@@ -24,7 +24,6 @@ export class CallsController extends BaseController implements ICallsController 
       res.status(200)
       res.send(response)
     } catch (error) {
-      console.log(error)
       this.criticalError(next)
     }
   }

@@ -86,8 +86,6 @@ export class AuthenticationController extends BaseController implements IAuthent
   }
 
   public logout: ControllerMethod = async (req, res, next) => {
-    console.log(req)
-
     const id: string = req.body.id
     const token: string = req.body.token
 
