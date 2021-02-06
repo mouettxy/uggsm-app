@@ -6,11 +6,13 @@ export class BaseRouter<T> implements Router {
   public basePath = ''
   public controller: T | null = null
 
-  constructor(Controller: new () => T | null, basePath: string) {
+  constructor(Controller: new () => T | null, basePath: string, withoutAuthorization?: boolean) {
     if (Controller && basePath) {
       this.basePath = basePath
       this.controller = new Controller()
-      this.expressRouter.all(`${this.basePath}*`, authenticationMiddleware)
+      if (!withoutAuthorization) {
+        this.expressRouter.all(`${this.basePath}*`, authenticationMiddleware)
+      }
       this.initializeRoutes()
     } else {
       throw new Error('Controller or base path is not specified')
