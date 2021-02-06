@@ -11,6 +11,7 @@ import '@/plugins/socket.io.ts'
 import '@/plugins/components'
 import '@/plugins/printer'
 import '@/plugins/v-mask'
+import '@/plugins/masonry'
 
 import vuetify from '@/plugins/vuetify'
 
