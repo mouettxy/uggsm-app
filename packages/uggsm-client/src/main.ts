@@ -12,6 +12,7 @@ import '@/plugins/components'
 import '@/plugins/printer'
 import '@/plugins/v-mask'
 import '@/plugins/masonry'
+import '@/plugins/casl'
 
 import vuetify from '@/plugins/vuetify'
 

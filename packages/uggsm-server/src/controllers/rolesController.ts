@@ -62,7 +62,7 @@ export class RolesController extends BaseController implements IRolesController 
       await this.model.findOneAndRemove({ name })
 
       api.io.emit('role deleted', name)
-      api.io.emit('update roles')
+      api.io.emit('update roles', name)
 
       this.success(res, 'OK')
     } catch (error) {
@@ -110,7 +110,7 @@ export class RolesController extends BaseController implements IRolesController 
         await role.save()
 
         api.io.emit('resource created', role)
-        api.io.emit('update roles')
+        api.io.emit('update roles', name)
 
         this.success(res, role)
       }
@@ -131,7 +131,7 @@ export class RolesController extends BaseController implements IRolesController 
       await role.save()
 
       api.io.emit('resource deleted', role)
-      api.io.emit('update roles')
+      api.io.emit('update roles', name)
 
       this.success(res, role)
     } catch (error) {
@@ -160,7 +160,7 @@ export class RolesController extends BaseController implements IRolesController 
         await role.save()
 
         api.io.emit('ability created', role)
-        api.io.emit('update roles')
+        api.io.emit('update roles', name)
 
         this.success(res, role)
       }
@@ -184,7 +184,7 @@ export class RolesController extends BaseController implements IRolesController 
       await role.save()
 
       api.io.emit('ability deleted', role)
-      api.io.emit('update roles')
+      api.io.emit('update roles', name)
 
       this.success(res, role)
     } catch (error) {
@@ -211,7 +211,7 @@ export class RolesController extends BaseController implements IRolesController 
       await role.save()
 
       api.io.emit('ability updated', role)
-      api.io.emit('update roles')
+      api.io.emit('update roles', name)
 
       this.success(res, role)
     } catch (error) {
