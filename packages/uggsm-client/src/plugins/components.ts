@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { Model } from 'vue-property-decorator'
 
 function requireComponents(req: any) {
   for (const key of req.keys()) {
