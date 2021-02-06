@@ -22,4 +22,20 @@ export default class Users extends VuexModule {
       return []
     }
   }
+
+  @Action
+  async updateById(data: { id: string; payload: Partial<User> }) {
+    try {
+      const response = await axios.put(`/user/${data.id}`, data.payload)
+
+      if (response.status === 200) {
+        return response.data
+      } else {
+        return []
+      }
+    } catch (error) {
+      console.error(error)
+      return []
+    }
+  }
 }
