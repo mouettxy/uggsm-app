@@ -98,7 +98,7 @@ export default class Calls extends VuexModule {
 
       this.context.commit('SET_TABLE', response.data)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     } finally {
       this.context.commit('SET_LOADING', false)
     }

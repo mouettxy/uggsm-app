@@ -130,8 +130,6 @@ export default class Roles extends VuexModule {
   socket_updateRoles(role: string) {
     this.context.dispatch('getAll')
 
-    console.log(authModule.user?.role, role)
-
     if (authModule.user?.role === role) {
       this.context.dispatch('buildAbility', { role, type: 'update' })
     }

@@ -85,10 +85,6 @@ export default class OOrderModalRegularWorkflow extends Vue {
     return officesModule.offices
   }
 
-  get console() {
-    return console
-  }
-
   get workflows() {
     const unitedDates: any = []
 
