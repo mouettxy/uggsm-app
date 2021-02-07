@@ -2,7 +2,8 @@
 {
   "name": "reports",
   "meta": {
-    "header": "Ежедневный отчёт"
+    "header": "Ежедневный отчёт",
+    "resource": "Report"
   }
 }
 </route>

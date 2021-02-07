@@ -2,7 +2,8 @@
 {
   "name": "analytic",
   "meta": {
-    "header": "Аналитика"
+    "header": "Аналитика",
+    "resource": "Analytics"
   }
 }
 </route>
