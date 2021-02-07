@@ -2,10 +2,16 @@
 .cash-table
   m-remote-table(:store='store')
     template(#main-toolbar)
-      v-col(cols='auto')
+      v-col(
+        cols='auto',
+        v-if='$can("addIncome", "Cash")'
+      )
         m-cash-modal-actions(type='income')
       v-col(cols='auto')
-        m-cash-modal-actions(type='consumption')
+        m-cash-modal-actions(
+          v-if='$can("addConsumption", "Cash")',
+          type='consumption'
+        )
       v-col(cols='auto')
         v-menu(:close-on-content-click='false')
           template(#activator='{on, attrs}')

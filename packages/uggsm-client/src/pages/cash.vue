@@ -2,7 +2,8 @@
 {
   "name": "cash",
   "meta": {
-    "header": "Касса"
+    "header": "Касса",
+    "resource": "Cash"
   }
 }
 </route>
