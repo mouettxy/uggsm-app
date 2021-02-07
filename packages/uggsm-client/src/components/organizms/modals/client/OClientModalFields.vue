@@ -14,6 +14,7 @@
         )
           a-input(
             v-model='model.name',
+            :disabled='canEditGeneralFields',
             label='Клиент'
           )
         v-col(
@@ -24,6 +25,7 @@
           a-select(
             v-model='model.clientType',
             :items='clientTypeSelect',
+            :disabled='canEditGeneralFields',
             label='Тип клиента'
           )
       v-row
@@ -34,6 +36,7 @@
         )
           a-input(
             v-model='model.discount',
+            :disabled='canEditGeneralFields',
             type='number',
             suffix='%',
             label='Скидка'
@@ -45,6 +48,7 @@
         )
           a-switch.mt-1(
             v-model='model.isProvider',
+            :disabled='canEditGeneralFields',
             label='Поставщик'
           )
       v-row
@@ -55,6 +59,7 @@
         )
           a-switch.mt-1(
             v-model='model.isConflict',
+            :disabled='canEditGeneralFields',
             label='Конфликтный'
           )
         v-col(
@@ -64,6 +69,7 @@
         )
           a-switch.mt-1(
             v-model='model.allowedEmailNotifications',
+            :disabled='canEditGeneralFields',
             label='E-mail'
           )
         v-col(
@@ -73,6 +79,7 @@
         )
           a-switch.mt-1(
             v-model='model.allowedNotifications',
+            :disabled='canEditGeneralFields',
             label='SMS'
           )
     v-col.fields-section__phone(
@@ -93,6 +100,7 @@
               v-btn(
                 v-on='on',
                 v-bind='attrs',
+                :disabled='!$can("addPhone", "Client")',
                 icon,
                 color='primary'
               )
@@ -137,6 +145,7 @@
             )
               span {{ phone.phone | VMask("+7 (###) ###-##-##") }}
               v-btn(
+                :disabled='!$can("deletePhone", "Client")',
                 @click='deletePhone(phone.id)',
                 icon,
                 color='error'
@@ -161,6 +170,10 @@ export default class OClientModalFields extends Vue {
   }
 
   public clientTypeSelect = ['физ. лицо', 'компания']
+
+  get canEditGeneralFields() {
+    return !this.$can('edit', 'Client')
+  }
 
   get model() {
     return this.client

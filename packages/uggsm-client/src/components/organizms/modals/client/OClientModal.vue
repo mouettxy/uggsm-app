@@ -22,6 +22,7 @@
 
       v-footer.client-modal__footer.elevation-8
         v-btn.mr-2(
+          :disabled='!$can("edit", "Client")',
           @click='update',
           color='primary'
         )

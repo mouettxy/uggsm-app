@@ -2,7 +2,8 @@
 {
   "name": "clients",
   "meta": {
-    "header": "Клиенты"
+    "header": "Клиенты",
+    "resource": "Client"
   }
 }
 </route>
