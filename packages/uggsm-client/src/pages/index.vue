@@ -15,11 +15,12 @@
       small.text--disabled.d-inline.ml-8 Последнее обновление: {{ date }}
     v-card-text
       template(v-for='item in news')
-        .text--disabled.d-inline.ml-4(style='font-size: 1.1rem') {{ item.date }}
+        .text--disabled.d-inline.ml-4(style='font-size: 1rem') {{ item.date }}
         template(v-if='item.breaking')
-          a-alert.mt-2.ml-3.mb-n2(
-            type='error',
-            persistent
+          v-chip.ml-2(
+            :color='item.breakingPass ? "lightgrey" : "red"',
+            small,
+            label
           ) Важные изменения. Требуется перезагрузить страницу несколько раз.
         v-list
           template(v-for='child in item.items')
@@ -34,7 +35,16 @@
                 v-list-item-content(
                   :class='{ "success--text": child.type === "feature", "info--text": child.type === "fix", "grey--text": child.type === "chore" }'
                 )
-                  v-list-item-title {{ child.text }}
+                  template(v-if='child.beta')
+                    v-list-item-title
+                      v-chip.mr-2(
+                        small,
+                        label,
+                        color='warning'
+                      ) BETA
+                      span {{ child.text }}
+                  template(v-else)
+                    v-list-item-title {{ child.text }}
 </template>
 
 <script lang="ts">
@@ -43,9 +53,20 @@ import moment from 'moment'
 
 @Component
 export default class PageIndex extends Vue {
-  public date = moment('05.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY')
+  public date = moment('07.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY')
 
   public news = [
+    {
+      date: moment('07.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      breaking: false,
+      items: [
+        {
+          type: 'feature',
+          text: 'Добавление системы прав доступа на основе ролей',
+          beta: true,
+        },
+      ],
+    },
     {
       date: moment('05.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       breaking: false,
@@ -63,6 +84,7 @@ export default class PageIndex extends Vue {
     {
       date: moment('20.11.2020', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       breaking: true,
+      breakingPass: true,
       items: [
         {
           type: 'feature',
