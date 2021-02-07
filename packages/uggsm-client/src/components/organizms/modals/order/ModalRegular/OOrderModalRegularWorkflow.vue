@@ -5,6 +5,7 @@
       o-order-modal-regular-printer(:order='order')
     v-col(cols='auto')
       v-menu(
+        v-if='$can("editOffice", "Order")',
         :close-on-content-click='false',
         bottom
       )
@@ -33,7 +34,7 @@
                     label='Дублировать',
                     dense
                   )
-    v-col(cols='auto')
+    // v-col(cols='auto')
       v-btn(
         small,
         color='secondary'

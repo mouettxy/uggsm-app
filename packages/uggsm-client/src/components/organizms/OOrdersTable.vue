@@ -4,26 +4,34 @@
     template(#top-toolbar='{store}')
       .success--text {{ store.tableRows }}
     template(#main-toolbar)
-      v-col(cols='auto')
-        o-order-modal-new
-          template(#activator='{on, attrs}')
-            v-btn(
-              v-on='on',
-              v-bind='attrs',
-              color='primary'
-            )
-              v-icon(left) mdi-plus
-              span Новый
-      v-col(cols='auto')
-        o-order-modal-warranty
-          template(#activator='{on, attrs}')
-            v-btn.ml-2(
-              v-on='on',
-              v-bind='attrs',
-              color='primary'
-            )
-              v-icon(left) mdi-eye-plus
-              span гарантия
+      can(
+        I='create',
+        a='Order'
+      )
+        v-col(cols='auto')
+          o-order-modal-new
+            template(#activator='{on, attrs}')
+              v-btn(
+                v-on='on',
+                v-bind='attrs',
+                color='primary'
+              )
+                v-icon(left) mdi-plus
+                span Новый
+      can(
+        I='create',
+        a='createGuaranty'
+      )
+        v-col(cols='auto')
+          o-order-modal-warranty
+            template(#activator='{on, attrs}')
+              v-btn.ml-2(
+                v-on='on',
+                v-bind='attrs',
+                color='primary'
+              )
+                v-icon(left) mdi-eye-plus
+                span гарантия
       v-col(cols='auto')
         v-btn.ml-2(
           @click='onClosedFilter',

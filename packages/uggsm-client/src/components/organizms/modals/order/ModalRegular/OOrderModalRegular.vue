@@ -23,6 +23,7 @@
 
     v-footer.order-modal-footer
       v-btn.mr-2(
+        :disabled='!$can("edit", "Order")',
         @click='update',
         color='primary'
       )

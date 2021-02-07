@@ -2,7 +2,8 @@
 {
   "name": "orders",
   "meta": {
-    "header": "Заказы"
+    "header": "Заказы",
+    "resource": "Order"
   }
 }
 </route>

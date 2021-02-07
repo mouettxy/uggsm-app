@@ -45,6 +45,7 @@
     )
       a-input.mb-6(
         v-model='model.serialNumber',
+        :disabled='canEditGeneralFields',
         label='Серийный номер',
         icon='mdi-fingerprint',
         dense
@@ -56,6 +57,7 @@
     )
       a-input(
         v-model='model.declaredPrice',
+        :disabled='canEditGeneralFields',
         type='number',
         label='Ориентировочная цена',
         icon='mdi-cash',
@@ -71,6 +73,7 @@
       a-autocomplete(
         v-model='model.phoneBrand',
         :predefined-items='model.phoneBrand ? [{ text: model.phoneBrand, value: model.phoneBrand }] : []',
+        :disabled='canEditGeneralFields',
         label='Бренд',
         icon='mdi-cellphone-information',
         endpoint='/phone-brand',
@@ -84,6 +87,7 @@
       a-autocomplete(
         v-model='model.phoneModel',
         :predefined-items='model.phoneModel ? [{ text: model.phoneModel, value: model.phoneModel }] : []',
+        :disabled='canEditGeneralFields',
         label='Модель',
         icon='mdi-cellphone-information',
         endpoint='/phone-model',
@@ -99,6 +103,7 @@
       a-autocomplete(
         v-model='model.declaredDefect',
         :predefined-items='model.declaredDefect ? [{ text: model.declaredDefect, value: model.declaredDefect }] : []',
+        :disabled='canEditGeneralFields',
         label='Первичная неисправность',
         icon='mdi-cellphone-erase',
         endpoint='/declared-defect',
@@ -112,6 +117,7 @@
       a-autocomplete(
         v-model='model.appearance',
         :predefined-items='model.appearance ? [{ text: model.appearance, value: model.appearance }] : []',
+        :disabled='canEditGeneralFields',
         label='Внешний вид',
         icon='mdi-cellphone-text',
         endpoint='/appearance',
@@ -127,6 +133,7 @@
       a-autocomplete(
         v-model='model.kit',
         :predefined-items='model.kit ? [{ text: model.kit, value: model.kit }] : []',
+        :disabled='canEditGeneralFields',
         label='Комплектация',
         icon='mdi-cellphone-cog',
         endpoint='/kit',
@@ -139,6 +146,7 @@
     )
       a-switch.order-modal-fields__section-item__switch(
         v-model='model.quick',
+        :disabled='canEditGeneralFields',
         label='Срочно',
         icon='mdi-alarm-light',
         color='error'
@@ -153,6 +161,7 @@
       a-autocomplete(
         v-model='model.master._id',
         :predefined-items='model.master ? [{ text: model.master.credentials, value: model.master._id }] : []',
+        :disabled='isMasterFieldDisabled',
         label='Мастер',
         icon='mdi-account-hard-hat',
         endpoint='/master',
@@ -167,7 +176,7 @@
       a-autocomplete(
         v-model='model.manager._id',
         :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
-        :disabled='isObjectId(model.manager._id)',
+        :disabled='isManagerFieldDisabled',
         label='Менеджер',
         icon='mdi-account-cowboy-hat',
         endpoint='/manager',
@@ -179,8 +188,6 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import { getAnonymousAnimal } from '@/api/helpers'
-import { authModule } from '@/store'
-import moment from 'moment'
 
 @Component
 export default class OOrderModalRegularFields extends Vue {
@@ -192,6 +199,26 @@ export default class OOrderModalRegularFields extends Vue {
 
   set model(value) {
     this.$emit('input', value)
+  }
+
+  get canEditGeneralFields() {
+    return !this.$can('edit', 'Order')
+  }
+
+  get isMasterFieldDisabled() {
+    if (this.$can('editMaster', 'Order')) {
+      return false
+    }
+
+    return true
+  }
+
+  get isManagerFieldDisabled() {
+    if (this.$can('editManager', 'Order')) {
+      return false
+    }
+
+    return true
   }
 
   isObjectId(string: string) {

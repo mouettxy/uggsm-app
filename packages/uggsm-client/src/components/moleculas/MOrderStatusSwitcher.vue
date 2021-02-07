@@ -1,40 +1,51 @@
 <template lang="pug">
-v-menu.order-status-switcher(
-  :close-on-content-click='false',
-  min-width='200px',
-  max-height='300px',
-  bottom
-)
-  template(v-slot:activator='{ on, attrs }')
-    v-btn(
-      v-on='on',
-      v-bind='attrs',
-      :style='{ color: accessibleColor(statusColor) }',
-      :color='statusColor',
-      small
-    )
-      span {{ status }}
-      v-icon(right) mdi-chevron-down
-  .order-status-switcher__lists
-    template(v-for='head in statusList')
-      v-list.order-status-switcher__list(
-        subheader,
-        nav,
-        dense
+.order-status-switcher__container
+  v-btn(
+    v-if='!$can("editStatus", "Order")',
+    :style='{ color: accessibleColor(statusColor) }',
+    :color='statusColor',
+    small,
+    depressed
+  )
+    span {{ status }}
+  v-menu.order-status-switcher(
+    v-if='$can("editStatus", "Order")',
+    :close-on-content-click='false',
+    min-width='200px',
+    max-height='300px',
+    bottom
+  )
+    template(v-slot:activator='{ on, attrs }')
+      v-btn(
+        v-on='on',
+        v-bind='attrs',
+        :style='{ color: accessibleColor(statusColor) }',
+        :color='statusColor',
+        small,
+        depressed
       )
-        v-subheader.order-status-switcher__list-subheader {{ head.text }}
-        v-list-item.order-status-switcher__list-item(
-          v-for='s in head.statuses',
-          :value='s.status',
-          :style='{ color: `${accessibleColor(s.color)} !important`, backgroundColor: s.color }',
-          :key='s.status',
-          :disabled='status === s.status',
-          :class='{ selected: status === s.status }',
-          @click='setStatus(s.status)'
+        span {{ status }}
+        v-icon(right) mdi-chevron-down
+    .order-status-switcher__lists
+      template(v-for='head in statusList')
+        v-list.order-status-switcher__list(
+          subheader,
+          nav,
+          dense
         )
-          v-list-item-content
-            v-list-item-title {{ s.status }}
-        v-divider
+          v-subheader.order-status-switcher__list-subheader {{ head.text }}
+          v-list-item.order-status-switcher__list-item(
+            v-for='s in head.statuses',
+            :value='s.status',
+            :style='{ color: `${accessibleColor(s.color)} !important`, backgroundColor: s.color }',
+            :key='s.status',
+            :disabled='status === s.status',
+            :class='{ selected: status === s.status }',
+            @click='setStatus(s.status)'
+          )
+            v-list-item-content
+              v-list-item-title {{ s.status }}
+          v-divider
 </template>
 
 <script lang="ts">

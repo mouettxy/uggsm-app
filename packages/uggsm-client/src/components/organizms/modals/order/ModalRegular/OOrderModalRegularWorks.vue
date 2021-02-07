@@ -2,7 +2,7 @@
 .order-modal-works.pa-2
   .text-h5.mb-4 Выполненная работа
   a-autocomplete(
-    v-if='!isOrderClosed',
+    v-if='!isOrderClosed && $can("addWorks", "Order")',
     v-model='work',
     label='Выполненная работа',
     icon='mdi-hammer-screwdriver',
@@ -74,7 +74,7 @@
           | Описание: {{ getMessage(item.id) }}
       template(#item.actions='{item}')
         v-btn(
-          :disabled='isOrderClosed',
+          :disabled='isOrderClosed || !$can("deleteWorks", "Order")',
           @click='deleteWork(item)',
           icon,
           color='red'
@@ -158,7 +158,7 @@ export default class OOrderModalRegularWorks extends Vue {
   }
 
   get isOrderClosed() {
-    if (authModule.user?.role === 'administrator') {
+    if (this.$can('manage', 'all')) {
       return false
     }
 

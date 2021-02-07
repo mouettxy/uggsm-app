@@ -5,17 +5,18 @@
     flat,
     dense
   )
-    template(v-if='displayActions')
-      m-cash-modal-actions(
-        :order-id='order.id',
-        :customer='order.customer',
-        type='income'
-      )
-      m-cash-modal-actions(
-        :order-id='order.id',
-        :customer='order.customer',
-        type='consumption'
-      )
+    m-cash-modal-actions(
+      v-if='$can("addIncome", "Order") && displayActions',
+      :order-id='order.id',
+      :customer='order.customer',
+      type='income'
+    )
+    m-cash-modal-actions(
+      v-if='$can("addConsumption", "Order") && displayActions',
+      :order-id='order.id',
+      :customer='order.customer',
+      type='consumption'
+    )
     v-spacer
     v-btn(
       :disabled='!displayActions',
@@ -115,15 +116,11 @@ export default class OOrderModalRegularCash extends Vue {
   }
 
   get displayActions() {
-    if (authModule.user?.role === 'administrator') {
-      return true
-    }
-
     if (this.order?.closedAt) {
       return false
-    } else {
-      return true
     }
+
+    return true
   }
 
   async setPayed() {
