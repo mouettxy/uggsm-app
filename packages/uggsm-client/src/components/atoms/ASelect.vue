@@ -8,6 +8,7 @@ v-select.a-select(
   :label='label',
   :items='items',
   :hideSelected='hideSelected',
+  :disabled='disabled',
   :dense='dense',
   :deletableChips='deletableChips',
   :clearable='clearable',
@@ -49,6 +50,7 @@ export default class ASelect extends Vue {
   @Prop({ default: false }) hideSelected!: boolean
   @Prop({ default: false }) deletableChips!: boolean
   @Prop({ default: true, type: Boolean }) clearable: any
+  @Prop() disabled!: boolean
   @Prop() cache!: string
 
   get model() {
