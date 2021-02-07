@@ -25,10 +25,6 @@ export const router = new Router({
 const guestAllowed = ['login', 'settingsNewUser', 'settingsNewOffice']
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.resource && Vue.prototype.$ability && Vue.prototype.$ability.can('access', to.meta.resource)) {
-    next({ name: 'index' })
-  }
-
   const isLoggedIn = authModule.isLoggedIn
 
   if (!isLoggedIn && includes(guestAllowed, to.name)) {
@@ -42,6 +38,15 @@ router.beforeEach((to, from, next) => {
   if (isLoggedIn && to.name === 'login') {
     next({ name: 'orders' })
     return
+  }
+  if (to.meta.resource) {
+    if (Vue.prototype.$ability && Vue.prototype.$ability.can('manage', 'all')) {
+      next()
+    } else if (Vue.prototype.$ability && Vue.prototype.$ability.can('access', to.meta.resource)) {
+      next()
+    } else if (Vue.prototype.$ability && !Vue.prototype.$ability.can('access', to.meta.resource)) {
+      next({ name: 'index' })
+    }
   }
 
   next()
