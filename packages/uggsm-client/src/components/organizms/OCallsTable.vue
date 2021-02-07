@@ -30,25 +30,28 @@
         span.error--text Не найдена
     template(#item.record='{value, item}')
       template(v-if='value')
-        m-bottom-audio-player(
-          :title='item.manager',
-          :subtitle='item.managerNumber + " -> " + item.clientNumber',
-          :audio='value'
-        )
-          template(#activator='{on, attrs, duration}')
-            div(
-              v-on='on',
-              v-bind='attrs'
-            )
-              template(v-if='duration > 0')
-                v-btn(
-                  text,
-                  small
-                )
-                  v-icon(left) mdi-play
-                  span Прослушать
-              template(v-else)
-                span.error--text Запись недоступна
+        template(v-if='$can("listen", "Call")')
+          m-bottom-audio-player(
+            :title='item.manager',
+            :subtitle='item.managerNumber + " -> " + item.clientNumber',
+            :audio='value'
+          )
+            template(#activator='{on, attrs, duration}')
+              div(
+                v-on='on',
+                v-bind='attrs'
+              )
+                template(v-if='duration > 0')
+                  v-btn(
+                    text,
+                    small
+                  )
+                    v-icon(left) mdi-play
+                    span Прослушать
+                template(v-else)
+                  span.error--text Запись недоступна
+        template(v-else)
+          span.error--text Прослушивание недоступно
       template(v-else)
         span.error--text Не найдена
 </template>

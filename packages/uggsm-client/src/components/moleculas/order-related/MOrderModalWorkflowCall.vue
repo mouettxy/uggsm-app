@@ -2,23 +2,28 @@
 .workflow-call
   template(v-if='call')
     template(v-if='call.answered')
-      m-bottom-audio-player(
-        :title='call.manager',
-        :subtitle='call.managerNumber + " -> " + call.clientNumber',
-        :audio='call.record'
-      )
-        template(#activator='{on, attrs, duration}')
-          template(v-if='duration > 0')
-            .workflow-call__item(
-              v-on='on',
-              v-bind='attrs'
-            )
-              v-icon mdi-play
-              span Прослушать запись
-          template(v-else)
-            .workflow-call__item--red
-              v-icon mdi-stop
-              span Запись недоступна
+      template(v-if='$can("listen", "Call")')
+        m-bottom-audio-player(
+          :title='call.manager',
+          :subtitle='call.managerNumber + " -> " + call.clientNumber',
+          :audio='call.record'
+        )
+          template(#activator='{on, attrs, duration}')
+            template(v-if='duration > 0')
+              .workflow-call__item(
+                v-on='on',
+                v-bind='attrs'
+              )
+                v-icon mdi-play
+                span Прослушать запись
+            template(v-else)
+              .workflow-call__item--red
+                v-icon mdi-stop
+                span Запись недоступна
+      template(v-else)
+        .workflow-call__item--red
+          v-icon mdi-stop
+          span Прослушивание недоступно
     template(v-else)
       m-bottom-audio-player(
         :title='call.manager',
