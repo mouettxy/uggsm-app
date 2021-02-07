@@ -5,6 +5,7 @@ v-switch(
   :label='label',
   :hide-details='hideDetails',
   :flat='flat',
+  :disabled='disabled',
   :dense='dense',
   :color='color'
 )
@@ -25,6 +26,7 @@ export default class ASwitch extends Vue {
   @Prop() flat!: boolean
   @Prop() icon!: string
   @Prop() color!: string
+  @Prop() disabled!: boolean
   @Prop({ default: 'auto' }) hideDetails!: boolean | string
 
   get model() {

@@ -12,6 +12,7 @@
       :placeholder='placeholder',
       :label='label',
       :hide-details='hideDetails ? "auto" : false',
+      :disabled='disabled',
       :dense='dense',
       :clearable='clearable',
       :hint='hint',
@@ -31,6 +32,7 @@
       :placeholder='placeholder',
       :label='label',
       :hide-details='hideDetails ? "auto" : false',
+      :disabled='disabled',
       :dense='dense',
       :clearable='clearable',
       :hint='hint',
@@ -64,6 +66,7 @@ export default class AInput extends Vue {
   @Prop({ type: Boolean, default: false }) phone!: boolean
   @Prop() prefix!: string
   @Prop() placeholder!: string
+  @Prop() disabled!: boolean
   @Ref('input') input: any
 
   get model() {
