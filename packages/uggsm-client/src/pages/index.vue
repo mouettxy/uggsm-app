@@ -57,6 +57,32 @@ export default class PageIndex extends Vue {
 
   public news = [
     {
+      date: moment('08.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      breaking: false,
+      items: [
+        {
+          type: 'feature',
+          text: 'Добавлена связь ролей и формы регистрации',
+        },
+        {
+          type: 'feature',
+          text: 'Обновлён вид форм настройки',
+        },
+        {
+          type: 'feature',
+          text: 'Временно убран пункт меню "Аналитика"',
+        },
+        {
+          type: 'feature',
+          text: 'Обновлён вид таблицы клиентов',
+        },
+        {
+          type: 'feature',
+          text: 'Добавлено уведомление о перезагрузке сервера',
+        },
+      ],
+    },
+    {
       date: moment('07.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       breaking: false,
       items: [
