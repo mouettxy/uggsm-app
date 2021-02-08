@@ -4,68 +4,101 @@ v-form.register-form(
   v-model='valid',
   @submit.prevent='onRegister'
 )
-  a-input.mb-1(
-    v-model.trim='user.username',
-    :validate='usernameRules',
-    label='Логин',
-    icon='mdi-account',
-    dense
-  )
-  a-input.mb-1(
-    v-model.trim='user.password',
-    :validate='passwordRules',
-    type='password',
-    label='Пароль',
-    icon='mdi-lock',
-    dense
-  )
-  a-input.mb-1(
-    v-model.trim='user.credentials',
-    :validate='credentialsRules',
-    type='text',
-    label='Имя (Для отображения)',
-    icon='mdi-rename-box',
-    dense
-  )
-  a-select.mb-1(
-    v-model.trim='user.role',
-    :items='["Администратор", "Мастер", "Менеджер"]',
-    label='Роль пользователя в системе',
-    icon='mdi-account-hard-hat',
-    dense
-  )
-  m-office-switcher.mb-1(
-    v-model='user.office',
-    :items='offices'
-  )
-  a-input.mb-1(
-    v-model.trim='user.masterPwd',
-    :validate='masterPwdRules',
-    label='Мастер пароль',
-    icon='mdi-lock-alert',
-    dense
-  )
-  v-btn(
-    type='submit',
-    color='primary'
-  ) Регистрация
+  v-row
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='user.username',
+        :validate='requiredField',
+        :hide-details='false',
+        label='Логин',
+        icon='mdi-account',
+        dense
+      )
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='user.password',
+        :validate='requiredField',
+        :hide-details='false',
+        type='password',
+        label='Пароль',
+        icon='mdi-lock',
+        dense
+      )
+  v-row
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='user.credentials',
+        :validate='requiredField',
+        :hide-details='false',
+        type='text',
+        label='Имя',
+        icon='mdi-rename-box',
+        dense
+      )
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-select(
+        v-model.trim='user.role',
+        :items='roles',
+        :hide-details='false',
+        label='Роль',
+        icon='mdi-account-hard-hat',
+        dense
+      )
+        template(#selection='{item}')
+          span {{ item.text }}
+  v-row
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      m-office-switcher.mb-1(
+        v-model='user.office',
+        :items='offices',
+        :hide-details='false'
+      )
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      v-btn(
+        type='submit',
+        color='primary',
+        block
+      ) Регистрация
 </template>
 
 <script lang="ts">
 import { Component, Vue, Ref } from 'vue-property-decorator'
-
-import { AuthInput } from '@/typings/api/auth'
 import { authModule, officesModule } from '@/store'
 import { map, cloneDeep } from 'lodash'
+import RoleAPI from '@/api/role'
 
 @Component
 export default class ORegisterForm extends Vue {
   @Ref('form') form: any
   public valid = false
-  public usernameRules: Array<any> = [(v: string) => !!v || 'Заполните логин для успешной регистрации']
-  public passwordRules: Array<any> = [(v: string) => !!v || 'Заполните пароль для успешной регистрации']
-  public credentialsRules: Array<any> = [(v: string) => !!v || 'Заполните имя для успешной регистрации']
-  public masterPwdRules: Array<any> = [(v: string) => !!v || 'Заполните мастер пароль для успешной регистрации']
+  public requiredField: Array<any> = [(v: string) => !!v || 'Необходимое поле']
+
+  public roles: { text: string; value: string }[] = []
+
   public user: any = {
     username: '',
     password: '',
@@ -93,19 +126,8 @@ export default class ORegisterForm extends Vue {
       const copy = cloneDeep(this.user)
 
       const userOffice = this.user.office.split('|')[0]
-      let userRole
-      if (this.user.role === 'Администратор') {
-        userRole = 'administrator'
-      } else if (this.user.role === 'Менеджер') {
-        userRole = 'manager'
-      } else if (this.user.role === 'Мастер') {
-        userRole = 'master'
-      } else {
-        userRole = 'master'
-      }
 
-      if (userOffice && userRole) {
-        copy.role = userRole
+      if (userOffice) {
         copy.office = userOffice
 
         if (await authModule.register(copy)) {
@@ -125,8 +147,19 @@ export default class ORegisterForm extends Vue {
     }
   }
 
-  mounted() {
+  async mounted() {
     officesModule.fetch()
+
+    const roles = await RoleAPI.getAll()
+
+    console.log(roles)
+
+    this.roles = map(roles.data, (e) => ({
+      text: e.description,
+      value: e.name,
+    }))
+
+    console.log(this.roles)
   }
 }
 </script>

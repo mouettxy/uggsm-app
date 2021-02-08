@@ -1,7 +1,6 @@
 <template lang="pug">
 .register-main
   v-card.pa-12.register-main__card(elevation='2')
-    v-card-title Регистрация
     o-register-form
 </template>
 
