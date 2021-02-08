@@ -54,7 +54,7 @@ export default class Settings extends VuexModule {
     } else if (payload.type === 'cash') {
       cashModule.fetchTable()
     } else if (payload.type === 'clients') {
-      clientModule.fetch()
+      clientModule.fetchTable()
     }
   }
 

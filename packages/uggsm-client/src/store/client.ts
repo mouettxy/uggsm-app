@@ -1,3 +1,4 @@
+import { TableHelpers } from './helpers/index'
 import { fromPairs, map, zip } from 'lodash'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { settingsModule } from '.'
@@ -10,21 +11,28 @@ import axios from '@/plugins/axios'
   name: 'client',
 })
 export default class Client extends VuexModule {
-  public clients: Array<ClientType> | null = null
+  /* -------------------------------------------------------------------------- */
+  /*                                    TABLE                                   */
+  /* -------------------------------------------------------------------------- */
 
+  public table: Array<ClientType> | null = null
   public isLoading = false
-  public countRows = 0
-  public options = {
-    page: 1,
-    itemsPerPage: 25,
-    sortBy: ['id'],
-    sortDesc: [true],
-    mustSort: false,
-    multiSort: true,
-  }
-
-  get clientTable() {
-    return map(this.clients, (e) => {
+  public tableRows = 0
+  public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id')
+  public tableHeaders = TableHelpers.generateHeaders(
+    {
+      id: '№',
+      name: 'Имя',
+      email: 'Почта',
+      phone: 'Телефон',
+      address: 'Адрес',
+      createdAt: 'Создано',
+      notifications: 'Уведомления',
+    },
+    'clients-headers'
+  )
+  get tableItems() {
+    return map(this.table, (e) => {
       return {
         id: e.id,
         createdAt: moment(e.createdAt).format('DD MMMM YYYY HH:mm'),
@@ -42,49 +50,42 @@ export default class Client extends VuexModule {
       }
     })
   }
-
+  get tableHeadersFormatted() {
+    return TableHelpers.excludeNotShownHeaders(this.tableHeaders)
+  }
   @Mutation
   SET_LOADING(payload: boolean) {
     this.isLoading = payload
   }
-
   @Mutation
-  SET_CLIENTS(payload: any) {
-    this.clients = payload.docs
-    this.countRows = payload.totalDocs
+  SET_TABLE(payload: any) {
+    this.table = payload.docs
+    this.tableRows = payload.totalDocs
   }
-
   @Mutation
-  SET_OPTIONS(payload: any) {
-    this.options = payload
+  SET_TABLE_OPTIONS(payload: any) {
+    this.tableOptions = payload
   }
-
-  @Action
-  setOptions(payload: any) {
-    this.context.commit('SET_OPTIONS', payload)
+  @Mutation
+  SET_TABLE_HEADERS(payload: any) {
+    this.tableHeaders = payload
   }
-
   @Action
-  async fetch() {
+  setTableOptions(payload: any) {
+    this.context.commit('SET_TABLE_OPTIONS', payload)
+  }
+  @Action
+  setTableHeaders(payload: any) {
+    localStorage.setItem('cashes-headers', JSON.stringify(payload))
+    this.context.commit('SET_TABLE_HEADERS', payload)
+  }
+  @Action
+  async fetchTable() {
     this.context.commit('SET_LOADING', true)
 
-    const payload = this.options
-    const office = settingsModule.office?._id
-    const query: any = {
-      page: payload.page,
-      limit: payload.itemsPerPage,
-      office,
-    }
+    const response = await clientAPI().getPaginated(TableHelpers.processQuery(this.tableOptions))
 
-    if (settingsModule.search) {
-      query.search = settingsModule.search
-    }
-
-    const sortDesc = map(payload.sortDesc, (e) => (e ? 'desc' : 'asc'))
-
-    query.sort = fromPairs(zip(payload.sortBy, sortDesc))
-
-    this.context.commit('SET_CLIENTS', await clientAPI().getPaginated(query))
+    this.context.commit('SET_TABLE', response)
     this.context.commit('SET_LOADING', false)
   }
 
@@ -165,6 +166,6 @@ export default class Client extends VuexModule {
 
   @Action
   async socket_updateClients() {
-    this.fetch()
+    this.fetchTable()
   }
 }
