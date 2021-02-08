@@ -4,54 +4,79 @@ v-form.office-form(
   v-model='valid',
   @submit.prevent='onOffice'
 )
-  a-input(
-    v-model.trim='office.code',
-    :validate='requiredField',
-    label='Код (Уникальный)',
-    icon='mdi-account',
-    dense
-  )
-  a-input(
-    v-model.trim='office.name',
-    :validate='requiredField',
-    label='Название',
-    icon='mdi-account',
-    dense
-  )
-  a-input(
-    v-model.trim='office.address',
-    :validate='requiredField',
-    label='Адрес',
-    icon='mdi-account',
-    dense
-  )
-  a-input(
-    v-model.trim='office.ordersTemplate',
-    :validate='requiredField',
-    label='Шаблон ID заявок',
-    icon='mdi-account',
-    dense,
-    hint='Например 4{C:4}'
-  )
-  a-input(
-    v-model.trim='office.docsTemplate',
-    :validate='requiredField',
-    label='Шаблон ID документа',
-    icon='mdi-account',
-    dense,
-    hint='Например BA{C:4} (Пока нигде не используется)'
-  )
-  a-input.mt-6(
-    v-model.trim='office.masterPwd',
-    :validate='requiredField',
-    label='Мастер пароль',
-    icon='mdi-lock-alert',
-    dense
-  )
-  v-btn(
-    type='submit',
-    color='primary'
-  ) Создать
+  v-row
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='office.name',
+        :validate='requiredField',
+        :hide-details='false',
+        label='Название',
+        icon='mdi-account',
+        dense
+      )
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='office.code',
+        :validate='requiredField',
+        :hide-details='false',
+        label='Код',
+        icon='mdi-account',
+        dense
+      )
+  v-row
+    v-col(cols='12')
+      a-input(
+        v-model.trim='office.address',
+        :validate='requiredField',
+        :hide-details='false',
+        label='Адрес',
+        icon='mdi-account',
+        dense
+      )
+  v-row
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='office.ordersTemplate',
+        :validate='requiredField',
+        :hide-details='false',
+        label='Шаблон ID заявок',
+        icon='mdi-account',
+        dense,
+        hint='Например 4{C:4}'
+      )
+    v-col(
+      cols='12',
+      md='6',
+      lg='6'
+    )
+      a-input(
+        v-model.trim='office.docsTemplate',
+        :validate='requiredField',
+        :hide-details='false',
+        label='Шаблон ID документа',
+        icon='mdi-account',
+        dense,
+        hint='Например BA{C:4} (Пока нигде не используется)'
+      )
+  v-row
+    v-col(cols='12')
+      v-btn(
+        type='submit',
+        color='primary',
+        block
+      ) Создать офис
 </template>
 
 <script lang="ts">

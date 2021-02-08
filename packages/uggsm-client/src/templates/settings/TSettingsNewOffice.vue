@@ -1,7 +1,6 @@
 <template lang="pug">
 .office-main
   v-card.pa-12.office-main__card(elevation='2')
-    v-card-title Новый офис
     o-office-form
 </template>
 
