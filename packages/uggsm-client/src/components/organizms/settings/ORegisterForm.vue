@@ -152,14 +152,10 @@ export default class ORegisterForm extends Vue {
 
     const roles = await RoleAPI.getAll()
 
-    console.log(roles)
-
     this.roles = map(roles.data, (e) => ({
       text: e.description,
       value: e.name,
     }))
-
-    console.log(this.roles)
   }
 }
 </script>
