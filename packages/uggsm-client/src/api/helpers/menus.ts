@@ -33,13 +33,13 @@ export const defaultMenu = [
     divider: true,
     resource: 'Calls',
   },
-  {
+  /* {
     linkName: 'analytic',
     title: 'Аналитика',
     icon: 'mdi-google-analytics',
     divider: false,
     resource: 'Analytics',
-  },
+  }, */
   {
     linkName: 'reports',
     title: 'Отчёты',
