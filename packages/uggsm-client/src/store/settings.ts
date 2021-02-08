@@ -1,7 +1,6 @@
-import { sendRequest } from './../api/helpers/index'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { cashModule, clientModule, officesModule, ordersModule } from '.'
-
+import Vue from 'vue'
 @Module({
   namespaced: true,
   name: 'settings',
@@ -11,6 +10,8 @@ export default class Settings extends VuexModule {
   public search: any = null
   public socketNotifications = true
   public miniNavigation: boolean | null = null
+
+  public serverReconnect = false
 
   @Mutation
   SET_OFFICE(payload: string) {
@@ -30,6 +31,11 @@ export default class Settings extends VuexModule {
   @Mutation
   SET_MINI_NAVIGATION(payload: boolean | null) {
     this.miniNavigation = payload
+  }
+
+  @Mutation
+  SET_SERVER_RECONNECT(payload: boolean) {
+    this.serverReconnect = payload
   }
 
   @Action
@@ -66,5 +72,22 @@ export default class Settings extends VuexModule {
   @Action
   async setMiniNavigation(payload: boolean | null) {
     this.context.commit('SET_MINI_NAVIGATION', payload)
+  }
+
+  @Action
+  async socket_disconnect(reason: string) {
+    if (reason === 'transport close') {
+      Vue.prototype.$notification.warning('Происходит перезагрузка сервера...')
+
+      this.context.commit('SET_SERVER_RECONNECT', true)
+    }
+  }
+
+  @Action
+  async socket_connect() {
+    if (this.serverReconnect) {
+      Vue.prototype.$notification.success('Сервер перезагружен. Рекомендуем обновить страницу.')
+      this.context.commit('SET_SERVER_RECONNECT', false)
+    }
   }
 }
