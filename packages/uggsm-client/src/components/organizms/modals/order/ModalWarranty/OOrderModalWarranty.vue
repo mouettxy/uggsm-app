@@ -136,6 +136,7 @@ export default class OOrderModalWarranty extends Vue {
       copy.warrantyCounter += 1
       copy.warrantySaved.push({ declaredDefect: copy.declaredDefect })
       copy.declaredDefect = this.defect
+      copy.statusWork = []
 
       copy.master = (copy.master._id as unknown) as User
       copy.manager = (copy.manager._id as unknown) as User
