@@ -53,9 +53,25 @@ import moment from 'moment'
 
 @Component
 export default class PageIndex extends Vue {
-  public date = moment('07.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY')
-
   public news = [
+    {
+      date: moment('11.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      breaking: false,
+      items: [
+        {
+          type: 'feature',
+          text: 'Добавлены предупреждения при перезагрузках/неисправностях у сервера',
+        },
+        {
+          type: 'fix',
+          text: 'Исправлено поведение гарантийных заявок. Теперь при создании в них не включаются старые работы',
+        },
+        {
+          type: 'fix',
+          text: 'Исправлено поведение дат в отчёте по закрытым заявкам',
+        },
+      ],
+    },
     {
       date: moment('08.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       breaking: false,
@@ -207,5 +223,7 @@ export default class PageIndex extends Vue {
       ],
     },
   ]
+
+  public date = this.news[0].date
 }
 </script>
