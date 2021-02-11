@@ -91,6 +91,7 @@ export const aggregationsList = {
           master: '$master',
           type: '$type',
           product: '$product',
+          date: '$date',
         },
         works: {
           $push: '$works',
@@ -108,6 +109,7 @@ export const aggregationsList = {
         _id: 0,
         master: '$_id.master',
         type: '$_id.type',
+        date: '$_id.date',
         product: '$_id.product',
         works: 1,
         price: 1,
