@@ -108,6 +108,4 @@ export default class OOrderModalRegularContent extends Vue {
       overflow-y: scroll
       height: calc(100vh - 140px)
       box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important
-      &--payed
-        height: calc(100vh - 174px)
 </style>

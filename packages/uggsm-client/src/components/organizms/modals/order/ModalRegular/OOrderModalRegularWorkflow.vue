@@ -229,6 +229,4 @@ export default class OOrderModalRegularWorkflow extends Vue {
         .v-label
           color: rgba(0, 0, 0, 0.87)
           font-size: .8rem !important
-  &--payed
-    height: calc(100vh - 80px)
 </style>

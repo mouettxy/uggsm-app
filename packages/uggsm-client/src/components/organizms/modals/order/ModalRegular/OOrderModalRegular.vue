@@ -35,12 +35,6 @@
       )
         v-icon(left) mdi-close
         span Закрыть
-      template(v-if='order')
-        template(v-if='order.payed')
-          v-list-item.d-inline-block(style='flex: 0 0 0')
-            v-list-item-content
-              v-list-item-title {{ order.declaredPrice }} руб.
-              v-list-item-subtitle Оплачено
 </template>
 
 <script lang="ts">
@@ -104,14 +98,11 @@ export default class OOrderModalRegular extends Vue {
 
 <style lang="sass">
 $height: calc(100vh - 48px)
-$height-payed: calc(100vh - 70px)
 
 .order-modal-content
   padding: 0 !important
   height: $height !important
   overflow: hidden
-  &--payed
-    height: $height-payed
 
 .order-modal-header
   padding: 12px
