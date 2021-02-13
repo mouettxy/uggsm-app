@@ -2,7 +2,7 @@
 {
   "name": "reportsOrdersCount",
   "meta": {
-    "header": "В работе"
+    "header": "Создано"
   }
 }
 </route>

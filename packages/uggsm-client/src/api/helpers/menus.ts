@@ -66,14 +66,14 @@ export const reportsMenu = [
   },
   {
     linkName: 'reportsOrdersWithoutWork',
-    title: 'Создано',
+    title: 'Закрыто на 0',
     icon: 'mdi-account-cancel',
     divider: false,
     resource: 'Report',
   },
   {
     linkName: 'reportsOrdersCount',
-    title: 'В работе',
+    title: 'Создано',
     icon: 'mdi-counter',
     divider: false,
     resource: 'Report',

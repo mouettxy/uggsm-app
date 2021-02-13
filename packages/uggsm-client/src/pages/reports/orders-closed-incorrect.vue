@@ -2,7 +2,7 @@
 {
   "name": "reportsOrdersWithoutWork",
   "meta": {
-    "header": "Создано"
+    "header": "Закрыто на 0"
   }
 }
 </route>
