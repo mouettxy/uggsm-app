@@ -1,15 +1,14 @@
 <template lang="pug">
 .report-orders-without-work
   v-card
-    v-row.fill-height.report-orders-without-work__toolbar
-      v-col(cols='2')
-        v-card-title Закрыто на 0
-      v-col(cols='3')
-        a-datetime-picker-2(
+    v-card-title Закрыто на 0
+    v-row.report-orders-without-work__toolbar
+      v-col(cols='5')
+        a-datetime-picker-2.pl-4(
           v-model='search.date',
           range
         )
-      v-col(cols='3')
+      v-col(cols='5')
         a-select(
           v-model='search.status',
           :items='["Закрыт", "Готов"]',
@@ -17,7 +16,7 @@
           label='Статус',
           dense
         )
-      v-col.text-right(cols='4')
+      v-col.text-right(cols='2')
         v-btn.mx-1(
           @click='getReport',
           color='primary'

@@ -1,15 +1,14 @@
 <template lang="pug">
 .report-orders-count
   v-card
+    v-card-title Создано
     v-row.fill-height.report-orders-count__toolbar
-      v-col(cols='2')
-        v-card-title Создано
-      v-col(cols='3')
-        a-datetime-picker-2(
+      v-col(cols='5')
+        a-datetime-picker-2.pl-4(
           v-model='search.date',
           range
         )
-      v-col(cols='3')
+      v-col(cols='5')
         a-select(
           v-model='search.status',
           :items='statusList',
@@ -17,7 +16,7 @@
           label='Статус',
           dense
         )
-      v-col.text-right(cols='4')
+      v-col.text-right(cols='2')
         v-btn.mx-1(
           @click='getReport',
           color='primary'

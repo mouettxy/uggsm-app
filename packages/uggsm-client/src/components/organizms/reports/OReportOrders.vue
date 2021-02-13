@@ -1,15 +1,14 @@
 <template lang="pug">
 .orders-report
   v-card
+    v-card-title Закрыто
     v-row.fill-height.orders-report__row
-      v-col(cols='1')
-        v-card-title Закрыто
       v-col(cols='3')
-        a-datetime-picker-2(
+        a-datetime-picker-2.pl-4(
           v-model='search.date',
           range
         )
-      v-col(cols='3')
+      v-col(cols='4')
         m-office-switcher(v-model='search.office')
       v-col(cols='3')
         a-select(
