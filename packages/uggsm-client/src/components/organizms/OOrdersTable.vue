@@ -118,6 +118,18 @@
                       label='Менеджеры(-а)',
                       cache='orders-manager-filter'
                     )
+              v-row
+                v-col(cols='10')
+                  a-datetime-picker-2(
+                    v-model='dateFilter',
+                    range
+                  )
+                v-col(cols='2')
+                  v-btn(
+                    @click='removeDateFilter',
+                    icon
+                  )
+                    v-icon mdi-close
     template(#item.id='{value, item}')
       o-order-modal-regular(
         :orderid='item.trueId',
@@ -152,12 +164,10 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, usersModule } from '@/store'
-import { cloneDeep, filter, includes, map, join, find } from 'lodash'
+import { cloneDeep, map, join } from 'lodash'
 import { statuses } from '@/api/helpers/enums'
-import moment from 'moment'
-import { Order } from '@/typings/api/order'
-import { authEnpoints } from '@/api'
 import { User } from '@/typings/api/auth'
+import moment from 'moment'
 
 @Component
 export default class OOrdersTable extends Vue {
@@ -171,10 +181,39 @@ export default class OOrdersTable extends Vue {
   public managerFilter = []
   public statusFilter = []
 
+  public dateFilter = []
+
   public page = 1
 
   public statuses = statuses
   public users: Array<User> | null = null
+
+  @Watch('dateFilter')
+  onDateFilter(date: Array<string>) {
+    if (date[0] && date[1]) {
+      const copyDate = cloneDeep(date)
+      copyDate[0] = moment(copyDate[0], 'DD.MM.YYYY').startOf('day').toISOString()
+      copyDate[1] = moment(copyDate[1], 'DD.MM.YYYY').endOf('day').toISOString()
+
+      this.store.setTableOptions({
+        ...this.store.tableOptions,
+        date: copyDate,
+      })
+      this.store.fetchTable()
+    }
+  }
+
+  removeDateFilter() {
+    const copyOptions = cloneDeep(this.store.tableOptions)
+
+    delete copyOptions.date
+
+    this.store.setTableOptions(copyOptions)
+
+    this.store.fetchTable()
+
+    this.dateFilter = []
+  }
 
   get store() {
     return ordersModule

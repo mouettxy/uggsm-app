@@ -252,6 +252,13 @@ export const parsePaginateResponse = (requestQuery, needOffice = false, model = 
     query.cashier = cashFilter.cashier
   }
 
+  if (requestQuery.date) {
+    query.createdAt = {
+      $gte: new Date(requestQuery.date[0]),
+      $lt: new Date(requestQuery.date[1]),
+    }
+  }
+
   return {
     query,
     options,
