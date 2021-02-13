@@ -22,14 +22,7 @@ export default class Cash extends VuexModule {
   public table: Array<CashType> | null = null
   public isLoading = false
   public tableRows = 0
-  public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id', (options) => {
-    return {
-      ...options,
-      status: [],
-      excludeStatus: ['Закрыт'],
-      orderDisplayOnlyExpired: false,
-    }
-  })
+  public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id')
   public tableHeaders = TableHelpers.generateHeaders(
     {
       id: '№',
