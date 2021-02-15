@@ -11,4 +11,7 @@ export type IRolesController = {
   createAbility: ControllerMethod
   deleteAbility: ControllerMethod
   updateAbility: ControllerMethod
+  createField: ControllerMethod
+  updateField: ControllerMethod
+  deleteField: ControllerMethod
 }

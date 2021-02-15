@@ -1,5 +1,13 @@
-import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getModelForClass, modelOptions, prop, Severity } from '@typegoose/typegoose'
+import mongoose, { mongo } from 'mongoose'
 
+class FieldSettings {
+  @prop({ enum: ['=', 'in', '!in', '!='] })
+  public operator: string
+
+  @prop({ enum: ['array', 'string', 'boolean'] })
+  public type: string
+}
 class RoleAbility {
   @prop()
   public description: string
@@ -9,6 +17,9 @@ class RoleAbility {
 
   @prop()
   public value: boolean
+
+  @prop({ type: () => [AbilityField], _id: false })
+  public fields?: AbilityField[]
 }
 
 class RoleResource {
@@ -20,6 +31,24 @@ class RoleResource {
 
   @prop({ type: () => [RoleAbility], _id: false })
   public abilities: RoleAbility[]
+}
+@modelOptions({
+  options: {
+    allowMixed: Severity.ALLOW,
+  },
+})
+class AbilityField {
+  @prop()
+  public description: string
+
+  @prop()
+  public name: string
+
+  @prop({ type: () => mongoose.Schema.Types.Mixed })
+  public value: Array<string> | boolean | string
+
+  @prop({ type: () => FieldSettings, _id: false })
+  public settings: FieldSettings
 }
 
 export class Role {

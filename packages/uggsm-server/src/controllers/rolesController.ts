@@ -218,4 +218,105 @@ export class RolesController extends BaseController implements IRolesController 
       this.criticalError(next, error)
     }
   }
+
+  public createField: ControllerMethod = async (req, res, next) => {
+    try {
+      const { role, resource, ability, field } = req.params
+
+      const fieldData: {
+        description: string
+        name: string
+        value: Array<string> | boolean | string
+        settings: {
+          operator: '=' | '!=' | 'in' | '!in'
+          type: 'array' | 'string' | 'boolean'
+        }
+      } = req.body
+
+      const model = await this.model.findOne({ name: role })
+
+      const modelResource = find(model.resources, { name: resource })
+
+      const modelAbility = find(modelResource.abilities, { name: ability })
+
+      if (!Array.isArray(modelAbility.fields)) {
+        modelAbility.fields = []
+      }
+
+      if (find(modelAbility.fields, { name: field })) {
+        this.badRequest(next, 'Поле с таким названием уже существует')
+      } else {
+        modelAbility.fields.push(fieldData)
+
+        await model.save()
+
+        api.io.emit('field created', fieldData)
+        api.io.emit('update roles', role)
+
+        this.success(res, model)
+      }
+    } catch (error) {
+      this.criticalError(next, error)
+    }
+  }
+
+  public updateField: ControllerMethod = async (req, res, next) => {
+    try {
+      const { role, resource, ability, field } = req.params
+
+      const fieldData: {
+        description: string
+        name: string
+        value: Array<string> | boolean | string
+        settings: {
+          operator: '=' | '!=' | 'in' | '!in'
+          type: 'array' | 'string' | 'boolean'
+        }
+      } = req.body
+
+      const model = await this.model.findOne({ name: role })
+
+      const modelResource = find(model.resources, { name: resource })
+
+      const modelAbility = find(modelResource.abilities, { name: ability })
+
+      const modelField = find(modelAbility?.fields, { name: field })
+
+      if (modelField) {
+        Object.assign(modelField, fieldData)
+
+        model.save()
+
+        api.io.emit('field updated', role)
+        api.io.emit('update roles', role)
+
+        this.success(res, model)
+      } else {
+        this.badRequest(next, 'Поля с таким названием не существует')
+      }
+    } catch (error) {
+      this.criticalError(next, error)
+    }
+  }
+
+  public deleteField: ControllerMethod = async (req, res, next) => {
+    try {
+      const { role, resource, ability, field } = req.params
+
+      const model = await this.model.findOne({ name: role })
+
+      const modelResource = find(model.resources, { name: resource })
+
+      const modelAbility = find(modelResource.abilities, { name: ability })
+
+      modelAbility.fields = filter(modelAbility.fields, (e) => e.name !== field)
+
+      api.io.emit('field deleted', field)
+      api.io.emit('update roles', role)
+
+      this.success(res, model)
+    } catch (error) {
+      this.criticalError(next, error)
+    }
+  }
 }

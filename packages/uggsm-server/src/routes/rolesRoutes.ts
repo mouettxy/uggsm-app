@@ -22,5 +22,9 @@ export class RolesRouter extends BaseRouter<IRolesController> {
       .post(this.prefixed(':name/ability'), this.controller.createAbility)
       .put(this.prefixed(':name/ability'), this.controller.updateAbility)
       .delete(this.prefixed(':name/ability'), this.controller.deleteAbility)
+
+      .post(this.prefixed(':role/resource/:resource/ability/:ability/field/:field'), this.controller.createField)
+      .put(this.prefixed(':role/resource/:resource/ability/:ability/field/:field'), this.controller.updateField)
+      .delete(this.prefixed(':role/resource/:resource/ability/:ability/field/:field'), this.controller.deleteField)
   }
 }
