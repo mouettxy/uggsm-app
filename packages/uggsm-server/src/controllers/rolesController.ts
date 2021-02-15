@@ -285,7 +285,7 @@ export class RolesController extends BaseController implements IRolesController 
       if (modelField) {
         Object.assign(modelField, fieldData)
 
-        model.save()
+        await model.save()
 
         api.io.emit('field updated', role)
         api.io.emit('update roles', role)
@@ -310,6 +310,8 @@ export class RolesController extends BaseController implements IRolesController 
       const modelAbility = find(modelResource.abilities, { name: ability })
 
       modelAbility.fields = filter(modelAbility.fields, (e) => e.name !== field)
+
+      await model.save()
 
       api.io.emit('field deleted', field)
       api.io.emit('update roles', role)

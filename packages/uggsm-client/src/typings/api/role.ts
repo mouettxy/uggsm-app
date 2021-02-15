@@ -1,7 +1,20 @@
+export type FieldSettings = {
+  operator: '=' | '!=' | 'in' | '!in'
+  type: 'array' | 'string' | 'boolean'
+}
+
+export type AbilityField = {
+  description: string
+  name: string
+  value: Array<string> | boolean | string
+  settings: FieldSettings
+}
+
 export type RoleAbility = {
   name: string
   description: string
   value: boolean
+  fields?: AbilityField[]
 }
 
 export type RoleResource = {
