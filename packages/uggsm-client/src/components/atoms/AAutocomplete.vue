@@ -7,6 +7,8 @@ v-autocomplete(
   :menu-props='{ allowOverflow: true, bottom: true, maxHeight: 204 }',
   :label='label',
   :items='items',
+  :item-value='itemValue',
+  :item-text='itemText',
   :hide-details='hideDetails',
   :disabled='disabled',
   :dense='dense',
@@ -17,12 +19,15 @@ v-autocomplete(
   outlined,
   no-filter,
   no-data-text='Нет доступных данных',
-  item-value='value',
-  item-text='text',
   hide-no-data,
   clearable,
   auto-select-first
 )
+  template(#item='data')
+    slot(
+      v-bind='data',
+      name='item'
+    )
 </template>
 
 <script lang="ts">
@@ -47,6 +52,8 @@ export default class AAutocomplete extends Vue {
   @Prop(Boolean) hideDetails!: boolean
   @Prop(Boolean) disallowFreeType!: boolean
   @Prop(Boolean) phone!: boolean
+  @Prop({ default: 'text' }) itemText!: string
+  @Prop({ default: 'value' }) itemValue!: string
 
   public items: Array<any> = []
   public query = ''
