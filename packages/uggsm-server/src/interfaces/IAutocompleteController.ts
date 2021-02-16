@@ -12,4 +12,6 @@ export interface IAutocompleteController {
   users: ControllerMethod
   manager: ControllerMethod
   completedWork: ControllerMethod
+
+  listOfRoutes: ControllerMethod
 }

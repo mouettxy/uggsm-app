@@ -1,24 +1,79 @@
 import { AutocompleteController } from '../controllers'
 import { IAutocompleteController } from '../interfaces'
-import BaseRouter from './heplers/BaseRouter'
-
-export class AutocompleteRouter extends BaseRouter<IAutocompleteController> {
+import { ExtendedRouter } from './heplers/BaseRouter'
+export class AutocompleteRouter extends ExtendedRouter<IAutocompleteController> {
   constructor() {
     super(AutocompleteController, '/autocomplete', false)
   }
 
-  initializeRoutes() {
-    this.expressRouter
-      .get(this.prefixed('customer-name'), this.controller.customerName)
-      .get(this.prefixed('customer-phone'), this.controller.customerPhone)
-      .get(this.prefixed('phone-brand'), this.controller.phoneBrand)
-      .get(this.prefixed('phone-model'), this.controller.phoneModel)
-      .get(this.prefixed('declared-defect'), this.controller.declaredDefect)
-      .get(this.prefixed('appearance'), this.controller.appearance)
-      .get(this.prefixed('kit'), this.controller.kit)
-      .get(this.prefixed('users'), this.controller.users)
-      .get(this.prefixed('master'), this.controller.master)
-      .get(this.prefixed('manager'), this.controller.manager)
-      .get(this.prefixed('completed-work'), this.controller.completedWork)
+  defineRoutes() {
+    this.addRoutes([
+      {
+        path: 'customer-name',
+        description: 'Имена клиента',
+        controllerMethod: 'customerName',
+        method: 'get',
+      },
+      {
+        path: 'customer-phone',
+        description: 'Телефоны клиента',
+        controllerMethod: 'customerPhone',
+        method: 'get',
+      },
+      {
+        path: 'phone-brand',
+        description: 'Бренды телефона',
+        controllerMethod: 'phoneBrand',
+        method: 'get',
+      },
+      {
+        path: 'phone-model',
+        description: 'Модели телефонов',
+        controllerMethod: 'phoneModel',
+        method: 'get',
+      },
+      {
+        path: 'declared-deffect',
+        description: 'Первичные деффекты',
+        controllerMethod: 'declaredDefect',
+        method: 'get',
+      },
+      {
+        path: 'kit',
+        description: 'Комплектации',
+        controllerMethod: 'kit',
+        method: 'get',
+      },
+      {
+        path: 'users',
+        description: 'Пользователи',
+        controllerMethod: 'users',
+        method: 'get',
+      },
+      {
+        path: 'master',
+        description: 'Мастера',
+        controllerMethod: 'master',
+        method: 'get',
+      },
+      {
+        path: 'manager',
+        description: 'Менеджеры',
+        controllerMethod: 'manager',
+        method: 'get',
+      },
+      {
+        path: 'completed-work',
+        description: 'Выполненные работы',
+        controllerMethod: 'completedWork',
+        method: 'get',
+      },
+      {
+        path: 'routes',
+        description: 'Ссылки автозаполнения',
+        controllerMethod: 'listOfRoutes',
+        method: 'get',
+      },
+    ])
   }
 }

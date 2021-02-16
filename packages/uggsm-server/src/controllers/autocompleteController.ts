@@ -1,9 +1,10 @@
+import { ExtendedRouter } from './../routes/heplers/BaseRouter'
 import { ControllerMethod } from './../interfaces/controller'
 import { BaseController } from './base/BaseController'
-import { isString, reduce } from 'lodash'
-import { HttpException } from '../exceptions'
+import { filter, isString, reduce } from 'lodash'
 import { IAutocompleteController } from '../interfaces'
 import { ClientModel, OrderModel, UserModel } from '../models'
+import { api } from '../server'
 
 export class AutocompleteController extends BaseController implements IAutocompleteController {
   private user = UserModel
@@ -304,6 +305,23 @@ export class AutocompleteController extends BaseController implements IAutocompl
       )
 
       this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
+    }
+  }
+
+  public listOfRoutes: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
+
+    try {
+      const routes = (api.routers.autocomplete as ExtendedRouter<any>).routes
+
+      const searchRegExp = new RegExp(search, 'i')
+
+      this.success(
+        res,
+        filter(routes, (e) => searchRegExp.test(e.description) || searchRegExp.test(e.path))
+      )
     } catch (error) {
       this.badRequest(next, 'Нет данных для поиска')
     }
