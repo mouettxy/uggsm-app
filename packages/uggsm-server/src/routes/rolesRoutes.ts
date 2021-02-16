@@ -1,30 +1,61 @@
-import { IRolesController } from '../interfaces'
 import { RolesController } from '../controllers'
-import BaseRouter from './heplers/BaseRouter'
-
-export class RolesRouter extends BaseRouter<IRolesController> {
+import { IRolesController } from '../interfaces'
+import { ExtendedRouter } from './heplers/BaseRouter'
+export class RolesRouter extends ExtendedRouter<IRolesController> {
   constructor() {
-    super(RolesController, '/role', true)
+    super(RolesController, '/role', false)
   }
 
-  initializeRoutes() {
-    this.expressRouter
-      .get(this.prefixed(''), this.controller.get)
-
-      .post(this.prefixed(''), this.controller.create)
-      .get(this.prefixed(':name'), this.controller.getByName)
-      .put(this.prefixed(':name'), this.controller.update)
-      .delete(this.prefixed(':name'), this.controller.delete)
-
-      .post(this.prefixed(':name/resource'), this.controller.createResource)
-      .delete(this.prefixed(':name/resource'), this.controller.deleteResource)
-
-      .post(this.prefixed(':name/ability'), this.controller.createAbility)
-      .put(this.prefixed(':name/ability'), this.controller.updateAbility)
-      .delete(this.prefixed(':name/ability'), this.controller.deleteAbility)
-
-      .post(this.prefixed(':role/resource/:resource/ability/:ability/field/:field'), this.controller.createField)
-      .put(this.prefixed(':role/resource/:resource/ability/:ability/field/:field'), this.controller.updateField)
-      .delete(this.prefixed(':role/resource/:resource/ability/:ability/field/:field'), this.controller.deleteField)
+  defineRoutes() {
+    this.addRoutes([
+      {
+        path: '',
+        description: 'Получает все роли',
+        controllerMethod: 'get',
+        method: 'get',
+      },
+      {
+        path: ':role',
+        description: 'Получить роль',
+        controllerMethod: 'getOne',
+        method: 'get',
+      },
+      {
+        path: ':role',
+        description: 'Создать роль',
+        controllerMethod: 'create',
+        method: 'post',
+      },
+      {
+        path: ':role',
+        description: 'Обновить роль',
+        controllerMethod: 'update',
+        method: 'put',
+      },
+      {
+        path: ':role',
+        description: 'Удалить роль',
+        controllerMethod: 'delete',
+        method: 'delete',
+      },
+      {
+        path: ':role/ability',
+        description: 'Создать способность',
+        controllerMethod: 'createAbility',
+        method: 'post',
+      },
+      {
+        path: ':role/ability/:ability',
+        description: 'Обновить способность',
+        controllerMethod: 'updateAbility',
+        method: 'put',
+      },
+      {
+        path: ':role/ability/:ability',
+        description: 'Удалить способность',
+        controllerMethod: 'deleteAbility',
+        method: 'delete',
+      },
+    ])
   }
 }

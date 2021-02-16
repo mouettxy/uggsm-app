@@ -5,8 +5,37 @@ import { api } from '../server'
 import BaseController from './base/BaseController'
 import { filter, find, findIndex } from 'lodash'
 
+enum Emits {
+  ROLE_CREATED = 'role created',
+  ROLE_UPDATED = 'role updated',
+  ROLE_DELETED = 'role deleted',
+  ABILITY_CREATED = 'ability created',
+  ABILITY_UPDATED = 'ability updated',
+  ABILTIY_DELETED = 'ability deleted',
+
+  ROLES_UPDATED = 'roles updated',
+}
+
+type RoleAbility = {
+  value: string
+  name: string
+  description: string
+  operator: string
+  type: string
+  autocomplete: string
+}
+
+type Role = {
+  value: string
+  name: string
+  description: string
+  abilities: RoleAbility[]
+}
+
 export class RolesController extends BaseController implements IRolesController {
   private model = RoleModel
+
+  public Emits = Emits
 
   public get: ControllerMethod = async (req, res, next) => {
     try {
@@ -18,305 +47,134 @@ export class RolesController extends BaseController implements IRolesController 
     }
   }
 
-  public getByName: ControllerMethod = async (req, res, next) => {
+  public getOne: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
     try {
-      const name = req.params.name
+      const document = await this.model.findOne({ value: role })
 
-      const role = await this.model.findOne({ name })
-
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public create: ControllerMethod = async (req, res, next) => {
+    const newRoleFields: Role = req.body
+
+    const defaultAbilities = []
+
+    newRoleFields.abilities = defaultAbilities
+
     try {
-      let data
-      if (req.body.resources) {
-        data = req.body
-      } else {
-        data = {
-          ...req.body,
-          resources: [],
-        }
-      }
+      const document = await this.model.create(newRoleFields)
 
-      const role = await this.model.create(data)
+      api.io.emit(this.Emits.ROLE_CREATED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED)
 
-      await role.save()
-
-      api.io.emit('role created', role)
-      api.io.emit('update roles')
-
-      this.success(res, role)
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public delete: ControllerMethod = async (req, res, next) => {
-    try {
-      const name = req.params.name
-
-      await this.model.findOneAndRemove({ name })
-
-      api.io.emit('role deleted', name)
-      api.io.emit('update roles', name)
-
-      this.success(res, 'OK')
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public update: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+
+    const roleFieldsToUpdate: Partial<Role> = req.body
+
     try {
-      const name = req.params.name
-      const data = req.body.data
+      const document = await this.model.findOneAndUpdate({ value: role }, roleFieldsToUpdate)
 
-      const role = await this.model.findOneAndUpdate({ name }, data)
+      api.io.emit(this.Emits.ROLE_UPDATED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED)
 
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
-  public createResource: ControllerMethod = async (req, res, next) => {
+  public delete: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+
     try {
-      const name = req.params.name
-      const resource = {
-        name: req.body.name,
-        description: req.body.description,
-      }
+      const document = await this.model.findOneAndDelete({ value: role })
 
-      const role = await this.model.findOne({ name })
+      api.io.emit(this.Emits.ROLE_DELETED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED)
 
-      if (find(role.resources, { name: resource.name })) {
-        this.badRequest(next, 'Ресурс с таким названием уже существует')
-      } else {
-        role.resources.push({
-          ...resource,
-          abilities: [
-            {
-              name: 'access',
-              description: 'Доступ к ресурсу',
-              value: true,
-            },
-          ],
-        })
-
-        await role.save()
-
-        api.io.emit('resource created', role)
-        api.io.emit('update roles', name)
-
-        this.success(res, role)
-      }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public deleteResource: ControllerMethod = async (req, res, next) => {
-    try {
-      const name = req.params.name
-      const resource = req.body.resource
-
-      const role = await this.model.findOne({ name })
-
-      role.resources = filter(role.resources, (e) => e.name !== resource)
-
-      await role.save()
-
-      api.io.emit('resource deleted', role)
-      api.io.emit('update roles', name)
-
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public createAbility: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+
+    const newAbilityFields: RoleAbility = req.body
+
     try {
-      const name = req.params.name
-      const resource = req.body.resource
-      const ability = req.body.ability as { name: string; description: string }
+      const document = await this.model.findOne({ value: role })
 
-      const role = await this.model.findOne({ name })
+      if (!find(document.abilities, { value: newAbilityFields.value })) {
+        document.abilities.push(newAbilityFields)
 
-      const roleResource = find(role.resources, { name: resource })
+        await document.save()
 
-      if (find(roleResource.abilities, { name: ability.name })) {
-        this.badRequest(next, 'Способность с таким названием уже существует')
+        api.io.emit(this.Emits.ABILITY_CREATED, document)
+        api.io.emit(this.Emits.ROLES_UPDATED)
+
+        this.success(res, document)
       } else {
-        roleResource.abilities.push({
-          ...ability,
-          value: true,
-        })
-
-        await role.save()
-
-        api.io.emit('ability created', role)
-        api.io.emit('update roles', name)
-
-        this.success(res, role)
+        this.badRequest(next, `Способность с кодовым именем "${newAbilityFields.value}" уже существует`)
       }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public deleteAbility: ControllerMethod = async (req, res, next) => {
-    try {
-      const name = req.params.name
-      const resource = req.body.resource
-      const ability = req.body.ability
-
-      const role = await this.model.findOne({ name })
-
-      const roleResource = find(role.resources, { name: resource })
-
-      roleResource.abilities = filter(roleResource.abilities, (e) => e.name !== ability)
-
-      await role.save()
-
-      api.io.emit('ability deleted', role)
-      api.io.emit('update roles', name)
-
-      this.success(res, role)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public updateAbility: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+    const ability = req.params.ability
+
+    const abilityFieldsToUpdate: Exclude<Partial<RoleAbility>, 'value'> = req.body
+
     try {
-      const name = req.params.name
-      const resource = req.body.resource
-      const ability = req.body.ability as { name: string; description: string; value: boolean }
+      const document = await this.model.findOne({ value: role })
 
-      const role = await this.model.findOne({ name })
+      const indexOfAbilityToUpdate = findIndex(document.abilities, { value: ability })
 
-      const roleResource = find(role.resources, { name: resource })
+      for (const field in abilityFieldsToUpdate) {
+        document.abilities[indexOfAbilityToUpdate][field] = abilityFieldsToUpdate[field]
+      }
 
-      const resourceAbility = find(roleResource.abilities, { name: ability.name })
+      await document.save()
 
-      resourceAbility.name = ability.name
-      resourceAbility.description = ability.description
-      resourceAbility.value = ability.value
+      api.io.emit(this.Emits.ABILITY_UPDATED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED)
 
-      await role.save()
-
-      api.io.emit('ability updated', role)
-      api.io.emit('update roles', name)
-
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
-  public createField: ControllerMethod = async (req, res, next) => {
+  public deleteAbility: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+    const ability = req.params.ability as string
+
     try {
-      const { role, resource, ability, field } = req.params
+      const document = await this.model.findOne({ value: role })
 
-      const fieldData: {
-        description: string
-        name: string
-        value: Array<string> | boolean | string
-        settings: {
-          operator: '=' | '!=' | 'in' | '!in'
-          type: 'array' | 'string' | 'boolean'
-        }
-      } = req.body
+      document.abilities = filter(document.abilities, (e) => e.value !== ability)
 
-      const model = await this.model.findOne({ name: role })
+      await document.save()
 
-      const modelResource = find(model.resources, { name: resource })
+      api.io.emit(this.Emits.ABILTIY_DELETED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED)
 
-      const modelAbility = find(modelResource.abilities, { name: ability })
-
-      if (!Array.isArray(modelAbility.fields)) {
-        modelAbility.fields = []
-      }
-
-      if (find(modelAbility.fields, { name: field })) {
-        this.badRequest(next, 'Поле с таким названием уже существует')
-      } else {
-        modelAbility.fields.push(fieldData)
-
-        await model.save()
-
-        api.io.emit('field created', fieldData)
-        api.io.emit('update roles', role)
-
-        this.success(res, model)
-      }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public updateField: ControllerMethod = async (req, res, next) => {
-    try {
-      const { role, resource, ability, field } = req.params
-
-      const fieldData: {
-        description: string
-        name: string
-        value: Array<string> | boolean | string
-        settings: {
-          operator: '=' | '!=' | 'in' | '!in'
-          type: 'array' | 'string' | 'boolean'
-        }
-      } = req.body
-
-      const model = await this.model.findOne({ name: role })
-
-      const modelResource = find(model.resources, { name: resource })
-
-      const modelAbility = find(modelResource.abilities, { name: ability })
-
-      const modelField = find(modelAbility?.fields, { name: field })
-
-      if (modelField) {
-        Object.assign(modelField, fieldData)
-
-        await model.save()
-
-        api.io.emit('field updated', role)
-        api.io.emit('update roles', role)
-
-        this.success(res, model)
-      } else {
-        this.badRequest(next, 'Поля с таким названием не существует')
-      }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public deleteField: ControllerMethod = async (req, res, next) => {
-    try {
-      const { role, resource, ability, field } = req.params
-
-      const model = await this.model.findOne({ name: role })
-
-      const modelResource = find(model.resources, { name: resource })
-
-      const modelAbility = find(modelResource.abilities, { name: ability })
-
-      modelAbility.fields = filter(modelAbility.fields, (e) => e.name !== field)
-
-      await model.save()
-
-      api.io.emit('field deleted', field)
-      api.io.emit('update roles', role)
-
-      this.success(res, model)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
