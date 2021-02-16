@@ -20,3 +20,21 @@ export interface Router {
       | IAutocompleteController
   ) => void
 }
+
+export type ExtendedRouterRouteEntry<T> = {
+  path: string
+  description: string
+  controllerMethod: keyof T
+  method: 'get' | 'post' | 'put' | 'delete'
+}
+
+export interface IExtendedRouter<T> {
+  expressRouter: express.Router
+  basePath: string
+  controller: T | null
+
+  addRoute: (route: ExtendedRouterRouteEntry<T>) => void
+  addRoutes: (routes: ExtendedRouterRouteEntry<T>[]) => void
+  defineRoutes: () => void
+  build: () => void
+}

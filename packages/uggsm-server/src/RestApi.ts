@@ -1,8 +1,7 @@
-import { UserModel } from './models/userModel'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-import { Router } from './interfaces'
+import { IExtendedRouter, Router } from './interfaces'
 import { errorMiddleware } from './middlewares'
 import * as endpointValidationMiddleware from './middlewares/validators/validateEndpoint'
 import { connectToDatabase } from './utils'
@@ -21,7 +20,7 @@ class RestApi {
   public io: SocketIO.Server | null = null
   public server: any = null
 
-  constructor(router: Router[]) {
+  constructor(router: Array<IExtendedRouter<any> | Router>) {
     connectToDatabase()
     this.initializeSocketIO()
     this.initializeMiddlewares()
@@ -38,12 +37,10 @@ class RestApi {
   public async listen() {
     this.server.listen(process.env.PORT)
 
-    await UserModel.updateMany({}, { tokens: [] })
-
     console.log('server listens on ' + process.env.PORT + ' port')
   }
 
-  private initializeRouter(routers: Router[]): void {
+  private initializeRouter(routers: Array<IExtendedRouter<any> | Router>): void {
     routers.forEach((router) => {
       this.expressApp.use('/v1/', router.expressRouter)
     })
