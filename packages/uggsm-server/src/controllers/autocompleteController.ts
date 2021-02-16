@@ -1,396 +1,311 @@
-import { NextFunction } from 'connect'
-import express from 'express'
+import { ControllerMethod } from './../interfaces/controller'
+import { BaseController } from './base/BaseController'
 import { isString, reduce } from 'lodash'
 import { HttpException } from '../exceptions'
 import { IAutocompleteController } from '../interfaces'
-import { ClientModel, OfficeModel, OrderModel, UserModel } from '../models'
+import { ClientModel, OrderModel, UserModel } from '../models'
 
-export class AutocompleteController implements IAutocompleteController {
+export class AutocompleteController extends BaseController implements IAutocompleteController {
   private user = UserModel
   private order = OrderModel
   private client = ClientModel
 
-  public customerName = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
-
-    if (!search) {
-      search = ''
+  private _normalizeQuery = (query: string) => {
+    if (!isString(query)) {
+      return ''
     }
 
-    if (isString(search)) {
-      try {
-        const response = await this.client
-          .find({ name: new RegExp(search, 'i') })
-          .select('name')
-          .limit(10)
-          .lean()
+    return query
+  }
 
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e.name, value: e.name })
-            return a
-          },
-          []
-        )
+  public customerName: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+    try {
+      const response = await this.client
+        .find({ name: new RegExp(search, 'i') })
+        .select('name')
+        .limit(10)
+        .lean()
+
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e.name, value: e.name })
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public customerPhone = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    const search = req.query.search
+  public customerPhone: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (isString(search)) {
-      try {
-        const response = await this.client.findOne({ name: search })
-        const reduced = reduce(
-          response.phone,
-          (a, e) => {
-            a.push({ text: e.phone, value: e.phone })
-            return a
-          },
-          []
-        )
+    try {
+      const response = await this.client.findOne({ name: search })
 
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+      const reduced = reduce(
+        response.phone,
+        (a, e) => {
+          a.push({ text: e.phone, value: e.phone })
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public phoneBrand = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+  public phoneBrand: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (!search) {
-      search = ''
-    }
-
-    if (isString(search)) {
-      try {
-        const response = await this.order
-          .aggregate([
-            { $match: { phoneBrand: new RegExp(search, 'i') } },
-            { $group: { _id: '$phoneBrand' } },
-            { $sample: { size: 10 } },
-          ])
-          .limit(10)
-
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e._id, value: e._id })
-
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
-    }
-  }
-
-  public phoneModel = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
-
-    if (!search) {
-      search = ''
-    }
-
-    if (isString(search)) {
-      try {
-        const response = await this.order.aggregate([
-          { $match: { phoneModel: new RegExp(search, 'i') } },
-          { $group: { _id: '$phoneModel' } },
+    try {
+      const response = await this.order
+        .aggregate([
+          { $match: { phoneBrand: new RegExp(search, 'i') } },
+          { $group: { _id: '$phoneBrand' } },
           { $sample: { size: 10 } },
         ])
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e._id, value: e._id })
+        .limit(10)
 
-            return a
-          },
-          []
-        )
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e._id, value: e._id })
 
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public declaredDefect = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+  public phoneModel: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (!search) {
-      search = ''
-    }
+    try {
+      const response = await this.order.aggregate([
+        { $match: { phoneModel: new RegExp(search, 'i') } },
+        { $group: { _id: '$phoneModel' } },
+        { $sample: { size: 10 } },
+      ])
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e._id, value: e._id })
 
-    if (isString(search)) {
-      try {
-        const response = await this.order
-          .aggregate([
-            { $match: { declaredDefect: new RegExp(search, 'i') } },
-            { $group: { _id: '$declaredDefect' } },
-            { $sample: { size: 10 } },
-          ])
-          .limit(10)
+          return a
+        },
+        []
+      )
 
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e._id, value: e._id })
-
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public appearance = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+  public declaredDefect: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (!search) {
-      search = ''
-    }
-
-    if (isString(search)) {
-      try {
-        const response = await this.order
-          .aggregate([
-            { $match: { appearance: new RegExp(search, 'i') } },
-            { $group: { _id: '$appearance' } },
-            { $sample: { size: 10 } },
-          ])
-          .limit(10)
-
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e._id, value: e._id })
-
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
-    }
-  }
-
-  public kit = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
-
-    if (!search) {
-      search = ''
-    }
-
-    if (isString(search)) {
-      try {
-        const response = await this.order
-          .aggregate([
-            { $match: { kit: new RegExp(search, 'i') } },
-            { $group: { _id: '$kit' } },
-            { $sample: { size: 10 } },
-          ])
-          .limit(10)
-
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e._id, value: e._id })
-
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
-    }
-  }
-
-  public completedWork = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
-
-    if (!search) {
-      search = ''
-    }
-
-    if (isString(search)) {
-      try {
-        const response = await this.order.aggregate([
-          { $unwind: '$statusWork' },
-          { $match: { 'statusWork.header': new RegExp(search, 'i') } },
-          {
-            $group: {
-              _id: { header: '$statusWork.header', price: '$statusWork.price', message: '$statusWork.message' },
-            },
-          },
+    try {
+      const response = await this.order
+        .aggregate([
+          { $match: { declaredDefect: new RegExp(search, 'i') } },
+          { $group: { _id: '$declaredDefect' } },
           { $sample: { size: 10 } },
         ])
+        .limit(10)
 
-        const reduced = reduce(
-          // @ts-ignore
-          response,
-          (a, e) => {
-            a.push({ text: e._id.header, value: e._id })
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e._id, value: e._id })
 
-            return a
-          },
-          []
-        )
+          return a
+        },
+        []
+      )
 
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public users = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+  public appearance: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
+
+    try {
+      const response = await this.order
+        .aggregate([
+          { $match: { appearance: new RegExp(search, 'i') } },
+          { $group: { _id: '$appearance' } },
+          { $sample: { size: 10 } },
+        ])
+        .limit(10)
+
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e._id, value: e._id })
+
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
+    }
+  }
+
+  public kit: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
+
+    try {
+      const response = await this.order
+        .aggregate([
+          { $match: { kit: new RegExp(search, 'i') } },
+          { $group: { _id: '$kit' } },
+          { $sample: { size: 10 } },
+        ])
+        .limit(10)
+
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e._id, value: e._id })
+
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
+    }
+  }
+
+  public completedWork: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
+
+    try {
+      const response = await this.order.aggregate([
+        { $unwind: '$statusWork' },
+        { $match: { 'statusWork.header': new RegExp(search, 'i') } },
+        {
+          $group: {
+            _id: { header: '$statusWork.header', price: '$statusWork.price', message: '$statusWork.message' },
+          },
+        },
+        { $sample: { size: 10 } },
+      ])
+
+      const reduced = reduce(
+        // @ts-ignore
+        response,
+        (a, e) => {
+          a.push({ text: e._id.header, value: e._id })
+
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
+    }
+  }
+
+  public users: ControllerMethod = async (req, res, next) => {
     const returnValue = req.query['return-value'] as string
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (!search) {
-      search = ''
-    }
+    try {
+      const response = await this.user.find({ credentials: new RegExp(search, 'i') }).lean()
 
-    if (isString(search)) {
-      try {
-        const response = await this.user.find({ credentials: new RegExp(search, 'i') }).lean()
+      const returns: string = returnValue ? returnValue : '_id'
 
-        const returns: string = returnValue ? returnValue : '_id'
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e.credentials, value: e[returns] })
 
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e.credentials, value: e[returns] })
+          return a
+        },
+        []
+      )
 
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public master = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+  // FIXME: in backend and frontend used as all roles
+  public master: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (!search) {
-      search = ''
-    }
+    try {
+      const response = await this.user
+        .find({ credentials: new RegExp(search, 'i'), role: { $in: ['master', 'manager', 'administrator'] } })
+        .select('_id credentials')
+        .lean()
 
-    if (isString(search)) {
-      try {
-        const response = await this.user
-          .find({ credentials: new RegExp(search, 'i'), role: { $in: ['master', 'manager', 'administrator'] } })
-          .select('_id credentials')
-          .lean()
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e.credentials, value: e._id })
 
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e.credentials, value: e._id })
+          return a
+        },
+        []
+      )
 
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 
-  public manager = async (req: express.Request, res: express.Response, next: NextFunction): Promise<void> => {
-    let search = req.query.search
+  public manager: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
 
-    if (!search) {
-      search = ''
-    }
+    try {
+      const response = await this.user
+        .find({ credentials: new RegExp(search, 'i'), role: { $in: ['manager', 'administrator'] } })
+        .select('_id credentials')
+        .lean()
 
-    if (isString(search)) {
-      try {
-        const response = await this.user
-          .find({ credentials: new RegExp(search, 'i'), role: { $in: ['manager', 'administrator'] } })
-          .select('_id credentials')
-          .lean()
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e.credentials, value: e._id })
 
-        const reduced = reduce(
-          response,
-          (a, e) => {
-            a.push({ text: e.credentials, value: e._id })
+          return a
+        },
+        []
+      )
 
-            return a
-          },
-          []
-        )
-
-        res.status(200)
-        res.send(reduced)
-      } catch (error) {
-        next(new HttpException(500, 'Неопознанная ошибка при поиске'))
-      }
-    } else {
-      next(new HttpException(400, 'Нет данных для поиска'))
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
     }
   }
 }

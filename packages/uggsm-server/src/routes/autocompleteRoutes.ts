@@ -1,31 +1,24 @@
-import express from 'express'
 import { AutocompleteController } from '../controllers'
-import { IAutocompleteController, Router } from '../interfaces'
-import { authenticationMiddleware } from '../middlewares'
+import { IAutocompleteController } from '../interfaces'
+import BaseRouter from './heplers/BaseRouter'
 
-export class AutocompleteRouter implements Router {
-  public expressRouter: express.Router = express.Router()
-
+export class AutocompleteRouter extends BaseRouter<IAutocompleteController> {
   constructor() {
-    const autocompleteController = new AutocompleteController()
-    this.initializeRoutes(autocompleteController)
+    super(AutocompleteController, '/autocomplete', false)
   }
 
-  public initializeRoutes(controller: IAutocompleteController): void {
-    const path = '/autocomplete'
-
+  initializeRoutes() {
     this.expressRouter
-      .all(`${path}*`, authenticationMiddleware)
-      .get(`${path}/customer-name`, controller.customerName)
-      .get(`${path}/customer-phone`, controller.customerPhone)
-      .get(`${path}/phone-brand`, controller.phoneBrand)
-      .get(`${path}/phone-model`, controller.phoneModel)
-      .get(`${path}/declared-defect`, controller.declaredDefect)
-      .get(`${path}/appearance`, controller.appearance)
-      .get(`${path}/kit`, controller.kit)
-      .get(`${path}/users`, controller.users)
-      .get(`${path}/master`, controller.master)
-      .get(`${path}/manager`, controller.manager)
-      .get(`${path}/completed-work`, controller.completedWork)
+      .get(this.prefixed('customer-name'), this.controller.customerName)
+      .get(this.prefixed('customer-phone'), this.controller.customerPhone)
+      .get(this.prefixed('phone-brand'), this.controller.phoneBrand)
+      .get(this.prefixed('phone-model'), this.controller.phoneModel)
+      .get(this.prefixed('declared-defect'), this.controller.declaredDefect)
+      .get(this.prefixed('appearance'), this.controller.appearance)
+      .get(this.prefixed('kit'), this.controller.kit)
+      .get(this.prefixed('users'), this.controller.users)
+      .get(this.prefixed('master'), this.controller.master)
+      .get(this.prefixed('manager'), this.controller.manager)
+      .get(this.prefixed('completed-work'), this.controller.completedWork)
   }
 }
