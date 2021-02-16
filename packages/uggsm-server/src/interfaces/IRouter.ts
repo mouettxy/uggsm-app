@@ -32,6 +32,7 @@ export interface IExtendedRouter<T> {
   expressRouter: express.Router
   basePath: string
   controller: T | null
+  routes: ExtendedRouterRouteEntry<T>[]
 
   addRoute: (route: ExtendedRouterRouteEntry<T>) => void
   addRoutes: (routes: ExtendedRouterRouteEntry<T>[]) => void

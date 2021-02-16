@@ -30,8 +30,8 @@ export class BaseRouter<T> implements Router {
   }
 }
 export class ExtendedRouter<T> implements IExtendedRouter<T> {
-  private routes: ExtendedRouterRouteEntry<T>[] = []
   private setAuthMiddleware = true
+  public routes: ExtendedRouterRouteEntry<T>[] = []
   public expressRouter: express.Router = express.Router()
 
   public basePath = ''

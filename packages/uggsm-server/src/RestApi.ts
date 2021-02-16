@@ -15,16 +15,22 @@ import path from 'path'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
-class RestApi {
+type RouterType = IExtendedRouter<any> | Router
+class RestApi<T> {
   public expressApp: express.Application = express()
   public io: SocketIO.Server | null = null
   public server: any = null
 
-  constructor(router: Array<IExtendedRouter<any> | Router>) {
+  public routers: Record<keyof T, RouterType> | null = null
+
+  constructor(routers: Record<keyof T, RouterType>) {
     connectToDatabase()
     this.initializeSocketIO()
     this.initializeMiddlewares()
-    this.initializeRouter(router)
+
+    this.routers = routers
+
+    this.initializeRouter()
     this.initializeErrorHandling()
   }
 
@@ -40,10 +46,10 @@ class RestApi {
     console.log('server listens on ' + process.env.PORT + ' port')
   }
 
-  private initializeRouter(routers: Array<IExtendedRouter<any> | Router>): void {
-    routers.forEach((router) => {
-      this.expressApp.use('/v1/', router.expressRouter)
-    })
+  private initializeRouter(): void {
+    for (const key in this.routers) {
+      this.expressApp.use('/v1/', this.routers[key].expressRouter)
+    }
   }
 
   private initializeMiddlewares(): void {

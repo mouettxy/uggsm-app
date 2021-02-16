@@ -19,19 +19,21 @@ import './services/logger'
 
 validateEnv()
 
-export const api = new RestApi([
-  new AuthenticationRouter(),
-  new OrdersRouter(),
-  new UsersRouter(),
-  new OfficeRouter(),
-  new CashRouter(),
-  new ClientRouter(),
-  new AdversitementRouter(),
-  new AutocompleteRouter(),
-  new EmailSubscriptionRouter(),
-  new CallsRouter(),
-  new RolesRouter(),
-])
+const Routers = {
+  authentification: new AuthenticationRouter(),
+  orders: new OrdersRouter(),
+  users: new UsersRouter(),
+  office: new OfficeRouter(),
+  cash: new CashRouter(),
+  client: new ClientRouter(),
+  adversitement: new AdversitementRouter(),
+  autocomplete: new AutocompleteRouter(),
+  emailSubscription: new EmailSubscriptionRouter(),
+  calls: new CallsRouter(),
+  roles: new RolesRouter(),
+}
+
+export const api = new RestApi<typeof Routers>(Routers)
 
 api.io.on('connection', () => {
   //
