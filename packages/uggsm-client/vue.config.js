@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-var-requires */
 
+const IgnoreNotFoundExportPlugin = require('./webpack/plugins/ignore-not-found-export-plugin')
 const SizePlugin = require('size-plugin')
 const zlib = require('zlib')
 const CompressionPlugin = require('compression-webpack-plugin')
-const isProductionEnvFlag = process.env.NODE_ENV === 'production'
 const TerserPlugin = require('terser-webpack-plugin')
 var DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack-plugin')
 
+const isProductionEnvFlag = process.env.NODE_ENV === 'production'
+
 let production = {}
+let developement = {}
 
 if (isProductionEnvFlag) {
   production.chainWebpack = (config) => {
@@ -93,10 +96,15 @@ if (isProductionEnvFlag) {
       ],
     },
   }
+} else {
+  developement.chainWebpack = (config) => {
+    config.plugin('IgnoreNotFoundExportPlugin').before('friendly-errors').use(IgnoreNotFoundExportPlugin)
+  }
 }
 
 module.exports = {
   ...production,
+  ...developement,
 
   devServer: {
     progress: false,
