@@ -15,13 +15,19 @@ export class RolesRouter extends ExtendedRouter<IRolesController> {
         method: 'get',
       },
       {
+        path: 'static/:type',
+        description: 'Получает статику',
+        controllerMethod: 'getStatic',
+        method: 'get',
+      },
+      {
         path: ':role',
         description: 'Получить роль',
         controllerMethod: 'getOne',
         method: 'get',
       },
       {
-        path: ':role',
+        path: '',
         description: 'Создать роль',
         controllerMethod: 'create',
         method: 'post',

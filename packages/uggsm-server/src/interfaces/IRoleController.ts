@@ -1,6 +1,8 @@
 import { ControllerMethod } from './controller'
 
 export type IRolesController = {
+  getStatic: ControllerMethod
+
   get: ControllerMethod
   getOne: ControllerMethod
   create: ControllerMethod

@@ -3,7 +3,7 @@ import { IRolesController } from '../interfaces/IRoleController'
 import { ControllerMethod } from '../interfaces/controller'
 import { api } from '../server'
 import BaseController from './base/BaseController'
-import { filter, find, findIndex } from 'lodash'
+import { filter, find, findIndex, includes } from 'lodash'
 
 enum Emits {
   ROLE_CREATED = 'role created',
@@ -17,7 +17,7 @@ enum Emits {
 }
 
 type RoleAbility = {
-  value: string
+  value: string | boolean | Array<string>
   name: string
   description: string
   operator: string
@@ -36,6 +36,51 @@ export class RolesController extends BaseController implements IRolesController 
   private model = RoleModel
 
   public Emits = Emits
+
+  public getStatic: ControllerMethod = async (req, res, next) => {
+    const staticData = {
+      types: [
+        {
+          text: 'Логическое значение',
+          value: 'boolean',
+        },
+        {
+          text: 'Строка',
+          value: 'string',
+        },
+        {
+          text: 'Список строк',
+          value: 'array',
+        },
+      ],
+      operators: [
+        {
+          text: 'Равно',
+          value: 'equals',
+        },
+        {
+          text: 'Не равно',
+          value: 'not equals',
+        },
+        {
+          text: 'В списке',
+          value: 'in array',
+        },
+        {
+          text: 'Не в списке',
+          value: 'not in array',
+        },
+      ],
+    }
+
+    const requestedStatic = req.params.type
+
+    if (includes(Object.keys(staticData), requestedStatic)) {
+      this.success(res, staticData[requestedStatic])
+    } else {
+      this.success(res, [])
+    }
+  }
 
   public get: ControllerMethod = async (req, res, next) => {
     try {
@@ -117,7 +162,7 @@ export class RolesController extends BaseController implements IRolesController 
     try {
       const document = await this.model.findOne({ value: role })
 
-      if (!find(document.abilities, { value: newAbilityFields.value })) {
+      if (!find(document.abilities, { name: newAbilityFields.name })) {
         document.abilities.push(newAbilityFields)
 
         await document.save()
@@ -138,12 +183,12 @@ export class RolesController extends BaseController implements IRolesController 
     const role = req.params.role
     const ability = req.params.ability
 
-    const abilityFieldsToUpdate: Exclude<Partial<RoleAbility>, 'value'> = req.body
+    const abilityFieldsToUpdate: Partial<RoleAbility> = req.body
 
     try {
       const document = await this.model.findOne({ value: role })
 
-      const indexOfAbilityToUpdate = findIndex(document.abilities, { value: ability })
+      const indexOfAbilityToUpdate = findIndex(document.abilities, { name: ability })
 
       for (const field in abilityFieldsToUpdate) {
         document.abilities[indexOfAbilityToUpdate][field] = abilityFieldsToUpdate[field]
@@ -167,7 +212,7 @@ export class RolesController extends BaseController implements IRolesController 
     try {
       const document = await this.model.findOne({ value: role })
 
-      document.abilities = filter(document.abilities, (e) => e.value !== ability)
+      document.abilities = filter(document.abilities, (e) => e.name !== ability)
 
       await document.save()
 
