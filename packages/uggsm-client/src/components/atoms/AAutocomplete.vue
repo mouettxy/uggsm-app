@@ -23,17 +23,12 @@ v-autocomplete(
   clearable,
   auto-select-first
 )
-  template(#item='data')
-    slot(
-      v-bind='data',
-      name='item'
-    )
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 
-import { isEmpty, map } from 'lodash'
+import { map } from 'lodash'
 
 import { VueMaskFilter } from 'v-mask'
 
