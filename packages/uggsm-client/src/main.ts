@@ -13,6 +13,7 @@ import '@/plugins/printer'
 import '@/plugins/v-mask'
 import '@/plugins/masonry'
 import '@/plugins/casl'
+import '@/plugins/markdown-directive'
 
 import vuetify from '@/plugins/vuetify'
 

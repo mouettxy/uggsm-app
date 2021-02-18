@@ -16561,6 +16561,13 @@ vue-cookies@^1.7.4:
   resolved "https://registry.yarnpkg.com/vue-cookies/-/vue-cookies-1.7.4.tgz#d241d0a0431da0795837651d10b4d73e7c8d3e8d"
   integrity sha512-mOS5Btr8V9zvAtkmQ7/TfqJIropOx7etDAgBywPCmHjvfJl2gFbH2XgoMghleLoyyMTi5eaJss0mPN7arMoslA==
 
+vue-directive-markdown@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/vue-directive-markdown/-/vue-directive-markdown-1.2.1.tgz#db0312fb973d486bd14c70dd35011d939620c6c4"
+  integrity sha512-nfmuLsvJjVc5CUrRRNlM8DBKNrHFo2uUZUrgKwd3NqkLmsr0E0lvD79NpLFXE/ETjsz54C9edZoHRLNNuY8apQ==
+  dependencies:
+    vue "^2.3.3"
+
 vue-eslint-parser@^7.0.0, vue-eslint-parser@^7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-7.1.1.tgz#c43c1c715ff50778b9a7e9a4e16921185f3425d3"
@@ -16676,7 +16683,7 @@ vue2-datepicker@^3.7.0:
     date-fns "^2.0.1"
     date-format-parse "^0.2.5"
 
-vue@^2.6.11, vue@^2.6.6:
+vue@^2.3.3, vue@^2.6.11, vue@^2.6.6:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
