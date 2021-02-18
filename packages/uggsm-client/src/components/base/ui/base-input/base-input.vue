@@ -15,7 +15,7 @@ v-text-field.ug-input(
   template(#append)
     .ug-input__append
       .ug-input__hint-content(ref='hint')
-        div(v-html='hint')
+        div(v-md.html) {{ hint }}
 
       .ug-input__mark
         //template(v-if='errors.length')
