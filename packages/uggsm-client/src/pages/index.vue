@@ -21,7 +21,7 @@
             :color='item.breakingPass ? "lightgrey" : "red"',
             small,
             label
-          ) Важные изменения. Требуется перезагрузить страницу несколько раз.
+          ) Важные изменения.
         v-list
           template(v-for='child in item.items')
             template(v-if='child.link')
@@ -54,6 +54,28 @@ import moment from 'moment'
 @Component
 export default class PageIndex extends Vue {
   public news = [
+    {
+      date: moment('11.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      breaking: true,
+      items: [
+        {
+          type: 'feature',
+          text: 'Улучшение системы ролей',
+        },
+        {
+          type: 'feature',
+          text: 'Добавлен фильтр по дате (промежутку дат) заявки',
+        },
+        {
+          type: 'fix',
+          text: 'Исправлено сьезжание интерфейса при статусе оплаты заявки "Оплачено"',
+        },
+        {
+          type: 'fix',
+          text: 'Исправлено несоответствие меню страницам отчётов',
+        },
+      ],
+    },
     {
       date: moment('11.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       breaking: false,
