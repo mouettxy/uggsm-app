@@ -1,9 +1,11 @@
+import { Actions, Subjects } from './../UggsmAbility'
 export type RoleAbility = {
   value: string | boolean | Array<string>
-  name: string
+  name: Actions
   description: string
   operator: string
   type: string
+  resource?: Subjects
   autocomplete: string
 }
 

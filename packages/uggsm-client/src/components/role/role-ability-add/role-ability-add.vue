@@ -98,6 +98,7 @@ import { Role } from '@/typings/api/role'
 import { cloneDeep } from 'lodash'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { normalizedMenus } from '@/api/helpers/menus'
+import { Actions } from '@/typings/UggsmAbility'
 
 enum Defaults {
   TYPE = 'boolean',
@@ -109,7 +110,7 @@ export default class UgRoleAbilityAdd extends Vue {
   @Prop({ required: true }) role!: Role
 
   public value: string | boolean | Array<string> | null = null
-  public name = ''
+  public name: Actions = ''
   public description = ''
   public operator: string = Defaults.TYPE
   public type: string = Defaults.OPERATOR

@@ -21,11 +21,17 @@ import store from '@/store'
 import router from '@/router'
 
 import moment from 'moment'
+import { tryUpdateRoleAbilities } from '@/plugins/casl'
 moment.locale('ru')
 
 Vue.config.productionTip = false
 
 new Vue({
+  sockets: {
+    ['roles updated'](role: string) {
+      tryUpdateRoleAbilities(role)
+    },
+  },
   vuetify,
   store,
   router,
