@@ -6,13 +6,13 @@
     dense
   )
     m-cash-modal-actions(
-      v-if='$can("addIncome", "Order") && displayActions',
+      v-if='$can("addOrderIncome", "Global") && displayActions',
       :order-id='order.id',
       :customer='order.customer',
       type='income'
     )
     m-cash-modal-actions(
-      v-if='$can("addConsumption", "Order") && displayActions',
+      v-if='$can("addOrderConsumption", "Global") && displayActions',
       :order-id='order.id',
       :customer='order.customer',
       type='consumption'

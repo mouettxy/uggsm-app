@@ -5,7 +5,7 @@
       o-order-modal-regular-printer(:order='order')
     v-col(cols='auto')
       v-menu(
-        v-if='$can("editOffice", "Order")',
+        v-if='$can("editOrderOffice", "Global")',
         :close-on-content-click='false',
         bottom
       )

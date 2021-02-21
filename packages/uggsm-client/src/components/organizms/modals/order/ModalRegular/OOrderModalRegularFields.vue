@@ -202,11 +202,11 @@ export default class OOrderModalRegularFields extends Vue {
   }
 
   get canEditGeneralFields() {
-    return !this.$can('edit', 'Order')
+    return !this.$can('editOrder', 'Global')
   }
 
   get isMasterFieldDisabled() {
-    if (this.$can('editMaster', 'Order')) {
+    if (this.$can('editOrderMaster', 'Global')) {
       return false
     }
 
@@ -214,7 +214,7 @@ export default class OOrderModalRegularFields extends Vue {
   }
 
   get isManagerFieldDisabled() {
-    if (this.$can('editManager', 'Order')) {
+    if (this.$can('editOrderManager', 'Global')) {
       return false
     }
 

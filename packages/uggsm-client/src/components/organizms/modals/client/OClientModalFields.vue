@@ -100,7 +100,7 @@
               v-btn(
                 v-on='on',
                 v-bind='attrs',
-                :disabled='!$can("addPhone", "Client")',
+                :disabled='!$can("addClientPhone", "Global")',
                 icon,
                 color='primary'
               )
@@ -145,7 +145,7 @@
             )
               span {{ phone.phone | VMask("+7 (###) ###-##-##") }}
               v-btn(
-                :disabled='!$can("deletePhone", "Client")',
+                :disabled='!$can("deleteClientPhone", "Global")',
                 @click='deletePhone(phone.id)',
                 icon,
                 color='error'
@@ -172,7 +172,7 @@ export default class OClientModalFields extends Vue {
   public clientTypeSelect = ['физ. лицо', 'компания']
 
   get canEditGeneralFields() {
-    return !this.$can('edit', 'Client')
+    return !this.$can('editClient', 'Global')
   }
 
   get model() {

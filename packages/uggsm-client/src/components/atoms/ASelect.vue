@@ -24,7 +24,7 @@ v-select.a-select(
       :item='item',
       :index='index'
     )
-      span {{ item }}
+      span {{ item["text"] }}
 </template>
 
 <script lang="ts">

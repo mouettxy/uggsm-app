@@ -2,7 +2,7 @@
 .workflow-call
   template(v-if='call')
     template(v-if='call.answered')
-      template(v-if='$can("listen", "Call")')
+      template(v-if='$can("listenCalls", "Global")')
         m-bottom-audio-player(
           :title='call.manager',
           :subtitle='call.managerNumber + " -> " + call.clientNumber',

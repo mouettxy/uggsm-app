@@ -4,12 +4,12 @@
     template(#main-toolbar)
       v-col(
         cols='auto',
-        v-if='$can("addIncome", "Cash")'
+        v-if='$can("addCashIncome", "Global")'
       )
         m-cash-modal-actions(type='income')
       v-col(cols='auto')
         m-cash-modal-actions(
-          v-if='$can("addConsumption", "Cash")',
+          v-if='$can("addCashConsumption", "Global")',
           type='consumption'
         )
       v-col(cols='auto')

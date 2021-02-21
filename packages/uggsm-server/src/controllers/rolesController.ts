@@ -3,10 +3,237 @@ import { IRolesController } from '../interfaces/IRoleController'
 import { ControllerMethod } from '../interfaces/controller'
 import { api } from '../server'
 import BaseController from './base/BaseController'
-import { filter, find, findIndex } from 'lodash'
+import { filter, find, findIndex, includes } from 'lodash'
+
+enum Emits {
+  ROLE_CREATED = 'role created',
+  ROLE_UPDATED = 'role updated',
+  ROLE_DELETED = 'role deleted',
+  ABILITY_CREATED = 'role ability created',
+  ABILITY_UPDATED = 'role ability updated',
+  ABILTIY_DELETED = 'role ability deleted',
+
+  ROLES_UPDATED = 'roles updated',
+}
+
+type RoleAbility = {
+  value: string | boolean | Array<string>
+  name: string
+  description: string
+  operator: string
+  type: string
+  autocomplete: string
+}
+
+type Role = {
+  value: string
+  name: string
+  description: string
+  abilities: RoleAbility[]
+}
 
 export class RolesController extends BaseController implements IRolesController {
   private model = RoleModel
+  private static = {
+    defaultAbilities: [
+      {
+        value: [],
+        name: 'access',
+        description: 'Доступ к ссылкам',
+        operator: 'not in array',
+        type: 'array',
+        autocomplete: 'access-links-list',
+      },
+      {
+        value: true,
+        name: 'createOrder',
+        description: 'Создавать заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrder',
+        description: 'Редактировать заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'createGuarantyOrder',
+        description: 'Создавать гарантийные заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderManager',
+        description: 'Редактировать менеджера заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addOrderWork',
+        description: 'Добавлять работу к заявке',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'deleteOrderWork',
+        description: 'Удалять работу из заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addOrderIncome',
+        description: 'Добавлять приход к заявке',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addOrderConsumption',
+        description: 'Добавлять расход к заявке',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderStatus',
+        description: 'Редактировать статус заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderOffice',
+        description: 'Менять офис заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderMaster',
+        description: 'Редактировать исполнителя заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editClient',
+        description: 'Редактировать клиентов',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addClientPhone',
+        description: 'Добавлять телефон клиенту',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'deleteClientPhone',
+        description: 'Удалять телефон клиента',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addCashIncome',
+        description: 'Добавлять приход в кассе',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addCashConsumption',
+        description: 'Добавлять расход в кассе',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'listenCalls',
+        description: 'Может прослушивать звонки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: ['Гаврилова', 'Гоголя', 'Ставропольская', 'UGGSM', 'iMarket Брюховецкая'],
+        name: 'seeOrders',
+        description: 'Видит заявки из офисов',
+        operator: 'in array',
+        type: 'array',
+        autocomplete: 'offices',
+      },
+    ],
+    types: [
+      {
+        text: 'Логическое значение',
+        value: 'boolean',
+      },
+      {
+        text: 'Строка',
+        value: 'string',
+      },
+      {
+        text: 'Список строк',
+        value: 'array',
+      },
+    ],
+    operators: [
+      {
+        text: 'Равно',
+        value: 'equals',
+      },
+      {
+        text: 'Не равно',
+        value: 'not equals',
+      },
+      {
+        text: 'В списке',
+        value: 'in array',
+      },
+      {
+        text: 'Не в списке',
+        value: 'not in array',
+      },
+    ],
+  }
+
+  public Emits = Emits
+
+  public getStatic: ControllerMethod = async (req, res, next) => {
+    const requestedStatic = req.params.type
+
+    if (includes(Object.keys(this.static), requestedStatic)) {
+      this.success(res, this.static[requestedStatic])
+    } else {
+      this.success(res, [])
+    }
+  }
 
   public get: ControllerMethod = async (req, res, next) => {
     try {
@@ -18,305 +245,134 @@ export class RolesController extends BaseController implements IRolesController 
     }
   }
 
-  public getByName: ControllerMethod = async (req, res, next) => {
+  public getOne: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
     try {
-      const name = req.params.name
+      const document = await this.model.findOne({ value: role })
 
-      const role = await this.model.findOne({ name })
-
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public create: ControllerMethod = async (req, res, next) => {
+    const newRoleFields: Role = req.body
+
+    const defaultAbilities = this.static.defaultAbilities
+
+    newRoleFields.abilities = defaultAbilities
+
     try {
-      let data
-      if (req.body.resources) {
-        data = req.body
-      } else {
-        data = {
-          ...req.body,
-          resources: [],
-        }
-      }
+      const document = await this.model.create(newRoleFields)
 
-      const role = await this.model.create(data)
+      api.io.emit(this.Emits.ROLE_CREATED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED, newRoleFields.value)
 
-      await role.save()
-
-      api.io.emit('role created', role)
-      api.io.emit('update roles')
-
-      this.success(res, role)
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public delete: ControllerMethod = async (req, res, next) => {
-    try {
-      const name = req.params.name
-
-      await this.model.findOneAndRemove({ name })
-
-      api.io.emit('role deleted', name)
-      api.io.emit('update roles', name)
-
-      this.success(res, 'OK')
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public update: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+
+    const roleFieldsToUpdate: Partial<Role> = req.body
+
     try {
-      const name = req.params.name
-      const data = req.body.data
+      const document = await this.model.findOneAndUpdate({ value: role }, roleFieldsToUpdate)
 
-      const role = await this.model.findOneAndUpdate({ name }, data)
+      api.io.emit(this.Emits.ROLE_UPDATED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
-  public createResource: ControllerMethod = async (req, res, next) => {
+  public delete: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+
     try {
-      const name = req.params.name
-      const resource = {
-        name: req.body.name,
-        description: req.body.description,
-      }
+      const document = await this.model.findOneAndDelete({ value: role })
 
-      const role = await this.model.findOne({ name })
+      api.io.emit(this.Emits.ROLE_DELETED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
-      if (find(role.resources, { name: resource.name })) {
-        this.badRequest(next, 'Ресурс с таким названием уже существует')
-      } else {
-        role.resources.push({
-          ...resource,
-          abilities: [
-            {
-              name: 'access',
-              description: 'Доступ к ресурсу',
-              value: true,
-            },
-          ],
-        })
-
-        await role.save()
-
-        api.io.emit('resource created', role)
-        api.io.emit('update roles', name)
-
-        this.success(res, role)
-      }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public deleteResource: ControllerMethod = async (req, res, next) => {
-    try {
-      const name = req.params.name
-      const resource = req.body.resource
-
-      const role = await this.model.findOne({ name })
-
-      role.resources = filter(role.resources, (e) => e.name !== resource)
-
-      await role.save()
-
-      api.io.emit('resource deleted', role)
-      api.io.emit('update roles', name)
-
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public createAbility: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+
+    const newAbilityFields: RoleAbility = req.body
+
     try {
-      const name = req.params.name
-      const resource = req.body.resource
-      const ability = req.body.ability as { name: string; description: string }
+      const document = await this.model.findOne({ value: role })
 
-      const role = await this.model.findOne({ name })
+      if (!find(document.abilities, { name: newAbilityFields.name })) {
+        document.abilities.push(newAbilityFields)
 
-      const roleResource = find(role.resources, { name: resource })
+        await document.save()
 
-      if (find(roleResource.abilities, { name: ability.name })) {
-        this.badRequest(next, 'Способность с таким названием уже существует')
+        api.io.emit(this.Emits.ABILITY_CREATED, document)
+        api.io.emit(this.Emits.ROLES_UPDATED, role)
+
+        this.success(res, document)
       } else {
-        roleResource.abilities.push({
-          ...ability,
-          value: true,
-        })
-
-        await role.save()
-
-        api.io.emit('ability created', role)
-        api.io.emit('update roles', name)
-
-        this.success(res, role)
+        this.badRequest(next, `Способность с кодовым именем "${newAbilityFields.value}" уже существует`)
       }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public deleteAbility: ControllerMethod = async (req, res, next) => {
-    try {
-      const name = req.params.name
-      const resource = req.body.resource
-      const ability = req.body.ability
-
-      const role = await this.model.findOne({ name })
-
-      const roleResource = find(role.resources, { name: resource })
-
-      roleResource.abilities = filter(roleResource.abilities, (e) => e.name !== ability)
-
-      await role.save()
-
-      api.io.emit('ability deleted', role)
-      api.io.emit('update roles', name)
-
-      this.success(res, role)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
   public updateAbility: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+    const ability = req.params.ability
+
+    const abilityFieldsToUpdate: Partial<RoleAbility> = req.body
+
     try {
-      const name = req.params.name
-      const resource = req.body.resource
-      const ability = req.body.ability as { name: string; description: string; value: boolean }
+      const document = await this.model.findOne({ value: role })
 
-      const role = await this.model.findOne({ name })
+      const indexOfAbilityToUpdate = findIndex(document.abilities, { name: ability })
 
-      const roleResource = find(role.resources, { name: resource })
+      for (const field in abilityFieldsToUpdate) {
+        document.abilities[indexOfAbilityToUpdate][field] = abilityFieldsToUpdate[field]
+      }
 
-      const resourceAbility = find(roleResource.abilities, { name: ability.name })
+      await document.save()
 
-      resourceAbility.name = ability.name
-      resourceAbility.description = ability.description
-      resourceAbility.value = ability.value
+      api.io.emit(this.Emits.ABILITY_UPDATED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
-      await role.save()
-
-      api.io.emit('ability updated', role)
-      api.io.emit('update roles', name)
-
-      this.success(res, role)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }
   }
 
-  public createField: ControllerMethod = async (req, res, next) => {
+  public deleteAbility: ControllerMethod = async (req, res, next) => {
+    const role = req.params.role
+    const ability = req.params.ability as string
+
     try {
-      const { role, resource, ability, field } = req.params
+      const document = await this.model.findOne({ value: role })
 
-      const fieldData: {
-        description: string
-        name: string
-        value: Array<string> | boolean | string
-        settings: {
-          operator: '=' | '!=' | 'in' | '!in'
-          type: 'array' | 'string' | 'boolean'
-        }
-      } = req.body
+      document.abilities = filter(document.abilities, (e) => e.name !== ability)
 
-      const model = await this.model.findOne({ name: role })
+      await document.save()
 
-      const modelResource = find(model.resources, { name: resource })
+      api.io.emit(this.Emits.ABILTIY_DELETED, document)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
-      const modelAbility = find(modelResource.abilities, { name: ability })
-
-      if (!Array.isArray(modelAbility.fields)) {
-        modelAbility.fields = []
-      }
-
-      if (find(modelAbility.fields, { name: field })) {
-        this.badRequest(next, 'Поле с таким названием уже существует')
-      } else {
-        modelAbility.fields.push(fieldData)
-
-        await model.save()
-
-        api.io.emit('field created', fieldData)
-        api.io.emit('update roles', role)
-
-        this.success(res, model)
-      }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public updateField: ControllerMethod = async (req, res, next) => {
-    try {
-      const { role, resource, ability, field } = req.params
-
-      const fieldData: {
-        description: string
-        name: string
-        value: Array<string> | boolean | string
-        settings: {
-          operator: '=' | '!=' | 'in' | '!in'
-          type: 'array' | 'string' | 'boolean'
-        }
-      } = req.body
-
-      const model = await this.model.findOne({ name: role })
-
-      const modelResource = find(model.resources, { name: resource })
-
-      const modelAbility = find(modelResource.abilities, { name: ability })
-
-      const modelField = find(modelAbility?.fields, { name: field })
-
-      if (modelField) {
-        Object.assign(modelField, fieldData)
-
-        await model.save()
-
-        api.io.emit('field updated', role)
-        api.io.emit('update roles', role)
-
-        this.success(res, model)
-      } else {
-        this.badRequest(next, 'Поля с таким названием не существует')
-      }
-    } catch (error) {
-      this.criticalError(next, error)
-    }
-  }
-
-  public deleteField: ControllerMethod = async (req, res, next) => {
-    try {
-      const { role, resource, ability, field } = req.params
-
-      const model = await this.model.findOne({ name: role })
-
-      const modelResource = find(model.resources, { name: resource })
-
-      const modelAbility = find(modelResource.abilities, { name: ability })
-
-      modelAbility.fields = filter(modelAbility.fields, (e) => e.name !== field)
-
-      await model.save()
-
-      api.io.emit('field deleted', field)
-      api.io.emit('update roles', role)
-
-      this.success(res, model)
+      this.success(res, document)
     } catch (error) {
       this.criticalError(next, error)
     }

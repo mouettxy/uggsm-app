@@ -1,38 +1,23 @@
-export type FieldSettings = {
-  operator: '=' | '!=' | 'in' | '!in'
-  type: 'array' | 'string' | 'boolean'
-}
-
-export type AbilityField = {
-  description: string
-  name: string
-  value: Array<string> | boolean | string
-  settings: FieldSettings
-}
-
+import { Actions, Subjects } from './../UggsmAbility'
 export type RoleAbility = {
-  name: string
+  value: string | boolean | Array<string>
+  name: Actions
   description: string
-  value: boolean
-  fields?: AbilityField[]
+  operator: string
+  type: string
+  resource?: Subjects
+  autocomplete: string
 }
 
-export type RoleResource = {
+export type Role = {
+  value: string
   name: string
   description: string
   abilities: RoleAbility[]
 }
 
-export type Role = {
-  name: string
-  description: string
-  resources: RoleResource[]
-}
-
 export type Roles = Role[]
 
-export type RoleInput = Omit<Role, 'resources'> & { resources?: RoleResource[] }
+export type RoleInput = Omit<Role, 'abilities'>
 
-export type ResourceInput = Omit<RoleResource, 'abilities'>
-
-export type AbilityInput = Omit<RoleAbility, 'value'>
+export type AbilityInput = RoleAbility

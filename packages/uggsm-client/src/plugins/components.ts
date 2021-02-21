@@ -1,11 +1,21 @@
+import { isNull, startsWith } from 'lodash'
+import { start } from 'repl'
 import Vue from 'vue'
 
 function requireComponents(req: any) {
   for (const key of req.keys()) {
-    const name = /(\w*)\.(vue)$/g.exec(key)
+    const name = /[\w,\s-]+\.(vue)$/g.exec(key)
 
-    if (name) {
-      Vue.component(name[1], req(key).default)
+    if (!isNull(name)) {
+      let componentName = name[0]
+
+      if (startsWith(key, './base') || startsWith(key, './role')) {
+        componentName = 'ug-' + componentName
+      }
+
+      if (name) {
+        Vue.component(componentName.slice(0, -4), req(key).default)
+      }
     }
   }
 }
@@ -15,6 +25,7 @@ requireComponents(req1)
 if (module.hot) {
   module.hot.accept(req1.id, () => {
     req1 = require.context('../components', true, /\.(vue)$/i)
+
     requireComponents(req1)
   })
 }

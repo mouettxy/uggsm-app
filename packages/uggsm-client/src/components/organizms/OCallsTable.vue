@@ -30,7 +30,7 @@
         span.error--text Не найдена
     template(#item.record='{value, item}')
       template(v-if='value')
-        template(v-if='$can("listen", "Call")')
+        template(v-if='$can("listenCalls", "Global")')
           m-bottom-audio-player(
             :title='item.manager',
             :subtitle='item.managerNumber + " -> " + item.clientNumber',

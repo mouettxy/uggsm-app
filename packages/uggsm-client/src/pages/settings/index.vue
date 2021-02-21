@@ -10,7 +10,7 @@
 
 <template lang="pug">
 .page-settings.pa-4
-  t-settings-main
+  ug-role-widget
 </template>
 
 <script lang="ts">

@@ -8,7 +8,7 @@ import cash from '@/store/cash'
 import client from '@/store/client'
 import calls from '@/store/calls'
 import users from '@/store/users'
-import roles from '@/store/roles'
+//import roles from '@/store/roles'
 import emailSubscription from '@/store/emailSubscription'
 import createPersistedState from 'vuex-persistedstate'
 
@@ -33,7 +33,7 @@ export const store = new Vuex.Store({
     client,
     calls,
     emailSubscription,
-    roles,
+    //roles,
   },
   plugins: [persistedState],
 })
@@ -51,6 +51,6 @@ export const clientModule = getModuleProxy(client)
 export const callModule = getModuleProxy(calls)
 export const emailSubscriptionModel = getModuleProxy(emailSubscription)
 export const usersModule = getModuleProxy(users)
-export const rolesModule = getModuleProxy(roles)
+// export const rolesModule = getModuleProxy(roles)
 
 export default store

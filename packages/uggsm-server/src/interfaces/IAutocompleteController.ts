@@ -12,6 +12,7 @@ export interface IAutocompleteController {
   users: ControllerMethod
   manager: ControllerMethod
   completedWork: ControllerMethod
+  offices: ControllerMethod
 
   listOfRoutes: ControllerMethod
 }

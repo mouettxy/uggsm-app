@@ -33,7 +33,7 @@ export class AutocompleteRouter extends ExtendedRouter<IAutocompleteController> 
         method: 'get',
       },
       {
-        path: 'declared-deffect',
+        path: 'declared-defect',
         description: 'Первичные деффекты',
         controllerMethod: 'declaredDefect',
         method: 'get',
@@ -66,6 +66,12 @@ export class AutocompleteRouter extends ExtendedRouter<IAutocompleteController> 
         path: 'completed-work',
         description: 'Выполненные работы',
         controllerMethod: 'completedWork',
+        method: 'get',
+      },
+      {
+        path: 'offices',
+        description: 'Офисы',
+        controllerMethod: 'offices',
         method: 'get',
       },
       {

@@ -14,7 +14,7 @@ v-select.office-switcher(
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { officesModule } from '@/store'
-import { map } from 'lodash'
+import { compact, map } from 'lodash'
 
 /**
  * Atom that switch offices
@@ -40,7 +40,13 @@ export default class MOfficeSwitcher extends Vue {
   }
 
   get items() {
-    return map(officesModule.offices, (el) => `${el.code}|${el.name}`)
+    return compact(
+      map(officesModule.offices, (el) => {
+        if (this.$can('seeOffices', 'Global', el.name)) {
+          return `${el.code}|${el.name}`
+        }
+      })
+    )
   }
 
   mounted() {

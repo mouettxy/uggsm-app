@@ -1,8 +1,16 @@
-import { AppAbility } from './AppAbility'
+import { UggsmAbility, Actions, Subjects } from './../UggsmAbility'
 
-declare module 'vue' {
-  interface ComponentCustomProperties {
-    $ability: AppAbility
-    $can(this: this, ...args: any): boolean
+declare module 'vue/types/vue' {
+  interface Vue {
+    $ability: UggsmAbility
+    $can(
+      this: this,
+      ...args: Parameters<(...args: [action: Actions] | [action: Actions, subject: Subjects, field?: any]) => boolean>
+    ): boolean
+  }
+}
+declare module 'vue/types/options' {
+  interface ComponentOptions<V extends Vue> {
+    ability?: UggsmAbility
   }
 }

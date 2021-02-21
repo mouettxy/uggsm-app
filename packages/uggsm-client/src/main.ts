@@ -12,6 +12,7 @@ import '@/plugins/components'
 import '@/plugins/printer'
 import '@/plugins/v-mask'
 import '@/plugins/casl'
+import '@/plugins/markdown-directive'
 
 import vuetify from '@/plugins/vuetify'
 
@@ -19,11 +20,17 @@ import store from '@/store'
 import router from '@/router'
 
 import moment from 'moment'
+import { tryUpdateRoleAbilities } from '@/plugins/casl'
 moment.locale('ru')
 
 Vue.config.productionTip = false
 
 new Vue({
+  sockets: {
+    ['roles updated'](role: string) {
+      tryUpdateRoleAbilities(role)
+    },
+  },
   vuetify,
   store,
   router,
