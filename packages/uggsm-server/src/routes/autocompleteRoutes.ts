@@ -69,6 +69,12 @@ export class AutocompleteRouter extends ExtendedRouter<IAutocompleteController> 
         method: 'get',
       },
       {
+        path: 'offices',
+        description: 'Офисы',
+        controllerMethod: 'offices',
+        method: 'get',
+      },
+      {
         path: 'routes',
         description: 'Ссылки автозаполнения',
         controllerMethod: 'listOfRoutes',
