@@ -16,7 +16,7 @@ v-card.ug-role-menu(
     )
       v-slide-y-transition(group)
         v-list-item(
-          v-for='item in items',
+          v-for='item in roles',
           :key='item.name',
           two-line
         )
@@ -75,17 +75,22 @@ v-card.ug-role-menu(
 import { copyTextToClipboard } from '@/api/helpers'
 import RoleAPI from '@/api/role'
 import { usersModule } from '@/store'
-import { Roles } from '@/typings/api/role'
-import { find } from 'lodash'
+import { Role, Roles } from '@/typings/api/role'
+import { compact, find, includes, map } from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class UgRoleMenu extends Vue {
   @Prop() items!: Roles
+  @Prop() rolesToHide!: Array<string>
 
   public user = ''
 
   public selectedItem = 0
+
+  get roles() {
+    return compact(map(this.items, (e) => (!includes(this.rolesToHide, e.value) ? e : null)))
+  }
 
   roleChange() {
     if (this.items[this.selectedItem]) {

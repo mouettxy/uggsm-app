@@ -3,6 +3,7 @@
   v-row
     v-col(cols='2')
       ug-role-menu(
+        :roles-to-hide='rolesToHide',
         :items='roles',
         @select='handleMenuSelect'
       )
@@ -16,11 +17,17 @@ import { Role, Roles } from '@/typings/api/role'
 import { Socket } from 'vue-socket.io-extended'
 import { Component, Vue } from 'vue-property-decorator'
 
+enum hideRoles {
+  ADMINISTRATOR = 'administrator',
+}
+
 @Component
 export default class UgRoleList extends Vue {
   public roles: Roles | null = null
 
-  public role = null
+  public role: Role | null = null
+
+  public rolesToHide = [hideRoles.ADMINISTRATOR]
 
   @Socket('roles updated')
   async onSocketRolesUpdated() {
@@ -51,7 +58,7 @@ export default class UgRoleList extends Vue {
   }
 
   handleMenuSelect(role: Role) {
-    console.log(role)
+    this.role = role
   }
 
   async mounted() {
