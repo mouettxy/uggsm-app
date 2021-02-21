@@ -1,3 +1,5 @@
+import { map } from 'lodash'
+
 export const defaultMenu = [
   {
     linkName: 'index',
@@ -103,3 +105,8 @@ export const settingsMenu = [
     resource: 'Settings',
   },
 ]
+
+export const normalizedMenus = map([...defaultMenu, ...reportsMenu, ...settingsMenu], (e) => ({
+  text: e.title,
+  value: e.linkName,
+}))
