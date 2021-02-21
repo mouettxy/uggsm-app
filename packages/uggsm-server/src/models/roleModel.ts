@@ -28,7 +28,7 @@ export class Role {
   @prop({ required: true })
   public name!: string
 
-  @prop({ required: true })
+  @prop()
   public description!: string
 
   @prop({ default: [], type: () => [RoleAbility], _id: false })
