@@ -10,7 +10,7 @@ form(@submit.prevent='handleSubmit')
     v-col(cols='4')
       a-select(
         v-model='type',
-        :items='types',
+        :items='extendedTypes',
         label='Тип данных значения',
         item-value='value',
         item-text='text'
@@ -44,7 +44,13 @@ form(@submit.prevent='handleSubmit')
       )
     v-col(cols='4')
       v-slide-x-transition
-        div(v-if='autocomplete && type === "array"')
+        div(v-if='type === "accessList"')
+          a-select-many(
+            v-model='value',
+            :items='accessLinksList',
+            label='Значение способности'
+          )
+        div(v-else-if='autocomplete && type === "array"')
           ug-tag-autocomplete(
             v-model='value',
             :path='`/${autocomplete}`',
@@ -89,7 +95,9 @@ form(@submit.prevent='handleSubmit')
 <script lang="ts">
 import RoleAPI from '@/api/role'
 import { Role } from '@/typings/api/role'
+import { cloneDeep } from 'lodash'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { normalizedMenus } from '@/api/helpers/menus'
 
 enum Defaults {
   TYPE = 'boolean',
@@ -110,6 +118,8 @@ export default class UgRoleAbilityAdd extends Vue {
   public types: { text: string; value: string }[] = []
   public operators: { text: string; value: string }[] = []
 
+  public accessLinksList = normalizedMenus
+
   public descriptionHint = `
   #### Рекомендации к заполнению
 
@@ -126,11 +136,27 @@ export default class UgRoleAbilityAdd extends Vue {
   onTypeChange(value: string) {
     if (value === 'string') {
       this.value = ''
+      this.operator = 'equals'
     } else if (value === 'boolean') {
       this.value = false
+      this.operator = 'equals'
     } else if (value === 'array') {
       this.value = []
+      this.operator = 'in array'
+    } else if (value === 'accessList') {
+      this.value = []
+      this.operator = 'in array'
     }
+  }
+
+  get extendedTypes() {
+    return [
+      ...this.types,
+      {
+        text: 'Список ссылок доступа',
+        value: 'accessList',
+      },
+    ]
   }
 
   get isAddAbilityDisabled() {
@@ -168,7 +194,7 @@ export default class UgRoleAbilityAdd extends Vue {
       return
     }
 
-    const apiResponse = await RoleAPI.createAbility(this.role.value, {
+    const fields = cloneDeep({
       value: this.value,
       name: this.name,
       description: this.description,
@@ -176,6 +202,16 @@ export default class UgRoleAbilityAdd extends Vue {
       type: this.type,
       autocomplete: this.autocomplete,
     })
+
+    // if field type is access list we change it to it's real type (array)
+    // and make unique autocomplete endpoint
+    // so other components can know what autocomplete needs to be rendered
+    if (fields.type === 'accessList') {
+      fields.type = 'array'
+      fields.autocomplete = 'access-links-list'
+    }
+
+    const apiResponse = await RoleAPI.createAbility(this.role.value, fields)
 
     if (!(apiResponse.status === 200)) {
       this.$notification.error(`Ошибка сервера при создании способности ${this.description}`)

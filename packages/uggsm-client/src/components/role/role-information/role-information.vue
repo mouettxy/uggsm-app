@@ -34,15 +34,20 @@ v-card.ug-role-information(
     )
       v-expansion-panel-header
         template(#default='{open}')
-          v-row(
-            v-if='!open',
-            no-gutters
-          )
-            v-col(cols='auto')
-              v-chip(
-                label,
-                color='secondary'
-              ) {{ ability.description }}
+          v-row(no-gutters)
+            template(v-if='open')
+              v-col(cols='auto')
+                v-chip(
+                  label,
+                  color='secondary'
+                ) {{ ability.name }}
+            template(v-else)
+              v-col(cols='auto')
+                v-chip(
+                  label,
+                  color='lightgrey'
+                ) {{ ability.description }}
+
             template(v-if='ability.type === "boolean"')
               v-col.ml-2(cols='auto')
                 v-chip(
@@ -50,46 +55,60 @@ v-card.ug-role-information(
                   label
                 )
                   span {{ ability.value ? "Разрешено" : "Запрещено" }}
-          v-row(
-            v-else,
-            no-gutters
-          )
-            v-col(cols='10')
-              v-chip(
-                label,
-                color='secondary'
-              ) {{ ability.name }}
 
-            v-col.text-right(cols='2')
-              ug-base-btn(
-                @click='handleDeleteAbility(ability)',
-                icon='mdi-trash-can'
-              )
+            template(v-if='open')
+              v-col.text-right(cols='auto')
+                ug-base-btn(
+                  @click='handleDeleteAbility(ability)',
+                  icon='mdi-trash-can',
+                  color='error'
+                )
 
       v-expansion-panel-content
-        v-divider
-        v-row
-          v-col(
-            cols='12',
-            v-if='ability.autocomplete && ability.type === "array"'
-          )
+        .ug-role-edit.d-flex.flex-row.align-center
+          template(v-if='ability.operator === "equals"')
+            v-chip(
+              label,
+              color='success'
+            ) Если равно
+          template(v-if='ability.operator === "not equals"')
+            v-chip(
+              label,
+              color='error'
+            ) Если не равно
+          template(v-if='ability.operator === "in array"')
+            v-chip(
+              label,
+              color='success'
+            ) Если в списке
+          template(v-if='ability.operator === "not in array"')
+            v-chip(
+              label,
+              color='error'
+            ) Если не в списке
+          v-chip.mx-1(
+            label,
+            color='secondary'
+          ) :
+          template(v-if='ability.autocomplete === "access-links-list"')
+            a-select-many(
+              v-model='ability.value',
+              :items='accessLinksList',
+              label='Значение способности'
+            )
+          template(v-else-if='ability.autocomplete && ability.type === "array"')
             ug-tag-autocomplete(
               v-model='ability.value',
               :path='`/${ability.autocomplete}`',
-              label='Значение способности'
+              label='Значение способности',
+              fetch-on-mount
             )
-          v-col(
-            cols='12',
-            v-else-if='!ability.autocomplete && ability.type === "array"'
-          )
+          template(v-else-if='!ability.autocomplete && ability.type === "array"')
             ug-tag-input(
               v-model='ability.value',
               label='Значение способности'
             )
-          v-col(
-            cols='12',
-            v-else-if='ability.autocomplete && ability.type === "string"'
-          )
+          template(v-else-if='ability.autocomplete && ability.type === "string"')
             a-autocomplete(
               v-model='ability.value',
               :endpoint='`/${ability.autocomplete}`',
@@ -99,22 +118,14 @@ v-card.ug-role-information(
               dense,
               abel='Значение способности'
             )
-          v-col(
-            cols='12',
-            v-else-if='!ability.autocomplete && ability.type === "string"'
-          )
+          template(v-else-if='!ability.autocomplete && ability.type === "string"')
             ug-base-input(
               v-model='ability.value',
               label='Значение способности'
             )
-          v-col(
-            cols='12',
-            v-else-if='ability.type === "boolean"'
-          )
-            a-switch.mt-1(
-              v-model='ability.value',
-              label='Значение способности'
-            )
+          template(v-else-if='ability.type === "boolean"')
+            a-switch.mt-0(v-model='ability.value')
+
         v-row(justify='end')
           v-col(cols='auto')
             ug-base-btn(
@@ -129,12 +140,15 @@ v-card.ug-role-information(
 import RoleAPI from '@/api/role'
 import { Role, RoleAbility } from '@/typings/api/role'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { normalizedMenus } from '@/api/helpers/menus'
 
 @Component
 export default class UgRoleInformation extends Vue {
   @Prop() role!: Role
 
   public showAddAbility = false
+
+  public accessLinksList = normalizedMenus
 
   async handleUpdate(ability: RoleAbility) {
     const apiResponse = await RoleAPI.updateAbility(this.role.value, ability.name, ability)
