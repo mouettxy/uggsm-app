@@ -55,7 +55,7 @@ import moment from 'moment'
 export default class PageIndex extends Vue {
   public news = [
     {
-      date: moment('11.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      date: moment('21.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       breaking: true,
       items: [
         {
