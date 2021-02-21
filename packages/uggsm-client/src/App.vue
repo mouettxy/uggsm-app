@@ -22,11 +22,16 @@ export default class App extends Vue {
     // FIXME: Удаляет поиск при f5
     settingsModule.setSearch({ search: '', type: this.$route.name })
 
-    setInterval(() => {
+    this.$nextTick(() => {
+      setInterval(() => {
+        if (!this.$ability?.can('access', 'Global', this.$route.name as string) && this.$route.name !== 'index') {
+          this.$router.push({ name: 'index' })
+        }
+      }, 60000)
       if (!this.$ability?.can('access', 'Global', this.$route.name as string) && this.$route.name !== 'index') {
         this.$router.push({ name: 'index' })
       }
-    }, 60000)
+    })
   }
 }
 </script>
