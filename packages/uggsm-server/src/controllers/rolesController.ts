@@ -9,9 +9,9 @@ enum Emits {
   ROLE_CREATED = 'role created',
   ROLE_UPDATED = 'role updated',
   ROLE_DELETED = 'role deleted',
-  ABILITY_CREATED = 'ability created',
-  ABILITY_UPDATED = 'ability updated',
-  ABILTIY_DELETED = 'ability deleted',
+  ABILITY_CREATED = 'role ability created',
+  ABILITY_UPDATED = 'role ability updated',
+  ABILTIY_DELETED = 'role ability deleted',
 
   ROLES_UPDATED = 'roles updated',
 }
@@ -267,7 +267,7 @@ export class RolesController extends BaseController implements IRolesController 
       const document = await this.model.create(newRoleFields)
 
       api.io.emit(this.Emits.ROLE_CREATED, document)
-      api.io.emit(this.Emits.ROLES_UPDATED)
+      api.io.emit(this.Emits.ROLES_UPDATED, newRoleFields.value)
 
       this.success(res, document)
     } catch (error) {
@@ -284,7 +284,7 @@ export class RolesController extends BaseController implements IRolesController 
       const document = await this.model.findOneAndUpdate({ value: role }, roleFieldsToUpdate)
 
       api.io.emit(this.Emits.ROLE_UPDATED, document)
-      api.io.emit(this.Emits.ROLES_UPDATED)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
       this.success(res, document)
     } catch (error) {
@@ -299,7 +299,7 @@ export class RolesController extends BaseController implements IRolesController 
       const document = await this.model.findOneAndDelete({ value: role })
 
       api.io.emit(this.Emits.ROLE_DELETED, document)
-      api.io.emit(this.Emits.ROLES_UPDATED)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
       this.success(res, document)
     } catch (error) {
@@ -321,7 +321,7 @@ export class RolesController extends BaseController implements IRolesController 
         await document.save()
 
         api.io.emit(this.Emits.ABILITY_CREATED, document)
-        api.io.emit(this.Emits.ROLES_UPDATED)
+        api.io.emit(this.Emits.ROLES_UPDATED, role)
 
         this.success(res, document)
       } else {
@@ -350,7 +350,7 @@ export class RolesController extends BaseController implements IRolesController 
       await document.save()
 
       api.io.emit(this.Emits.ABILITY_UPDATED, document)
-      api.io.emit(this.Emits.ROLES_UPDATED)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
       this.success(res, document)
     } catch (error) {
@@ -370,7 +370,7 @@ export class RolesController extends BaseController implements IRolesController 
       await document.save()
 
       api.io.emit(this.Emits.ABILTIY_DELETED, document)
-      api.io.emit(this.Emits.ROLES_UPDATED)
+      api.io.emit(this.Emits.ROLES_UPDATED, role)
 
       this.success(res, document)
     } catch (error) {

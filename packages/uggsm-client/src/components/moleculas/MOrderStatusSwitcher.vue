@@ -1,7 +1,7 @@
 <template lang="pug">
 .order-status-switcher__container
   v-btn(
-    v-if='!$can("editStatus", "Order")',
+    v-if='!$can("editOrderStatus", "Global")',
     :style='{ color: accessibleColor(statusColor) }',
     :color='statusColor',
     small,
@@ -9,7 +9,7 @@
   )
     span {{ status }}
   v-menu.order-status-switcher(
-    v-if='$can("editStatus", "Order")',
+    v-if='$can("editOrderStatus", "Global")',
     :close-on-content-click='false',
     min-width='200px',
     max-height='300px',

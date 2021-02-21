@@ -21,7 +21,7 @@ export type Actions =
   | 'addCashIncome'
   | 'addCashConsumption'
   | 'listenCalls'
-  | 'seeOrdersFromOffices'
+  | 'seeOffices'
 export type Subjects = 'Global' | 'all'
 
 export type UggsmAbility = Ability<[Actions, Subjects]>

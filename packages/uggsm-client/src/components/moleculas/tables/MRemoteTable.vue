@@ -110,7 +110,7 @@ export default class MRemoteTable extends Vue {
   }
 
   get defaultOffice() {
-    if (settingsModule.office) {
+    if (settingsModule.office && this.$can('seeOffices', 'Global', settingsModule.office.name)) {
       return `${settingsModule.office.code}|${settingsModule.office.name}`
     } else {
       settingsModule.setOffice({ office: '', type: 'orders' })

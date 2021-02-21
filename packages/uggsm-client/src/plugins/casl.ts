@@ -1,17 +1,33 @@
 import { UggsmAbility } from './../typings/UggsmAbility'
-import { Role } from '@/typings/api/role'
 import RoleAPI from './../api/role'
 import { authModule } from './../store/index'
 import Vue from 'vue'
 import { abilitiesPlugin, Can } from '@casl/vue'
-import { Ability, AbilityBuilder } from '@casl/ability'
+import { AbilityBuilder } from '@casl/ability'
 import { compact, each, map } from 'lodash'
 
 enum Default {
   RESOURCE = 'Global',
 }
 
-async function buildAbility(data: { role: string; type: 'default' | 'update' }) {
+export const fieldMatcher = <T extends string>(
+  fieldsWrapper: {
+    fields: T[]
+    operator: 'in array' | 'not in array'
+  }[]
+) => (field: T) => {
+  const fields = fieldsWrapper[0]
+
+  if (fields.operator === 'in array') {
+    return fields.fields.includes(field)
+  } else if (fields.operator === 'not in array') {
+    return !fields.fields.includes(field)
+  }
+
+  return true
+}
+
+export async function buildAbility(data: { role: string; type: 'default' | 'update' }) {
   const { can, cannot, rules, build } = new AbilityBuilder(UggsmAbility)
 
   if (data.role === 'administrator') {
@@ -46,13 +62,12 @@ async function buildAbility(data: { role: string; type: 'default' | 'update' }) 
 
     if (arrayAbilities.length) {
       each(arrayAbilities, (e) => {
-        if (e && (e.value as Array<string>).length > 0) {
+        if (e) {
           const abilityResource = e.resource ? e.resource : Default.RESOURCE
-          if (e.operator === 'in array') {
-            can(e.name, abilityResource, e.value as Array<string>)
-          } else if (e.operator === 'not in array') {
-            cannot(e.name, abilityResource, e.value as Array<string>)
-          }
+
+          // idk how to type this
+          // @ts-ignore
+          can(e.name, abilityResource, [{ fields: e.value, operator: e.operator }])
         }
       })
     }
@@ -74,6 +89,7 @@ async function buildAbility(data: { role: string; type: 'default' | 'update' }) 
       each(booleanAbilities, (e) => {
         if (e) {
           const abilityResource = e.resource ? e.resource : Default.RESOURCE
+
           if (e.value) {
             can(e.name, abilityResource)
           } else {
@@ -85,10 +101,11 @@ async function buildAbility(data: { role: string; type: 'default' | 'update' }) 
   }
 
   if (data.type === 'update') {
-    //@ts-ignore
     Vue.prototype.$ability.update(rules)
   } else {
-    return build()
+    // idk how to type this
+    // @ts-ignore
+    return build({ fieldMatcher })
   }
 }
 
@@ -98,7 +115,7 @@ export async function tryUpdateRoleAbilities(role: string) {
   }
 }
 
-;(async function () {
+export async function initCASL() {
   let ability
   if (authModule.user?.role) {
     ability = await buildAbility({ role: authModule.user.role, type: 'default' })
@@ -107,5 +124,6 @@ export async function tryUpdateRoleAbilities(role: string) {
   }
 
   Vue.use(abilitiesPlugin, ability, { useGlobalProperties: true })
-  Vue.component('Can', Can)
-})()
+}
+
+initCASL()

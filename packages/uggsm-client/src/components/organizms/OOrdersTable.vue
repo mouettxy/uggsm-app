@@ -4,132 +4,133 @@
     template(#top-toolbar='{store}')
       .success--text {{ store.tableRows }}
     template(#main-toolbar)
-      can(
-        I='create',
-        a='Order'
-      )
+      template(v-if='selectedOffice')
+        template(v-if='$can("createOrder", "Global")')
+          v-col(cols='auto')
+            o-order-modal-new
+              template(#activator='{on, attrs}')
+                v-btn(
+                  v-on='on',
+                  v-bind='attrs',
+                  color='primary'
+                )
+                  v-icon(left) mdi-plus
+                  span Новый
+        template(v-if='$can("createGuarantyOrder", "Global")')
+          v-col(cols='auto')
+            o-order-modal-warranty
+              template(#activator='{on, attrs}')
+                v-btn.ml-2(
+                  v-on='on',
+                  v-bind='attrs',
+                  color='primary'
+                )
+                  v-icon(left) mdi-eye-plus
+                  span гарантия
         v-col(cols='auto')
-          o-order-modal-new
-            template(#activator='{on, attrs}')
-              v-btn(
-                v-on='on',
-                v-bind='attrs',
-                color='primary'
-              )
-                v-icon(left) mdi-plus
-                span Новый
-      can(
-        I='create',
-        a='createGuaranty'
-      )
+          v-btn.ml-2(
+            @click='onClosedFilter',
+            color='secondary'
+          )
+            v-icon(
+              v-if='displayClosedOrders',
+              left
+            ) mdi-check
+            v-icon(
+              v-else,
+              left
+            ) mdi-close
+            span Закрытые
         v-col(cols='auto')
-          o-order-modal-warranty
+          v-menu(:close-on-content-click='false')
             template(#activator='{on, attrs}')
               v-btn.ml-2(
                 v-on='on',
                 v-bind='attrs',
-                color='primary'
+                icon,
+                color='black'
               )
-                v-icon(left) mdi-eye-plus
-                span гарантия
-      v-col(cols='auto')
-        v-btn.ml-2(
-          @click='onClosedFilter',
-          color='secondary'
-        )
-          v-icon(
-            v-if='displayClosedOrders',
-            left
-          ) mdi-check
-          v-icon(
-            v-else,
-            left
-          ) mdi-close
-          span Закрытые
-      v-col(cols='auto')
-        v-menu(:close-on-content-click='false')
-          template(#activator='{on, attrs}')
-            v-btn.ml-2(
-              v-on='on',
-              v-bind='attrs',
-              icon,
-              color='black'
-            )
-              v-icon mdi-filter
-          v-card(dark)
-            v-card-text
-              v-row
-                v-col(cols='auto')
-                  v-btn.ml-2(
-                    :color='displayExpired ? "success" : "secondary"',
-                    @click='onExpiredFilter'
-                  )
-                    span Просроченные
-                template(v-if='isManager || isAdmin')
+                v-icon mdi-filter
+            v-card(dark)
+              v-card-text
+                v-row
                   v-col(cols='auto')
                     v-btn.ml-2(
-                      :color='displayManagerOrders ? "success" : "secondary"',
-                      @click='onManagerFilter'
-                    ) Мои заказы
-              v-row
-                v-col(cols='12')
-                  a-select(
-                    v-model='statusFilter',
-                    :items='statuses',
-                    @change='onStatusFilter',
-                    multiple,
-                    label='Статус',
-                    dense,
-                    cache='orders-status-filter'
-                  )
-                    template(#selection='{ item, index }')
-                      v-chip(
-                        v-if='index === 0',
-                        small
+                      :color='displayExpired ? "success" : "secondary"',
+                      @click='onExpiredFilter'
+                    )
+                      span Просроченные
+                  template(v-if='isManager || isAdmin')
+                    v-col(cols='auto')
+                      v-btn.ml-2(
+                        :color='displayManagerOrders ? "success" : "secondary"',
+                        @click='onManagerFilter'
+                      ) Мои заказы
+                v-row
+                  v-col(cols='12')
+                    a-select(
+                      v-model='statusFilter',
+                      :items='statuses',
+                      @change='onStatusFilter',
+                      multiple,
+                      label='Статус',
+                      dense,
+                      cache='orders-status-filter'
+                    )
+                      template(#selection='{ item, index }')
+                        v-chip(
+                          v-if='index === 0',
+                          small
+                        )
+                          span {{ item }}
+                        v-menu(open-on-hover)
+                          template(#activator='{on, attrs}')
+                            v-chip(
+                              v-if='index === 1',
+                              v-on='on',
+                              v-bind='attrs',
+                              small
+                            )
+                              | (+{{ statusFilter.length - 1 }})
+                          v-card(dark)
+                            v-card-text
+                              span.white--text {{ joinArray(statusFilter.slice(1)) }}
+                v-row
+                  template(v-if='isManager || isAdmin')
+                    v-col(cols='12')
+                      a-select-many(
+                        v-model='masterFilter',
+                        :items='masters',
+                        @change='onMastersFilter',
+                        label='Мастер(-а)',
+                        cache='orders-master-filter'
                       )
-                        span {{ item }}
-                      v-menu(open-on-hover)
-                        template(#activator='{on, attrs}')
-                          v-chip(
-                            v-if='index === 1',
-                            v-on='on',
-                            v-bind='attrs',
-                            small
-                          )
-                            | (+{{ statusFilter.length - 1 }})
-                        v-card(dark)
-                          v-card-text
-                            span.white--text {{ joinArray(statusFilter.slice(1)) }}
-              v-row
-                template(v-if='isManager || isAdmin')
-                  v-col(cols='12')
-                    a-select-many(
-                      v-model='masterFilter',
-                      :items='masters',
-                      @change='onMastersFilter',
-                      label='Мастер(-а)',
-                      cache='orders-master-filter'
+                    v-col(cols='12')
+                      a-select-many(
+                        v-model='managerFilter',
+                        :items='managers',
+                        @change='onManagersFilter',
+                        label='Менеджеры(-а)',
+                        cache='orders-manager-filter'
+                      )
+                v-row
+                  v-col(cols='10')
+                    a-datetime-picker-2(
+                      v-model='dateFilter',
+                      range
                     )
-                  v-col(cols='12')
-                    a-select-many(
-                      v-model='managerFilter',
-                      :items='managers',
-                      @change='onManagersFilter',
-                      label='Менеджеры(-а)',
-                      cache='orders-manager-filter'
+                  v-col(cols='2')
+                    v-btn(
+                      @click='removeDateFilter',
+                      icon
                     )
-              v-row
-                v-col(cols='10')
-                  a-datetime-picker-2(
-                    v-model='dateFilter',
-                    range
-                  )
-                v-col(cols='2')
-                  v-btn(
-                    @click='removeDateFilter',
-                    icon
-                  )
-                    v-icon mdi-close
+                      v-icon mdi-close
+      template(v-else)
+        v-col(cols='11')
+          a-alert(
+            type='warning',
+            persistent
+          ) Не выбран офис, выберите свой офис в выпадающем списке сверху.
     template(#item.id='{value, item}')
       o-order-modal-regular(
         :orderid='item.trueId',
@@ -163,11 +164,12 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { authModule, ordersModule, usersModule } from '@/store'
+import { authModule, ordersModule, settingsModule, usersModule } from '@/store'
 import { cloneDeep, map, join } from 'lodash'
 import { statuses } from '@/api/helpers/enums'
 import { User } from '@/typings/api/auth'
 import moment from 'moment'
+import { settings } from 'cluster'
 
 @Component
 export default class OOrdersTable extends Vue {
@@ -187,6 +189,10 @@ export default class OOrdersTable extends Vue {
 
   public statuses = statuses
   public users: Array<User> | null = null
+
+  get selectedOffice() {
+    return settingsModule.office
+  }
 
   @Watch('dateFilter')
   onDateFilter(date: Array<string>) {

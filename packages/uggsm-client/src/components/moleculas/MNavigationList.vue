@@ -8,7 +8,7 @@ v-list(
       template(v-if='item.divider')
         v-divider.my-1
       v-list-item(
-        v-if='$can("access", item.resource)',
+        v-if='canAccessResource(item.linkName)',
         :to='{ name: item.linkName }',
         :key='item.title',
         color='#fafafa'
@@ -37,6 +37,14 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component
 export default class MNavigationDrawer extends Vue {
   @Prop({ type: Array, default: () => [] }) items!: Array<any>
+
+  canAccessResource(resource: string) {
+    if (this.$can('access', 'Global', resource)) {
+      return true
+    }
+
+    return false
+  }
 }
 </script>
 
