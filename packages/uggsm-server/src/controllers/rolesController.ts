@@ -40,7 +40,7 @@ export class RolesController extends BaseController implements IRolesController 
         value: [],
         name: 'access',
         description: 'Доступ к ссылкам',
-        operator: 'in array',
+        operator: 'not in array',
         type: 'array',
         autocomplete: 'access-links-list',
       },
@@ -182,7 +182,7 @@ export class RolesController extends BaseController implements IRolesController 
       },
       {
         value: ['Гаврилова', 'Гоголя', 'Ставропольская', 'UGGSM', 'iMarket Брюховецкая'],
-        name: 'seeOrdersFromOffices',
+        name: 'seeOrders',
         description: 'Видит заявки из офисов',
         operator: 'in array',
         type: 'array',
