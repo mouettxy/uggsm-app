@@ -34,49 +34,202 @@ type Role = {
 
 export class RolesController extends BaseController implements IRolesController {
   private model = RoleModel
+  private static = {
+    defaultAbilities: [
+      {
+        value: [],
+        name: 'access',
+        description: 'Доступ к ссылкам',
+        operator: 'in array',
+        type: 'array',
+        autocomplete: 'access-links-list',
+      },
+      {
+        value: true,
+        name: 'createOrder',
+        description: 'Создавать заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrder',
+        description: 'Редактировать заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'createGuarantyOrder',
+        description: 'Создавать гарантийные заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderManager',
+        description: 'Редактировать менеджера заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addOrderWork',
+        description: 'Добавлять работу к заявке',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'deleteOrderWork',
+        description: 'Удалять работу из заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addOrderIncome',
+        description: 'Добавлять приход к заявке',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addOrderConsumption',
+        description: 'Добавлять расход к заявке',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderStatus',
+        description: 'Редактировать статус заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderOffice',
+        description: 'Менять офис заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editOrderMaster',
+        description: 'Редактировать исполнителя заявки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'editClient',
+        description: 'Редактировать клиентов',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addClientPhone',
+        description: 'Добавлять телефон клиенту',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'deleteClientPhone',
+        description: 'Удалять телефон клиента',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addCashIncome',
+        description: 'Добавлять приход в кассе',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'addCashConsumption',
+        description: 'Добавлять расход в кассе',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: true,
+        name: 'listenCalls',
+        description: 'Может прослушивать звонки',
+        operator: 'equals',
+        type: 'boolean',
+        autocomplete: '',
+      },
+      {
+        value: ['Гаврилова', 'Гоголя', 'Ставропольская', 'UGGSM', 'iMarket Брюховецкая'],
+        name: 'seeOrdersFromOffices',
+        description: 'Видит заявки из офисов',
+        operator: 'in array',
+        type: 'array',
+        autocomplete: 'offices',
+      },
+    ],
+    types: [
+      {
+        text: 'Логическое значение',
+        value: 'boolean',
+      },
+      {
+        text: 'Строка',
+        value: 'string',
+      },
+      {
+        text: 'Список строк',
+        value: 'array',
+      },
+    ],
+    operators: [
+      {
+        text: 'Равно',
+        value: 'equals',
+      },
+      {
+        text: 'Не равно',
+        value: 'not equals',
+      },
+      {
+        text: 'В списке',
+        value: 'in array',
+      },
+      {
+        text: 'Не в списке',
+        value: 'not in array',
+      },
+    ],
+  }
 
   public Emits = Emits
 
   public getStatic: ControllerMethod = async (req, res, next) => {
-    const staticData = {
-      types: [
-        {
-          text: 'Логическое значение',
-          value: 'boolean',
-        },
-        {
-          text: 'Строка',
-          value: 'string',
-        },
-        {
-          text: 'Список строк',
-          value: 'array',
-        },
-      ],
-      operators: [
-        {
-          text: 'Равно',
-          value: 'equals',
-        },
-        {
-          text: 'Не равно',
-          value: 'not equals',
-        },
-        {
-          text: 'В списке',
-          value: 'in array',
-        },
-        {
-          text: 'Не в списке',
-          value: 'not in array',
-        },
-      ],
-    }
-
     const requestedStatic = req.params.type
 
-    if (includes(Object.keys(staticData), requestedStatic)) {
-      this.success(res, staticData[requestedStatic])
+    if (includes(Object.keys(this.static), requestedStatic)) {
+      this.success(res, this.static[requestedStatic])
     } else {
       this.success(res, [])
     }
@@ -106,7 +259,7 @@ export class RolesController extends BaseController implements IRolesController 
   public create: ControllerMethod = async (req, res, next) => {
     const newRoleFields: Role = req.body
 
-    const defaultAbilities = []
+    const defaultAbilities = this.static.defaultAbilities
 
     newRoleFields.abilities = defaultAbilities
 
