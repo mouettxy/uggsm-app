@@ -36,6 +36,8 @@ export default class UgTagAutocomplete extends Vue {
   @Prop({ default: 'text' }) itemText!: string
   @Prop({ default: 'value' }) itemValue!: string
 
+  @Prop() fetchOnMount!: boolean
+
   public search = null
 
   public items = []
@@ -74,9 +76,13 @@ export default class UgTagAutocomplete extends Vue {
   }
 
   handleInput(value: any) {
-    console.log(value)
-
     this.search = null
+  }
+
+  mounted() {
+    if (this.fetchOnMount) {
+      this.onSearchChange('')
+    }
   }
 }
 </script>
