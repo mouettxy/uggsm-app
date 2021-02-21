@@ -182,7 +182,7 @@ export class RolesController extends BaseController implements IRolesController 
       },
       {
         value: ['Гаврилова', 'Гоголя', 'Ставропольская', 'UGGSM', 'iMarket Брюховецкая'],
-        name: 'seeOrders',
+        name: 'seeOffices',
         description: 'Видит заявки из офисов',
         operator: 'in array',
         type: 'array',

@@ -94,7 +94,7 @@ export default class UgRoleMenu extends Vue {
 
   roleChange() {
     if (this.items[this.selectedItem]) {
-      this.$emit('select', this.items[this.selectedItem])
+      this.$emit('select', this.roles[this.selectedItem])
     }
   }
 
