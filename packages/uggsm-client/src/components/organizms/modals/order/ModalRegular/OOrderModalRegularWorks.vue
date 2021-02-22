@@ -2,7 +2,7 @@
 .order-modal-works.pa-2
   .text-h5.mb-4 Выполненная работа
   a-autocomplete(
-    v-if='!isOrderClosed && $can("addOrderWorks", "Global")',
+    v-if='!isOrderClosed && $can("addOrderWork", "Global")',
     v-model='work',
     label='Выполненная работа',
     icon='mdi-hammer-screwdriver',
@@ -74,7 +74,7 @@
           | Описание: {{ getMessage(item.id) }}
       template(#item.actions='{item}')
         v-btn(
-          :disabled='isOrderClosed || !$can("deleteOrderWorks", "Global")',
+          :disabled='isOrderClosed || !$can("deleteOrderWork", "Global")',
           @click='deleteWork(item)',
           icon,
           color='red'
