@@ -25,6 +25,20 @@ export class UserAPI {
     }
   }
 
+  async getPaginated(query: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request<any>({
+        url: `/paginated`,
+        params: query,
+        method: 'get',
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async getOne(id: string): AxiosResponseAPI<User> {
     try {
       const response = await this.api.request<User>({
