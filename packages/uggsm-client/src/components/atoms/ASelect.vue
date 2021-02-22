@@ -2,6 +2,7 @@
 v-select.a-select(
   v-model='model',
   :smallChips='smallChips',
+  :single-line='singleLine',
   :readonly='readonly',
   :prepend-inner-icon='icon',
   :multiple='multiple',
@@ -50,6 +51,7 @@ export default class ASelect extends Vue {
   @Prop({ default: false }) hideSelected!: boolean
   @Prop({ default: false }) deletableChips!: boolean
   @Prop({ default: true, type: Boolean }) clearable: any
+  @Prop({ required: false }) singleLine!: boolean
   @Prop() disabled!: boolean
   @Prop() cache!: string
 
