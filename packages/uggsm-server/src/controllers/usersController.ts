@@ -26,6 +26,18 @@ export class UsersController extends BaseController implements IUserController {
     }
   }
 
+  public getPaginated: ControllerMethod = async (req, res, next) => {
+    try {
+      const { query, options } = this.parsePaginateRequest(req.query, this.model)
+      // @ts-ignore
+      const paginated = await this.model.paginate(query, options)
+
+      this.success(res, paginated)
+    } catch (error) {
+      this.criticalError(next, error)
+    }
+  }
+
   public getOne: ControllerMethod = async (req, res, next) => {
     const id = req.params.id
 

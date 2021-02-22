@@ -5,4 +5,5 @@ export type IUserController = {
   getOne: ControllerMethod
   delete: ControllerMethod
   update: ControllerMethod
+  getPaginated: ControllerMethod
 }
