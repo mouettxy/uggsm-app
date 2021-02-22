@@ -73,19 +73,14 @@ export default class Auth extends VuexModule {
   }
 
   @Action
-  async socket_createdUser(evt: string) {
-    //
-  }
-
-  @Action
-  async socket_updatedUser(evt: User) {
+  async socket_userUpdated(evt: User) {
     if (evt.id === this.user?.id) {
       this.context.commit('LOGIN', evt)
     }
   }
 
   @Action
-  async socket_deletedUser(evt: string) {
+  async socket_userDeleted(evt: string) {
     if (evt === this.user?._id) {
       this.context.commit('LOGOUT')
     }

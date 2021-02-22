@@ -1,10 +1,8 @@
-import { NextFunction } from 'connect'
-import { Request, Response } from 'express'
+import { ControllerMethod } from './controller'
 
-export interface IUserController {
-  getAll: (req: Request, res: Response, next: NextFunction) => Promise<void>
-  getById: (req: Request, res: Response, next: NextFunction) => Promise<void>
-  create: (req: Request, res: Response, next: NextFunction) => Promise<void>
-  updateById: (req: Request, res: Response, next: NextFunction) => Promise<void>
-  deleteById: (req: Request, res: Response, next: NextFunction) => Promise<void>
+export type IUserController = {
+  get: ControllerMethod
+  getOne: ControllerMethod
+  delete: ControllerMethod
+  update: ControllerMethod
 }
