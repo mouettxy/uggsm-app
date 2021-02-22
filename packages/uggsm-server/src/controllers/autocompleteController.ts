@@ -3,7 +3,7 @@ import { ControllerMethod } from './../interfaces/controller'
 import { BaseController } from './base/BaseController'
 import { filter, isString, map, reduce } from 'lodash'
 import { IAutocompleteController } from '../interfaces'
-import { ClientModel, OfficeModel, OrderModel, UserModel } from '../models'
+import { ClientModel, OfficeModel, OrderModel, RoleModel, UserModel } from '../models'
 import { api } from '../server'
 
 export class AutocompleteController extends BaseController implements IAutocompleteController {
@@ -11,6 +11,7 @@ export class AutocompleteController extends BaseController implements IAutocompl
   private order = OrderModel
   private client = ClientModel
   private office = OfficeModel
+  private role = RoleModel
 
   private _normalizeQuery = (query: string) => {
     if (!isString(query)) {
@@ -326,6 +327,33 @@ export class AutocompleteController extends BaseController implements IAutocompl
         response,
         (a, e) => {
           a.push({ text: e.name, value: e.name })
+
+          return a
+        },
+        []
+      )
+
+      this.success(res, reduced)
+    } catch (error) {
+      this.badRequest(next, 'Нет данных для поиска')
+    }
+  }
+
+  public roles: ControllerMethod = async (req, res, next) => {
+    const search = this._normalizeQuery(req.query.search as string)
+
+    const regExp = new RegExp(search, 'i')
+
+    try {
+      const response = await this.role
+        .find({ $or: [{ name: regExp }, { value: regExp }, { description: regExp }] })
+        .select(['name', 'value'])
+        .lean()
+
+      const reduced = reduce(
+        response,
+        (a, e) => {
+          a.push({ text: e.name, value: e.value })
 
           return a
         },
