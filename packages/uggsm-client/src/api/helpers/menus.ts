@@ -50,10 +50,16 @@ export const defaultMenu = [
     resource: 'Report',
   },
   {
+    linkName: 'users',
+    title: 'Пользователи',
+    icon: 'mdi-account-tie',
+    divider: true,
+    resource: 'Users',
+  },
+  {
     linkName: 'settings',
     title: 'Настройки',
     icon: 'mdi-cog',
-    divider: true,
     resource: 'Settings',
   },
 ]
