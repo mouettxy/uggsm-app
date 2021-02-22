@@ -164,12 +164,12 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { authModule, ordersModule, settingsModule, usersModule } from '@/store'
+import { authModule, ordersModule, settingsModule } from '@/store'
 import { cloneDeep, map, join } from 'lodash'
 import { statuses } from '@/api/helpers/enums'
 import { User } from '@/typings/api/auth'
 import moment from 'moment'
-import { settings } from 'cluster'
+import UserAPI from '@/api/user'
 
 @Component
 export default class OOrdersTable extends Vue {
@@ -326,7 +326,7 @@ export default class OOrdersTable extends Vue {
   }
 
   async created() {
-    this.users = await usersModule.getAll()
+    this.users = (await UserAPI.get()).data
   }
 }
 </script>

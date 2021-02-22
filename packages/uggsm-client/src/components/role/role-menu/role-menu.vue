@@ -74,8 +74,8 @@ v-card.ug-role-menu(
 <script lang="ts">
 import { copyTextToClipboard } from '@/api/helpers'
 import RoleAPI from '@/api/role'
-import { usersModule } from '@/store'
-import { Role, Roles } from '@/typings/api/role'
+import UserAPI from '@/api/user'
+import { Roles } from '@/typings/api/role'
 import { compact, find, includes, map } from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
@@ -110,9 +110,9 @@ export default class UgRoleMenu extends Vue {
 
   async roleAssign(role: string) {
     if (this.user) {
-      const apiResponse = await usersModule.updateById({ id: this.user, payload: { role } })
+      const apiResponse = await UserAPI.update(this.user, { role })
 
-      if (!apiResponse) {
+      if (!(apiResponse.status === 200)) {
         this.$notification.error('Ошибка сервера при назначении роли')
         return
       }

@@ -1,4 +1,5 @@
 import { Endpoint } from '@/typings/api/Endpoint'
+import { User as UserType } from '@/typings/api/user'
 
 export type AuthEndpoints = {
   login: Endpoint
@@ -19,12 +20,4 @@ export type RegisterInput = {
   role: string
 }
 
-export type User = {
-  _id: string
-  username: string
-  password: string
-  credentials: string
-  role: string
-  office: string
-  id: number
-}
+export type User = UserType
