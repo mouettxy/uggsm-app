@@ -62,18 +62,18 @@
           @defect-change='onDefectChange'
         )
     v-footer.order-modal-footer
-      v-btn.mr-2(
+      ug-base-btn.mr-2(
         @click='create',
+        label='Создать',
+        icon='mdi-content-save',
         color='primary'
       )
-        v-icon(left) mdi-content-save
-        span Создать
-      v-btn(
+      ug-base-btn(
         @click='rewind',
-        text
+        label='Закрыть',
+        icon='mdi-close',
+        color='lightgrey'
       )
-        v-icon(left) mdi-close
-        span Закрыть
 </template>
 
 <script lang="ts">
@@ -120,7 +120,7 @@ export default class OOrderModalWarranty extends Vue {
   }
 
   async create() {
-    if (this.order && this.defect) {
+    if (this.order && this.defect && this.order.master && this.order.manager) {
       const copy = cloneDeep(this.order)
 
       if (!copy.isWarranty) {
@@ -149,6 +149,8 @@ export default class OOrderModalWarranty extends Vue {
       if (response) {
         this.rewind()
       }
+    } else {
+      this.$notification.error('В заявке не указан мастер или менеджер или не заполнено поле "Дефект".')
     }
   }
 }
