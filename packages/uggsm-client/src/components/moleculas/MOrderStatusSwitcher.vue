@@ -236,10 +236,10 @@ export default class MOrderStatusSwitcher extends Vue {
       }
 
       let orderid: string | number = order.id
-      // if order on warranty
+      /* // if order on warranty
       if (order.isWarranty) {
         orderid = `${order.warrantyOrderId}/${order.warrantyCounter}`
-      }
+      } */
 
       if (response) {
         this.$notification.success('Успешная смена статуса')
