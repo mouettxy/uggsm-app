@@ -2,13 +2,16 @@
 v-btn.ug-base-btn(
   :type='type',
   :text='text',
-  :icon='!!icon',
+  :icon='!!icon && !label',
   :disabled='disabled',
   :depressed='depressed',
   :color='color',
   @click='handleClick'
 )
-  template(v-if='icon')
+  template(v-if='icon && label')
+    v-icon(left) {{ icon }}
+    span {{ label }}
+  template(v-else-if='icon')
     v-icon {{ icon }}
   template(v-else)
     v-icon(
