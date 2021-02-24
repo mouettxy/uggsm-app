@@ -16,9 +16,10 @@ import RoleAPI from '@/api/role'
 import { Role, Roles } from '@/typings/api/role'
 import { Socket } from 'vue-socket.io-extended'
 import { Component, Vue } from 'vue-property-decorator'
+import { find } from 'lodash'
 
-enum hideRoles {
-  ADMINISTRATOR = 'administrator',
+const HIDE_ROLES = {
+  ADMINISTRATOR: 'administrator',
 }
 
 @Component
@@ -27,7 +28,7 @@ export default class UgRoleList extends Vue {
 
   public role: Role | null = null
 
-  public rolesToHide = [hideRoles.ADMINISTRATOR]
+  public rolesToHide = [HIDE_ROLES.ADMINISTRATOR]
 
   @Socket('roles updated')
   async onSocketRolesUpdated() {
@@ -36,7 +37,7 @@ export default class UgRoleList extends Vue {
 
   get currentRole() {
     if (!this.role && this.roles) {
-      return this.roles[0]
+      return find(this.roles, (e) => !this.rolesToHide.includes(e.value))
     } else if (this.role) {
       return this.role
     }
