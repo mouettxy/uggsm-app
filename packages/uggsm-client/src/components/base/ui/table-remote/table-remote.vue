@@ -241,7 +241,6 @@ export default class UgTableRemote extends Mixins(TableRemoteHelpers, Responsive
   }
 
   infiniteScroll(_: any, __: any, isIntersecting: boolean) {
-    console.log('intersect')
     if (isIntersecting && !this.search) {
       if (!(this.options.page + 1 > this.serverPages)) {
         this.options.page++

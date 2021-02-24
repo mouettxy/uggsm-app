@@ -4,7 +4,6 @@ import routes from 'vue-auto-routing'
 import { createRouterLayout } from 'vue-router-layout'
 import { authModule } from '@/store'
 import { includes } from 'lodash'
-import { buildAbility } from '@/plugins/casl'
 
 Vue.use(Router)
 
