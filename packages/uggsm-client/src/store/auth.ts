@@ -6,6 +6,8 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import Vue from 'vue'
 import router from '@/router'
 import { tryUpdateRoleAbilities } from '@/plugins/casl'
+import VueRouter from 'vue-router'
+const { isNavigationFailure, NavigationFailureType } = VueRouter
 
 @Module({
   namespaced: true,
@@ -55,7 +57,13 @@ export default class Auth extends VuexModule {
     if (reason === 'rejected') {
       response = await authAPI().logout({ id: this.user?._id, token: null })
       if (router.currentRoute.name !== 'login') {
-        router.push({ name: 'login' })
+        router.push({ name: 'login' }).catch((failure) => {
+          if (isNavigationFailure(failure, NavigationFailureType.redirected)) {
+            Vue.prototype.$notification.warning(
+              'Ваша сессия закончена. Войдите в аккаунт снова что бы обновить сессию.'
+            )
+          }
+        })
       }
     } else {
       response = await authAPI().logout({ id: this.user?._id, token: Vue.$cookies.get('UUID') })
