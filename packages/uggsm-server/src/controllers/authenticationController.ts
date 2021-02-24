@@ -89,16 +89,22 @@ export class AuthenticationController extends BaseController implements IAuthent
     const id: string = req.body.id
     const token: string = req.body.token
 
-    const user = await this.user.findById(id)
+    try {
+      const user = await this.user.findById(id)
 
-    if (!token) {
-      user.tokens = []
-    } else {
-      remove(user.tokens, (e) => e === token)
+      if (user) {
+        if (!token) {
+          user.tokens = []
+        } else {
+          remove(user.tokens, (e) => e === token)
+        }
+
+        await user.save()
+      }
+
+      res.status(200).send({ status: 200, message: 'OK' })
+    } catch (error) {
+      this.criticalError(next, 'ERROR')
     }
-
-    await user.save()
-
-    res.status(200).send({ status: 200, message: 'OK' })
   }
 }

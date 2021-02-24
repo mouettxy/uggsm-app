@@ -39,7 +39,7 @@ _axios.interceptors.request.use(
 
 _axios.interceptors.response.use(
   function (response) {
-    if (response.status === 401) {
+    if (response.status === 401 && authModule.isLoggedIn) {
       authModule.logout('rejected')
     }
     return response
