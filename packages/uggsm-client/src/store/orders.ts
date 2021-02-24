@@ -86,7 +86,7 @@ export default class Orders extends VuexModule {
         estimatedCloseAt: e.estimatedCloseAt,
         status: e.status,
         created: createTime,
-        master: e.master.credentials,
+        master: e.master?.credentials || '',
         phoneModel: e.phoneModel,
         phoneBrand: e.phoneBrand,
         password: e.password,
