@@ -97,6 +97,9 @@ if (isProductionEnvFlag) {
     },
   }
 } else {
+  developement.configureWebpack = {
+    devtool: 'source-map',
+  }
   developement.chainWebpack = (config) => {
     config.plugin('IgnoreNotFoundExportPlugin').before('friendly-errors').use(IgnoreNotFoundExportPlugin)
   }
