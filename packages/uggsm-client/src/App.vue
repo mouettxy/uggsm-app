@@ -5,7 +5,7 @@ v-app
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { authModule, settingsModule } from './store'
+import { settingsModule } from './store'
 
 @Component
 export default class App extends Vue {
