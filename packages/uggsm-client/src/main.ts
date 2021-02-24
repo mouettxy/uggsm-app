@@ -11,7 +11,6 @@ import '@/plugins/socket.io.ts'
 import '@/plugins/components'
 import '@/plugins/printer'
 import '@/plugins/v-mask'
-import '@/plugins/casl'
 import '@/plugins/markdown-directive'
 
 import vuetify from '@/plugins/vuetify'
@@ -20,6 +19,8 @@ import store from '@/store'
 import router from '@/router'
 
 import moment from 'moment'
+import '@/plugins/casl'
+
 import { tryUpdateRoleAbilities } from '@/plugins/casl'
 moment.locale('ru')
 

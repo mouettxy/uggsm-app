@@ -2,9 +2,10 @@ import { UggsmAbility } from './../typings/UggsmAbility'
 import RoleAPI from './../api/role'
 import { authModule } from './../store/index'
 import Vue from 'vue'
-import { abilitiesPlugin, Can } from '@casl/vue'
+import { abilitiesPlugin } from '@casl/vue'
 import { AbilityBuilder } from '@casl/ability'
 import { compact, each, map } from 'lodash'
+import { LOCAL_STORAGE } from '@/api/helpers/Constants'
 
 enum Default {
   RESOURCE = 'Global',
@@ -116,9 +117,10 @@ export async function tryUpdateRoleAbilities(role: string) {
 }
 
 export async function initCASL() {
+  const cachedRole = localStorage.getItem(LOCAL_STORAGE.CURRENT_ROLE)
   let ability
-  if (authModule.user?.role) {
-    ability = await buildAbility({ role: authModule.user.role, type: 'default' })
+  if (cachedRole) {
+    ability = await buildAbility({ role: cachedRole, type: 'default' })
   } else {
     ability = await buildAbility({ role: 'guest', type: 'default' })
   }

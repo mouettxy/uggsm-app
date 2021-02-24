@@ -1,9 +1,11 @@
+import { LOCAL_STORAGE } from '@/api/helpers/Constants'
 import { User } from '@/typings/api/auth'
 import { authAPI } from '@/api'
 import { AuthInput } from '@/typings/api/auth'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import Vue from 'vue'
 import router from '@/router'
+import { tryUpdateRoleAbilities } from '@/plugins/casl'
 
 @Module({
   namespaced: true,
@@ -17,12 +19,16 @@ export default class Auth extends VuexModule {
   LOGIN(payload: User) {
     this.user = payload
     this.isLoggedIn = true
+
+    localStorage.setItem(LOCAL_STORAGE.CURRENT_ROLE, payload.role)
   }
 
   @Mutation
   LOGOUT() {
     this.user = null
     this.isLoggedIn = false
+
+    localStorage.removeItem(LOCAL_STORAGE.CURRENT_ROLE)
   }
 
   @Action
@@ -33,6 +39,9 @@ export default class Auth extends VuexModule {
       Vue.$cookies.set('UUID', response.jwtData.token, '7d')
 
       this.context.commit('LOGIN', response.user)
+
+      await tryUpdateRoleAbilities(response.user.role)
+
       return Promise.resolve(true)
     } else {
       return Promise.resolve(false)
@@ -76,6 +85,8 @@ export default class Auth extends VuexModule {
   async socket_userUpdated(evt: User) {
     if (evt.id === this.user?.id) {
       this.context.commit('LOGIN', evt)
+
+      await tryUpdateRoleAbilities(evt.role)
     }
   }
 
