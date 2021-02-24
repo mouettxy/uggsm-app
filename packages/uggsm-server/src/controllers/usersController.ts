@@ -56,7 +56,7 @@ export class UsersController extends BaseController implements IUserController {
     const fields = req.body
 
     try {
-      const document = await this.model.findByIdAndUpdate(id, fields)
+      const document = await this.model.findByIdAndUpdate(id, fields, { new: true })
 
       api.io.emit(this.Emits.USER_UPDATED, document)
       api.io.emit(this.Emits.USERS_UPDATED, id)
