@@ -21,70 +21,90 @@ v-autocomplete(
 )
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-
+<script>
 import axios from '@/plugins/axios'
 
-@Component
-export default class UgTagAutocomplete extends Vue {
-  @Prop() label!: string
-  @Prop() value!: Array<string> | string
-
-  @Prop({ required: true }) path!: string
-
-  @Prop({ default: 'text' }) itemText!: string
-  @Prop({ default: 'value' }) itemValue!: string
-
-  @Prop() fetchOnMount!: boolean
-
-  public search = null
-
-  public items = []
-
-  get endpoint() {
-    return `/autocomplete${this.path}`
-  }
-
-  @Watch('search')
-  async onSearchChange(value: string) {
-    this.items = await this.fetchEndpoint(value)
-  }
-
-  async fetchEndpoint(search: string) {
-    const apiResponse = await axios.request({
-      url: this.endpoint,
-      method: 'get',
-      params: {
-        search: search,
+export default {
+  name: 'ug-tag-autocomplete',
+  props: {
+    label: {
+      required: false,
+      type: String,
+    },
+    value: {
+      required: false,
+      type: [Array, String],
+    },
+    path: {
+      required: false,
+      type: String,
+    },
+    fetchOnMount: {
+      required: false,
+      type: Boolean,
+    },
+    itemText: {
+      required: false,
+      type: String,
+      default: 'text',
+    },
+    itemValue: {
+      required: false,
+      type: String,
+      default: 'value',
+    },
+  },
+  data: function () {
+    return {
+      search: null,
+      items: [],
+    }
+  },
+  computed: {
+    model: {
+      get: function () {
+        return this.value
       },
-    })
+      set: function (value) {
+        this.$emit('input', value)
+      },
+    },
+    endpoint() {
+      return `/autocomplete${this.path}`
+    },
+  },
+  watch: {
+    search: function (value) {
+      this.getItems(value)
+    },
+  },
+  methods: {
+    async fetchEndpoint(search) {
+      const apiResponse = await axios.request({
+        url: this.endpoint,
+        method: 'get',
+        params: {
+          search: search,
+        },
+      })
 
-    if (!(apiResponse.status === 200)) {
-      return []
-    }
+      if (!(apiResponse.status === 200)) {
+        return []
+      }
 
-    return apiResponse.data
-  }
-
-  get model() {
-    return this.value
-  }
-
-  set model(value: Array<string> | string) {
-    this.$emit('input', value)
-  }
-
-  handleInput(value: any) {
-    this.search = null
-  }
-
-  mounted() {
+      return apiResponse.data
+    },
+    async getItems(value) {
+      this.items = await this.fetchEndpoint(value)
+    },
+    handleInput() {
+      this.search = null
+    },
+  },
+  mounted: function () {
     if (this.fetchOnMount) {
-      this.onSearchChange('')
+      this.getItems('')
     }
-  }
+  },
 }
 </script>
-
-<style lang="sass"></style>

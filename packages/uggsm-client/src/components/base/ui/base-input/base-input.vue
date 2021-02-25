@@ -18,19 +18,6 @@ v-text-field.ug-input(
         div(v-md.html) {{ hint }}
 
       .ug-input__mark
-        //template(v-if='errors.length')
-          v-avatar.ug-input__question-mark(
-            ref='append',
-            @mouseover.native='handleAppendMouseOver',
-            @mouseleave.native='handleAppendMouseLeave',
-            @click='handleAppendClick',
-            size='24'
-          )
-            v-icon(
-              ref='icon',
-              small,
-              color='error'
-            ) mdi-alert
         template(v-if='hint')
           v-avatar.ug-input__question-mark(
             ref='append',
@@ -46,27 +33,67 @@ v-text-field.ug-input(
             ) mdi-help
 </template>
 
-<script lang="ts">
-import { Component, Prop, Ref, Watch } from 'vue-property-decorator'
+<script>
+import BaseInputAnimations from './base-input.animations'
+
+export default {
+  name: 'ug-base-input',
+  mixins: [BaseInputAnimations],
+  props: {
+    value: {
+      required: true,
+      type: [String, Number],
+    },
+    label: {
+      required: true,
+      type: String,
+    },
+    icon: {
+      required: false,
+      type: String,
+    },
+    hint: {
+      required: false,
+      type: String,
+    },
+    rules: {
+      required: false,
+      type: Array,
+    },
+  },
+  computed: {
+    model: {
+      get: function () {
+        return this.value
+      },
+      set: function (value) {
+        this.$emit('input', value)
+      },
+    },
+  },
+  methods: {
+    handleAppendMouseOver() {
+      const { append } = this.$refs
+
+      this.animateAppend(append.$el)
+    },
+    handleAppendMouseLeave() {
+      const { append } = this.$refs
+
+      this.deanimateAppend(append.$el)
+    },
+    handleAppendClick() {
+      const { hint } = this.$refs
+
+      this.animateHint(hint)
+    },
+    handleBlur() {
+      this.deanimateHint()
+    },
+  },
+}
+/* import { Component, Prop, Ref, Watch } from 'vue-property-decorator'
 import UgBaseInputAnimations from './base-input.animations'
-
-@Component
-export default class UgBaseInput extends UgBaseInputAnimations {
-  @Prop({ required: true }) value!: string | number
-  @Prop({ required: true }) label!: string
-  @Prop({ required: false }) icon!: string
-  @Prop({ required: false }) hint!: string
-  @Prop({ required: false }) rules!: Array<() => boolean>
-
-  @Ref('input') input!: any
-
-  get model() {
-    return this.value
-  }
-
-  set model(value: string | number) {
-    this.$emit('input', value)
-  }
 
   handleAppendMouseOver() {
     const { append }: Record<string, any> = this.$refs
@@ -89,7 +116,7 @@ export default class UgBaseInput extends UgBaseInputAnimations {
   handleBlur() {
     this.deanimateHint()
   }
-}
+} */
 </script>
 
 <style lang="sass">

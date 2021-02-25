@@ -25,24 +25,52 @@ v-btn.ug-base-btn(
     ) {{ iconRight }}
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-
-@Component
-export default class UgBaseBtn extends Vue {
-  @Prop({ required: false }) label!: string
-  @Prop({ required: false }) icon!: string
-  @Prop({ required: false }) iconLeft!: string
-  @Prop({ required: false }) iconRight!: string
-  @Prop({ required: false }) color!: string
-  @Prop({ required: false }) text!: boolean
-  @Prop({ required: false }) depressed!: boolean
-  @Prop({ required: false }) disabled!: boolean
-  @Prop({ required: false }) type!: string
-
-  handleClick(event: Event) {
-    this.$emit('click', event)
-  }
+<script>
+export default {
+  name: 'ug-base-btn',
+  props: {
+    label: {
+      required: false,
+      type: String,
+    },
+    icon: {
+      required: false,
+      type: String,
+    },
+    iconLeft: {
+      required: false,
+      type: String,
+    },
+    iconRight: {
+      required: false,
+      type: String,
+    },
+    color: {
+      required: false,
+      type: String,
+    },
+    text: {
+      required: false,
+      type: Boolean,
+    },
+    depressed: {
+      required: false,
+      type: Boolean,
+    },
+    disabled: {
+      required: false,
+      type: Boolean,
+    },
+    type: {
+      required: false,
+      type: String,
+    },
+  },
+  methods: {
+    handleClick(event) {
+      this.$emit('click', event)
+    },
+  },
 }
 </script>
 

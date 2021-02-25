@@ -9,61 +9,87 @@
   )
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+<script>
+export default {
+  name: 'ug-btn-toggle',
+  props: {
+    value: {
+      required: true,
+      type: Boolean,
+    },
+    label: {
+      required: true,
+      type: String,
+    },
+    iconLeft: {
+      required: false,
+      type: String,
+    },
+    iconRight: {
+      required: false,
+      type: String,
+    },
+    color: {
+      required: false,
+      type: String,
+    },
+    activeColor: {
+      required: false,
+      type: String,
+    },
+    activeIcon: {
+      required: false,
+      type: String,
+    },
+    text: {
+      required: false,
+      type: Boolean,
+    },
+    depressed: {
+      required: false,
+      type: Boolean,
+    },
+  },
+  computed: {
+    statedColor() {
+      return this.model ? this.activeColor : this.color
+    },
+    statedLeftIcon() {
+      if (!this.activeIcon) {
+        return this.iconLeft
+      }
 
-@Component
-export default class UgBtnToggle extends Vue {
-  @Prop({ required: true }) value!: boolean
-  @Prop({ required: true }) label!: string
-  @Prop({ required: false }) iconLeft!: string
-  @Prop({ required: false }) iconRight!: string
-  @Prop({ required: false }) color!: string
-  @Prop({ required: false }) activeColor!: string
-  @Prop({ required: false }) text!: boolean
-  @Prop({ required: false }) depressed!: boolean
-  @Prop({ required: false }) activeIcon!: string
+      if (!this.iconLeft) {
+        return this.iconLeft
+      }
 
-  get statedColor() {
-    return this.model ? this.activeColor : this.color
-  }
+      return this.model ? this.activeIcon : this.iconLeft
+    },
+    statedRightIcon() {
+      if (!this.activeIcon) {
+        return this.iconRight
+      }
 
-  get statedLeftIcon() {
-    if (!this.activeIcon) {
-      return this.iconLeft
-    }
+      if (!this.iconRight) {
+        return this.iconRight
+      }
 
-    if (!this.iconLeft) {
-      return this.iconLeft
-    }
-
-    return this.model ? this.activeIcon : this.iconLeft
-  }
-
-  get statedRightIcon() {
-    if (!this.activeIcon) {
-      return this.iconRight
-    }
-
-    if (!this.iconRight) {
-      return this.iconRight
-    }
-
-    return this.model ? this.activeIcon : this.iconRight
-  }
-
-  get model() {
-    return this.value
-  }
-
-  set model(value: boolean) {
-    this.$emit('input', value)
-  }
-
-  handleClick() {
-    this.model = !this.model
-  }
+      return this.model ? this.activeIcon : this.iconRight
+    },
+    model: {
+      get: function () {
+        return this.value
+      },
+      set: function (value) {
+        this.$emit('input', value)
+      },
+    },
+  },
+  methods: {
+    handleClick(event) {
+      this.model = !this.model
+      this.$emit('click', event)
+    },
+  },
 }
 </script>
-
-<style lang="sass"></style>

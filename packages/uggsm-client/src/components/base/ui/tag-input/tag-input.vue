@@ -13,26 +13,41 @@ v-combobox(
 )
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-
-@Component
-export default class UgTagInput extends Vue {
-  @Prop({ required: false }) label!: string
-  @Prop({ required: true }) value!: Array<string> | string
-  @Prop({ required: false }) items!: Array<string>
-  @Prop({ default: 'auto' }) hideDetails!: string | boolean
-
-  public search = ''
-
-  get model() {
-    return this.value
-  }
-
-  set model(value: Array<string> | string) {
-    this.$emit('input', value)
-  }
+<script>
+export default {
+  name: 'ug-tag-input',
+  props: {
+    label: {
+      required: false,
+      type: String,
+    },
+    value: {
+      required: true,
+      type: [Array, String],
+    },
+    items: {
+      required: false,
+      type: [Array],
+    },
+    hideDetails: {
+      required: false,
+      type: [String, Boolean],
+    },
+  },
+  data: function () {
+    return {
+      search: '',
+    }
+  },
+  computed: {
+    model: {
+      get: function () {
+        return this.value
+      },
+      set: function (value) {
+        this.$emit('input', value)
+      },
+    },
+  },
 }
 </script>
-
-<style lang="sass"></style>
