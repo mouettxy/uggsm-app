@@ -3,7 +3,21 @@
 <script>
   export default {
     name: '<%- name %>',
-    props: <%- JSON.stringify(props ? props : {}) %>,
+    props: {
+      <% for (const prop in props) { %>
+        <%= prop %>: {
+          required: <%- props[prop].required %>,
+          type: [
+            <% for (const propType in props[prop].type) { %>
+              <%- props[prop].type[propType] %>,
+            <% } %>
+          ],
+          <% if (props[prop].default) { %>
+            default: <%- props[prop].default %>,
+          <% } %>
+        },
+      <% } %>
+    },
     data: function () {
       return <%- JSON.stringify(data ? data : {}) %>
     },

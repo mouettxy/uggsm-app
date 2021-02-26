@@ -152,25 +152,24 @@ class Generator {
         }
 
         const prop = {
-          name: answerAboutProp.name,
-          type: answerAboutProp.type,
           required: answerAboutProp.required === 'true' ? true : false,
+          type: answerAboutProp.type,
         }
 
         if (answerAboutProp.default) {
           prop.default = answerAboutProp.default
         }
 
-        this.result.props[prop.name] = prop
+        this.result.props[answerAboutProp.name] = prop
 
         this.console
           .clearMessagesWithBgColor('bgGreen')
           .pushMessage(
             'black',
             'bgYellow',
-            `Prop ${prop.name}${prop.default ? `=${prop.default}` : ''} (${prop.type});${
-              prop.required ? ' required;' : ''
-            }`
+            `Prop ${answerAboutProp.name}${answerAboutProp.default ? `=${answerAboutProp.default}` : ''} (${
+              answerAboutProp.type
+            });${prop.required ? ' required;' : ''}`
           )
           .clear()
 
