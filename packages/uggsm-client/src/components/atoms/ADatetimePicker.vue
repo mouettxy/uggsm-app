@@ -76,6 +76,10 @@ v-dialog(
 </template>
 
 <script lang="ts">
+//* --------------------------------------------------------------------------
+//!                        DEPRECATED NOT USED ANYWHERE
+//* --------------------------------------------------------------------------
+
 import moment from 'moment'
 import { Component, Vue, Prop, Watch, Ref } from 'vue-property-decorator'
 

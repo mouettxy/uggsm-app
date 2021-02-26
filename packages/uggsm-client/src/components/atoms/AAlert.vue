@@ -20,6 +20,10 @@ v-alert.elevation-2.base__alert(
 </template>
 
 <script lang="ts">
+//* --------------------------------------------------------------------------
+//!                   MOVED NEEDS TO BE REPLACED EVERYWHERE
+//* --------------------------------------------------------------------------
+
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component

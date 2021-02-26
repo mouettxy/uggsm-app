@@ -21,6 +21,10 @@ date-picker.datetime-picker-2(
 </template>
 
 <script lang="ts">
+//* --------------------------------------------------------------------------
+//!                   MOVED NEEDS TO BE REPLACED EVERYWHERE
+//* --------------------------------------------------------------------------
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import DatePicker from 'vue2-datepicker'
 import '@/sass/vue2-datepicker.sass'
