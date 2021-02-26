@@ -1,0 +1,28 @@
+{
+  "name": "@uggsm/codegen",
+  "version": "1.0.0",
+  "description": "CLI tool for code generation",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newfox79/uggsm-app.git"
+  },
+  "author": "https://github.com/newfox79",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/newfox79/uggsm-app/issues"
+  },
+  "homepage": "https://github.com/newfox79/uggsm-app#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "figlet": "^1.5.0",
+    "handlebars": "^4.7.7",
+    "inquirer": "^7.3.3",
+    "xml-js": "^1.6.11",
+    "yargs": "^16.2.0"
+  }
+}
