@@ -72,24 +72,20 @@ export class OfficeController implements IOfficeController {
   public create = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {
     const officeData = request.body
 
-    if (officeData.masterPwd === process.env.REGISTER_USER_MASTER_PWD) {
-      const createdOffice = new this.model({
-        ...officeData,
+    const createdOffice = new this.model({
+      ...officeData,
+    })
+    await createdOffice
+      .save()
+      .then((savedOrder) => {
+        response.status(200)
+        api.io.emit('created office', savedOrder)
+        api.io.emit('update offices')
+        response.send(savedOrder)
       })
-      await createdOffice
-        .save()
-        .then((savedOrder) => {
-          response.status(200)
-          api.io.emit('created office', savedOrder)
-          api.io.emit('update offices')
-          response.send(savedOrder)
-        })
-        .catch((err: Error) => {
-          next(new HttpException(500, err.message))
-        })
-    } else {
-      next(new HttpException(500, 'Where master password?!'))
-    }
+      .catch((err: Error) => {
+        next(new HttpException(500, err.message))
+      })
   }
 
   public updateById = async (
