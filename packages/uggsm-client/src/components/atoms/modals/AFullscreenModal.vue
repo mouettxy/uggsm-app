@@ -17,6 +17,10 @@
 </template>
 
 <script lang="ts">
+//* --------------------------------------------------------------------------
+//!                     DEPRECATED NEEDS TO BE REMOVED
+//* --------------------------------------------------------------------------
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component

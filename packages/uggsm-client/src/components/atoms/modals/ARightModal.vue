@@ -19,6 +19,10 @@
 </template>
 
 <script lang="ts">
+//* --------------------------------------------------------------------------
+//!                   MOVED NEEDS TO BE REPLACED EVERYWHERE
+//* --------------------------------------------------------------------------
+
 import { Component, Vue, Prop, Mixins } from 'vue-property-decorator'
 import Responsive from '@/mixins/responive'
 
