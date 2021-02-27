@@ -55,6 +55,15 @@ import moment from 'moment'
 export default class PageIndex extends Vue {
   public news = [
     {
+      date: moment('26.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      items: [
+        {
+          type: 'fix',
+          text: 'Исправлена ошибка которая не позволяла создавать новые офисы',
+        },
+      ],
+    },
+    {
       date: moment('23.02.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       items: [
         {
@@ -64,7 +73,7 @@ export default class PageIndex extends Vue {
         },
         {
           type: 'fix',
-          text: 'Исправлена ошидбка когда СМС-уведомление не отправлялось при смене статуса гарантийной заявки',
+          text: 'Исправлена ошибка когда СМС-уведомление не отправлялось при смене статуса гарантийной заявки',
         },
       ],
     },
