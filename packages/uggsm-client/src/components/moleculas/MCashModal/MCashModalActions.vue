@@ -1,5 +1,5 @@
 <template lang="pug">
-a-center-modal(
+ug-modal-center(
   v-if='enabled',
   v-model='modal',
   content-class='cash-modal-actions'
@@ -58,7 +58,7 @@ a-center-modal(
           v-model='model.price',
           :type='type'
         )
-        a-textarea(
+        ug-base-textarea(
           v-model='model.comment',
           label='Комментарий',
           dense
@@ -72,12 +72,20 @@ a-center-modal(
 </template>
 
 <script lang="ts">
+import UgModalCenter from '@/components/base/ui/modal-center/modal-center.vue'
+import UgBaseTextarea from '@/components/base/ui/base-textarea/base-textarea.vue'
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { authModule, settingsModule, cashModule, ordersModule } from '@/store'
+import { authModule, settingsModule, ordersModule } from '@/store'
 import { cashAPI } from '@/api'
 import { Order } from '@/typings/api/order'
 
-@Component
+@Component({
+  components: {
+    UgModalCenter,
+    UgBaseTextarea,
+  },
+})
 export default class MCashModalActions extends Vue {
   @Prop({ required: true, type: String }) type!: 'income' | 'consumption'
   @Prop({ type: [Number, String] }) orderId: any

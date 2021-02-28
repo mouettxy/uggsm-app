@@ -34,33 +34,17 @@
                     label='Дублировать',
                     dense
                   )
-    // v-col(cols='auto')
-      v-btn(
-        small,
-        color='secondary'
-      )
-        v-icon(left) mdi-cellphone
-        span SMS
 
   .order-modal-workflow__content
-    a-timeline
-      template(v-for='workflow in workflows')
-        a-timeline-time(
-          :date='workflow[0]',
-          :color='workflow[1][0]["color"]'
-        )
-        a-timeline-item(
-          v-for='action in workflow[1]',
-          :key='action.id',
-          :item='action'
-        )
-          template(#custom.content-body='{value}')
-            m-order-modal-workflow-call(:call='getCall(value)')
+    ug-order-timeline(:workflow='workflows')
+      template(#custom.content-body='{value}')
+        m-order-modal-workflow-call(:call='getCall(value)')
 </template>
 
 <script lang="ts">
+import UgOrderTimeline from '@/components/order/order-timeline/order-timeline.vue'
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { officesModule, ordersModule } from '@/store'
+import { officesModule } from '@/store'
 import moment from 'moment'
 
 import { each, cloneDeep, find, includes } from 'lodash'
@@ -68,7 +52,11 @@ import { ordersAPI } from '@/api'
 import { getCorrectTextColor } from '@/api/helpers'
 import { Order } from '@/typings/api/order'
 
-@Component
+@Component({
+  components: {
+    UgOrderTimeline,
+  },
+})
 export default class OOrderModalRegularWorkflow extends Vue {
   @Prop({ default: null }) order!: Order | null
   public duplicate = false

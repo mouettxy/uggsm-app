@@ -1,6 +1,6 @@
 <template lang="pug">
 .order-modal-warranty
-  a-right-modal(v-model='modal')
+  ug-modal-right(v-model='modal')
     template(#activator='{on, attrs}')
       slot(
         name='activator',
@@ -77,10 +77,11 @@
 </template>
 
 <script lang="ts">
+import UgModalRight from '@/components/base/ui/modal-right/modal-right.vue'
 import { ordersModule } from '@/store'
 import { Order } from '@/typings/api/order'
 import { Component, Vue } from 'vue-property-decorator'
-import { cloneDeep, debounce, find, flatten, map } from 'lodash'
+import { cloneDeep, find, flatten, map } from 'lodash'
 import { groupedStatuses } from '@/api/helpers/enums'
 import { getCorrectTextColor } from '@/api/helpers'
 import moment from 'moment'
@@ -88,7 +89,11 @@ import { User } from '@/typings/api/auth'
 import { Office } from '@/typings/api/office'
 import { Client } from '@/typings/api/client'
 
-@Component
+@Component({
+  components: {
+    UgModalRight,
+  },
+})
 export default class OOrderModalWarranty extends Vue {
   public modal = false
   public order: Order | null = null

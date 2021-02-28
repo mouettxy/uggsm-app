@@ -127,7 +127,7 @@
                       v-icon mdi-close
       template(v-else)
         v-col(cols='11')
-          a-alert(
+          ug-base-alert(
             type='warning',
             persistent
           ) Не выбран офис, выберите свой офис в выпадающем списке сверху.
@@ -163,6 +163,8 @@
 </template>
 
 <script lang="ts">
+import UgBaseAlert from '@/components/base/ui/base-alert/base-alert.vue'
+
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, settingsModule } from '@/store'
 import { cloneDeep, map, join } from 'lodash'
@@ -171,7 +173,11 @@ import { User } from '@/typings/api/auth'
 import moment from 'moment'
 import UserAPI from '@/api/user'
 
-@Component
+@Component({
+  components: {
+    UgBaseAlert,
+  },
+})
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
 

@@ -86,7 +86,7 @@
     ref='commentForm',
     @submit.prevent='addComment'
   )
-    a-textarea(
+    ug-base-textarea(
       v-model='comment.message',
       label='Комментарий',
       hide-details,
@@ -101,13 +101,18 @@
 </template>
 
 <script lang="ts">
+import UgBaseTextarea from '@/components/base/ui/base-textarea/base-textarea.vue'
 import { Component, Vue, Prop, Watch, Ref } from 'vue-property-decorator'
-import { ordersModule, authModule } from '@/store'
+import { authModule } from '@/store'
 import { ordersAPI } from '@/api'
 import { find, reduce } from 'lodash'
 import { Order } from '@/typings/api/order'
 
-@Component
+@Component({
+  components: {
+    UgBaseTextarea,
+  },
+})
 export default class OOrderModalRegularWorks extends Vue {
   @Ref('form') form!: any
   @Ref('commentForm') commentForm!: any

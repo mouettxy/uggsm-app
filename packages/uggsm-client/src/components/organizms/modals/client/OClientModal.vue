@@ -1,6 +1,6 @@
 <template lang="pug">
 .client-modal
-  a-right-modal(v-model='modal')
+  ug-modal-right(v-model='modal')
     template(#activator='{on, attrs}')
       slot(
         name='activator',
@@ -44,13 +44,18 @@
 </template>
 
 <script lang="ts">
+import UgModalRight from '@/components/base/ui/modal-right/modal-right.vue'
 import { Component, Vue, Prop, Watch, Mixins } from 'vue-property-decorator'
 import { Client } from '@/typings/api/client'
 import { clientModule } from '@/store'
 import { Socket } from 'vue-socket.io-extended'
 import Responsive from '@/mixins/responive'
 
-@Component
+@Component({
+  components: {
+    UgModalRight,
+  },
+})
 export default class OClientModal extends Mixins(Responsive) {
   @Prop({ type: [Number, String], required: true }) clientid!: number | string
   @Prop({ type: Boolean, default: false }) byName!: boolean

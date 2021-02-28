@@ -1,6 +1,6 @@
 <template lang="pug">
 .order-modal-new
-  a-right-modal(v-model='modal')
+  ug-modal-right(v-model='modal')
     template(#activator='{on, attrs}')
       slot(
         name='activator',
@@ -31,10 +31,15 @@
 </template>
 
 <script lang="ts">
+import UgModalRight from '@/components/base/ui/modal-right/modal-right.vue'
 import { ordersModule } from '@/store'
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: {
+    UgModalRight,
+  },
+})
 export default class OOrderModalNew extends Vue {
   public modal = false
 

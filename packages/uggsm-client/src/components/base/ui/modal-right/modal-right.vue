@@ -18,6 +18,8 @@ v-dialog.ug-modal-right(
 </template>
 
 <script>
+import Responsive from '@/mixins/responive'
+
 export default {
   name: 'ug-modal-right',
 
@@ -27,6 +29,8 @@ export default {
       type: [Boolean],
     },
   },
+
+  mixins: [Responsive],
 
   computed: {
     model: {

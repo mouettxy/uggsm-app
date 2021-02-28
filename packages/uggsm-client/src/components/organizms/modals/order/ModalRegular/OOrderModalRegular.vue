@@ -1,6 +1,6 @@
 <template lang="pug">
 .order-modal-new
-  a-fullscreen-modal-2(v-model='modal')
+  ug-modal-fullscreen(v-model='modal')
     template(#activator='{on, attrs}')
       slot(
         name='activator',
@@ -38,12 +38,17 @@
 </template>
 
 <script lang="ts">
+import UgModalFullscreen from '@/components/base/ui/modal-fullscreen/modal-fullscreen.vue'
 import { ordersModule } from '@/store'
 import { Order } from '@/typings/api/order'
 import { Socket } from 'vue-socket.io-extended'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: {
+    UgModalFullscreen,
+  },
+})
 export default class OOrderModalRegular extends Vue {
   @Prop() orderid!: string | number
 
