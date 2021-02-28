@@ -10,14 +10,14 @@ v-select.ug-base-select(
   :items='items',
   :hideSelected='hideSelected',
   :disabled='disabled',
-  :dense='dense',
   :deletableChips='deletableChips',
   :clearable='clearable',
   :chips='chips',
   :hint='hint',
   @change='onChange',
   outlined,
-  hide-details='auto'
+  hide-details='auto',
+  dense
 )
   template(#selection='{item, index}')
     slot(
@@ -25,7 +25,10 @@ v-select.ug-base-select(
       :item='item',
       :index='index'
     )
-      span {{ item["text"] }}
+      template(v-if='typeof item === "string"')
+        span {{ item }}
+      template(v-else)
+        span {{ item["text"] }}
 </template>
 
 <script>
@@ -60,11 +63,6 @@ export default {
     cache: {
       required: false,
       type: [String],
-    },
-
-    dense: {
-      required: false,
-      type: [Boolean],
     },
 
     readonly: {

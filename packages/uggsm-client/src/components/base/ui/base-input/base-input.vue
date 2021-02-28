@@ -1,36 +1,80 @@
 <template lang="pug">
-v-text-field.ug-input(
-  ref='input',
-  v-model='model',
-  :rules='rules',
-  :prepend-inner-icon='icon',
-  :placeholder='label',
-  :label='label',
-  :hide-details='true',
-  @blur='handleBlur',
-  single-line,
-  outlined,
-  dense
-)
-  template(#append)
-    .ug-input__append
-      .ug-input__hint-content(ref='hint')
-        div(v-md.html) {{ hint }}
+.ug-base-input
+  template(v-if='type === "number"')
+    v-text-field(
+      ref='input',
+      v-model.number='model',
+      :type='type',
+      :suffix='suffix',
+      :rules='rules',
+      :prepend-inner-icon='icon',
+      :prefix='prefix',
+      :placeholder='label',
+      :label='label',
+      :hide-details='true',
+      :disabled='disabled',
+      @blur='handleBlur',
+      single-line,
+      outlined,
+      dense
+    )
+      template(#append)
+        .ug-base-input__append
+          .ug-base-input__hint-content(ref='hint')
+            div(v-md.html) {{ hint }}
 
-      .ug-input__mark
-        template(v-if='hint')
-          v-avatar.ug-input__question-mark(
-            ref='append',
-            @mouseover.native='handleAppendMouseOver',
-            @mouseleave.native='handleAppendMouseLeave',
-            @click.prevent='handleAppendClick',
-            size='24'
-          )
-            v-icon(
-              ref='icon',
-              small,
-              color='primary'
-            ) mdi-help
+          .ug-base-input__mark
+            template(v-if='hint')
+              v-avatar.ug-base-input__question-mark(
+                ref='append',
+                @mouseover.native='handleAppendMouseOver',
+                @mouseleave.native='handleAppendMouseLeave',
+                @click.prevent='handleAppendClick',
+                size='24'
+              )
+                v-icon(
+                  ref='icon',
+                  small,
+                  color='primary'
+                ) mdi-help
+  template(v-else-if='["text", "password"].includes(type)')
+    v-text-field(
+      ref='input',
+      v-model='model',
+      :type='type',
+      :suffix='suffix',
+      :rules='rules',
+      :prepend-inner-icon='icon',
+      :prefix='prefix',
+      :placeholder='label',
+      :label='label',
+      :hide-details='true',
+      :disabled='disabled',
+      @blur='handleBlur',
+      v-mask='phoneMask',
+      single-line,
+      outlined,
+      dense
+    )
+      template(#append)
+        .ug-base-input__append
+          .ug-base-input__hint-content(ref='hint')
+            div(v-md.html) {{ hint }}
+
+          .ug-base-input__mark
+            template(v-if='hint')
+              v-avatar.ug-base-input__question-mark(
+                ref='append',
+                @mouseover.native='handleAppendMouseOver',
+                @mouseleave.native='handleAppendMouseLeave',
+                @click.prevent='handleAppendClick',
+                size='24'
+              )
+                v-icon(
+                  ref='icon',
+                  small,
+                  color='primary'
+                ) mdi-help
 </template>
 
 <script>
@@ -41,11 +85,11 @@ export default {
   mixins: [BaseInputAnimations],
   props: {
     value: {
-      required: true,
+      required: false,
       type: [String, Number],
     },
     label: {
-      required: true,
+      required: false,
       type: String,
     },
     icon: {
@@ -60,6 +104,30 @@ export default {
       required: false,
       type: Array,
     },
+    type: {
+      required: false,
+      type: [String],
+      default: 'text',
+      validator: (v) => {
+        return ['text', 'number', 'password'].includes(v)
+      },
+    },
+    phone: {
+      required: false,
+      type: [Boolean],
+    },
+    suffix: {
+      required: false,
+      type: [String],
+    },
+    prefix: {
+      required: false,
+      type: [String],
+    },
+    disabled: {
+      required: false,
+      type: [Boolean],
+    },
   },
   computed: {
     model: {
@@ -69,6 +137,14 @@ export default {
       set: function (value) {
         this.$emit('input', value)
       },
+    },
+
+    phoneMask() {
+      if (this.phone) {
+        return '+7 (###) ###-##-##'
+      } else {
+        return false
+      }
     },
   },
   methods: {
@@ -91,44 +167,27 @@ export default {
       this.deanimateHint()
     },
   },
+
+  mounted: function () {
+    if (this.type === 'number') {
+      const { input } = this.$refs
+
+      input.$el.querySelector('input').style.appearance = 'textfield'
+    }
+  },
 }
-/* import { Component, Prop, Ref, Watch } from 'vue-property-decorator'
-import UgBaseInputAnimations from './base-input.animations'
-
-  handleAppendMouseOver() {
-    const { append }: Record<string, any> = this.$refs
-
-    this.animateAppend(append.$el)
-  }
-
-  handleAppendMouseLeave() {
-    const { append }: Record<string, any> = this.$refs
-
-    this.deanimateAppend(append.$el)
-  }
-
-  handleAppendClick() {
-    const { hint }: Record<string, any> = this.$refs
-
-    this.animateHint(hint)
-  }
-
-  handleBlur() {
-    this.deanimateHint()
-  }
-} */
 </script>
 
 <style lang="sass">
-.ug-input
-  .ug-input__append
+.ug-base-input
+  .ug-base-input__append
     position: relative
-    .ug-input__hint-content
+    .ug-base-input__hint-content
       color: #151515 !important
       position: absolute
       display: none
       overflow: hidden
-    .ug-input__mark
+    .ug-base-input__mark
       margin-top: -1px
       border-radius: 50%
   .v-input__append-inner

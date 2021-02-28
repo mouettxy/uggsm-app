@@ -21,7 +21,8 @@ v-autocomplete.ug-base-autocomplete(
   no-data-text='Нет доступных данных',
   hide-no-data,
   clearable,
-  auto-select-first
+  auto-select-first,
+  append-icon=''
 )
 </template>
 
@@ -32,8 +33,13 @@ export default {
   name: 'ug-base-autocomplete',
   props: {
     value: {
-      required: true,
+      required: false,
       type: [String, Number, Object],
+    },
+
+    endpoint: {
+      required: true,
+      type: [String],
     },
 
     disabled: {
