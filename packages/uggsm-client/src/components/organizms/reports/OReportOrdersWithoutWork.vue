@@ -4,12 +4,12 @@
     v-card-title Закрыто на 0
     v-row.report-orders-without-work__toolbar
       v-col(cols='5')
-        a-datetime-picker-2.pl-4(
+        ug-datetime-picker.pl-4(
           v-model='search.date',
           range
         )
       v-col(cols='5')
-        a-select(
+        ug-base-select(
           v-model='search.status',
           :items='["Закрыт", "Готов"]',
           multiple,
@@ -65,15 +65,20 @@
 </template>
 
 <script lang="ts">
+import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+
 import { Component, Vue } from 'vue-property-decorator'
 import moment from 'moment'
-import { settingsModule, ordersModule } from '@/store'
-import { cloneDeep, groupBy, sum, map, reduce, join, flatten } from 'lodash'
+import { ordersModule } from '@/store'
+import { cloneDeep, groupBy, map, reduce, flatten } from 'lodash'
 import JsonExcel from 'vue-json-excel'
 
 @Component({
   components: {
     JsonExcel,
+    UgDatetimePicker,
+    UgBaseSelect,
   },
 })
 export default class OReportsOrdersWithoutWork extends Vue {

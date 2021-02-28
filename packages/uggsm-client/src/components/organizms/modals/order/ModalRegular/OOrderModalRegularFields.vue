@@ -43,25 +43,23 @@
       md='6',
       lg='6'
     )
-      a-input.mb-6(
+      ug-base-input.mb-6(
         v-model='model.serialNumber',
         :disabled='canEditGeneralFields',
         label='Серийный номер',
-        icon='mdi-fingerprint',
-        dense
+        icon='mdi-fingerprint'
       )
     v-col.order-modal-fields__section-item(
       cols='12',
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model='model.declaredPrice',
         :disabled='canEditGeneralFields',
         type='number',
         label='Ориентировочная цена',
-        icon='mdi-cash',
-        dense
+        icon='mdi-cash'
       )
 
   v-row.order-modal-fields__section(no-gutters)
@@ -70,7 +68,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.phoneBrand',
         :predefined-items='model.phoneBrand ? [{ text: model.phoneBrand, value: model.phoneBrand }] : []',
         :disabled='canEditGeneralFields',
@@ -84,7 +82,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.phoneModel',
         :predefined-items='model.phoneModel ? [{ text: model.phoneModel, value: model.phoneModel }] : []',
         :disabled='canEditGeneralFields',
@@ -100,7 +98,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.declaredDefect',
         :predefined-items='model.declaredDefect ? [{ text: model.declaredDefect, value: model.declaredDefect }] : []',
         :disabled='canEditGeneralFields',
@@ -114,7 +112,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.appearance',
         :predefined-items='model.appearance ? [{ text: model.appearance, value: model.appearance }] : []',
         :disabled='canEditGeneralFields',
@@ -130,7 +128,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.kit',
         :predefined-items='model.kit ? [{ text: model.kit, value: model.kit }] : []',
         :disabled='canEditGeneralFields',
@@ -144,7 +142,7 @@
       md='6',
       lg='6'
     )
-      a-switch.order-modal-fields__section-item__switch(
+      ug-base-switch.order-modal-fields__section-item__switch(
         v-model='model.quick',
         :disabled='canEditGeneralFields',
         label='Срочно',
@@ -158,7 +156,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.master._id',
         :predefined-items='model.master ? [{ text: model.master.credentials, value: model.master._id }] : []',
         :disabled='isMasterFieldDisabled',
@@ -173,7 +171,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.manager._id',
         :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
         :disabled='isManagerFieldDisabled',
@@ -186,10 +184,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import { getAnonymousAnimal } from '@/api/helpers'
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+    UgBaseSwitch,
+    UgBaseInput,
+  },
+})
 export default class OOrderModalRegularFields extends Vue {
   @Prop({ required: true }) value!: any
 

@@ -2,11 +2,9 @@
 .manage-daily-subscriptions
   v-row.align-center
     v-col(cols='2')
-      a-input(
+      ug-base-input(
         v-model='email',
-        label='E-mail',
-        hide-details,
-        dense
+        label='E-mail'
       )
     v-col(cols='2')
       v-btn(
@@ -35,10 +33,16 @@
 </template>
 
 <script lang="ts">
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue } from 'vue-property-decorator'
 import { emailSubscriptionModel } from '@/store'
 
-@Component
+@Component({
+  components: {
+    UgBaseInput,
+  },
+})
 export default class ManageDailySubscriptions extends Vue {
   public email = ''
 

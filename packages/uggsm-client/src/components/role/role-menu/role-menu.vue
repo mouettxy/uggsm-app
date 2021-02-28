@@ -53,7 +53,7 @@ v-card.ug-role-menu(
                       v-list-item-title.primary--text Назначить роль
                   v-card
                     v-card-text
-                      a-autocomplete.mb-2(
+                      ug-base-autocomplete.mb-2(
                         v-model='user',
                         label='Пользователь',
                         hide-details,
@@ -72,6 +72,8 @@ v-card.ug-role-menu(
 </template>
 
 <script lang="ts">
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+
 import { copyTextToClipboard } from '@/api/helpers'
 import RoleAPI from '@/api/role'
 import UserAPI from '@/api/user'
@@ -79,7 +81,11 @@ import { Roles } from '@/typings/api/role'
 import { compact, find, includes, map } from 'lodash'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+  },
+})
 export default class UgRoleMenu extends Vue {
   @Prop() items!: Roles
   @Prop() rolesToHide!: Array<string>

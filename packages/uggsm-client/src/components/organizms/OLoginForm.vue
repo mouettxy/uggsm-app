@@ -4,15 +4,15 @@ v-form.login-form(
   v-model='valid',
   @submit.prevent='onLogin'
 )
-  a-input.mb-1(
+  ug-base-input.mb-1(
     v-model='user.username',
-    :validate='usernameRules',
+    :rules='usernameRules',
     label='Логин',
     icon='mdi-account'
   )
-  a-input.mb-1(
+  ug-base-input.mb-1(
     v-model='user.password',
-    :validate='passwordRules',
+    :rules='passwordRules',
     type='password',
     label='Пароль',
     icon='mdi-lock'
@@ -24,12 +24,18 @@ v-form.login-form(
 </template>
 
 <script lang="ts">
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
 import { AuthInput } from '@/typings/api/auth'
 import { authModule } from '@/store'
 
-@Component
+@Component({
+  components: {
+    UgBaseInput,
+  },
+})
 export default class OLoginForm extends Vue {
   @Ref('form') form: any
   public valid = false

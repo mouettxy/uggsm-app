@@ -6,11 +6,10 @@
       md='4',
       lg='4'
     )
-      a-input(
-        v-model.number='orderid',
+      ug-base-input(
+        v-model='orderid',
         type='number',
         prefix='№',
-        placeholder='00000',
         label='Заявка'
       )
     v-col.order-modal-fields__section-item(
@@ -47,7 +46,7 @@
       no-gutters
     )
       v-col.order-modal-fields__section-item(cols='12')
-        a-autocomplete(
+        ug-base-autocomplete(
           v-model='defect',
           label='Новая неисправность',
           icon='mdi-cellphone-erase',
@@ -57,7 +56,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Mixins, Watch } from 'vue-property-decorator'
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
+import { Component, Mixins, Watch } from 'vue-property-decorator'
 import Responsive from '@/mixins/responive'
 import { Order } from '@/typings/api/order'
 import { debounce, find, flatten, map } from 'lodash'
@@ -65,7 +67,12 @@ import { ordersModule } from '@/store'
 import { groupedStatuses } from '@/api/helpers/enums'
 import { getCorrectTextColor } from '@/api/helpers'
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+    UgBaseInput,
+  },
+})
 export default class OOrderModalWarrantyFields extends Mixins(Responsive) {
   public orderid: number | null = null
   public order: Order | null = null

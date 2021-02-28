@@ -7,7 +7,7 @@
       md='4',
       lg='4'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.customerName',
         :icon='customerNameIcon',
         label='Имя клиента',
@@ -19,7 +19,7 @@
       md='4',
       lg='4'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.customerPhone',
         :replaceSearchWith='model.customerName',
         phone,
@@ -33,7 +33,7 @@
       md='4',
       lg='4'
     )
-      a-input(
+      ug-base-input(
         v-model='model.password',
         :hide-details='false',
         label='Пароль',
@@ -49,11 +49,10 @@
       md='6',
       lg='6'
     )
-      a-input.mb-6(
+      ug-base-input.mb-6(
         v-model='model.serialNumber',
         label='Серийный номер',
-        icon='mdi-fingerprint',
-        dense
+        icon='mdi-fingerprint'
       )
 
     v-col.order-modal-fields__section-item(
@@ -61,12 +60,10 @@
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model='model.declaredPrice',
-        :hide-details='false',
         label='Ориентировочная цена',
-        icon='mdi-cash',
-        dense
+        icon='mdi-cash'
       )
 
   v-row.order-modal-fields__section(no-gutters)
@@ -75,7 +72,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.phoneBrand',
         label='Бренд',
         icon='mdi-cellphone-information',
@@ -87,7 +84,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.phoneModel',
         label='Модель',
         icon='mdi-cellphone-information',
@@ -101,7 +98,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.declaredDefect',
         label='Первичная неисправность',
         icon='mdi-cellphone-erase',
@@ -113,7 +110,7 @@
       md='6',
       lg='6'
     )
-      a-switch.order-modal-fields__section-item__switch(
+      ug-base-switch.order-modal-fields__section-item__switch(
         v-model='model.quick',
         label='Срочно',
         icon='mdi-alarm-light',
@@ -126,7 +123,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.appearance',
         :predefined-items='[{ value: "царапины и потёртости", text: "царапины и потёртости" }]',
         label='Внешний вид',
@@ -139,7 +136,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.kit',
         :predefined-items='[{ value: "устройство без сим карты, чехла, карты памяти", text: "устройство без сим карты, чехла, карты памяти" }]',
         label='Комплектация',
@@ -150,7 +147,7 @@
 
   v-row.order-modal-fields__section(no-gutters)
     v-col.order-modal-fields__section-item(cols='12')
-      a-datetime-picker(
+      ug-datetime-picker-2(
         v-model='model.estimatedCloseAt',
         :add='24',
         type='hours',
@@ -166,7 +163,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.master',
         label='Мастер',
         icon='mdi-account-hard-hat',
@@ -179,7 +176,7 @@
       md='6',
       lg='6'
     )
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='model.manager._id',
         :predefined-items='model.manager ? [{ text: model.manager.credentials, value: model.manager._id }] : []',
         :disabled='isObjectId(model.manager._id)',
@@ -192,12 +189,24 @@
 </template>
 
 <script lang="ts">
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgDatetimePicker2 from '@/components/base/ui/datetime-picker-2/datetime-picker-2.vue'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { getAnonymousAnimal } from '@/api/helpers'
 import { authModule } from '@/store'
 import { Component, Prop, Mixins, Watch } from 'vue-property-decorator'
 import Responsive from '@/mixins/responive'
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+    UgDatetimePicker2,
+    UgBaseSwitch,
+    UgBaseInput,
+  },
+})
 export default class OOrderModalNewFields extends Mixins(Responsive) {
   @Prop() value!: Record<string, any>
 

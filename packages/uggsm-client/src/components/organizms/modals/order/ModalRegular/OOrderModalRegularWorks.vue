@@ -1,7 +1,7 @@
 <template lang="pug">
 .order-modal-works.pa-2
   .text-h5.mb-4 Выполненная работа
-  a-autocomplete(
+  ug-base-autocomplete(
     v-if='!isOrderClosed && $can("addOrderWork", "Global")',
     v-model='work',
     label='Выполненная работа',
@@ -18,31 +18,24 @@
       )
         v-row
           v-col(cols='6')
-            a-input(
-              v-bind='{style: "appearance: textfield;"}',
+            ug-base-input(
               v-model='model.header',
-              label='Название',
-              hide-details,
-              dense
+              label='Название'
             )
           v-col(cols='6')
-            a-input(
+            ug-base-input(
               v-model='model.message',
-              label='Описание',
-              hide-details,
-              dense
+              label='Описание'
             )
           v-col(cols='6')
-            a-input(
+            ug-base-input(
               v-model='model.price',
-              :validate='[(v) => v > 0 || "Введите число без лишних знаков"]',
+              :rules='[(v) => v > 0 || "Введите число без лишних знаков"]',
               type='number',
-              label='Цена',
-              hide-details,
-              dense
+              label='Цена'
             )
           v-col(cols='6')
-            a-autocomplete(
+            ug-base-autocomplete(
               v-model='model.user',
               :uri-query='{ "return-value": "id" }',
               :predefined-items='[model.user]',
@@ -102,6 +95,9 @@
 
 <script lang="ts">
 import UgBaseTextarea from '@/components/base/ui/base-textarea/base-textarea.vue'
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue, Prop, Watch, Ref } from 'vue-property-decorator'
 import { authModule } from '@/store'
 import { ordersAPI } from '@/api'
@@ -111,6 +107,8 @@ import { Order } from '@/typings/api/order'
 @Component({
   components: {
     UgBaseTextarea,
+    UgBaseAutocomplete,
+    UgBaseInput,
   },
 })
 export default class OOrderModalRegularWorks extends Vue {

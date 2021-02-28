@@ -12,7 +12,7 @@
           md='8',
           lg='8'
         )
-          a-input(
+          ug-base-input(
             v-model='model.name',
             :disabled='canEditGeneralFields',
             label='Клиент'
@@ -22,7 +22,7 @@
           md='4',
           lg='4'
         )
-          a-select(
+          ug-base-select(
             v-model='model.clientType',
             :items='clientTypeSelect',
             :disabled='canEditGeneralFields',
@@ -34,7 +34,7 @@
           md='8',
           lg='8'
         )
-          a-input(
+          ug-base-input(
             v-model='model.discount',
             :disabled='canEditGeneralFields',
             type='number',
@@ -46,7 +46,7 @@
           md='4',
           lg='4'
         )
-          a-switch.mt-1(
+          ug-base-switch.mt-1(
             v-model='model.isProvider',
             :disabled='canEditGeneralFields',
             label='Поставщик'
@@ -57,7 +57,7 @@
           md='4',
           lg='4'
         )
-          a-switch.mt-1(
+          ug-base-switch.mt-1(
             v-model='model.isConflict',
             :disabled='canEditGeneralFields',
             label='Конфликтный'
@@ -67,7 +67,7 @@
           md='4',
           lg='4'
         )
-          a-switch.mt-1(
+          ug-base-switch.mt-1(
             v-model='model.allowedEmailNotifications',
             :disabled='canEditGeneralFields',
             label='E-mail'
@@ -77,7 +77,7 @@
           md='4',
           lg='4'
         )
-          a-switch.mt-1(
+          ug-base-switch.mt-1(
             v-model='model.allowedNotifications',
             :disabled='canEditGeneralFields',
             label='SMS'
@@ -107,7 +107,7 @@
                 v-icon mdi-plus
             v-card
               v-card-text
-                a-input.mb-2(
+                ug-base-input.mb-2(
                   v-model='phone.phone',
                   phone,
                   label='Телефон',
@@ -115,7 +115,7 @@
                   hide-details,
                   dense
                 )
-                a-input(
+                ug-base-input(
                   v-model='phone.comment',
                   label='Комментарий',
                   icon='mdi-message',
@@ -154,11 +154,21 @@
 </template>
 
 <script lang="ts">
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Client } from '@/typings/api/client'
 import { filter, cloneDeep, last, map } from 'lodash'
 
-@Component
+@Component({
+  components: {
+    UgBaseSelect,
+    UgBaseSwitch,
+    UgBaseInput,
+  },
+})
 export default class OClientModalFields extends Vue {
   @Prop(Object) client!: Client
 

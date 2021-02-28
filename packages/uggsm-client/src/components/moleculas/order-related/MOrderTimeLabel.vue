@@ -22,7 +22,7 @@
       hide-on-leave
     )
       .order-time-label__editable-input(v-if='editMode')
-        a-datetime-picker.editable-input__field(
+        ug-datetime-picker-2.editable-input__field(
           v-model='model',
           :fill='chipColor',
           :add='24',
@@ -54,13 +54,18 @@
 </template>
 
 <script lang="ts">
+import UgDatetimePicker2 from '@/components/base/ui/datetime-picker-2/datetime-picker-2.vue'
+
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import moment from 'moment'
 import { includes } from 'lodash'
-import { Order } from '@/typings/api/order'
 import { ordersModule } from '@/store'
 
-@Component
+@Component({
+  components: {
+    UgDatetimePicker2,
+  },
+})
 export default class MOrderTimeLabel extends Vue {
   @Prop({ required: true }) time!: string | null
   @Prop({ required: true }) orderStatus!: string

@@ -91,7 +91,7 @@ v-card.ug-role-information(
             color='secondary'
           ) :
           template(v-if='ability.autocomplete === "access-links-list"')
-            a-select-many(
+            ug-select-many(
               v-model='ability.value',
               :items='accessLinksList',
               label='Значение способности'
@@ -109,7 +109,7 @@ v-card.ug-role-information(
               label='Значение способности'
             )
           template(v-else-if='ability.autocomplete && ability.type === "string"')
-            a-autocomplete(
+            ug-base-autocomplete(
               v-model='ability.value',
               :endpoint='`/${ability.autocomplete}`',
               item-value='value',
@@ -124,7 +124,7 @@ v-card.ug-role-information(
               label='Значение способности'
             )
           template(v-else-if='ability.type === "boolean"')
-            a-switch.mt-0(v-model='ability.value')
+            ug-base-switch.mt-0(v-model='ability.value')
 
         v-row(justify='end')
           v-col(cols='auto')
@@ -137,12 +137,22 @@ v-card.ug-role-information(
 </template>
 
 <script lang="ts">
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+
 import RoleAPI from '@/api/role'
 import { Role, RoleAbility } from '@/typings/api/role'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { normalizedMenus } from '@/api/helpers/menus'
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+    UgSelectMany,
+    UgBaseSwitch,
+  },
+})
 export default class UgRoleInformation extends Vue {
   @Prop() role!: Role
 

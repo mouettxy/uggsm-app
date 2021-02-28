@@ -29,7 +29,7 @@
             v-list-item
               v-list-item-content
                 v-list-item-title.px-2.py-2
-                  a-switch.order-modal-workflow__header__action-duplicate(
+                  ug-base-switch.order-modal-workflow__header__action-duplicate(
                     v-model='duplicate',
                     label='Дублировать',
                     dense
@@ -43,6 +43,8 @@
 
 <script lang="ts">
 import UgOrderTimeline from '@/components/order/order-timeline/order-timeline.vue'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { officesModule } from '@/store'
 import moment from 'moment'
@@ -55,6 +57,7 @@ import { Order } from '@/typings/api/order'
 @Component({
   components: {
     UgOrderTimeline,
+    UgBaseSwitch,
   },
 })
 export default class OOrderModalRegularWorkflow extends Vue {

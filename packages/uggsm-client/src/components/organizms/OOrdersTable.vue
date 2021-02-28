@@ -68,37 +68,17 @@
                       ) Мои заказы
                 v-row
                   v-col(cols='12')
-                    a-select(
+                    ug-select-many(
                       v-model='statusFilter',
                       :items='statuses',
                       @change='onStatusFilter',
-                      multiple,
                       label='Статус',
-                      dense,
                       cache='orders-status-filter'
                     )
-                      template(#selection='{ item, index }')
-                        v-chip(
-                          v-if='index === 0',
-                          small
-                        )
-                          span {{ item }}
-                        v-menu(open-on-hover)
-                          template(#activator='{on, attrs}')
-                            v-chip(
-                              v-if='index === 1',
-                              v-on='on',
-                              v-bind='attrs',
-                              small
-                            )
-                              | (+{{ statusFilter.length - 1 }})
-                          v-card(dark)
-                            v-card-text
-                              span.white--text {{ joinArray(statusFilter.slice(1)) }}
                 v-row
                   template(v-if='isManager || isAdmin')
                     v-col(cols='12')
-                      a-select-many(
+                      ug-select-many(
                         v-model='masterFilter',
                         :items='masters',
                         @change='onMastersFilter',
@@ -106,7 +86,7 @@
                         cache='orders-master-filter'
                       )
                     v-col(cols='12')
-                      a-select-many(
+                      ug-select-many(
                         v-model='managerFilter',
                         :items='managers',
                         @change='onManagersFilter',
@@ -115,7 +95,7 @@
                       )
                 v-row
                   v-col(cols='10')
-                    a-datetime-picker-2(
+                    ug-datetime-picker(
                       v-model='dateFilter',
                       range
                     )
@@ -164,6 +144,8 @@
 
 <script lang="ts">
 import UgBaseAlert from '@/components/base/ui/base-alert/base-alert.vue'
+import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
+import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, settingsModule } from '@/store'
@@ -176,6 +158,8 @@ import UserAPI from '@/api/user'
 @Component({
   components: {
     UgBaseAlert,
+    UgDatetimePicker,
+    UgSelectMany,
   },
 })
 export default class OOrdersTable extends Vue {

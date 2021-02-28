@@ -34,7 +34,7 @@ ug-modal-center(
       v-card-text.cash-modal-actions__card-text.pa-4
         v-row
           v-col(cols='6')
-            a-autocomplete(
+            ug-base-autocomplete(
               v-model='model.cashier',
               :predefined-items='model.cashier ? [{ text: userCredentials, value: userId }] : []',
               :disabled='isCashierDisabled',
@@ -45,7 +45,7 @@ ug-modal-center(
               dense
             )
           v-col(cols='6')
-            a-autocomplete(
+            ug-base-autocomplete(
               v-model='model.customer',
               :predefined-items='customerName ? [{ text: customerName, value: customerName }] : []',
               label='Имя клиента',
@@ -74,6 +74,7 @@ ug-modal-center(
 <script lang="ts">
 import UgModalCenter from '@/components/base/ui/modal-center/modal-center.vue'
 import UgBaseTextarea from '@/components/base/ui/base-textarea/base-textarea.vue'
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { authModule, settingsModule, ordersModule } from '@/store'
@@ -84,6 +85,7 @@ import { Order } from '@/typings/api/order'
   components: {
     UgModalCenter,
     UgBaseTextarea,
+    UgBaseAutocomplete,
   },
 })
 export default class MCashModalActions extends Vue {

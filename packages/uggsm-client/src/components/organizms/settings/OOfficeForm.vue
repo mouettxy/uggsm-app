@@ -10,36 +10,30 @@ v-form.office-form(
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='office.name',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         label='Название',
-        icon='mdi-account',
-        dense
+        icon='mdi-account'
       )
     v-col(
       cols='12',
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='office.code',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         label='Код',
-        icon='mdi-account',
-        dense
+        icon='mdi-account'
       )
   v-row
     v-col(cols='12')
-      a-input(
+      ug-base-input(
         v-model.trim='office.address',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         label='Адрес',
-        icon='mdi-account',
-        dense
+        icon='mdi-account'
       )
   v-row
     v-col(
@@ -47,28 +41,24 @@ v-form.office-form(
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='office.ordersTemplate',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         label='Шаблон ID заявок',
         icon='mdi-account',
-        dense,
-        hint='Например 4{C:4}'
+        hint='Например ```4{C:4}```'
       )
     v-col(
       cols='12',
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='office.docsTemplate',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         label='Шаблон ID документа',
         icon='mdi-account',
-        dense,
-        hint='Например BA{C:4} (Пока нигде не используется)'
+        hint='Например ```BA{C:4}``` (Пока нигде не используется)'
       )
   v-row
     v-col(cols='12')
@@ -80,11 +70,17 @@ v-form.office-form(
 </template>
 
 <script lang="ts">
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
 import { officeAPI } from '@/api'
 
-@Component
+@Component({
+  components: {
+    UgBaseInput,
+  },
+})
 export default class OOfficeForm extends Vue {
   @Ref('form') form: any
   public valid = false

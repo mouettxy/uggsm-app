@@ -23,11 +23,11 @@
               v-icon mdi-filter
           v-card
             v-card-text
-              a-datetime-picker-2.mb-2(
+              ug-datetime-picker.mb-2(
                 v-model='search.date',
                 range
               )
-              a-autocomplete.mb-2(
+              ug-base-autocomplete.mb-2(
                 v-model='search.cashier',
                 label='Кассир',
                 hide-details,
@@ -85,12 +85,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
+
+import { Component, Vue } from 'vue-property-decorator'
 import { cashModule } from '@/store'
-import { cloneDeep, filter } from 'lodash'
+import { cloneDeep } from 'lodash'
 import moment from 'moment'
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+    UgDatetimePicker,
+  },
+})
 export default class OCashTable extends Vue {
   public search = {
     date: [moment().format('DD.MM.YYYY'), moment().format('DD.MM.YYYY')],

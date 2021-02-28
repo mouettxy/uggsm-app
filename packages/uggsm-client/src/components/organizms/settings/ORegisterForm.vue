@@ -10,27 +10,23 @@ v-form.register-form(
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='user.username',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         label='Логин',
-        icon='mdi-account',
-        dense
+        icon='mdi-account'
       )
     v-col(
       cols='12',
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='user.password',
-        :validate='requiredField',
-        :hide-details='false',
+        :rules='requiredField',
         type='password',
         label='Пароль',
-        icon='mdi-lock',
-        dense
+        icon='mdi-lock'
       )
   v-row
     v-col(
@@ -38,21 +34,18 @@ v-form.register-form(
       md='6',
       lg='6'
     )
-      a-input(
+      ug-base-input(
         v-model.trim='user.credentials',
-        :validate='requiredField',
-        :hide-details='false',
-        type='text',
+        :rules='requiredField',
         label='Имя',
-        icon='mdi-rename-box',
-        dense
+        icon='mdi-rename-box'
       )
     v-col(
       cols='12',
       md='6',
       lg='6'
     )
-      a-select(
+      ug-base-select(
         v-model.trim='user.role',
         :items='roles',
         :hide-details='false',
@@ -86,12 +79,20 @@ v-form.register-form(
 </template>
 
 <script lang="ts">
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue, Ref } from 'vue-property-decorator'
 import { authModule, officesModule } from '@/store'
 import { map, cloneDeep } from 'lodash'
 import RoleAPI from '@/api/role'
 
-@Component
+@Component({
+  components: {
+    UgBaseSelect,
+    UgBaseInput,
+  },
+})
 export default class ORegisterForm extends Vue {
   @Ref('form') form: any
   public valid = false

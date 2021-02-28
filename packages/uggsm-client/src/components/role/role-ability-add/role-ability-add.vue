@@ -8,7 +8,7 @@ form(@submit.prevent='handleSubmit')
         label='Название способности'
       )
     v-col(cols='4')
-      a-select(
+      ug-base-select(
         v-model='type',
         :items='extendedTypes',
         label='Тип данных значения',
@@ -16,7 +16,7 @@ form(@submit.prevent='handleSubmit')
         item-text='text'
       )
     v-col(cols='4')
-      a-select(
+      ug-base-select(
         v-model='operator',
         :items='operators',
         label='Оператор сравнения значеня(-ий)',
@@ -31,7 +31,7 @@ form(@submit.prevent='handleSubmit')
         label='Переменная способности'
       )
     v-col(cols='4')
-      a-autocomplete(
+      ug-base-autocomplete(
         v-model='autocomplete',
         :disabled='isChooseAutocompleteDisabled',
         label='Выберите автодополнение',
@@ -45,7 +45,7 @@ form(@submit.prevent='handleSubmit')
     v-col(cols='4')
       v-slide-x-transition
         div(v-if='type === "accessList"')
-          a-select-many(
+          ug-select-many(
             v-model='value',
             :items='accessLinksList',
             label='Значение способности'
@@ -62,7 +62,7 @@ form(@submit.prevent='handleSubmit')
             label='Значение способности'
           )
         div(v-else-if='autocomplete && type === "string"')
-          a-autocomplete(
+          ug-base-autocomplete(
             v-model='value',
             :endpoint='`/${autocomplete}`',
             item-value='value',
@@ -77,7 +77,7 @@ form(@submit.prevent='handleSubmit')
             label='Значение способности'
           )
         div(v-else-if='type === "boolean"')
-          a-switch.mt-1(
+          ug-base-switch.mt-1(
             v-model='value',
             label='Значение способности'
           )
@@ -93,6 +93,11 @@ form(@submit.prevent='handleSubmit')
 </template>
 
 <script lang="ts">
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+
 import RoleAPI from '@/api/role'
 import { Role } from '@/typings/api/role'
 import { cloneDeep } from 'lodash'
@@ -105,7 +110,14 @@ enum Defaults {
   OPERATOR = 'equals',
 }
 
-@Component
+@Component({
+  components: {
+    UgBaseAutocomplete,
+    UgBaseSelect,
+    UgSelectMany,
+    UgBaseSwitch,
+  },
+})
 export default class UgRoleAbilityAdd extends Vue {
   @Prop({ required: true }) role!: Role
 

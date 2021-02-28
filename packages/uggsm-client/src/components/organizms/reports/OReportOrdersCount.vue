@@ -4,12 +4,12 @@
     v-card-title Создано
     v-row.fill-height.report-orders-count__toolbar
       v-col(cols='5')
-        a-datetime-picker-2.pl-4(
+        ug-datetime-picker.pl-4(
           v-model='search.date',
           range
         )
       v-col(cols='5')
-        a-select(
+        ug-base-select(
           v-model='search.status',
           :items='statusList',
           multiple,
@@ -52,6 +52,9 @@
 </template>
 
 <script lang="ts">
+import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+
 import { Component, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import { cloneDeep, reduce, join, map } from 'lodash'
@@ -61,6 +64,8 @@ import JsonExcel from 'vue-json-excel'
 @Component({
   components: {
     JsonExcel,
+    UgDatetimePicker,
+    UgBaseSelect,
   },
 })
 export default class OReportsOrdersCount extends Vue {

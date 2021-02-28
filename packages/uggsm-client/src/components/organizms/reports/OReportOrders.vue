@@ -4,14 +4,14 @@
     v-card-title Закрыто
     v-row.fill-height.orders-report__row
       v-col(cols='3')
-        a-datetime-picker-2.pl-4(
+        ug-datetime-picker.pl-4(
           v-model='search.date',
           range
         )
       v-col(cols='4')
         m-office-switcher(v-model='search.office')
       v-col(cols='3')
-        a-select(
+        ug-base-select(
           v-model='search.status',
           :items='["Закрыт", "Готов"]',
           multiple,
@@ -69,6 +69,9 @@
 </template>
 
 <script lang="ts">
+import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+
 import { Component, Vue } from 'vue-property-decorator'
 import moment from 'moment'
 import { settingsModule, ordersModule } from '@/store'
@@ -78,6 +81,8 @@ import JsonExcel from 'vue-json-excel'
 @Component({
   components: {
     JsonExcel,
+    UgDatetimePicker,
+    UgBaseSelect,
   },
 })
 export default class OOrdersReport extends Vue {

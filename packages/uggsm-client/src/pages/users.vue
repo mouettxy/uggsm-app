@@ -18,7 +18,7 @@
     headers-schema-id='headers-id'
   )
     template(#item.role='{ item }')
-      a-select.pa-2(
+      ug-base-select.pa-2(
         v-model='item.role',
         :items='roles',
         @change='handleRoleChange(item)',
@@ -36,11 +36,17 @@
 </template>
 
 <script lang="ts">
+import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+
 import UserAPI from '@/api/user'
 import { User } from '@/typings/api/user'
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: {
+    UgBaseSelect,
+  },
+})
 export default class PageUsers extends Vue {
   public headersSchema = {
     id: 'Идентификатор',

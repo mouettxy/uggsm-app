@@ -4,7 +4,7 @@
     table.cash-check__table
       thead.cash-check__table-header
         td.cash-check__table-header__item Наименование
-        td.cash-check__table-header__item Сумма, руб
+        td.cash-check__table-header__item Сумма, руб.
       tbody.cash-check__table-body
         tr.cash-check__table-body-row
           template(v-if='type === "income"')
@@ -12,21 +12,29 @@
           template(v-else)
             td.cash-check__table-body-row__item Выплата денег из кассы
           td.cash-check__table-body-row__item
-            a-input(
+            ug-base-input(
               v-model='model',
               type='number',
+              suffix='руб.',
+              label='Сумма',
               hide-details,
               dense
             )
         tr.cash-check__table-body-row
           td.cash-check__table-body-row__item.text-right Итого:
-          td.cash-check__table-body-row__item.text-right {{ model }} руб
+          td.cash-check__table-body-row__item.text-right {{ model }} руб.
 </template>
 
 <script lang="ts">
+import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: {
+    UgBaseInput,
+  },
+})
 export default class Name extends Vue {
   @Prop({ required: true, type: [String, Number] }) value!: string | number
   @Prop({ required: true, type: String }) type!: 'income' | 'consumption'
