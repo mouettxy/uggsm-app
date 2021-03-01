@@ -5,18 +5,18 @@
     flat,
     dense
   )
-    m-cash-modal-actions(
-      v-if='$can("addOrderIncome", "Global") && displayActions',
-      :order-id='order.id',
-      :customer='order.customer',
-      type='income'
-    )
-    m-cash-modal-actions(
-      v-if='$can("addOrderConsumption", "Global") && displayActions',
-      :order-id='order.id',
-      :customer='order.customer',
-      type='consumption'
-    )
+    .pr-1
+      ug-modal-cash-income(
+        v-if='$can("addOrderIncome", "Global") && displayActions',
+        :order-id='order.id',
+        :customer='order.customer'
+      )
+    .pl-1
+      ug-modal-cash-consumption(
+        v-if='$can("addOrderConsumption", "Global") && displayActions',
+        :order-id='order.id',
+        :customer='order.customer'
+      )
     v-spacer
     v-btn(
       :disabled='!displayActions',
@@ -40,14 +40,21 @@
 </template>
 
 <script lang="ts">
+import UgModalCashConsumption from '@/components/cash/modal-cash-consumption/modal-cash-consumption.vue'
+import UgModalCashIncome from '@/components/cash/modal-cash-income/modal-cash-income.vue'
+
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { ordersModule, cashModule, authModule } from '@/store'
 import { map, reduce } from 'lodash'
 import { ordersAPI } from '@/api'
 import { Order } from '@/typings/api/order'
 import moment from 'moment'
 
-@Component
+@Component({
+  components: {
+    UgModalCashConsumption,
+    UgModalCashIncome,
+  },
+})
 export default class OOrderModalRegularCash extends Vue {
   @Prop({}) order!: Order
 

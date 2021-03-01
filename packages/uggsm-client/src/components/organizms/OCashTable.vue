@@ -2,16 +2,16 @@
 .cash-table
   m-remote-table(:store='store')
     template(#main-toolbar)
-      v-col(
+      v-col.pr-1(
         cols='auto',
         v-if='$can("addCashIncome", "Global")'
       )
-        m-cash-modal-actions(type='income')
-      v-col(cols='auto')
-        m-cash-modal-actions(
-          v-if='$can("addCashConsumption", "Global")',
-          type='consumption'
-        )
+        ug-modal-cash-income
+      v-col.pl-1(
+        cols='auto',
+        v-if='$can("addCashConsumption", "Global")'
+      )
+        ug-modal-cash-consumption
       v-col(cols='auto')
         v-menu(:close-on-content-click='false')
           template(#activator='{on, attrs}')
@@ -87,6 +87,8 @@
 <script lang="ts">
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
 import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
+import UgModalCashConsumption from '@/components/cash/modal-cash-consumption/modal-cash-consumption.vue'
+import UgModalCashIncome from '@/components/cash/modal-cash-income/modal-cash-income.vue'
 
 import { Component, Vue } from 'vue-property-decorator'
 import { cashModule } from '@/store'
@@ -97,6 +99,8 @@ import moment from 'moment'
   components: {
     UgBaseAutocomplete,
     UgDatetimePicker,
+    UgModalCashConsumption,
+    UgModalCashIncome,
   },
 })
 export default class OCashTable extends Vue {
