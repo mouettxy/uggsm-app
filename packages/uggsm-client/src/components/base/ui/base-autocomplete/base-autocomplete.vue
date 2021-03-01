@@ -141,11 +141,15 @@ export default {
 
         this.items = items
 
-        if (this.phone) {
-          this.items = this.items.map(this.items, (e) => ({
-            value: e.value,
-            text: VueMaskFilter(e.text, '+7 (###) ###-##-##'),
-          }))
+        if (this.phone && this.items) {
+          const tempItems = []
+          this.items.forEach((e) => {
+            tempItems.push({
+              value: e.value,
+              text: VueMaskFilter(e.text, '+7 (###) ###-##-##'),
+            })
+          })
+          this.items = tempItems
         }
 
         if (!this.disallowFreeType) {
