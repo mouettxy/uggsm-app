@@ -38,12 +38,13 @@
   .order-modal-workflow__content
     ug-order-timeline(:workflow='workflows')
       template(#custom.content-body='{value}')
-        m-order-modal-workflow-call(:call='getCall(value)')
+        ug-order-workflow-audioplayer(:call='getCall(value)')
 </template>
 
 <script lang="ts">
 import UgOrderTimeline from '@/components/order/order-timeline/order-timeline.vue'
 import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+import UgOrderWorkflowAudioplayer from '@/components/order/order-workflow-audioplayer/order-workflow-audioplayer.vue'
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { officesModule } from '@/store'
@@ -56,6 +57,7 @@ import { Order } from '@/typings/api/order'
 
 @Component({
   components: {
+    UgOrderWorkflowAudioplayer,
     UgOrderTimeline,
     UgBaseSwitch,
   },

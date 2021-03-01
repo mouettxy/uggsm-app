@@ -133,7 +133,7 @@
         scope='table'
       )
     template(#item.estimatedCloseAt='{value, item}')
-      m-order-time-label(
+      ug-order-edit-time(
         :time='value',
         :orderid='item.id',
         :order-status='item.status',
@@ -146,6 +146,7 @@
 import UgBaseAlert from '@/components/base/ui/base-alert/base-alert.vue'
 import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
 import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
+import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time.vue'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, settingsModule } from '@/store'
@@ -160,6 +161,7 @@ import UserAPI from '@/api/user'
     UgBaseAlert,
     UgDatetimePicker,
     UgSelectMany,
+    UgOrderEditTime,
   },
 })
 export default class OOrdersTable extends Vue {

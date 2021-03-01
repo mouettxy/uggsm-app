@@ -41,7 +41,7 @@
               color='success'
             ) {{ order.orderType }}
         span Тип заказа
-      m-order-time-label(
+      ug-order-edit-time(
         :time='order.estimatedCloseAt',
         :style='{ paddingTop: "5px" }',
         :orderid='order.id',
@@ -78,11 +78,16 @@
 </template>
 
 <script lang="ts">
+import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time.vue'
+
 import { Component, Vue, Prop } from 'vue-property-decorator'
-import { ordersModule } from '@/store'
 import { Order } from '@/typings/api/order'
 
-@Component
+@Component({
+  components: {
+    UgOrderEditTime,
+  },
+})
 export default class OOrderModalRegularContent extends Vue {
   @Prop({ default: null }) order!: Order | null
 

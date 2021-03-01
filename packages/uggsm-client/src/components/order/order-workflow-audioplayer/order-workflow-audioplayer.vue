@@ -1,37 +1,37 @@
 <template lang="pug">
-.workflow-call
+.ug-workflow-audioplayer
   template(v-if='call')
     template(v-if='call.answered')
       template(v-if='$can("listenCalls", "Global")')
-        m-bottom-audio-player(
+        ug-bottom-audioplayer(
           :title='call.manager',
           :subtitle='call.managerNumber + " -> " + call.clientNumber',
           :audio='call.record'
         )
           template(#activator='{on, attrs, duration}')
             template(v-if='duration > 0')
-              .workflow-call__item(
+              .ug-workflow-audioplayer__item(
                 v-on='on',
                 v-bind='attrs'
               )
                 v-icon mdi-play
                 span Прослушать запись
             template(v-else)
-              .workflow-call__item--red
+              .ug-workflow-audioplayer__item--red
                 v-icon mdi-stop
                 span Запись недоступна
       template(v-else)
-        .workflow-call__item--red
+        .ug-workflow-audioplayer__item--red
           v-icon mdi-stop
           span Прослушивание недоступно
     template(v-else)
-      m-bottom-audio-player(
+      ug-bottom-audioplayer(
         :title='call.manager',
         :subtitle='call.managerNumber + " -> " + call.clientNumber',
         :audio='call.record'
       )
         template(#activator='{on, attrs}')
-          .workflow-call__item--red(
+          .ug-workflow-audioplayer__item--red(
             v-on='on',
             v-bind='attrs'
           )
@@ -42,24 +42,34 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import UgBottomAudioplayer from '@/components/base/ui/bottom-audioplayer/bottom-audioplayer.vue'
 
-@Component
-export default class MOrderModalWorkflowCall extends Vue {
-  @Prop() call!: Record<string, any>
+export default {
+  name: 'ug-order-workflow-audioplayer',
+
+  components: {
+    UgBottomAudioplayer,
+  },
+
+  props: {
+    call: {
+      required: true,
+      type: [Object],
+    },
+  },
 }
 </script>
 
 <style lang="sass">
-.workflow-call
-  .workflow-call__item
+.ug-workflow-audioplayer
+  .ug-workflow-audioplayer__item
     transition: .3s all
     &:hover
       .v-icon
         animation: pulse 2s infinite
       color: #689f38
       background: rgba(0, 0, 0, .05)
-  .workflow-call__item--red
+  .ug-workflow-audioplayer__item--red
     transition: .3s all
     &:hover
       .v-icon
@@ -69,23 +79,7 @@ export default class MOrderModalWorkflowCall extends Vue {
 
 @keyframes pulse
   0%
-    color: rgba(104, 159, 56, 0.1)
-  10%
-    color: rgba(104, 159, 56, 0.2)
-  20%
-    color: rgba(104, 159, 56, 0.3)
-  30%
-    color: rgba(104, 159, 56, 0.4)
-  40%
     color: rgba(104, 159, 56, 0.5)
-  60%
-    color: rgba(104, 159, 56, 0.6)
-  70%
-    color: rgba(104, 159, 56, 0.7)
-  80%
-    color: rgba(104, 159, 56, 0.8)
-  90%
-    color: rgba(104, 159, 56, 0.9)
   100%
     color: rgba(104, 159, 56, 1)
 </style>

@@ -20,6 +20,20 @@ export class OrderAPI extends BaseAPI {
       return error
     }
   }
+
+  async setEstimatedCloseAt(orderId: string, data: any): AxiosResponseAPI<Order> {
+    try {
+      const response = await this.api.request<Order>({
+        url: `/${orderId}/estimated-close-time`,
+        method: 'put',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
 }
 
 export default new OrderAPI({

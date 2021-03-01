@@ -31,7 +31,7 @@
     template(#item.record='{value, item}')
       template(v-if='value')
         template(v-if='$can("listenCalls", "Global")')
-          m-bottom-audio-player(
+          ug-bottom-audioplayer(
             :title='item.manager',
             :subtitle='item.managerNumber + " -> " + item.clientNumber',
             :audio='value'
@@ -57,10 +57,16 @@
 </template>
 
 <script lang="ts">
+import UgBottomAudioplayer from '@/components/base/ui/bottom-audioplayer/bottom-audioplayer.vue'
+
 import { Component, Vue } from 'vue-property-decorator'
 import { callModule } from '@/store'
 
-@Component
+@Component({
+  components: {
+    UgBottomAudioplayer,
+  },
+})
 export default class OCallsTable extends Vue {
   get store() {
     return callModule
