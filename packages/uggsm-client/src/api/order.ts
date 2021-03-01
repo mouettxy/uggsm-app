@@ -1,15 +1,12 @@
-import axios from 'axios'
+import BaseAPI from './BaseAPI'
 import { config } from '@/plugins/axios'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 import { Order } from '@/typings/api/order'
 
-export class OrderAPI {
-  private apiConfig = {
-    ...config,
-    baseURL: `${config.baseURL}/order`,
+export class OrderAPI extends BaseAPI {
+  constructor(config: Record<string, any>) {
+    super(config)
   }
-
-  private api = axios.create(this.apiConfig)
 
   async getById(orderId: string): AxiosResponseAPI<Order> {
     try {
@@ -25,4 +22,7 @@ export class OrderAPI {
   }
 }
 
-export default new OrderAPI()
+export default new OrderAPI({
+  ...config,
+  baseURL: `${config.baseURL}/order`,
+})

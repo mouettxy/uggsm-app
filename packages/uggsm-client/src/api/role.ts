@@ -1,15 +1,12 @@
-import axios from 'axios'
+import BaseAPI from './BaseAPI'
 import { config } from '@/plugins/axios'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 import { RoleAbility, Role, Roles, RoleInput, AbilityInput } from '@/typings/api/role'
 
-export class RoleAPI {
-  private apiConfig = {
-    ...config,
-    baseURL: `${config.baseURL}/role`,
+export class RoleAPI extends BaseAPI {
+  constructor(config: Record<string, any>) {
+    super(config)
   }
-
-  private api = axios.create(this.apiConfig)
 
   async getStatic(type: string) {
     try {
@@ -133,4 +130,7 @@ export class RoleAPI {
   }
 }
 
-export default new RoleAPI()
+export default new RoleAPI({
+  ...config,
+  baseURL: `${config.baseURL}/role`,
+})

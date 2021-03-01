@@ -1,16 +1,14 @@
-import axios from 'axios'
+import BaseAPI from './BaseAPI'
 import { config } from '@/plugins/axios'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 import { User } from '@/typings/api/auth'
 
 export type Users = User[]
 
-export class UserAPI {
-  private apiConfig = {
-    ...config,
-    baseURL: `${config.baseURL}/user`,
+export class UserAPI extends BaseAPI {
+  constructor(config: Record<string, any>) {
+    super(config)
   }
-  private api = axios.create(this.apiConfig)
 
   async get(): AxiosResponseAPI<Users> {
     try {
@@ -80,4 +78,7 @@ export class UserAPI {
   }
 }
 
-export default new UserAPI()
+export default new UserAPI({
+  ...config,
+  baseURL: `${config.baseURL}/user`,
+})

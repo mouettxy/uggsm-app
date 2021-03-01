@@ -1,15 +1,12 @@
+import BaseAPI from './BaseAPI'
 import { Cash, CashInput } from '@/typings/api/cash'
-import axios from 'axios'
 import { config } from '@/plugins/axios'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 
-export class CashAPI {
-  private apiConfig = {
-    ...config,
-    baseURL: `${config.baseURL}/cash`,
+export class CashAPI extends BaseAPI {
+  constructor(config: Record<string, any>) {
+    super(config)
   }
-
-  private api = axios.create(this.apiConfig)
 
   async getPaginated(data: any): AxiosResponseAPI<any> {
     try {
@@ -66,4 +63,7 @@ export class CashAPI {
   }
 }
 
-export default new CashAPI()
+export default new CashAPI({
+  ...config,
+  baseURL: `${config.baseURL}/cash`,
+})
