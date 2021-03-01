@@ -11,7 +11,6 @@ v-autocomplete.ug-base-autocomplete(
   :item-text='itemText',
   :hide-details='hideDetails',
   :disabled='disabled',
-  :dense='dense',
   @update:search-input='onChange',
   @focus.stop='onAutocompleteFocus',
   @blur.stop='onBlur',
@@ -20,6 +19,7 @@ v-autocomplete.ug-base-autocomplete(
   no-filter,
   no-data-text='Нет доступных данных',
   hide-no-data,
+  dense,
   clearable,
   auto-select-first,
   append-icon=''
@@ -60,11 +60,6 @@ export default {
     replaceSearchWith: {
       required: false,
       type: [String],
-    },
-
-    dense: {
-      required: false,
-      type: [Boolean],
     },
 
     icon: {
