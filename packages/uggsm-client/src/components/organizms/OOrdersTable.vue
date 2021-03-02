@@ -42,7 +42,10 @@
             ) mdi-close
             span Закрытые
         v-col(cols='auto')
-          v-menu(:close-on-content-click='false')
+          v-menu(
+            :close-on-content-click='false',
+            eager
+          )
             template(#activator='{on, attrs}')
               v-btn.ml-2(
                 v-on='on',
