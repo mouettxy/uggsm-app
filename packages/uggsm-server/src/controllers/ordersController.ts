@@ -6,7 +6,7 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { CashModel, OfficeModel, OrderModel } from '../models'
-import { filter, map, join } from 'lodash'
+import { filter, map, join, reduce } from 'lodash'
 import generateReport from '../services/reports'
 import { ControllerMethod } from '../interfaces/controller'
 import { RedSmsClient } from '../services/sms/RedSmsClient'
@@ -302,15 +302,166 @@ export class OrdersController implements IOrdersController {
   }
 
   public setStatus: ControllerMethod = async (req, res, next) => {
+    function getCashPrepay(order) {
+      let skipCash = false
+      let income = reduce(
+        order.statusWork,
+        (a, e) => {
+          a += e.price
+          return a
+        },
+        0
+      )
+
+      const cash = order.cash
+
+      let consumption
+      if (cash.length > 0) {
+        const prepaySum = reduce(
+          cash,
+          (a, e) => {
+            a += e.income
+            return a
+          },
+          0
+        )
+
+        const difference = income - prepaySum
+
+        if (income === 0 && prepaySum > 0) {
+          consumption = prepaySum
+        } else if (prepaySum > income && difference > 0) {
+          income = difference
+        } else if (difference < 0) {
+          consumption = difference
+        } else if (prepaySum === income) {
+          skipCash = true
+        }
+
+        return {
+          income,
+          consumption,
+          skipCash,
+          difference,
+        }
+      }
+
+      return {
+        income,
+        consumption,
+        skipCash,
+        difference: income,
+      }
+    }
+
+    const id = req.params.id
+    const status = req.body.status
+    const userId = req.body.userid
+    const userMongoId = req.body.userMongoId
+    const officeId = req.body.officeId
+
+    let response: any = {
+      status: 'OK',
+      sms: false,
+    }
+
     try {
-      const order = await this.model.setStatus(req.params.id, req.body.status, req.body.userid)
+      if (['Готов', 'Готов, без ремонта', 'Закрыт'].includes(status)) {
+        let order = await this.model.findOne({ id })
+
+        if (order) {
+          order = order.toObject()
+          const cash = await CashModel.find({ orderid: parseInt(id) })
+
+          // @ts-ignore
+          order.cash = cash
+
+          const { consumption, skipCash, difference } = getCashPrepay(order)
+
+          if (status === 'Закрыт') {
+            const cashPayload: any = {
+              orderid: order.id,
+              //@ts-ignore
+              client: order.customer._id,
+              cashier: userMongoId,
+              office: officeId,
+            }
+
+            if (!skipCash) {
+              if (consumption) {
+                cashPayload.consumption = Math.abs(consumption)
+              } else {
+                cashPayload.income = difference
+              }
+
+              const cash = await CashModel.create(cashPayload)
+
+              await cash.save()
+            }
+
+            await this.model.setPayed(id, true, userId)
+          } else if (status === 'Готов') {
+            //@ts-ignore
+            if (order.customer && order.customer.phone.length && order.customer.phone[0].phone) {
+              response = {
+                status: 'OK',
+                sms: true,
+                smsType: 'order-closed',
+                smsPayload: {
+                  id,
+                  //@ts-ignore
+                  phone: '8' + order.customer.phone[0].phone,
+                  model: `${order.phoneBrand} ${order.phoneModel}`,
+                  price: difference || 0,
+                },
+              }
+            } else {
+              response = {
+                status: 'OK',
+                sms: false,
+              }
+            }
+          } else if (status === 'Готов, без ремонта') {
+            //@ts-ignore
+            if (order.customer && order.customer.phone.length && order.customer.phone[0].phone) {
+              response = {
+                status: 'OK',
+                sms: true,
+                smsType: 'order-closed-without-work',
+                smsPayload: {
+                  id,
+                  //@ts-ignore
+                  phone: '8' + order.customer.phone[0].phone,
+                  model: `${order.phoneBrand} ${order.phoneModel}`,
+                  price: reduce(
+                    order.statusWork,
+                    (a, e) => {
+                      a += e.price
+                      return a
+                    },
+                    0
+                  ),
+                },
+              }
+            } else {
+              response = {
+                status: 'OK',
+                sms: false,
+              }
+            }
+          }
+        }
+      }
+
+      const order = await this.model.setStatus(id, status, userId)
 
       if (order) {
         res.status(200)
         api.io.emit('added order status', order.id)
         api.io.emit('update order', order.id)
         api.io.emit('update orders')
-        res.send(order)
+
+        res.send(response)
       } else {
         throw new Error('Не удалось обработать данные')
       }

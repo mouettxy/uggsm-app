@@ -130,7 +130,7 @@
             v-icon(left) mdi-pencil
             span {{ value }}
     template(#item.status='{value, item}')
-      m-order-status-switcher(
+      ug-order-status(
         :status='value',
         :orderid='item.id',
         scope='table'
@@ -150,6 +150,7 @@ import UgBaseAlert from '@/components/base/ui/base-alert/base-alert.vue'
 import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-picker.vue'
 import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
 import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time.vue'
+import UgOrderStatus from '@/components/order/order-status/order-status.vue'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, settingsModule } from '@/store'
@@ -165,6 +166,7 @@ import UserAPI from '@/api/user'
     UgDatetimePicker,
     UgSelectMany,
     UgOrderEditTime,
+    UgOrderStatus,
   },
 })
 export default class OOrdersTable extends Vue {

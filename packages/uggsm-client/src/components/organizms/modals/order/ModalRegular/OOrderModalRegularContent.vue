@@ -17,7 +17,7 @@
             ) {{ order.office.code }}
         span {{ order.office.name }}
       .text-h5.pa-1
-        m-order-status-switcher(
+        ug-order-status(
           :status='order.status',
           :orderid='order.id'
         )
@@ -79,6 +79,7 @@
 
 <script lang="ts">
 import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time.vue'
+import UgOrderStatus from '@/components/order/order-status/order-status.vue'
 
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { Order } from '@/typings/api/order'
@@ -86,6 +87,7 @@ import { Order } from '@/typings/api/order'
 @Component({
   components: {
     UgOrderEditTime,
+    UgOrderStatus,
   },
 })
 export default class OOrderModalRegularContent extends Vue {
