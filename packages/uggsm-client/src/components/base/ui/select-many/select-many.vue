@@ -3,6 +3,7 @@ ug-base-select.ug-select-many(
   v-model='model',
   :label='label',
   :items='items',
+  :cache='cache',
   @change='onChange',
   multiple,
   dense
@@ -12,7 +13,10 @@ ug-base-select.ug-select-many(
       v-if='index === 0',
       small
     )
-      span {{ item.text }}
+      template(v-if='typeof item === "string"')
+        span {{ item }}
+      template(v-else)
+        span {{ item["text"] }}
     v-menu(open-on-hover)
       template(#activator='{on, attrs}')
         v-chip(
@@ -21,7 +25,7 @@ ug-base-select.ug-select-many(
           v-bind='attrs',
           small
         )
-          | (+{{ model.length - 1 }})
+          | + {{ model.length - 1 }}
       v-card(dark)
         v-card-text
           span.white--text {{ joinedModel }}
@@ -54,6 +58,11 @@ export default {
       required: false,
       type: [String],
     },
+
+    cache: {
+      required: false,
+      type: [String],
+    },
   },
 
   computed: {
@@ -67,7 +76,15 @@ export default {
     },
 
     joinedModel() {
-      return this.items.map((e) => find(this.items, { value: e })?.text || '').join(', ')
+      return this.value
+        .map((e) => {
+          if (this.items.length > 0 && typeof this.items[0] === 'string') {
+            return e
+          }
+
+          return find(this.items, { value: e })?.text || ''
+        })
+        .join(', ')
     },
   },
 
