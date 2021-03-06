@@ -1,6 +1,6 @@
 <template lang="pug">
 v-main.layout-centered(app)
-  o-navigation(:items='items')
+  ug-side-menu(:menu-items='items')
   v-container(
     fluid,
     fill-height
@@ -11,14 +11,14 @@ v-main.layout-centered(app)
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { defaultMenu } from '@/api/helpers/menus'
+import UgSideMenu from '@/components/base/ui/side-menu/side-menu.vue'
 
-@Component
+@Component({
+  components: {
+    UgSideMenu,
+  },
+})
 export default class LayoutDefault extends Vue {
   public items = defaultMenu
 }
 </script>
-
-<style lang="sass">
-.layout-default
-  height: 100%
-</style>
