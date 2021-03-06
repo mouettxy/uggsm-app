@@ -72,6 +72,9 @@ export default class Auth extends VuexModule {
     if (response) {
       this.context.commit('LOGOUT')
       Vue.$cookies.remove('UUID')
+
+      router.push({ name: 'login' })
+
       return Promise.resolve(true)
     } else {
       return Promise.resolve(false)
