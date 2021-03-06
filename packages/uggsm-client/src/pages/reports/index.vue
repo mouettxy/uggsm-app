@@ -16,9 +16,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-@Component({
-  layout: 'reports',
-})
+@Component
 export default class PageReports extends Vue {}
 </script>
 

@@ -16,11 +16,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-/**
- * Orders page
- */
-@Component({
-  layout: 'orders',
-})
+@Component
 export default class PageOrders extends Vue {}
 </script>

@@ -16,7 +16,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 @Component({
-  layout: 'settings',
+  layout: 'centered',
 })
 export default class PageSettingsNewOffice extends Vue {}
 </script>
