@@ -19,12 +19,17 @@
 
 <script>
 import UgSideMenuAnimations from './side-menu-user-panel.animations'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
 import { mapState, mapActions } from 'vuex'
 import { toUpper } from 'lodash'
 
 export default {
   name: 'ug-side-menu-user-panel',
+
+  components: {
+    UgBaseBtn,
+  },
 
   mixins: [UgSideMenuAnimations],
 
@@ -65,8 +70,6 @@ export default {
 
 <style lang="sass">
 .ug-side-menu-user-panel
-  padding: 6px
-  padding-bottom: 16px
   position: relative
   z-index: 101
   .ug-side-menu-user-panel__avatar
@@ -83,8 +86,8 @@ export default {
     user-select: none
   .ug-side-menu-user-panel__content-wrapper
     position: absolute
-    top: 4px
-    left: 4px
+    top: -2px
+    left: -2px
     .ug-side-menu-user-panel__content
       display: none
       position: fixed

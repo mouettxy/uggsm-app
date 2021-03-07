@@ -1,34 +1,32 @@
 <template lang="pug">
-.ug-side-menu__wrapper(v-if='userIsLoggedIn')
-  .ug-side-menu.elevation-4
-    .ug-side-menu__items
-      ug-side-menu-item(
-        v-for='(menuItem, menuItemIndex) in menuItems',
-        :menu-item-index='menuItemIndex',
-        :menu-item='menuItem',
-        :key='menuItem.linkName'
-      )
-
-    ug-side-menu-user-panel
+.ug-side-menu-container(v-if='userIsLoggedIn')
+  template(v-if='mobile')
+    ug-side-menu-mobile(:menu-items='menuItems')
+  template(v-else)
+    ug-side-menu-desktop(:menu-items='menuItems')
 </template>
 
 <script>
-import UgSideMenuItem from './side-menu-item/side-menu-item'
-import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+import UgSideMenuDesktop from './side-menu-desktop/side-menu-desktop'
+import UgSideMenuMobile from './side-menu-mobile/side-menu-mobile'
 import { mapState } from 'vuex'
 
 export default {
   name: 'ug-side-menu',
 
   components: {
-    UgSideMenuItem,
-    UgBaseBtn,
+    UgSideMenuDesktop,
+    UgSideMenuMobile,
   },
 
   props: {
     menuItems: {
       required: true,
-      type: Array,
+      type: [Array],
+    },
+    mobile: {
+      required: false,
+      type: [Boolean],
     },
   },
 
@@ -39,28 +37,3 @@ export default {
   },
 }
 </script>
-
-<style lang="sass">
-.ug-side-menu__wrapper
-  position: fixed
-  z-index: 100
-  top: 0
-  left: 0
-  height: 100%
-  width: 48px
-  background: #09090C
-  overflow: hidden
-  border-top-right-radius: 8px
-  border-bottom-right-radius: 8px
-  .ug-side-menu
-    position: relative
-    display: flex
-    height: 100%
-    flex-direction: column
-    padding-top: 16px
-
-  .ug-side-menu__items
-    display: flex
-    flex-direction: column
-    flex-grow: 1
-</style>
