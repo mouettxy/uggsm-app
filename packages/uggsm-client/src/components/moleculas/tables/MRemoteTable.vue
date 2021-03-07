@@ -3,7 +3,7 @@
   v-row.top-toolbar.elevation-1(no-gutters)
     v-col(cols='auto')
       template(v-if='displayOfficeSwitcher')
-        m-office-switcher(v-model='defaultOffice')
+        ug-office-switcher(@office-select="handleOfficeSelect")
       template(v-else)
         .text-h5 {{ $route.meta.header }}
     template(
@@ -78,10 +78,14 @@
 </template>
 
 <script lang="ts">
-import { settingsModule } from '@/store'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import UgOfficeSwitcher from '@/components/office/office-switcher/office-switcher.vue'
 
-@Component
+@Component({
+  components: {
+    UgOfficeSwitcher,
+  },
+})
 export default class MRemoteTable extends Vue {
   @Prop({ default: true }) displayOfficeSwitcher!: boolean
   @Prop({ default: true }) displaySearchField!: boolean
@@ -109,21 +113,6 @@ export default class MRemoteTable extends Vue {
     return this.store.tableHeaders
   }
 
-  get defaultOffice() {
-    if (settingsModule.office && this.$can('seeOffices', 'Global', settingsModule.office.name)) {
-      return `${settingsModule.office.code}|${settingsModule.office.name}`
-    } else {
-      settingsModule.setOffice({ office: '', type: 'orders' })
-      return ''
-    }
-  }
-
-  set defaultOffice(value) {
-    if (this.$route.name === 'orders' || this.$route.name === 'cash') {
-      settingsModule.setOffice({ office: value, type: this.$route.name })
-    }
-  }
-
   get tableTotalItems() {
     return this.store.tableRows
   }
@@ -142,6 +131,10 @@ export default class MRemoteTable extends Vue {
 
   get tableItems() {
     return this.store.tableItems
+  }
+
+  handleOfficeSelect() {
+    this.loadTable()
   }
 
   async tableUpdate() {

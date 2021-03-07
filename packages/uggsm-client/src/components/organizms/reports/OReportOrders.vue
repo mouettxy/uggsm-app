@@ -9,7 +9,11 @@
           range
         )
       v-col(cols='4')
-        m-office-switcher(v-model='search.office')
+        ug-base-select(
+          v-model='search.office',
+          :items='offices',
+          label='Офис'
+        )
       v-col(cols='3')
         ug-base-select(
           v-model='search.status',
@@ -77,6 +81,8 @@ import moment from 'moment'
 import { settingsModule, ordersModule } from '@/store'
 import { cloneDeep, groupBy, sum, map, reduce, join } from 'lodash'
 import JsonExcel from 'vue-json-excel'
+import OfficeAPI from '@/api/office'
+import { Office } from '@/typings/api/office'
 
 @Component({
   components: {
@@ -124,6 +130,21 @@ export default class OOrdersReport extends Vue {
       value: 'total',
     },
   ]
+
+  public officesRaw: Office[] = []
+
+  get offices() {
+    if (!this.officesRaw) {
+      return []
+    }
+
+    return this.officesRaw.map((e) => {
+      return {
+        text: `${e.code}|${e.name}`,
+        value: e.code,
+      }
+    })
+  }
 
   get formattedReport() {
     return groupBy(
@@ -198,10 +219,23 @@ export default class OOrdersReport extends Vue {
     return sum(map(report, (e) => e.total))
   }
 
+  async fetchOffices() {
+    const response = await OfficeAPI.getAll()
+
+    if (response.status !== 200) {
+      this.$notification.error('Ошибка при получении списка офисов')
+      return
+    }
+
+    this.officesRaw = response.data
+  }
+
   mounted() {
     if (settingsModule.office) {
       this.search.office = `${settingsModule.office.code}|${settingsModule.office.name}`
     }
+
+    this.fetchOffices()
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template lang="pug">
-.office-switcher-item(:class='{ "office-switcher-item--fill-name-width": fillNameWidth }')
+.office-switcher-item(:class='classList')
   v-chip.office-switcher-item__code(
     :small='small',
     :class='getRoundedClass("l")',
@@ -53,9 +53,19 @@ export default {
     },
   },
 
+  computed: {
+    classList() {
+      return {
+        'office-switcher-item--fill-name-width': this.fillNameWidth,
+        'office-switcher-item--small': this.small,
+        'office-switcher-item--regular': !this.small,
+      }
+    },
+  },
+
   methods: {
     getRoundedClass(direction) {
-      const directionRound = `rounded-${direction}-lg`
+      const directionRound = `rounded-${direction}`
 
       return this.rounded ? { 'rounded-0': true, [directionRound]: true } : { 'rounded-0': true }
     },
@@ -74,6 +84,13 @@ export default {
 .office-switcher-item
   position: relative
   display: inline-block
+
+  &.office-switcher-item--regular
+    .office-switcher-item__code
+      height: 40px
+
+    .office-switcher-item__name
+      height: 40px
 
   .office-switcher-item__code
     text-align: center

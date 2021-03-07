@@ -1,5 +1,4 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { officeAPI } from '@/api'
 import find from 'lodash/find'
 
 @Module({
@@ -16,7 +15,7 @@ export default class Offices extends VuexModule {
 
   @Action
   async fetch() {
-    this.context.commit('SET_OFFICES', await officeAPI().getAll())
+    //
   }
 
   @Action

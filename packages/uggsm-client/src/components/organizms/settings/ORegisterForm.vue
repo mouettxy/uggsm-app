@@ -61,10 +61,10 @@ v-form.register-form(
       md='6',
       lg='6'
     )
-      m-office-switcher.mb-1(
+      ug-base-select.mb-1(
         v-model='user.office',
         :items='offices',
-        :hide-details='false'
+        label='Офис'
       )
     v-col(
       cols='12',
@@ -83,9 +83,11 @@ import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
 import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
 
 import { Component, Vue, Ref } from 'vue-property-decorator'
-import { authModule, officesModule } from '@/store'
+import { authModule } from '@/store'
 import { map, cloneDeep } from 'lodash'
 import RoleAPI from '@/api/role'
+import { Office } from '@/typings/api/office'
+import OfficeAPI from '@/api/office'
 
 @Component({
   components: {
@@ -109,8 +111,30 @@ export default class ORegisterForm extends Vue {
     masterPwd: '',
   }
 
+  public officesRaw: Office[] = []
+
   get offices() {
-    return map(officesModule.offices, (el) => `${el.code}|${el.name}`)
+    if (!this.officesRaw) {
+      return []
+    }
+
+    return this.officesRaw.map((e) => {
+      return {
+        text: `${e.code}|${e.name}`,
+        value: `${e.code}|${e.name}`,
+      }
+    })
+  }
+
+  async fetchOffices() {
+    const response = await OfficeAPI.getAll()
+
+    if (response.status !== 200) {
+      this.$notification.error('Ошибка при получении списка офисов')
+      return
+    }
+
+    this.officesRaw = response.data
   }
 
   async onRegister() {
@@ -149,13 +173,15 @@ export default class ORegisterForm extends Vue {
   }
 
   async mounted() {
-    officesModule.fetch()
+    this.fetchOffices()
 
     const roles = await RoleAPI.getAll()
 
+    console.log(roles)
+
     this.roles = map(roles.data, (e) => ({
-      text: e.description,
-      value: e.name,
+      text: e.name,
+      value: e.value,
     }))
   }
 }

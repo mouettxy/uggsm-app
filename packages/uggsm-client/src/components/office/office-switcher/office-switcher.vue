@@ -35,7 +35,8 @@
             ug-office-switcher-item(
               :name='currentOffice.name',
               :code='currentOffice.code',
-              rounded
+              rounded,
+              color='accent'
             )
       template(v-if='allowedOffices.length')
         template(v-for='allowedOffice in allowedOffices')
