@@ -13,27 +13,13 @@
             color='error'
           )
         .ug-side-menu__items
-          router-link.ug-side-menu__item(
-            v-for='menuItem in menuItems',
-            :to='{ name: menuItem.linkName }',
-            :key='menuItem.linkName',
-            @click.native.stop='handleCloseClick',
-            exact-active-class='ug-side-menu__item--exact-active',
-            active-class='ug-side-menu__item--active'
+          ug-side-menu-item(
+            v-for='(menuItem, menuItemIndex) in menuItems',
+            :menu-item-index='menuItemIndex',
+            :menu-item='menuItem',
+            @click.stop='handleCloseClick',
+            mobile
           )
-            v-icon(left) {{ menuItem.icon }}
-            span.text-button {{ menuItem.title }}
-            template(v-if='menuItem.submenu')
-              .ug-side-menu__item-submenu
-                router-link.ug-side-menu__item-submenu__item(
-                  v-for='submenuItem in menuItem.submenu',
-                  :to='{ name: submenuItem.linkName }',
-                  :key='submenuItem.linkName',
-                  @click.native.stop='handleCloseClick',
-                  exact-active-class='ug-side-menu__item-submenu__item--exact-active',
-                  active-class='ug-side-menu__item-submenu__item--active'
-                )
-                  span.text-subtitle-1 {{ submenuItem.title }}
     .ug-side-menu__bar
       .ug-side-menu__bar-inner
       .ug-side-menu__bar-inner.ug-side-menu__bar-inner--short
@@ -110,47 +96,6 @@ export default {
         .ug-side-menu__items
           height: 100%
           padding-bottom: 32px
-          .ug-side-menu__item
-            display: block
-            text-decoration: none
-            color: #151515
-
-            &.ug-side-menu__item--exact-active
-              .v-icon
-                color: var(--v-primary-base) !important
-              color: var(--v-primary-base)
-
-            &.ug-side-menu__item--active
-              .v-icon
-                color: var(--v-primary-base) !important
-
-            .v-icon
-              color: #151515 !important
-
-            .ug-side-menu__item-submenu
-              padding-left: 48px
-              .ug-side-menu__item-submenu__item
-                display: block
-                position: relative
-                padding: 4px 0
-                color: #424242
-                text-decoration: none
-
-                &::after
-                  content: ''
-                  position: absolute
-                  width: 1px
-                  height: 100%
-                  background: #bdbdbd
-                  left: -16px
-                &.ug-side-menu__item-submenu__item--active
-                  color: var(--v-primary-base)
-                  text-shadow: 0px 0px 1px #1859A1
-
-                  &::after
-                    background: var(--v-primary-base)
-                    box-shadow: 0px 0px 2px 1px var(--v-primary-base)
-
 
     .ug-side-menu__bar
       display: flex
