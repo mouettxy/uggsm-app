@@ -74,7 +74,7 @@ import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
 
 import { Component, Vue, Ref } from 'vue-property-decorator'
 
-import { officeAPI } from '@/api'
+import OfficeAPI from '@/api/office'
 
 @Component({
   components: {
@@ -96,7 +96,7 @@ export default class OOfficeForm extends Vue {
 
   async onOffice() {
     if (this.form.validate()) {
-      if (await officeAPI(this.office.code).create(this.office)) {
+      if (await OfficeAPI.create(this.office.code, this.office)) {
         this.$notification.success('Офис успешно добавлен')
         this.office = {
           code: '',

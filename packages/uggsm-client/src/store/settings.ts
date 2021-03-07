@@ -1,6 +1,7 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { cashModule, clientModule, officesModule, ordersModule } from '.'
 import Vue from 'vue'
+import { Office } from '@/typings/api/office'
 @Module({
   namespaced: true,
   name: 'settings',
@@ -39,16 +40,8 @@ export default class Settings extends VuexModule {
   }
 
   @Action
-  async setOffice(payload: { office: string; type: 'orders' | 'cash' }) {
-    const office = await officesModule.findByCodeAndName(payload.office)
-
-    this.context.commit('SET_OFFICE', office)
-
-    if (payload.type === 'orders') {
-      await ordersModule.fetchTable()
-    } else if (payload.type === 'cash') {
-      await cashModule.fetchTable()
-    }
+  async setOffice(payload: Office) {
+    this.context.commit('SET_OFFICE', payload)
   }
 
   @Action
