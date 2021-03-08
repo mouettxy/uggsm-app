@@ -21,10 +21,10 @@ export class OfficeAPI extends BaseAPI {
     }
   }
 
-  async create(officeCode: string, data: Partial<Office>): AxiosResponseAPI<Office> {
+  async create(data: Partial<Office>): AxiosResponseAPI<Office> {
     try {
       const response = await this.api.request<Office>({
-        url: `/${officeCode}`,
+        url: ``,
         method: 'post',
         data,
       })

@@ -24,6 +24,10 @@ export const settingsMenu = [
     linkName: 'settingsNewOffice',
     title: 'Новый офис',
   },
+  {
+    linkName: 'settingsDailySubscriptions',
+    title: 'Управление ежедневными отчётами',
+  },
 ]
 
 export const defaultMenu = [

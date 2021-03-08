@@ -12,12 +12,24 @@ export type AuthInput = {
   password: string
 }
 
+export type AuthOutput = {
+  user: UserType
+  jwtData: {
+    token: string
+  }
+}
+
 export type RegisterInput = {
   username: string
   password: string
   credentials: string
   office: string
   role: string
+}
+
+export type LogoutInput = {
+  id: string | undefined
+  token: string | null
 }
 
 export type User = UserType

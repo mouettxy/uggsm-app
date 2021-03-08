@@ -1,13 +1,12 @@
 import { LOCAL_STORAGE } from '@/api/helpers/Constants'
-import { User } from '@/typings/api/auth'
-import { authAPI } from '@/api'
-import { AuthInput } from '@/typings/api/auth'
+import { AuthInput, User } from '@/typings/api/auth'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import Vue from 'vue'
 import router from '@/router'
 import { tryUpdateRoleAbilities } from '@/plugins/casl'
 import VueRouter from 'vue-router'
 const { isNavigationFailure, NavigationFailureType } = VueRouter
+import AuthAPI from '@/api/auth'
 
 @Module({
   namespaced: true,
@@ -35,19 +34,21 @@ export default class Auth extends VuexModule {
 
   @Action
   async login(payload: AuthInput) {
-    const response = await authAPI().login(payload)
+    const response = await AuthAPI.login(payload)
 
-    if (response) {
-      Vue.$cookies.set('UUID', response.jwtData.token, '7d')
-
-      this.context.commit('LOGIN', response.user)
-
-      await tryUpdateRoleAbilities(response.user.role)
-
-      return Promise.resolve(true)
-    } else {
-      return Promise.resolve(false)
+    if (response.status !== 200) {
+      return false
     }
+
+    const user = response.data.user
+    const jwtData = response.data.jwtData
+
+    Vue.$cookies.set('UUID', jwtData.token, '7d')
+    this.context.commit('LOGIN', user)
+
+    await tryUpdateRoleAbilities(user.role)
+
+    return true
   }
 
   @Action
@@ -55,7 +56,7 @@ export default class Auth extends VuexModule {
     let response
 
     if (reason === 'rejected') {
-      response = await authAPI().logout({ id: this.user?._id, token: null })
+      response = await AuthAPI.logout({ id: this.user?._id, token: null })
       if (router.currentRoute.name !== 'login') {
         router.push({ name: 'login' }).catch((failure) => {
           if (isNavigationFailure(failure, NavigationFailureType.redirected)) {
@@ -66,30 +67,19 @@ export default class Auth extends VuexModule {
         })
       }
     } else {
-      response = await authAPI().logout({ id: this.user?._id, token: Vue.$cookies.get('UUID') })
+      response = await AuthAPI.logout({ id: this.user?._id, token: Vue.$cookies.get('UUID') })
     }
 
-    if (response) {
-      this.context.commit('LOGOUT')
-      Vue.$cookies.remove('UUID')
-
-      router.push({ name: 'login' })
-
-      return Promise.resolve(true)
-    } else {
-      return Promise.resolve(false)
+    if (response.status !== 200) {
+      return false
     }
-  }
 
-  @Action
-  async register(payload: any) {
-    const response = await authAPI().register(payload)
+    this.context.commit('LOGOUT')
+    Vue.$cookies.remove('UUID')
 
-    if (response) {
-      return Promise.resolve(true)
-    } else {
-      return Promise.resolve(false)
-    }
+    router.push({ name: 'login' })
+
+    return true
   }
 
   @Action
