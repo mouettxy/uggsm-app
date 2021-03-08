@@ -4,9 +4,9 @@
     .ug-side-menu__content.elevation-3(ref='content')
       .ug-side-menu__items-wrapper
         .ug-side-menu__utils
-          ug-side-menu-user-panel.pa-0
+          ug-side-menu-user-panel.ug-side-menu__utils-user-panel
 
-          ug-base-btn.ug-side-menu__content-close.elevation-1(
+          ug-base-btn.ug-side-menu__utils-close.elevation-1(
             @click.stop='handleCloseClick',
             icon='mdi-close',
             depressed,
@@ -78,20 +78,20 @@ export default {
       position: relative
       overflow-y: scroll
 
-      .ug-side-menu__content-close
-        background: rgb(241, 241, 241)
-
       .ug-side-menu__items-wrapper
         height: 100%
         display: flex
         flex-direction: column
         align-items: center
         .ug-side-menu__utils
-          padding: 16px 0
+          padding: 16px 16px
           display: flex
-          justify-content: center
           align-items: center
-          gap: 128px
+          width: 100%
+
+          .ug-side-menu__utils-close
+            margin-left: auto
+            background: rgb(241, 241, 241)
 
         .ug-side-menu__items
           height: 100%

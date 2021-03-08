@@ -48,15 +48,15 @@
       template(v-if='menuItem.submenu')
         .ug-side-menu-item__submenu
           template(v-for='submenuItem in menuItem.submenu')
-          ug-side-menu-item-link(
-            v-if='canAccessSubResource(submenuItem.linkName)',
-            :link='submenuItem',
-            :key='submenuItem.linkName',
-            @click='forwardClick',
-            submenu,
-            mobile
-          )
-            span.text-subtitle-1 {{ submenuItem.title }}
+            ug-side-menu-item-link(
+              v-if='canAccessSubResource(submenuItem.linkName)',
+              :link='submenuItem',
+              :key='submenuItem.linkName',
+              @click='forwardClick',
+              submenu,
+              mobile
+            )
+              span.text-subtitle-1 {{ submenuItem.title }}
 </template>
 
 <script>
@@ -139,12 +139,18 @@ $animation-time: .15s
 
     .ug-side-menu-item__submenu
       padding-left: 48px
+      position: relative
       .ug-side-menu-item-link__submenu
         display: block
         position: relative
         padding: 4px 0
         color: darken($color-grey, 50%)
         text-decoration: none
+        white-space: nowrap
+        text-overflow: ellipsis
+        overflow: hidden
+        width: 200px
+
         &::after
           content: ''
           position: absolute
@@ -152,6 +158,7 @@ $animation-time: .15s
           height: 100%
           background: darken($color-grey, 30%)
           left: -16px
+
         &.ug-side-menu-item-link__submenu--active
           color: $color-primary
           text-shadow: 0px 0px 1px $color-primary
