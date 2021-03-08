@@ -6,6 +6,7 @@ v-btn.ug-base-btn(
   :disabled='disabled',
   :depressed='depressed',
   :color='color',
+  :block='block',
   @click='handleClick'
 )
   template(v-if='icon && label')
@@ -58,6 +59,10 @@ export default {
       type: Boolean,
     },
     disabled: {
+      required: false,
+      type: Boolean,
+    },
+    block: {
       required: false,
       type: Boolean,
     },
