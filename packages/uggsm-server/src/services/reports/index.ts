@@ -472,7 +472,7 @@ export default async function (
     }
 
     if (params.status) {
-      options.status = { $in: options.status }
+      options.status = { $in: params.status }
     }
 
     aggregate = aggregationsList.count(options)
