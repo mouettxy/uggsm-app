@@ -64,6 +64,7 @@ import { Order } from '@/typings/api/order'
 })
 export default class OOrderModalRegularWorkflow extends Vue {
   @Prop({ default: null }) order!: Order | null
+
   public duplicate = false
 
   getCall(id: string) {

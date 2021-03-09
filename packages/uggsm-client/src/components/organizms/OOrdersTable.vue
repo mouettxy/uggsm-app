@@ -173,11 +173,15 @@ export default class OOrdersTable extends Vue {
   public columnsMenu = false
 
   public displayClosedOrders = false
+
   public displayExpired = false
+
   public displayManagerOrders = false
 
   public masterFilter = []
+
   public managerFilter = []
+
   public statusFilter = []
 
   public dateFilter = []
@@ -185,6 +189,7 @@ export default class OOrdersTable extends Vue {
   public page = 1
 
   public statuses = statuses
+
   public users: Array<User> | null = null
 
   get selectedOffice() {

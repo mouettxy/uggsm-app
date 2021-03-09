@@ -98,6 +98,7 @@ export default {
     datetime: {
       required: false,
       type: [Date, String, Array],
+      default: '',
     },
 
     disabled: {
@@ -113,16 +114,19 @@ export default {
     label: {
       required: false,
       type: [String],
+      default: '',
     },
 
     add: {
       required: false,
       type: [Number],
+      default: 7,
     },
 
     type: {
       required: false,
       type: [String],
+      default: 'days',
       validator: (v) => {
         return ['hours', 'day', 'week', 'month'].includes(v)
       },
@@ -131,6 +135,7 @@ export default {
     icon: {
       required: false,
       type: [String],
+      default: '',
     },
 
     small: {
@@ -141,6 +146,7 @@ export default {
     fill: {
       required: false,
       type: [String],
+      default: '',
     },
   },
 
@@ -161,16 +167,11 @@ export default {
     }
   },
 
-  watch: {
-    datetime: function () {
-      this.init()
-    },
-  },
-
   computed: {
     dateToDb() {
       return moment(this.selectedDatetime, 'DD.MM.YYYY HH:mm').toISOString()
     },
+
     selectedDatetime() {
       if (this.date && this.time) {
         const date = moment(this.date, 'YYYY-MM-DD').locale('ru').format('DD.MM.YYYY')
@@ -182,6 +183,16 @@ export default {
         return null
       }
     },
+  },
+
+  watch: {
+    datetime: function () {
+      this.init()
+    },
+  },
+
+  mounted: function () {
+    this.init()
   },
 
   methods: {
@@ -232,10 +243,6 @@ export default {
     showTimePicker() {
       this.activeTab = 1
     },
-  },
-
-  mounted: function () {
-    this.init()
   },
 }
 </script>

@@ -59,7 +59,9 @@ import { settingsModule } from '@/store'
 @Component
 export default class MPrintCheck extends Vue {
   @Prop({ type: [String, Number] }) orderId!: string | number
+
   @Prop({ type: [String] }) customerName!: string
+
   @Prop({ type: [Array] }) works!: Array<any>
 
   get dateNow() {

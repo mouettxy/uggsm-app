@@ -24,6 +24,7 @@ export default {
       required: true,
       type: [Array],
     },
+
     mobile: {
       required: false,
       type: [Boolean],

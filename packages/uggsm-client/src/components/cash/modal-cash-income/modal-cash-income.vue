@@ -97,10 +97,13 @@ export default {
     orderId: {
       required: false,
       type: [Number, String],
+      default: '',
     },
+
     customer: {
       required: false,
       type: [Object],
+      default: () => {},
     },
   },
 
@@ -115,6 +118,7 @@ export default {
         comment: '',
         cashier: '',
       },
+
       userCredentials: '',
       userId: '',
     }
@@ -125,6 +129,7 @@ export default {
       user: (state) => state.auth.user,
       office: (state) => state.settings.office,
     }),
+
     isCashierFieldDisabled() {
       if (this.$can('manage', 'all')) {
         return false
@@ -140,6 +145,21 @@ export default {
     isPriceIncorrect() {
       return !this.model.price || !parseInt(this.model.price) || !(this.model.price >= 0)
     },
+  },
+
+  mounted: async function () {
+    if (this.orderId) {
+      await this.getOrder()
+    } else {
+      this.model.cashier = this.user._id
+      this.userId = this.user._id
+      this.userCredentials = this.user.credentials
+    }
+
+    if (this.customer) {
+      this.customerName = this.customer.name
+      this.model.customer = this.customer.name
+    }
   },
 
   methods: {
@@ -212,21 +232,6 @@ export default {
       this.$notification.success('Успешное сохранение чека')
       this.rewind()
     },
-  },
-
-  mounted: async function () {
-    if (this.orderId) {
-      await this.getOrder()
-    } else {
-      this.model.cashier = this.user._id
-      this.userId = this.user._id
-      this.userCredentials = this.user.credentials
-    }
-
-    if (this.customer) {
-      this.customerName = this.customer.name
-      this.model.customer = this.customer.name
-    }
   },
 }
 </script>

@@ -55,6 +55,7 @@ export default class PageUsers extends Vue {
     credentials: 'Имя',
     actions: 'Действия',
   }
+
   public roles: { text: string; value: string }[] = []
 
   async fetchFunction(data: any) {

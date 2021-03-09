@@ -35,6 +35,7 @@ export default {
     value: {
       required: false,
       type: [String, Number, Object],
+      default: '',
     },
 
     endpoint: {
@@ -50,26 +51,31 @@ export default {
     uriQuery: {
       required: false,
       type: [Object],
+      default: () => {},
     },
 
     label: {
       required: false,
       type: [String],
+      default: '',
     },
 
     replaceSearchWith: {
       required: false,
       type: [String],
+      default: '',
     },
 
     icon: {
       required: false,
       type: [String],
+      default: '',
     },
 
     predefinedItems: {
       required: false,
       type: [Array],
+      default: () => [],
     },
 
     returnObject: {
@@ -104,6 +110,7 @@ export default {
       default: 'value',
     },
   },
+
   data: function () {
     return {
       items: [],
@@ -111,11 +118,13 @@ export default {
       allowItemsFetch: false,
     }
   },
+
   computed: {
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },
@@ -129,6 +138,13 @@ export default {
       }
     },
   },
+
+  mounted: function () {
+    if (this.predefinedItems) {
+      this.items = this.predefinedItems
+    }
+  },
+
   methods: {
     async onChange() {
       if (this.query && this.allowItemsFetch) {
@@ -193,11 +209,6 @@ export default {
         this.model = this.query
       }
     },
-  },
-  mounted: function () {
-    if (this.predefinedItems) {
-      this.items = this.predefinedItems
-    }
   },
 }
 </script>

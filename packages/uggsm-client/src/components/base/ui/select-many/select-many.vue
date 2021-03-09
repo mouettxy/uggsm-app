@@ -57,11 +57,13 @@ export default {
     label: {
       required: false,
       type: [String],
+      default: '',
     },
 
     cache: {
       required: false,
       type: [String],
+      default: '',
     },
   },
 
@@ -70,6 +72,7 @@ export default {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },

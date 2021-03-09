@@ -24,26 +24,31 @@ export default {
     value: {
       required: false,
       type: [String, Number],
+      default: '',
     },
 
     icon: {
       required: false,
       type: [String],
+      default: '',
     },
 
     label: {
       required: false,
       type: [String],
+      default: '',
     },
 
     hint: {
       required: false,
       type: [String],
+      default: '',
     },
 
     validate: {
       required: false,
       type: [Array],
+      default: () => [],
     },
 
     dense: {
@@ -64,6 +69,7 @@ export default {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },

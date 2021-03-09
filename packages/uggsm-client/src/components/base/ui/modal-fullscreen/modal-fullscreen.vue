@@ -32,6 +32,7 @@ export default {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },

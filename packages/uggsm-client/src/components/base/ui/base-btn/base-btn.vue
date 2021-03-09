@@ -33,44 +33,60 @@ export default {
     label: {
       required: false,
       type: String,
+      default: '',
     },
+
     icon: {
       required: false,
       type: String,
+      default: '',
     },
+
     iconLeft: {
       required: false,
       type: String,
+      default: '',
     },
+
     iconRight: {
       required: false,
       type: String,
+      default: '',
     },
+
     color: {
       required: false,
       type: String,
+      default: '',
     },
+
     text: {
       required: false,
       type: Boolean,
     },
+
     depressed: {
       required: false,
       type: Boolean,
     },
+
     disabled: {
       required: false,
       type: Boolean,
     },
+
     block: {
       required: false,
       type: Boolean,
     },
+
     type: {
       required: false,
       type: String,
+      default: '',
     },
   },
+
   methods: {
     handleClick(event) {
       this.$emit('click', event)

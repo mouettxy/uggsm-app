@@ -141,12 +141,19 @@ export default class MPrintRepairContractIMarket extends Vue {
   public year = moment().format('YYYY')
 
   @Prop(String) clientName!: string
+
   @Prop(String) clientPhone!: string
+
   @Prop(String) model!: string
+
   @Prop(String) serialNumber!: string
+
   @Prop(String) appearance!: string
+
   @Prop(String) kit!: string
+
   @Prop(String) declaredDefect!: string
+
   @Prop(String) password!: string
 }
 </script>

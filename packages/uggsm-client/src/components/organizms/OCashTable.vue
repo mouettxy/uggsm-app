@@ -108,7 +108,9 @@ export default class OCashTable extends Vue {
     date: [moment().format('DD.MM.YYYY'), moment().format('DD.MM.YYYY')],
     cashier: '',
   }
+
   public incomeByFilter = 0
+
   public consumptionByFilter = 0
 
   get store() {

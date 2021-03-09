@@ -88,6 +88,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 })
 export default class UgRoleMenu extends Vue {
   @Prop() items!: Roles
+
   @Prop() rolesToHide!: Array<string>
 
   public user = ''

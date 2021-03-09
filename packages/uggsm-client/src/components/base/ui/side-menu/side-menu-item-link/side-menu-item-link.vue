@@ -26,18 +26,24 @@ export default {
       required: true,
       type: Object,
     },
+
     active: {
       required: false,
       type: String,
+      default: '',
     },
+
     exactActive: {
       required: false,
       type: String,
+      default: '',
     },
+
     mobile: {
       required: false,
       type: Boolean,
     },
+
     submenu: {
       required: false,
       type: Boolean,
@@ -48,9 +54,11 @@ export default {
     defaultMobile() {
       return this.mobile ? this.defaultClass + '--mobile' : ''
     },
+
     defaultClass() {
       return this.submenu ? BASE_SUBMENU_CLASS : BASE_CLASS
     },
+
     defaultActive() {
       if (this.submenu) {
         return BASE_SUBMENU_ACTIVE_CLASS
@@ -58,6 +66,7 @@ export default {
 
       return BASE_ACTIVE_CLASS
     },
+
     defaultExactActive() {
       if (this.submenu) {
         return BASE_SUBMENU_EXACT_ACTIVE_CLASS

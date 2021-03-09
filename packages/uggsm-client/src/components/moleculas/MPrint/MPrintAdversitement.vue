@@ -23,17 +23,29 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component
 export default class MPrintAdversitement extends Vue {
   @Prop({ type: [String, Number] }) orderId!: string | number
+
   @Prop({ type: [String, Number] }) createdAt!: string
+
   @Prop({ type: [String, Number] }) customerName!: string
+
   @Prop({ type: [String, Number] }) customerPhone!: string
+
   @Prop({ type: [String, Number] }) phoneModel!: string
+
   @Prop({ type: [String, Number] }) serialNumber!: string
+
   @Prop({ type: [String, Number] }) declaredDeffect!: string
+
   @Prop({ type: [String, Number] }) password!: string
+
   @Prop({ type: [String, Number] }) appearance!: string
+
   @Prop({ type: [String, Number] }) kit!: string
+
   @Prop({ type: [String, Number] }) estimatedCloseAt!: string
+
   @Prop({ type: [String, Number] }) declaredPrice!: string
+
   @Prop({ type: [String, Number] }) avance!: string
 
   get year() {

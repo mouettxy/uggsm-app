@@ -154,14 +154,21 @@ import { Socket } from 'vue-socket.io-extended'
 @Component
 export default class UgTableRemote extends Mixins(TableRemoteHelpers, Responsive) {
   @Prop({ required: true }) headersSchema!: Record<string, string>
+
   @Prop({ required: true }) headersSchemaId!: string
+
   @Prop({ required: true }) fetchFunction!: (options: any) => any
 
   @Prop({ required: false }) includeSearchField!: boolean
+
   @Prop({ required: false }) includeOfficeField!: boolean
+
   @Prop({ required: false, default: true }) includeHeader!: boolean
+
   @Prop({ required: false, default: true }) includeMiddleToolbar!: boolean
+
   @Prop({ required: false, default: '' }) socketEvent!: string
+
   @Prop({ required: false, default: 'id' }) itemKeyField!: string
 
   public isLoading = false
@@ -169,10 +176,13 @@ export default class UgTableRemote extends Mixins(TableRemoteHelpers, Responsive
   public itemsCount = Infinity
 
   public options: any = null
+
   public headers: any = null
+
   public headersMenu = false
 
   public messageWhenNoData = 'Нет данных для отображения'
+
   public messageWhenLoading = 'Данные загружаются...'
 
   public items: any = null
@@ -180,7 +190,9 @@ export default class UgTableRemote extends Mixins(TableRemoteHelpers, Responsive
   public debouncedUpdateTable: any = debounce(this.updateTable, 700)
 
   public serverItems = 0
+
   public serverPages = 0
+
   public finalPageReached = false
 
   @Watch('search')

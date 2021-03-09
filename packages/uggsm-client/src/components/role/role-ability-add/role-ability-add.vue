@@ -122,13 +122,19 @@ export default class UgRoleAbilityAdd extends Vue {
   @Prop({ required: true }) role!: Role
 
   public value: string | boolean | Array<string> | null = null
+
   public name: Actions = ''
+
   public description = ''
+
   public operator: string = Defaults.TYPE
+
   public type: string = Defaults.OPERATOR
+
   public autocomplete = ''
 
   public types: { text: string; value: string }[] = []
+
   public operators: { text: string; value: string }[] = []
 
   public accessLinksList = normalizedMenus
@@ -138,6 +144,7 @@ export default class UgRoleAbilityAdd extends Vue {
 
   - Название способности на русском, отображается в интерфейсе
   `
+
   public nameHint = `
   #### Рекомендации к заполнению
 

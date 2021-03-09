@@ -58,8 +58,11 @@ import Responsive from '@/mixins/responive'
 })
 export default class OClientModal extends Mixins(Responsive) {
   @Prop({ type: [Number, String], required: true }) clientid!: number | string
+
   @Prop({ type: Boolean, default: false }) byName!: boolean
+
   public client: Client | null = null
+
   public modal = false
 
   @Watch('modal')

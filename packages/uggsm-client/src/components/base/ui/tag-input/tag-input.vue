@@ -20,30 +20,39 @@ export default {
     label: {
       required: false,
       type: String,
+      default: '',
     },
+
     value: {
       required: true,
       type: [Array, String],
     },
+
     items: {
       required: false,
       type: [Array],
+      default: () => [],
     },
+
     hideDetails: {
       required: false,
       type: [String, Boolean],
+      default: '',
     },
   },
+
   data: function () {
     return {
       search: '',
     }
   },
+
   computed: {
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },

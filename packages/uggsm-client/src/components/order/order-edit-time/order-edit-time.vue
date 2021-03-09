@@ -72,25 +72,32 @@ export default {
       required: true,
       validator: (prop) => typeof prop === 'string' || prop === null,
     },
+
     orderStatus: {
       required: true,
       type: [String],
     },
+
     small: {
       required: false,
       type: [Boolean],
     },
+
     editable: {
       required: false,
       type: [Boolean],
     },
+
     path: {
       required: false,
       type: [String],
+      default: '',
     },
+
     orderid: {
       required: false,
       type: [String, Number],
+      default: '',
     },
   },
 
@@ -99,16 +106,6 @@ export default {
       invalidDate: false,
       editMode: false,
     }
-  },
-
-  watch: {
-    time: function (value) {
-      if (value === 'Invalid date' || value === 'Invalid date Invalid date' || value === null) {
-        this.invalidDate = true
-      } else {
-        this.invalidDate = false
-      }
-    },
   },
 
   computed: {
@@ -120,6 +117,7 @@ export default {
       get: function () {
         return this.time
       },
+
       set: function (value) {
         this.$emit('change', value)
       },
@@ -139,6 +137,22 @@ export default {
     chipColor() {
       return this.isExpired ? 'error' : 'softgrey'
     },
+  },
+
+  watch: {
+    time: function (value) {
+      if (value === 'Invalid date' || value === 'Invalid date Invalid date' || value === null) {
+        this.invalidDate = true
+      } else {
+        this.invalidDate = false
+      }
+    },
+  },
+
+  mounted: function () {
+    if (this.time === 'Invalid date' || this.time === 'Invalid date Invalid date' || this.time === null) {
+      this.invalidDate = true
+    }
   },
 
   methods: {
@@ -164,12 +178,6 @@ export default {
       this.$notification.success('Успешная смена срока заказа')
       this.disableEditMode()
     },
-  },
-
-  mounted: function () {
-    if (this.time === 'Invalid date' || this.time === 'Invalid date Invalid date' || this.time === null) {
-      this.invalidDate = true
-    }
   },
 }
 </script>

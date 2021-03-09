@@ -75,12 +75,6 @@ export default {
     }
   },
 
-  watch: {
-    allowedOfficesLength: function () {
-      this.checkOfficeAbility()
-    },
-  },
-
   computed: {
     ...mapState({
       selectedOffice: (state) => state.settings.office,
@@ -98,6 +92,16 @@ export default {
     allowedOfficesLength() {
       return this.allowedOffices.length
     },
+  },
+
+  watch: {
+    allowedOfficesLength: function () {
+      this.checkOfficeAbility()
+    },
+  },
+
+  mounted: function () {
+    this.init()
   },
 
   methods: {
@@ -182,10 +186,6 @@ export default {
 
       this.isLoading = false
     },
-  },
-
-  mounted: function () {
-    this.init()
   },
 }
 </script>

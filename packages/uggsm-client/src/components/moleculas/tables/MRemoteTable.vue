@@ -88,12 +88,15 @@ import UgOfficeSwitcher from '@/components/office/office-switcher/office-switche
 })
 export default class MRemoteTable extends Vue {
   @Prop({ default: true }) displayOfficeSwitcher!: boolean
+
   @Prop({ default: true }) displaySearchField!: boolean
 
   @Prop({ default: 'Не найдено элементов' }) noDataText!: string
+
   @Prop({ default: 'Загружаем элементы' }) loadingText!: string
 
   @Prop({ default: 'calc(100vh - 160px)' }) height!: string
+
   @Prop({ default: 'id' }) itemsKey!: string
 
   @Prop({ required: true }) store!: any

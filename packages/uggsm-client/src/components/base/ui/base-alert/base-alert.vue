@@ -28,20 +28,25 @@ export default {
       type: [String],
       default: 'info',
     },
+
     persistent: {
       required: false,
       type: [Boolean],
     },
+
     uniqueId: {
       required: false,
       type: [String],
+      default: '',
     },
+
     transition: {
       required: false,
       type: [String],
       default: 'slide-y-transition',
     },
   },
+
   computed: {
     isHidden() {
       if (!this.persistent) {
@@ -54,6 +59,7 @@ export default {
       return false
     },
   },
+
   methods: {
     hideAlert(closeFn) {
       const uniqueId = this.$props.uniqueId

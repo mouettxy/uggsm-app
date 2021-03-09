@@ -16,9 +16,13 @@ export default class Client extends VuexModule {
   /* -------------------------------------------------------------------------- */
 
   public table: Array<ClientType> | null = null
+
   public isLoading = false
+
   public tableRows = 0
+
   public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id')
+
   public tableHeaders = TableHelpers.generateHeaders(
     {
       id: '№',
@@ -31,6 +35,7 @@ export default class Client extends VuexModule {
     },
     'clients-headers'
   )
+
   get tableItems() {
     return map(this.table, (e) => {
       return {
@@ -50,35 +55,43 @@ export default class Client extends VuexModule {
       }
     })
   }
+
   get tableHeadersFormatted() {
     return TableHelpers.excludeNotShownHeaders(this.tableHeaders)
   }
+
   @Mutation
   SET_LOADING(payload: boolean) {
     this.isLoading = payload
   }
+
   @Mutation
   SET_TABLE(payload: any) {
     this.table = payload.docs
     this.tableRows = payload.totalDocs
   }
+
   @Mutation
   SET_TABLE_OPTIONS(payload: any) {
     this.tableOptions = payload
   }
+
   @Mutation
   SET_TABLE_HEADERS(payload: any) {
     this.tableHeaders = payload
   }
+
   @Action
   setTableOptions(payload: any) {
     this.context.commit('SET_TABLE_OPTIONS', payload)
   }
+
   @Action
   setTableHeaders(payload: any) {
     localStorage.setItem('cashes-headers', JSON.stringify(payload))
     this.context.commit('SET_TABLE_HEADERS', payload)
   }
+
   @Action
   async fetchTable() {
     this.context.commit('SET_LOADING', true)

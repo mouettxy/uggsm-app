@@ -43,7 +43,9 @@ import { Component, Vue } from 'vue-property-decorator'
 @Component
 export default class UgRoleAdd extends Vue {
   public value = ''
+
   public name = ''
+
   public description = ''
 
   public showForm = false
@@ -54,6 +56,7 @@ export default class UgRoleAdd extends Vue {
   - Должно быть написано на русском, отображается в интерфейсе
   - Должно отражать краткое значение роли в системе
   `
+
   public valueHint = `
   #### Рекомендации к заполнению
 

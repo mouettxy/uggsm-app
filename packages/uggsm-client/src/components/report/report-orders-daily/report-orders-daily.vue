@@ -165,6 +165,7 @@ export default {
           value: 'defect',
         },
       ],
+
       tableClosedHeaders: [
         {
           text: '№',
@@ -210,20 +211,27 @@ export default {
           a += e.ordersTotal
           return a
         }, 0),
+
         closed: this.report.closed.reduce((a, e) => {
           a += e.ordersTotal
           return a
         }, 0),
+
         worksPrice: this.report.closed.reduce((a, e) => {
           a += e.cashSum
           return a
         }, 0),
+
         cashPrice: this.report.closed.reduce((a, e) => {
           a += e.worksSum
           return a
         }, 0),
       }
     },
+  },
+
+  mounted: function () {
+    this.getReport()
   },
 
   methods: {
@@ -241,10 +249,6 @@ export default {
 
       this.report = response.data
     },
-  },
-
-  mounted: function () {
-    this.getReport()
   },
 }
 </script>

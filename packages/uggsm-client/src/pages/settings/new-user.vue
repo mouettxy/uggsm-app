@@ -102,8 +102,6 @@ import OfficeAPI from '@/api/office'
 import AuthAPI from '@/api/auth'
 
 export default {
-  layout: 'centered',
-
   name: 'ug-page-settings-new-user',
 
   components: {
@@ -111,6 +109,8 @@ export default {
     UgBaseInput,
     UgBaseBtn,
   },
+
+  layout: 'centered',
 
   data: function () {
     return {
@@ -121,6 +121,7 @@ export default {
         office: '',
         role: '',
       },
+
       officesRaw: [],
       rolesRaw: [],
       isFormValid: false,
@@ -151,6 +152,11 @@ export default {
         value: `${e.code}|${e.name}`,
       }))
     },
+  },
+
+  mounted: function () {
+    this.fetchOffices()
+    this.fetchRoles()
   },
 
   methods: {
@@ -234,11 +240,6 @@ export default {
         }
       }
     },
-  },
-
-  mounted: function () {
-    this.fetchOffices()
-    this.fetchRoles()
   },
 }
 </script>

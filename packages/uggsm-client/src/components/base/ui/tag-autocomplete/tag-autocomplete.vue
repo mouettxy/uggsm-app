@@ -30,54 +30,74 @@ export default {
     label: {
       required: false,
       type: String,
+      default: '',
     },
+
     value: {
       required: false,
       type: [Array, String],
+      default: '',
     },
+
     path: {
       required: false,
       type: String,
+      default: '',
     },
+
     fetchOnMount: {
       required: false,
       type: Boolean,
     },
+
     itemText: {
       required: false,
       type: String,
       default: 'text',
     },
+
     itemValue: {
       required: false,
       type: String,
       default: 'value',
     },
   },
+
   data: function () {
     return {
       search: null,
       items: [],
     }
   },
+
   computed: {
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },
     },
+
     endpoint() {
       return `/autocomplete${this.path}`
     },
   },
+
   watch: {
     search: function (value) {
       this.getItems(value)
     },
   },
+
+  mounted: function () {
+    if (this.fetchOnMount) {
+      this.getItems('')
+    }
+  },
+
   methods: {
     async fetchEndpoint(search) {
       const apiResponse = await axios.request({
@@ -94,17 +114,14 @@ export default {
 
       return apiResponse.data
     },
+
     async getItems(value) {
       this.items = await this.fetchEndpoint(value)
     },
+
     handleInput() {
       this.search = null
     },
-  },
-  mounted: function () {
-    if (this.fetchOnMount) {
-      this.getItems('')
-    }
   },
 }
 </script>

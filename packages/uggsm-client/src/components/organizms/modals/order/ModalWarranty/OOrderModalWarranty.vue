@@ -96,7 +96,9 @@ import { Client } from '@/typings/api/client'
 })
 export default class OOrderModalWarranty extends Vue {
   public modal = false
+
   public order: Order | null = null
+
   public defect = ''
 
   rewind(rewindModel = true) {

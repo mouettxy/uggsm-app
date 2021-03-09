@@ -87,23 +87,33 @@ export default {
     value: {
       required: false,
       type: [String, Number],
+      default: '',
     },
+
     label: {
       required: false,
       type: String,
+      default: '',
     },
+
     icon: {
       required: false,
       type: String,
+      default: '',
     },
+
     hint: {
       required: false,
       type: String,
+      default: '',
     },
+
     rules: {
       required: false,
       type: Array,
+      default: () => [],
     },
+
     type: {
       required: false,
       type: [String],
@@ -112,28 +122,36 @@ export default {
         return ['text', 'number', 'password'].includes(v)
       },
     },
+
     phone: {
       required: false,
       type: [Boolean],
     },
+
     suffix: {
       required: false,
       type: [String],
+      default: '',
     },
+
     prefix: {
       required: false,
       type: [String],
+      default: '',
     },
+
     disabled: {
       required: false,
       type: [Boolean],
     },
   },
+
   computed: {
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },
@@ -147,26 +165,6 @@ export default {
       }
     },
   },
-  methods: {
-    handleAppendMouseOver() {
-      const { append } = this.$refs
-
-      this.animateAppend(append.$el)
-    },
-    handleAppendMouseLeave() {
-      const { append } = this.$refs
-
-      this.deanimateAppend(append.$el)
-    },
-    handleAppendClick() {
-      const { hint } = this.$refs
-
-      this.animateHint(hint)
-    },
-    handleBlur() {
-      this.deanimateHint()
-    },
-  },
 
   mounted: function () {
     if (this.type === 'number') {
@@ -174,6 +172,30 @@ export default {
 
       input.$el.querySelector('input').style.appearance = 'textfield'
     }
+  },
+
+  methods: {
+    handleAppendMouseOver() {
+      const { append } = this.$refs
+
+      this.animateAppend(append.$el)
+    },
+
+    handleAppendMouseLeave() {
+      const { append } = this.$refs
+
+      this.deanimateAppend(append.$el)
+    },
+
+    handleAppendClick() {
+      const { hint } = this.$refs
+
+      this.animateHint(hint)
+    },
+
+    handleBlur() {
+      this.deanimateHint()
+    },
   },
 }
 </script>

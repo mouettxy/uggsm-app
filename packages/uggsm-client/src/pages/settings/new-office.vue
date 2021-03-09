@@ -87,9 +87,8 @@
 import OfficeAPI from '@/api/office'
 
 export default {
-  layout: 'centered',
-
   name: 'ug-settings-new-office',
+  layout: 'centered',
 
   data: function () {
     return {

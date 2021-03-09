@@ -74,8 +74,10 @@ export default {
     icon: {
       required: false,
       type: [String],
+      default: '',
     },
   },
+
   computed: {
     model: {
       get: function () {
@@ -85,6 +87,7 @@ export default {
 
         return this.value
       },
+
       set: function (value) {
         if (this.returnIsoString) {
           this.$emit('input', moment(value, this.format).toISOString())

@@ -135,6 +135,7 @@ export default {
         office: '',
         status: ['Закрыт'],
       },
+
       report: null,
       tableHeaders: [
         {
@@ -154,6 +155,7 @@ export default {
           value: 'total',
         },
       ],
+
       embeddedHeaders: [
         {
           text: 'Наименование',
@@ -164,6 +166,7 @@ export default {
           value: 'total',
         },
       ],
+
       officesRaw: [],
     }
   },
@@ -172,6 +175,7 @@ export default {
     ...mapState({
       currentOffice: (state) => state.settings.office,
     }),
+
     offices() {
       if (!this.officesRaw) {
         return []
@@ -254,6 +258,14 @@ export default {
     },
   },
 
+  mounted: function () {
+    if (this.currentOffice) {
+      this.search.office = this.currentOffice.code
+    }
+
+    this.fetchOffices()
+  },
+
   methods: {
     async getReport() {
       const search = cloneDeep(this.search)
@@ -294,14 +306,6 @@ export default {
 
       this.officesRaw = response.data
     },
-  },
-
-  mounted: function () {
-    if (this.currentOffice) {
-      this.search.office = this.currentOffice.code
-    }
-
-    this.fetchOffices()
   },
 }
 </script>

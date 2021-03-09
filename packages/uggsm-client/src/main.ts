@@ -32,6 +32,7 @@ new Vue({
       tryUpdateRoleAbilities(role)
     },
   },
+
   vuetify,
   store,
   router,

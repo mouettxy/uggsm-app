@@ -75,7 +75,9 @@ import { getCorrectTextColor } from '@/api/helpers'
 })
 export default class OOrderModalWarrantyFields extends Mixins(Responsive) {
   public orderid: number | null = null
+
   public order: Order | null = null
+
   public defect = ''
 
   public dGetOrder = debounce(this.getOrder, 200)

@@ -59,11 +59,17 @@ import { settingsModule } from '@/store'
 @Component
 export default class MPrintWarranty extends Vue {
   @Prop({ required: true, type: [String, Number] }) orderId!: string | number
+
   @Prop({ required: true, type: [String] }) createdAt!: string
+
   @Prop({ required: true, type: [String] }) customerName!: string
+
   @Prop({ required: true, type: [String] }) customerPhone!: string
+
   @Prop({ required: true, type: [String] }) phoneModel!: string
+
   @Prop({ required: true, type: [String] }) serialNumber!: string
+
   @Prop({ required: true, type: [String] }) declaredDeffect!: string
 
   get year() {

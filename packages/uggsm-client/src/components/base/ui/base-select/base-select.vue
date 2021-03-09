@@ -43,26 +43,31 @@ export default {
     items: {
       required: false,
       type: [Array],
+      default: () => [],
     },
 
     icon: {
       required: false,
       type: [String],
+      default: '',
     },
 
     label: {
       required: false,
       type: [String],
+      default: '',
     },
 
     hint: {
       required: false,
       type: [String],
+      default: '',
     },
 
     cache: {
       required: false,
       type: [String],
+      default: '',
     },
 
     readonly: {
@@ -116,6 +121,7 @@ export default {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
 
@@ -123,12 +129,6 @@ export default {
           localStorage.setItem(this.cache, JSON.stringify(value))
         }
       },
-    },
-  },
-
-  methods: {
-    onChange() {
-      this.$emit('change', this.model)
     },
   },
 
@@ -142,6 +142,12 @@ export default {
         this.$emit('change', items)
       }
     }
+  },
+
+  methods: {
+    onChange() {
+      this.$emit('change', this.model)
+    },
   },
 }
 </script>

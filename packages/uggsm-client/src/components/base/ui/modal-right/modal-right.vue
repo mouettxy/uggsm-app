@@ -23,6 +23,8 @@ import Responsive from '@/mixins/responive'
 export default {
   name: 'ug-modal-right',
 
+  mixins: [Responsive],
+
   props: {
     value: {
       required: true,
@@ -30,13 +32,12 @@ export default {
     },
   },
 
-  mixins: [Responsive],
-
   computed: {
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         if (!value) {
           document.documentElement.classList.remove('overflow-y-hidden')

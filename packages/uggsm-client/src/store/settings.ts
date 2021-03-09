@@ -8,8 +8,11 @@ import { Office } from '@/typings/api/office'
 })
 export default class Settings extends VuexModule {
   public office: any = null
+
   public search: any = null
+
   public socketNotifications = true
+
   public miniNavigation: boolean | null = null
 
   public serverReconnect = false

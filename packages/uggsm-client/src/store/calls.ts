@@ -20,9 +20,13 @@ export default class Calls extends VuexModule {
   /* -------------------------------------------------------------------------- */
 
   public table: Array<Call> | null = null
+
   public isLoading = false
+
   public tableRows = 0
+
   public tableOptions: any = TableHelpers.generateOptions(1, 25, 'answerTime')
+
   public tableHeaders = TableHelpers.generateHeaders(
     {
       order: 'Заявка',
@@ -38,6 +42,7 @@ export default class Calls extends VuexModule {
     },
     'calls-headers'
   )
+
   get tableItems() {
     return map(this.table, (e) => {
       const startTime = getTime(e.startTime)
@@ -58,35 +63,43 @@ export default class Calls extends VuexModule {
       }
     })
   }
+
   get tableHeadersFormatted() {
     return TableHelpers.excludeNotShownHeaders(this.tableHeaders)
   }
+
   @Mutation
   SET_LOADING(payload: boolean) {
     this.isLoading = payload
   }
+
   @Mutation
   SET_TABLE(payload: any) {
     this.table = payload.docs
     this.tableRows = payload.totalDocs
   }
+
   @Mutation
   SET_TABLE_OPTIONS(payload: any) {
     this.tableOptions = payload
   }
+
   @Mutation
   SET_TABLE_HEADERS(payload: any) {
     this.tableHeaders = payload
   }
+
   @Action
   setTableOptions(payload: any) {
     this.context.commit('SET_TABLE_OPTIONS', payload)
   }
+
   @Action
   setTableHeaders(payload: any) {
     localStorage.setItem('orders-headers', JSON.stringify(payload))
     this.context.commit('SET_TABLE_HEADERS', payload)
   }
+
   @Action
   async fetchTable() {
     this.context.commit('SET_LOADING', true)

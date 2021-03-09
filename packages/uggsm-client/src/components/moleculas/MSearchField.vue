@@ -25,7 +25,9 @@ import { debounce } from 'lodash'
 @Component
 export default class MSearchField extends Vue {
   @Prop({ required: true, type: String }) type!: string
+
   public value = ''
+
   public debounced = debounce(settingsModule.setSearch, 300)
 
   @Watch('value')

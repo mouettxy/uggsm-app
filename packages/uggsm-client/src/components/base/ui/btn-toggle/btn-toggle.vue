@@ -17,43 +17,58 @@ export default {
       required: true,
       type: Boolean,
     },
+
     label: {
       required: true,
       type: String,
     },
+
     iconLeft: {
       required: false,
       type: String,
+      default: '',
     },
+
     iconRight: {
       required: false,
       type: String,
+      default: '',
     },
+
     color: {
       required: false,
       type: String,
+      default: '',
     },
+
     activeColor: {
       required: false,
       type: String,
+      default: '',
     },
+
     activeIcon: {
       required: false,
       type: String,
+      default: '',
     },
+
     text: {
       required: false,
       type: Boolean,
     },
+
     depressed: {
       required: false,
       type: Boolean,
     },
   },
+
   computed: {
     statedColor() {
       return this.model ? this.activeColor : this.color
     },
+
     statedLeftIcon() {
       if (!this.activeIcon) {
         return this.iconLeft
@@ -65,6 +80,7 @@ export default {
 
       return this.model ? this.activeIcon : this.iconLeft
     },
+
     statedRightIcon() {
       if (!this.activeIcon) {
         return this.iconRight
@@ -76,15 +92,18 @@ export default {
 
       return this.model ? this.activeIcon : this.iconRight
     },
+
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },
     },
   },
+
   methods: {
     handleClick(event) {
       this.model = !this.model

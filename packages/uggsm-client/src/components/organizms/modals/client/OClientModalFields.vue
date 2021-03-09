@@ -173,6 +173,7 @@ export default class OClientModalFields extends Vue {
   @Prop(Object) client!: Client
 
   public phoneMenu = false
+
   public phone = {
     comment: '',
     phone: '',

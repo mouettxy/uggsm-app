@@ -54,11 +54,13 @@ export default {
     ...mapActions({
       handleLogout: 'auth/logout',
     }),
+
     handleUserClick() {
       const { userPanel } = this.$refs
 
       this.userPanelSlideIn(userPanel)
     },
+
     handleUserBlur() {
       const { userPanel } = this.$refs
 

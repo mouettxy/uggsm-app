@@ -30,23 +30,28 @@ export default {
       required: true,
       type: String,
     },
+
     name: {
       required: true,
       type: String,
     },
+
     color: {
       required: false,
       type: String,
       default: 'green',
     },
+
     small: {
       required: false,
       type: Boolean,
     },
+
     rounded: {
       required: false,
       type: Boolean,
     },
+
     fillNameWidth: {
       required: false,
       type: Boolean,

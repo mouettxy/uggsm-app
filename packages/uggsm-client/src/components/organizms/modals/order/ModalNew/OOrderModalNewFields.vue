@@ -211,13 +211,16 @@ export default class OOrderModalNewFields extends Mixins(Responsive) {
   @Prop() value!: Record<string, any>
 
   public customerNameIcon = 'mdi-account-plus'
+
   @Watch('customerName')
   async onCustomerNameChange() {
     await this.isClientExists()
   }
+
   get customerName() {
     return this.model.customerName
   }
+
   async isClientExists() {
     try {
       const response = await this.$axios.get('/autocomplete/customer-phone', {

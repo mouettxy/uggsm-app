@@ -107,6 +107,7 @@ export default {
         date: [moment().format('DD.MM.YYYY'), moment().format('DD.MM.YYYY')],
         status: ['Закрыт'],
       },
+
       report: null,
       tableHeaders: [
         {

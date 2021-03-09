@@ -113,10 +113,13 @@ import { Order } from '@/typings/api/order'
 })
 export default class OOrderModalRegularWorks extends Vue {
   @Ref('form') form!: any
+
   @Ref('commentForm') commentForm!: any
+
   @Prop({ required: true, default: null }) order!: Order | null
 
   public work = null
+
   public tableHeaders = [
     {
       text: '№',

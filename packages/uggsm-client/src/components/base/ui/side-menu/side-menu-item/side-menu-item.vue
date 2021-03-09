@@ -76,10 +76,12 @@ export default {
       required: true,
       type: Object,
     },
+
     menuItemIndex: {
       required: true,
       type: Number,
     },
+
     mobile: {
       required: false,
       type: Boolean,

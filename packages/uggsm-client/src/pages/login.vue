@@ -50,14 +50,14 @@ import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 import { mapActions } from 'vuex'
 
 export default {
-  layout: 'centered',
-
   name: 'ug-page-login',
 
   components: {
     UgBaseInput,
     UgBaseBtn,
   },
+
+  layout: 'centered',
 
   data: function () {
     return {

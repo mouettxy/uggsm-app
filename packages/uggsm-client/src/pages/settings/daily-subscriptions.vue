@@ -66,14 +66,14 @@ import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 import EmailSubscriptionAPI from '@/api/emailSubscription'
 
 export default {
-  layout: 'centered',
-
   name: 'ug-daily-subscriptions',
 
   components: {
     UgBaseInput,
     UgBaseBtn,
   },
+
+  layout: 'centered',
 
   sockets: {
     ['update email subscriptions']() {
@@ -101,6 +101,10 @@ export default {
     emailRules() {
       return [(v) => /^([a-z0-9_.-]+@[\da-z.-]+\.[a-z.]{2,6})$/g.test(this.email) || 'Введите валидный Email адрес']
     },
+  },
+
+  mounted: function () {
+    this.getSubscriptions()
   },
 
   methods: {
@@ -144,10 +148,6 @@ export default {
 
       this.$notification.success(`Почта успешно отписана от ежедневных отчётов`)
     },
-  },
-
-  mounted: function () {
-    this.getSubscriptions()
   },
 }
 </script>

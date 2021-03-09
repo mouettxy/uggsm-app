@@ -53,6 +53,7 @@ export default class OOrderModalRegular extends Vue {
   @Prop() orderid!: string | number
 
   public modal = false
+
   public order: Order | null = null
 
   @Watch('modal')

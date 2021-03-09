@@ -16,6 +16,8 @@
     "@vue/cli-plugin-typescript": "^4.5.8",
     "babel-loader": "^8.1.0",
     "core-js": "^3.6.5",
+    "eslint": "^7.21.0",
+    "eslint-plugin-vue": "^7.7.0",
     "gsap": "^3.5.1",
     "ignore-not-found-export-plugin": "^1.0.1",
     "lodash": "^4.17.20",

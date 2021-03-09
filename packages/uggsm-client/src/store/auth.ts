@@ -14,6 +14,7 @@ import AuthAPI from '@/api/auth'
 })
 export default class Auth extends VuexModule {
   public user: User | null = null
+
   public isLoggedIn = false
 
   @Mutation

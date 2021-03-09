@@ -95,13 +95,17 @@ export default {
       required: true,
       type: [String],
     },
+
     title: {
       required: false,
       type: [String],
+      default: '',
     },
+
     subtitle: {
       required: false,
       type: [String],
+      default: '',
     },
   },
 
@@ -127,6 +131,10 @@ export default {
         }
       }
     },
+  },
+
+  beforeDestroy: function () {
+    this.stop()
   },
 
   methods: {
@@ -245,10 +253,6 @@ export default {
       player.pause()
       this.currentTime = 0
     },
-  },
-
-  beforeDestroy: function () {
-    this.stop()
   },
 }
 </script>

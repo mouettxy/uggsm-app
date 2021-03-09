@@ -26,6 +26,7 @@ export default {
     label: {
       required: false,
       type: [String],
+      default: '',
     },
 
     dense: {
@@ -41,11 +42,13 @@ export default {
     icon: {
       required: false,
       type: [String],
+      default: '',
     },
 
     color: {
       required: false,
       type: [String],
+      default: '',
     },
 
     disabled: {
@@ -60,11 +63,13 @@ export default {
       default: 'auto',
     },
   },
+
   computed: {
     model: {
       get: function () {
         return this.value
       },
+
       set: function (value) {
         this.$emit('input', value)
       },
