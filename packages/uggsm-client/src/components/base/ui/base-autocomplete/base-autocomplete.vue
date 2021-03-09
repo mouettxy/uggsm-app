@@ -51,7 +51,7 @@ export default {
     uriQuery: {
       required: false,
       type: [Object],
-      default: () => {},
+      default: () => ({}),
     },
 
     label: {

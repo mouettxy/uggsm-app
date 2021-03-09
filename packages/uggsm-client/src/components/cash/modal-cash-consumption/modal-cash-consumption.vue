@@ -103,7 +103,7 @@ export default {
     customer: {
       required: false,
       type: [Object],
-      default: () => {},
+      default: () => ({}),
     },
   },
 
