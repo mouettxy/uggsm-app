@@ -8,15 +8,20 @@
 </route>
 
 <template lang="pug">
-.page-reports-orders-without-work
-  t-reports-orders-without-work
+.page-reports-orders-without-work.pa-4
+  ug-report-orders-closed-incorrect
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import UgReportOrdersClosedIncorrect from '@/components/report/report-orders-closed-incorrect/report-orders-closed-incorrect'
 
-@Component
-export default class PageReportsOrdersWithoutWork extends Vue {}
+export default {
+  name: 'ug-page-orders-closed-incorrect',
+
+  components: {
+    UgReportOrdersClosedIncorrect,
+  },
+}
 </script>
 
 <style lang="sass">

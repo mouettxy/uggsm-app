@@ -63,6 +63,20 @@ export class OrderAPI extends BaseAPI {
       return error
     }
   }
+
+  async generateReport(params: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request({
+        url: `/reports/report`,
+        method: 'get',
+        params,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
 }
 
 export default new OrderAPI({

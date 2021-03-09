@@ -26,6 +26,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="sass">
+@import '@/sass/global.sass'
 .notificationCenter.topRight
   z-index: 999999
 </style>

@@ -9,15 +9,20 @@
 </route>
 
 <template lang="pug">
-.page-orders
-  t-reports-orders-daily(from='reports')
+.page-orders.pa-4
+  ug-report-orders-daily
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import UgReportOrdersDaily from '@/components/report/report-orders-daily/report-orders-daily'
 
-@Component
-export default class PageReports extends Vue {}
+export default {
+  name: 'ug-page-report-orders-daily',
+
+  components: {
+    UgReportOrdersDaily,
+  },
+}
 </script>
 
 <style lang="sass">

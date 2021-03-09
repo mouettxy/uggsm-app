@@ -30,7 +30,7 @@ export default {
     },
     persistent: {
       required: false,
-      type: [],
+      type: [Boolean],
     },
     uniqueId: {
       required: false,
