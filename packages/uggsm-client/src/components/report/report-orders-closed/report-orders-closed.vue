@@ -70,17 +70,20 @@ v-card.ug-report-orders-closed
             strong {{ master }}
             template(#actions)
               v-chip.dark--text.mr-1(
+                small,
                 label,
                 color='warning'
               ) {{ report.length }}
 
               v-chip.dark--text(
                 v-if='getSumOfReport(report) > 0',
+                small,
                 label,
                 color='green'
               ) {{ getSumOfReport(report) }}
               v-chip.dark--text(
                 v-else,
+                small,
                 label,
                 color='green'
               ) {{ getSumOfReport(report) }}

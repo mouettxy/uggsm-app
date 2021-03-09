@@ -66,6 +66,7 @@
                     strong {{ master }}
                     template(#actions)
                       v-chip.dark--text(
+                        small,
                         label,
                         color='error'
                       ) {{ report.length }}

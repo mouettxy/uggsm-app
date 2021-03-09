@@ -60,6 +60,7 @@
               strong {{ report.office }}
               template(#actions)
                 v-chip(
+                  small,
                   label,
                   color='success'
                 ) {{ report.count }}
