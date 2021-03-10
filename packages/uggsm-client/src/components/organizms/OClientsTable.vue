@@ -34,15 +34,19 @@
         color='success'
       ) mdi-message
     template(#item.id='{value}')
-      o-client-modal(:clientid='value')
+      ug-modal-client(:clientid='value')
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import UgModalClient from '@/components/client/modal-client/modal-client.vue'
+import { Component, Vue } from 'vue-property-decorator'
 import { clientModule } from '@/store'
-import { filter } from 'lodash'
 
-@Component
+@Component({
+  components: {
+    UgModalClient,
+  },
+})
 export default class OClientsTable extends Vue {
   get store() {
     return clientModule

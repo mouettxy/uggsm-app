@@ -12,7 +12,7 @@ v-btn.ug-base-btn(
   template(v-if='icon && label')
     v-icon(left) {{ icon }}
     span {{ label }}
-  template(v-else-if='icon')
+  template(v-else-if='icon && !label')
     v-icon {{ icon }}
   template(v-else)
     v-icon(
@@ -32,7 +32,7 @@ export default {
   props: {
     label: {
       required: false,
-      type: String,
+      type: [String, Number],
       default: '',
     },
 

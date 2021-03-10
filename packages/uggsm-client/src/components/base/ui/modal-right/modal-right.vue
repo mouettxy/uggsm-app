@@ -3,8 +3,7 @@ v-dialog.ug-modal-right(
   v-model='model',
   :fullscreen='isMobile',
   :content-class='`right-modal${isMobile ? " is-mobile" : ""}`',
-  transition='dialog-bottom-transition',
-  persistent
+  transition='dialog-bottom-transition'
 )
   template(#activator='{on, attrs}')
     slot(

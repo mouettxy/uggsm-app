@@ -11,7 +11,7 @@
         v-list-item-content
           v-list-item-title
             template(v-if='model.customer && model.customer.id')
-              o-client-modal(:clientid='model.customer.id')
+              ug-modal-client(:clientid='model.customer.id')
                 template(#activator='{on, attrs}')
                   div(
                     v-on='on',
@@ -184,6 +184,7 @@
 </template>
 
 <script lang="ts">
+import UgModalClient from '@/components/client/modal-client/modal-client.vue'
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
 import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
 import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
@@ -194,6 +195,7 @@ import { getAnonymousAnimal } from '@/api/helpers'
 @Component({
   components: {
     UgBaseAutocomplete,
+    UgModalClient,
     UgBaseSwitch,
     UgBaseInput,
   },

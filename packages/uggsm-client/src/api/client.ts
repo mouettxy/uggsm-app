@@ -8,12 +8,12 @@ export class ClientAPI extends BaseAPI {
     super(config)
   }
 
-  async getPaginated(data: any): AxiosResponseAPI<any> {
+  async getPaginated(params: any): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request<any>({
         url: `/paginated`,
         method: 'get',
-        data,
+        params,
       })
 
       return response
@@ -27,6 +27,33 @@ export class ClientAPI extends BaseAPI {
       const response = await this.api.request<Client>({
         url: `/name/${name}`,
         method: 'get',
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
+  async getOne(id: string): AxiosResponseAPI<Client> {
+    try {
+      const response = await this.api.request<Client>({
+        url: `/${id}`,
+        method: 'get',
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
+  async update(id: string, data: Partial<Client>): AxiosResponseAPI<Client> {
+    try {
+      const response = await this.api.request<Client>({
+        url: `/${id}`,
+        method: 'put',
+        data,
       })
 
       return response
