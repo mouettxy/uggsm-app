@@ -13,7 +13,9 @@ import { RedSmsClient } from '../services/sms/RedSmsClient'
 
 export class OrdersController implements IOrdersController {
   private model = OrderModel
+
   private smsClient = new RedSmsClient()
+
   private disableSmsClient = process.env.NODE_ENV !== 'production'
 
   public getAll: ControllerMethod = async (req, res, next) => {
@@ -394,7 +396,7 @@ export class OrdersController implements IOrdersController {
                 cashPayload.income = difference
               }
 
-              const cash = await CashModel.create(cashPayload)
+              const cash = new CashModel(cashPayload)
 
               await cash.save()
             }
