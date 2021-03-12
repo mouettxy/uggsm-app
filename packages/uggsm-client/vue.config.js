@@ -111,6 +111,7 @@ module.exports = {
 
   devServer: {
     progress: false,
+    disableHostCheck: true,
     overlay: {
       warnings: false,
       errors: true,
