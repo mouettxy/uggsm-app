@@ -1,11 +1,10 @@
 <template lang="pug">
 .office-switcher-item(:class='classList')
   v-chip.office-switcher-item__code(
-    :small='small',
+    :color='codeColor',
     :class='getRoundedClass("l")',
     @click='forwardClick',
-    label,
-    color='secondary'
+    label
   ) 
     v-icon(
       small,
@@ -13,7 +12,6 @@
     ) mdi-office-building
     span {{ code }}
   v-chip.office-switcher-item__name(
-    :small='small',
     :color='color',
     :class='{ ...getRoundedClass("r") }',
     @click='forwardClick',
@@ -42,9 +40,10 @@ export default {
       default: 'green',
     },
 
-    small: {
+    codeColor: {
       required: false,
-      type: Boolean,
+      type: String,
+      default: 'secondary',
     },
 
     rounded: {
@@ -62,8 +61,6 @@ export default {
     classList() {
       return {
         'office-switcher-item--fill-name-width': this.fillNameWidth,
-        'office-switcher-item--small': this.small,
-        'office-switcher-item--regular': !this.small,
       }
     },
   },
@@ -89,13 +86,6 @@ export default {
 .office-switcher-item
   position: relative
   display: inline-block
-
-  &.office-switcher-item--regular
-    .office-switcher-item__code
-      height: 40px
-
-    .office-switcher-item__name
-      height: 40px
 
   .office-switcher-item__code
     text-align: center

@@ -34,9 +34,10 @@
           )
             ug-office-switcher-item(
               :name='currentOffice.name',
+              :color='nameColor',
+              :codeColor='codeColor',
               :code='currentOffice.code',
-              rounded,
-              color='accent'
+              rounded
             )
       template(v-if='allowedOffices.length')
         template(v-for='allowedOffice in allowedOffices')
@@ -44,9 +45,9 @@
             v-if='allowedOffice.name !== currentOffice.name',
             :name='allowedOffice.name',
             :color='getOfficeColor(allowedOffice)',
+            :codeColor='codeColor',
             :code='allowedOffice.code',
             @click='selectOffice',
-            small,
             fill-name-width
           )
       template(v-else)
@@ -65,6 +66,20 @@ export default {
 
   components: {
     UgOfficeSwitcherItem,
+  },
+
+  props: {
+    codeColor: {
+      required: false,
+      type: String,
+      default: 'secondary',
+    },
+
+    nameColor: {
+      required: false,
+      type: String,
+      default: 'accent',
+    },
   },
 
   data: function () {
@@ -129,7 +144,7 @@ export default {
         return office.color
       }
 
-      return 'grey'
+      return this.nameColor
     },
 
     setCurrentOffice() {
