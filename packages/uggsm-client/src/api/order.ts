@@ -9,6 +9,20 @@ export class OrderAPI extends BaseAPI {
     super(config)
   }
 
+  async getPaginated(params: string): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request<any>({
+        url: `/paginate`,
+        method: 'get',
+        params,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async getById(orderId: string): AxiosResponseAPI<Order> {
     try {
       const response = await this.api.request<Order>({
