@@ -2,6 +2,7 @@
 .ug-base-input
   template(v-if='type === "number"')
     v-text-field(
+      v-bind='attrs',
       ref='input',
       v-model.number='model',
       :type='type',
@@ -13,9 +14,9 @@
       :label='label',
       :hide-details='true',
       :disabled='disabled',
+      @focus='handleFocus',
       @blur='handleBlur',
       single-line,
-      outlined,
       dense
     )
       template(#append)
@@ -39,6 +40,7 @@
                 ) mdi-help
   template(v-else-if='["text", "password"].includes(type)')
     v-text-field(
+      v-bind='attrs',
       ref='input',
       v-model='model',
       :type='type',
@@ -50,10 +52,10 @@
       :label='label',
       :hide-details='true',
       :disabled='disabled',
+      @focus='handleFocus',
       @blur='handleBlur',
       v-mask='phoneMask',
       single-line,
-      outlined,
       dense
     )
       template(#append)
@@ -82,7 +84,9 @@ import BaseInputAnimations from './base-input.animations'
 
 export default {
   name: 'ug-base-input',
+
   mixins: [BaseInputAnimations],
+
   props: {
     value: {
       required: false,
@@ -144,6 +148,17 @@ export default {
       required: false,
       type: [Boolean],
     },
+
+    onFocusSolo: {
+      required: false,
+      type: [Boolean],
+    },
+  },
+
+  data: function () {
+    return {
+      hasFocus: false,
+    }
   },
 
   computed: {
@@ -163,6 +178,14 @@ export default {
       } else {
         return false
       }
+    },
+
+    attrs() {
+      if (this.hasFocus && this.onFocusSolo) {
+        return { solo: true }
+      }
+
+      return { outlined: true }
     },
   },
 
@@ -195,6 +218,12 @@ export default {
 
     handleBlur() {
       this.deanimateHint()
+
+      this.hasFocus = false
+    },
+
+    handleFocus() {
+      this.hasFocus = true
     },
   },
 }
