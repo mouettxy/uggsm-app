@@ -2,7 +2,6 @@ import { parsePaginateResponse } from '../utils/helpers'
 import { ControllerMethod } from '../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
 import { OrderModel } from '../models'
-import moment from 'moment'
 import { DocumentType } from '@typegoose/typegoose'
 import { api } from '../server'
 import { Call, CallModel } from '../models/callModel'
@@ -10,10 +9,10 @@ import { Order } from '../models'
 import { CallsWebhookCallStart, CallsWebhookCallAnswer, CallsWebhookCallFinish } from '../interfaces/CallsAPI'
 import { formatPhone } from '../utils/helpers'
 import BaseController from './base/BaseController'
-import { logger } from 'express-winston'
 
 export class CallsController extends BaseController implements ICallsController {
   private model = CallModel
+
   public getPaginated: ControllerMethod = async (req, res, next) => {
     const { query, options } = parsePaginateResponse(req.query, false, this.model)
 
@@ -27,6 +26,7 @@ export class CallsController extends BaseController implements ICallsController 
       this.criticalError(next)
     }
   }
+
   public callbackCallStart: ControllerMethod = async (req, res, next) => {
     const body: CallsWebhookCallStart = req.body
 
@@ -41,6 +41,7 @@ export class CallsController extends BaseController implements ICallsController 
 
   public callbackCallFinish: ControllerMethod = async (req, res, next) => {
     const body: CallsWebhookCallFinish = req.body
+    // TODO: handle body.event.answer_time is 0
 
     // Группа Гаврилова Сервис
     if (body.event.user_group_id) {
@@ -69,9 +70,9 @@ export class CallsController extends BaseController implements ICallsController 
             managerNumber: formatPhone(body.event.src_number),
             manager: body.event.user_name,
             record: body.event.recording,
-            startTime: moment(body.event.start_time).toDate(),
-            endTime: moment(body.event.end_time).toDate(),
-            answerTime: moment(body.event.answer_time).toDate(),
+            startTime: new Date(body.event.start_time * 1000),
+            endTime: new Date(body.event.end_time * 1000),
+            answerTime: new Date(body.event.answer_time * 1000),
           })
 
           const workflowId = order.workflow.length + 1
@@ -100,9 +101,9 @@ export class CallsController extends BaseController implements ICallsController 
             managerNumber: formatPhone(body.event.src_number),
             manager: body.event.user_name,
             record: body.event.recording,
-            startTime: moment.utc(body.event.start_time).toDate(),
-            endTime: moment.utc(body.event.end_time).toDate(),
-            answerTime: moment.utc(body.event.answer_time).toDate(),
+            startTime: new Date(body.event.start_time * 1000),
+            endTime: new Date(body.event.end_time * 1000),
+            answerTime: new Date(body.event.answer_time * 1000),
           })
         }
 

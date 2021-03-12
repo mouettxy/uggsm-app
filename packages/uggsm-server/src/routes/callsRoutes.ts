@@ -1,17 +1,38 @@
 import { ICallsController } from 'src/interfaces'
 import { CallsController } from '../controllers'
-import BaseRouter from './heplers/BaseRouter'
+import { ExtendedRouter } from './heplers/BaseRouter'
 
-export class CallsRouter extends BaseRouter<ICallsController> {
+export class CallsRouter extends ExtendedRouter<ICallsController> {
   constructor() {
-    super(CallsController, '/calls')
+    super(CallsController, '/calls', false)
   }
 
-  initializeRoutes() {
-    this.expressRouter
-      .get(this.prefixed('paginated'), this.controller.getPaginated)
-      .post(this.prefixed('callbacks/call-start'), this.controller.callbackCallStart)
-      .post(this.prefixed('callbacks/call-answer'), this.controller.callbackCallAnswer)
-      .post(this.prefixed('callbacks/call-finish'), this.controller.callbackCallFinish)
+  defineRoutes() {
+    this.addRoutes([
+      {
+        path: 'paginated',
+        description: 'Получить все звонки',
+        controllerMethod: 'getPaginated',
+        method: 'get',
+      },
+      {
+        path: 'callbacks/call-start',
+        description: 'moizvonki callback call-start',
+        controllerMethod: 'callbackCallStart',
+        method: 'post',
+      },
+      {
+        path: 'callbacks/call-answer',
+        description: 'moizvonki callback call-answer',
+        controllerMethod: 'callbackCallAnswer',
+        method: 'post',
+      },
+      {
+        path: 'callbacks/call-finish',
+        description: 'moizvonki callback call-finish',
+        controllerMethod: 'callbackCallFinish',
+        method: 'post',
+      },
+    ])
   }
 }
