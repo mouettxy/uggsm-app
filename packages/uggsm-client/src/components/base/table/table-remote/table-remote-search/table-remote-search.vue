@@ -49,7 +49,7 @@ export default {
 
   .v-input
     .v-input__slot
-      background: #fff
+      background: var(--v-light-base)
       font-size: 14px !important
 
       border-radius: 8px
@@ -58,9 +58,11 @@ export default {
       .v-input__prepend-inner
         align-self: start !important
         margin-top: 4px !important
+        .v-icon
+          font-size: 1.5rem
       .v-text-field__slot
         input
           padding: 4px 0
       fieldset
-        border: 2px solid #e7e7e7
+        border: 1px solid var(--v-table_darkgrey-base)
 </style>

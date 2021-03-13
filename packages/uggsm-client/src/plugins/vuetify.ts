@@ -44,7 +44,7 @@ const vuetifyOpts = {
         warning: '#FB8C00',
         error: '#FF5252',
         dark: '#181818',
-        light: '#fefefe',
+        light: '#fff',
         softgrey: '#F1F1F1',
       },
       light: {
@@ -57,8 +57,12 @@ const vuetifyOpts = {
         warning: '#FB8C00',
         error: '#FF5252',
         dark: '#181818',
-        light: '#fefefe',
+        light: '#fff',
         softgrey: '#F1F1F1',
+
+        table_lightgrey: '#F8F6F4',
+        table_darkgrey: '#C1C4BD',
+        table_darkergrey: '#7A8E85',
       },
     },
   },
