@@ -135,6 +135,18 @@ export default class Orders extends VuexModule {
   }
 
   @Action
+  setDefaultTableOptions() {
+    const defaultOptions = TableHelpers.generateOptions(1, 25, 'id', (options) => ({
+      ...options,
+      status: [],
+      excludeStatus: ['Закрыт'],
+      orderDisplayOnlyExpired: false,
+    }))
+
+    this.context.commit('SET_TABLE_OPTIONS', defaultOptions)
+  }
+
+  @Action
   setTableHeaders(payload: any) {
     localStorage.setItem('orders-headers', JSON.stringify(payload))
     this.context.commit('SET_TABLE_HEADERS', payload)

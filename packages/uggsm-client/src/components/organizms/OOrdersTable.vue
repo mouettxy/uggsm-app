@@ -27,20 +27,7 @@
                 )
                   v-icon(left) mdi-eye-plus
                   span гарантия
-        v-col(cols='auto')
-          v-btn.ml-2(
-            @click='onClosedFilter',
-            color='secondary'
-          )
-            v-icon(
-              v-if='displayClosedOrders',
-              left
-            ) mdi-check
-            v-icon(
-              v-else,
-              left
-            ) mdi-close
-            span Закрытые
+
         v-col(cols='auto')
           v-menu(
             :close-on-content-click='false',
@@ -50,10 +37,10 @@
               v-btn.ml-2(
                 v-on='on',
                 v-bind='attrs',
-                icon,
-                color='black'
+                color='secondary'
               )
-                v-icon mdi-filter
+                v-icon(left) mdi-filter-plus
+                span фильтр
             v-card(dark)
               v-card-text
                 v-row
@@ -108,6 +95,13 @@
                       icon
                     )
                       v-icon mdi-close
+        v-col(cols='auto')
+          v-btn.ml-2(
+            @click='onRemoveFilters',
+            color='secondary'
+          )
+            v-icon(left) mdi-filter-remove
+            span Сбросить фильтры
       template(v-else)
         v-col(cols='11')
           ug-base-alert(
@@ -171,8 +165,6 @@ import UserAPI from '@/api/user'
 })
 export default class OOrdersTable extends Vue {
   public columnsMenu = false
-
-  public displayClosedOrders = false
 
   public displayExpired = false
 
@@ -270,6 +262,7 @@ export default class OOrdersTable extends Vue {
   }
 
   onManagersFilter() {
+    console.log(this.managerFilter)
     this.store.setTableOptions({
       ...this.store.tableOptions,
       managers: this.managerFilter,
@@ -316,14 +309,24 @@ export default class OOrdersTable extends Vue {
     this.store.fetchTable()
   }
 
-  onClosedFilter() {
-    this.displayClosedOrders = !this.displayClosedOrders
+  rewindFilters() {
+    this.columnsMenu = false
+    this.displayExpired = false
+    this.displayManagerOrders = false
+    this.masterFilter = []
+    this.managerFilter = []
+    this.statusFilter = []
+    this.dateFilter = []
+    this.page = 1
 
-    this.store.setTableOptions({
-      ...this.store.tableOptions,
-      excludeStatus: this.displayClosedOrders ? [] : ['Закрыт'],
-    })
+    localStorage.removeItem('orders-manager-filter')
+    localStorage.removeItem('orders-status-filter')
+    localStorage.removeItem('orders-master-filter')
+  }
 
+  onRemoveFilters() {
+    this.rewindFilters()
+    this.store.setDefaultTableOptions()
     this.store.fetchTable()
   }
 
