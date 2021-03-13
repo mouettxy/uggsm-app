@@ -6,7 +6,39 @@
     :headers.sync='headers'
   )
 
-  .ug-table-remote__table-wrapper.mx-2.elevation-1
+  v-slide-y-transition
+    .ug-table-remote__meta(v-if='items')
+      span.
+        Результаты
+        #[strong {{ items.page * items.limit - items.limit + 1 }}] -
+        #[strong {{ items.page * items.limit }}] из
+        #[strong {{ serverItems }}]
+
+      span
+        | Результатов на странице:
+        v-menu(content-class='ug-table-remote__meta-limit')
+          template(#activator='{on, attrs}')
+            .ug-table-remote__meta-limit__chip(
+              v-on='on',
+              v-bind='attrs'
+            )
+              ug-base-chip.ml-2(
+                small,
+                color='#e0e0e0'
+              )
+                span {{ resultsPerPage }}
+                v-icon(right) mdi-chevron-down
+          v-list(dense)
+            v-list-item-group(color='primary')
+              v-list-item(
+                v-for='item in resultsPerPageMenu',
+                @click='handleResultsPerPageChange(item)'
+              )
+                v-list-item-content
+                  v-list-item-title(v-if='item !== "Максимум"') {{ item }}
+                  v-list-item-title.red--text(v-else) {{ item }}
+
+  .ug-table-remote__table-wrapper.elevation-1
     v-data-table(
       :server-items-length='itemsCount',
       :options.sync='options',
@@ -34,10 +66,18 @@
           v-bind='scope',
           :name='slot'
         )
+  v-slide-y-transition
+    ug-table-remote-pagination(
+      v-if='options',
+      v-model='options.page',
+      :server-pages='serverPages'
+    )
 </template>
 
 <script>
 import { debounce } from 'lodash'
+import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+import UgTableRemotePagination from './table-remote-pagination/table-remote-pagination'
 import TableRemoteHelpers from './table-remote.helpers'
 import UgTabelRemotePanel from './table-remote-panel/table-remote-panel'
 import Responsive from '@/mixins/responive'
@@ -47,6 +87,8 @@ export default {
 
   components: {
     UgTabelRemotePanel,
+    UgBaseChip,
+    UgTableRemotePagination,
   },
 
   mixins: [TableRemoteHelpers, Responsive],
@@ -104,6 +146,8 @@ export default {
     return {
       headers: null,
       search: '',
+      resultsPerPageModel: 30,
+      resultsPerPageMenu: [30, 50, 100, 200, 'Максимум'],
 
       isLoading: false,
       itemsCount: Infinity,
@@ -112,26 +156,20 @@ export default {
       messageWhenNoData: 'Нет данных для отображения',
       messageWhenLoading: 'Данные загружаются...',
       items: null,
-      debouncedUpdateTable: debounce(this.updateTable, 700),
+      debouncedUpdateTable: debounce(this.updateTable, 200),
+
       serverItems: 0,
+      serverPages: 1,
     }
   },
 
   computed: {
     tableHeight() {
       if (this.isMobile) {
-        if (!this.includeMiddleToolbar) {
-          return 'calc(100vh - 115px)'
-        }
-
         return 'calc(100vh - 170px)'
       }
 
-      if (!this.includeMiddleToolbar) {
-        return 'calc(100vh - 80px)'
-      }
-
-      return 'calc(100vh - 135px)'
+      return 'calc(100vh - 180px)'
     },
 
     tableItems() {
@@ -140,6 +178,14 @@ export default {
       }
 
       return []
+    },
+
+    resultsPerPage() {
+      if (this.resultsPerPageModel === 'Максимум' && this.serverItems > 0) {
+        return this.serverItems
+      }
+
+      return this.resultsPerPageModel
     },
 
     headersToShow() {
@@ -153,7 +199,7 @@ export default {
     },
   },
 
-  mounted: function () {
+  created: function () {
     this.init()
   },
 
@@ -162,12 +208,23 @@ export default {
   },
 
   methods: {
+    handleResultsPerPageChange(resultsPerPage) {
+      this.resultsPerPageModel = resultsPerPage
+
+      this.options = {
+        ...this.options,
+        page: 1,
+        itemsPerPage: this.resultsPerPage,
+      }
+    },
+
     async updateTable() {
       this.isLoading = true
       if (this.options) {
         const response = await this.fetchFunction(this.processQuery(this.options))
 
         this.serverItems = response.totalDocs
+        this.serverPages = response.totalPages
 
         this.items = response
       }
@@ -176,10 +233,12 @@ export default {
     },
 
     init() {
-      this.options = this.generateOptions(1, 20, this.itemKeyField)
+      this.options = this.generateOptions(1, this.resultsPerPage, this.itemKeyField)
       this.headers = this.generateHeaders(this.headersSchema, this.headersSchemaId)
 
       this.isLoading = true
+
+      this.updateTable()
 
       this.$socket.client.on(this.socketEvent, () => {
         this.updateTable()
@@ -191,8 +250,21 @@ export default {
 
 <style lang="sass">
 .ug-table-remote
-  thead
-    tr
-      th
-        white-space: nowrap
+
+  .ug-table-remote__meta
+    display: flex
+    color: var(--v-table_darkergrey-base)
+    justify-content: space-between
+    padding: 0 12px
+    margin: 8px 0
+
+    .ug-table-remote__meta-limit__chip
+      cursor: pointer
+      display: inline-block
+
+  .ug-table-remote__table-wrapper
+    margin: 0 12px
+
+  thead tr th
+    white-space: nowrap
 </style>

@@ -13,7 +13,7 @@
         :name='slot'
       )
   .ug-table-remote-panel__delimeter
-    .ug-table-remote-panel__delimeter-content.elevation-1
+    .ug-table-remote-panel__delimeter--inner
   ug-table-remote-panel-bottom(:search.sync='searchModel')
 </template>
 
@@ -73,13 +73,13 @@ export default {
 
 <style lang="sass">
 .ug-table-remote-panel
-  background: #f9f9f9
+  background: var(--v-table_lightgrey-base)
   padding: 6px 0
 
   .ug-table-remote-panel__delimeter
-    width: 100%
-    height: 1px
-    padding: 8px 12px
-    .ug-table-remote-panel__delimeter-content
+    padding: 0 12px
+    margin: 8px 0
+    .ug-table-remote-panel__delimeter--inner
       height: 1px
+      background: var(--v-table_darkgrey-base)
 </style>
