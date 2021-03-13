@@ -44,7 +44,7 @@ import UgModalClientHeader from './modal-client-header/modal-client-header'
 import UgModalClientContent from './modal-client-content/modal-client-content'
 import UgModalRight from '@/components/base/ui/modal-right/modal-right'
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 import ClientAPI from '@/api/client'
 

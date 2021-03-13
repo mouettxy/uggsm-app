@@ -45,7 +45,7 @@ header.ug-modal-client-header.softgrey
 import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 export default {
   name: 'ug-modal-client-header',
