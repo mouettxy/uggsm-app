@@ -1,43 +1,76 @@
 <template lang="pug">
 .ug-table-remote-panel-bottom
-  template(v-if='!isMobile')
-    v-row.ug-table-remote-panel-bottom--wrap(
-      no-gutters,
-      align='center'
+  v-row.ug-table-remote-panel-bottom--wrap(
+    no-gutters,
+    justify='space-between',
+    align='center'
+  )
+    v-col(
+      cols='12',
+      md='3',
+      lg='3'
     )
-      v-col.ug-table-remote-panel-bottom__search(
-        cols='12',
-        md='3',
-        lg='3'
+      v-row.mr-2.mr-lg-0.mr-md-0(
+        no-gutters,
+        align='center'
       )
-        ug-table-remote-search(v-model='searchModel')
-      v-col.ug-table-remote-panel-bottom__display-filters(
-        cols='12',
-        md='5',
-        lg='5'
-      )
-
-      v-col.ug-table-remote-panel-bottom__custom-filter.d-flex.align-center.justify-end(
-        cols='12',
-        md='4',
-        lg='4'
-      )
-        ug-table-remote-btn(
-          label='Сохраненные фильтры',
-          icon='mdi-filter-plus'
+        v-col(
+          cols='6',
+          sm='10',
+          md='10',
+          lg='10'
         )
-
-        .ug-table-remote-panel-bottom__vertical-delimeter
-          .ug-table-remote-panel-bottom__vertical-delimeter--inner
-
-        ug-table-remote-btn(
-          label='Управление фильтром',
-          icon='mdi-filter-menu'
+          ug-table-remote-search(v-model='searchModel')
+        v-col(
+          cols='6',
+          sm='2',
+          md='2',
+          lg='2'
         )
+          ug-table-remote-btn.ml-2(
+            :label='isMobile ? "Сброс" : "Сброс фильтра"',
+            :block='isMobile',
+            icon='mdi-filter-remove'
+          )
+    v-col.mt-2.mt-lg-0.mt-md-0(
+      cols='12',
+      md='auto',
+      lg='auto'
+    )
+      v-row(
+        no-gutters,
+        justify='space-between',
+        align='center'
+      )
+        v-col(
+          cols='5',
+          md='auto',
+          lg='auto'
+        )
+          ug-table-remote-btn(
+            :label='isMobile ? "Мои" : "Мои фильтры"',
+            :block='isMobile',
+            icon='mdi-filter-plus'
+          )
+        v-col.text-center(cols='auto')
+          .ug-table-remote-panel-bottom__vertical-delimeter(
+            :class='{ "ug-table-remote-panel-bottom__vertical-delimeter--mobile": isMobile }'
+          )
+            .ug-table-remote-panel-bottom__vertical-delimeter--inner
+        v-col(
+          cols='5',
+          md='auto',
+          lg='auto'
+        )
+          ug-table-remote-btn(
+            :label='isMobile ? "Фильтры" : "Управление фильтром"',
+            :block='isMobile',
+            icon='mdi-filter-menu'
+          )
 </template>
 
 <script>
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 import UgTableRemoteSearch from './../../table-remote-search/table-remote-search'
 
 export default {
@@ -75,9 +108,10 @@ export default {
   padding: 0 12px
   .ug-table-remote-panel-bottom__vertical-delimeter
     height: 16px
-    display: inline-block
     width: 1px
     margin: 0 8px
+    &--mobile
+      margin: 0 auto
     .ug-table-remote-panel-bottom__vertical-delimeter--inner
       background: var(--v-table_darkgrey-base)
       height: 100%

@@ -25,11 +25,7 @@
       no-gutters,
       align='center'
     )
-      v-col(cols='auto')
-        span.text-h5 {{ $route.meta.header }}
-      v-col.ml-auto.px-1(cols='auto')
-        ug-table-remote-headers-switcher(v-model='headers')
-      v-col(
+      v-col.pr-2(
         cols='auto',
         v-if='includeOfficeField'
       )
@@ -37,6 +33,11 @@
           name-color='#dddddd',
           code-color='#cacaca'
         )
+      v-col(cols='auto')
+        span.text-h5 {{ $route.meta.header }}
+
+      v-col.ml-auto.px-1(cols='auto')
+        ug-table-remote-headers-switcher(v-model='headers')
       slot(name='panel-top:inside')
     slot(name='panel-top:outside')
 </template>
@@ -45,7 +46,7 @@
 import UgOfficeSwitcher from '@/components/office/office-switcher/office-switcher'
 import UgTableRemoteHeadersSwitcher from './../../table-remote-headers-switcher/table-remote-headers-switcher'
 
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 export default {
   name: 'ug-table-remote-panel-top',
