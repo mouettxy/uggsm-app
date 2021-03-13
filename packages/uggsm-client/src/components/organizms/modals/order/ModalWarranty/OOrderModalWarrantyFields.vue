@@ -60,7 +60,7 @@ import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-auto
 import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
 
 import { Component, Mixins, Watch } from 'vue-property-decorator'
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 import { Order } from '@/typings/api/order'
 import { debounce, find, flatten, map } from 'lodash'
 import { ordersModule } from '@/store'

@@ -197,7 +197,7 @@ import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
 import { getAnonymousAnimal } from '@/api/helpers'
 import { authModule } from '@/store'
 import { Component, Prop, Mixins, Watch } from 'vue-property-decorator'
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 @Component({
   components: {

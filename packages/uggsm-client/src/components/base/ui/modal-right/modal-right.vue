@@ -17,7 +17,7 @@ v-dialog.ug-modal-right(
 </template>
 
 <script>
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 export default {
   name: 'ug-modal-right',

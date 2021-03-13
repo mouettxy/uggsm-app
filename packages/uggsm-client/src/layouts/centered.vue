@@ -18,7 +18,7 @@ v-main.layout-centered(
 import { Component, Vue } from 'vue-property-decorator'
 import { defaultMenu } from '@/api/helpers/menus'
 import UgSideMenu from '@/components/base/ui/side-menu/side-menu.vue'
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 @Component({
   components: {
