@@ -2,6 +2,7 @@
 ug-base-btn.ug-table-remote-btn.text-subtitle-1(
   :label='label',
   :icon-left='icon',
+  :block='block',
   depressed
 )
 </template>
@@ -27,6 +28,11 @@ export default {
       required: false,
       type: String,
       default: '',
+    },
+
+    block: {
+      required: false,
+      type: Boolean,
     },
   },
 }

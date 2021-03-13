@@ -1,42 +1,57 @@
 <template lang="pug">
 .ug-table-remote
   ug-table-remote-panel(
+    ref='topPanel',
     :search.sync='search',
     :include-office-field='includeOfficeField',
-    :headers.sync='headers'
+    :headers.sync='headers',
+    v-intersect.quiet='handleTopPanelIntersect'
   )
 
   v-slide-y-transition
-    .ug-table-remote__meta(v-if='items')
-      span.
-        Результаты
-        #[strong {{ items.page * items.limit - items.limit + 1 }}] -
-        #[strong {{ items.page * items.limit }}] из
-        #[strong {{ serverItems }}]
-
-      span
-        | Результатов на странице:
-        v-menu(content-class='ug-table-remote__meta-limit')
-          template(#activator='{on, attrs}')
-            .ug-table-remote__meta-limit__chip(
-              v-on='on',
-              v-bind='attrs'
-            )
-              ug-base-chip.ml-2(
-                small,
-                color='#e0e0e0'
+    v-row.ug-table-remote__meta(
+      v-if='items',
+      no-gutters,
+      justify='space-between'
+    )
+      v-col(
+        cols='12',
+        md='auto',
+        lg='auto'
+      )
+        span.
+          Результаты
+          #[strong {{ items.page * items.limit - items.limit + 1 }}] -
+          #[strong {{ items.page * items.limit }}] из
+          #[strong {{ serverItems }}]
+      v-col(
+        cols='12',
+        md='auto',
+        lg='auto'
+      )
+        span
+          | Результатов на странице:
+          v-menu(content-class='ug-table-remote__meta-limit')
+            template(#activator='{on, attrs}')
+              .ug-table-remote__meta-limit__chip(
+                v-on='on',
+                v-bind='attrs'
               )
-                span {{ resultsPerPage }}
-                v-icon(right) mdi-chevron-down
-          v-list(dense)
-            v-list-item-group(color='primary')
-              v-list-item(
-                v-for='item in resultsPerPageMenu',
-                @click='handleResultsPerPageChange(item)'
-              )
-                v-list-item-content
-                  v-list-item-title(v-if='item !== "Максимум"') {{ item }}
-                  v-list-item-title.red--text(v-else) {{ item }}
+                ug-base-chip.ml-2(
+                  small,
+                  color='#e0e0e0'
+                )
+                  span {{ resultsPerPage }}
+                  v-icon(right) mdi-chevron-down
+            v-list(dense)
+              v-list-item-group(color='primary')
+                v-list-item(
+                  v-for='item in resultsPerPageMenu',
+                  @click='handleResultsPerPageChange(item)'
+                )
+                  v-list-item-content
+                    v-list-item-title(v-if='item !== "Максимум"') {{ item }}
+                    v-list-item-title.red--text(v-else) {{ item }}
 
   .ug-table-remote__table-wrapper.elevation-1
     v-data-table(
@@ -69,9 +84,39 @@
   v-slide-y-transition
     ug-table-remote-pagination(
       v-if='options',
+      ref='pagination',
       v-model='options.page',
-      :server-pages='serverPages'
+      :server-pages='serverPages',
+      v-intersect.quiet='handlePaginationIntersect'
     )
+
+  v-fab-transition
+    v-btn(
+      v-if='!isTopPanelVisible',
+      :style='{ bottom: "64px" }',
+      @click='moveToTopPanelVisible',
+      small,
+      left,
+      fixed,
+      fab,
+      dark,
+      color='primary',
+      bottom
+    )
+      v-icon mdi-chevron-up
+  v-fab-transition
+    v-btn(
+      v-if='!isPaginationVisible',
+      @click='moveToPaginationVisible',
+      small,
+      left,
+      fixed,
+      fab,
+      dark,
+      color='primary',
+      bottom
+    )
+      v-icon mdi-chevron-down
 </template>
 
 <script>
@@ -80,7 +125,7 @@ import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 import UgTableRemotePagination from './table-remote-pagination/table-remote-pagination'
 import TableRemoteHelpers from './table-remote.helpers'
 import UgTabelRemotePanel from './table-remote-panel/table-remote-panel'
-import Responsive from '@/mixins/responive'
+import Responsive from '@/mixins/responsive'
 
 export default {
   name: 'ug-table-remote',
@@ -149,6 +194,9 @@ export default {
       resultsPerPageModel: 30,
       resultsPerPageMenu: [30, 50, 100, 200, 'Максимум'],
 
+      isPaginationVisible: false,
+      isTopPanelVisible: true,
+
       isLoading: false,
       itemsCount: Infinity,
       options: null,
@@ -166,7 +214,7 @@ export default {
   computed: {
     tableHeight() {
       if (this.isMobile) {
-        return 'calc(100vh - 170px)'
+        return '100%'
       }
 
       return 'calc(100vh - 180px)'
@@ -208,6 +256,30 @@ export default {
   },
 
   methods: {
+    handlePaginationIntersect(_, __, isIntersection) {
+      this.isPaginationVisible = isIntersection
+    },
+
+    handleTopPanelIntersect(_, __, isIntersection) {
+      this.isTopPanelVisible = isIntersection
+    },
+
+    moveToPaginationVisible() {
+      const { pagination } = this.$refs
+
+      if (pagination && pagination.$el) {
+        pagination.$el.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' })
+      }
+    },
+
+    moveToTopPanelVisible() {
+      const { topPanel } = this.$refs
+
+      if (topPanel && topPanel.$el) {
+        topPanel.$el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
+      }
+    },
+
     handleResultsPerPageChange(resultsPerPage) {
       this.resultsPerPageModel = resultsPerPage
 
