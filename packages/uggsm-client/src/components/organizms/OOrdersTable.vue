@@ -62,7 +62,7 @@
                       v-model='statusFilter',
                       :items='statuses',
                       @change='onStatusFilter',
-                      label='Статус',
+                      label='Исключить статус(-ы)',
                       cache='orders-status-filter'
                     )
                 v-row
@@ -292,7 +292,7 @@ export default class OOrdersTable extends Vue {
   onStatusFilter() {
     this.store.setTableOptions({
       ...this.store.tableOptions,
-      status: this.statusFilter,
+      excludeStatus: this.statusFilter,
     })
 
     this.store.fetchTable()

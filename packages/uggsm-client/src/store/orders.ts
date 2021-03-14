@@ -44,8 +44,7 @@ export default class Orders extends VuexModule {
   public tableOptions: any = TableHelpers.generateOptions(1, 25, 'id', (options) => {
     return {
       ...options,
-      status: [],
-      excludeStatus: ['Закрыт'],
+      excludeStatus: [],
       orderDisplayOnlyExpired: false,
     }
   })
@@ -138,8 +137,7 @@ export default class Orders extends VuexModule {
   setDefaultTableOptions() {
     const defaultOptions = TableHelpers.generateOptions(1, 25, 'id', (options) => ({
       ...options,
-      status: [],
-      excludeStatus: ['Закрыт'],
+      excludeStatus: [],
       orderDisplayOnlyExpired: false,
     }))
 
@@ -159,7 +157,6 @@ export default class Orders extends VuexModule {
     const response = await ordersAPI().getPaginated(
       TableHelpers.processQuery(this.tableOptions, (query) => {
         const query_: any = {
-          statuses: this.tableOptions.status,
           excludeStatuses: this.tableOptions.excludeStatus,
           orderDisplayOnlyExpired: this.tableOptions.orderDisplayOnlyExpired,
         }
