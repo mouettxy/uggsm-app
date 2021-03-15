@@ -9,21 +9,24 @@ v-btn.ug-base-btn(
   :block='block',
   @click='handleClick'
 )
-  template(v-if='icon && label')
-    v-icon(left) {{ icon }}
-    span {{ label }}
-  template(v-else-if='icon && !label')
-    v-icon {{ icon }}
+  template(v-if='renderSlot')
+    slot
   template(v-else)
-    v-icon(
-      v-if='iconLeft',
-      left
-    ) {{ iconLeft }}
-    span {{ label }}
-    v-icon(
-      v-if='iconRight',
-      right
-    ) {{ iconRight }}
+    template(v-if='icon && label')
+      v-icon(left) {{ icon }}
+      span {{ label }}
+    template(v-else-if='icon && !label')
+      v-icon {{ icon }}
+    template(v-else)
+      v-icon(
+        v-if='iconLeft',
+        left
+      ) {{ iconLeft }}
+      span {{ label }}
+      v-icon(
+        v-if='iconRight',
+        right
+      ) {{ iconRight }}
 </template>
 
 <script>
@@ -84,6 +87,11 @@ export default {
       required: false,
       type: String,
       default: '',
+    },
+
+    renderSlot: {
+      required: false,
+      type: Boolean,
     },
   },
 
