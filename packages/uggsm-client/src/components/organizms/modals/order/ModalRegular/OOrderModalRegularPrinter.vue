@@ -41,6 +41,19 @@
       :appearance='order.appearance'
     )
     m-print-warranty-i-market
+
+    ug-print-volgograd(
+      :serial-number='order.serialNumber',
+      :order-id='orderId',
+      :model='order.phoneModel',
+      :master='order.master ? order.master.credentials : ""',
+      :kit='order.kit',
+      :estimated-close-at='order.estimatedCloseAt',
+      :deffect='order.declaredDeffect',
+      :declared-price='order.declaredPrice',
+      :customer='order.customer ? order.customer.name : ""',
+      :appearance='order.appearance'
+    )
   v-menu(
     v-model='printMenu',
     close-on-click,
@@ -71,13 +84,21 @@
         v-list-item(@click='$htmlToPaper("print-repair-contract-i-market")')
           v-list-item-content
             v-list-item-title Акт приема iMarket
+        v-list-item(@click='$htmlToPaper("print-volgograd")')
+          v-list-item-content
+            v-list-item-title Заказ Волгоград
 </template>
 
 <script lang="ts">
 import { Order } from '@/typings/api/order'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import UgPrintVolgograd from '@/components/print/print-volgograd/print-volgograd.vue'
 
-@Component
+@Component({
+  components: {
+    UgPrintVolgograd,
+  },
+})
 export default class OOrderModalRegularPrinter extends Vue {
   @Prop({ required: true }) order!: Order
 
