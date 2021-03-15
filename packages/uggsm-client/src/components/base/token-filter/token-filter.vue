@@ -24,7 +24,7 @@ v-slide-x-transition.ug-token-filter(
 <script>
 import UgTokenFilterEntry from './token-filter-entry/token-filter-entry'
 import UgTokenFilterAdd from './token-filter-add/token-filter-add'
-import { addToStorage, getFromStorage } from '@/api/helpers/storageManager'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'ug-token-filter',
@@ -41,37 +41,31 @@ export default {
       default: () => [],
     },
 
-    cache: {
+    type: {
       required: false,
       type: String,
       default: '',
     },
-
-    defaultFilters: {
-      required: false,
-      type: Array,
-      default: () => [],
-    },
-
-    savedFilter: {
-      required: true,
-      type: String,
-    },
-  },
-
-  data: function () {
-    return {
-      filter: [],
-    }
   },
 
   computed: {
-    savedFilterPath() {
-      return {
-        default: this.savedFilter + '-filter' + '.default',
-        custom: this.savedFilter + '-filter' + '.custom',
-        current: this.savedFilter + '-filter' + '.current',
-      }
+    ...mapState({
+      filterList: (state) => state.filters.filterList,
+    }),
+
+    filter: {
+      get: function () {
+        return this.filterList[this.type].current
+      },
+
+      set: function (data) {
+        this.$emit('update', data)
+
+        this.vuexAddCurrentFilter({
+          name: this.type,
+          data,
+        })
+      },
     },
 
     uniqueTokens() {
@@ -81,23 +75,16 @@ export default {
     },
   },
 
-  watch: {
-    filter: function (value) {
-      this.$emit('update', value)
-
-      addToStorage(this.savedFilterPath.current, value)
-    },
-
-    defaultFilters: function (value) {
-      addToStorage(this.savedFilterPath.default, this.defaultFilters)
-    },
-  },
-
   mounted: function () {
-    this.initStorage()
+    this.initFilter()
   },
 
   methods: {
+    ...mapActions({
+      vuexInitDefaultFilter: 'filters/initDefaultFilter',
+      vuexAddCurrentFilter: 'filters/addCurrent',
+    }),
+
     /* --------------------------------- /PUBLIC --------------------------------- */
     disableAll() {
       for (const index in this.filter) {
@@ -107,6 +94,8 @@ export default {
           ...filter,
           disabled: true,
         })
+
+        this.filter = [...this.filter]
       }
     },
 
@@ -118,87 +107,15 @@ export default {
           ...filter,
           disabled: false,
         })
+
+        this.filter = [...this.filter]
       }
-    },
-
-    getSavedFilters(type = '') {
-      if (!type) {
-        const defaultFilter = getFromStorage(this.savedFilterPath.default) || []
-        const customFilter = getFromStorage(this.savedFilterPath.custom) || []
-
-        return [...defaultFilter, ...customFilter]
-      }
-
-      if (type === 'default') {
-        return getFromStorage(this.savedFilterPath.default) || []
-      }
-
-      if (type === 'custom') {
-        return getFromStorage(this.savedFilterPath.custom) || []
-      }
-    },
-
-    getSavedFilterAutocomplete() {
-      return this.getSavedFilters().map((e) => ({ text: e.name, value: e.name }))
-    },
-
-    getSavedFilter(name) {
-      const filters = this.getSavedFilters()
-
-      return filters.find((e) => e.name === name)
-    },
-
-    createSavedFilter(name) {
-      const filters = this.getSavedFilters()
-
-      if (filters.find((e) => e.name === name)) {
-        return false
-      }
-
-      const customFilter = this.getSavedFilters('custom')
-      addToStorage(this.savedFilterPath.custom, [
-        ...customFilter,
-        {
-          name,
-          filter: getFromStorage(this.savedFilterPath.current),
-        },
-      ])
-      return true
-    },
-
-    setSavedFilter(name) {
-      const savedFilter = this.getSavedFilter(name)
-
-      if (!savedFilter) {
-        return false
-      }
-
-      this.filter = savedFilter.filter
-      return true
-    },
-
-    removeSavedFilter(name) {
-      const customFilter = this.getSavedFilters('custom')
-
-      addToStorage(
-        this.savedFilterPath.custom,
-        customFilter.filter((e) => e.name !== name)
-      )
     },
 
     /* --------------------------------- \PUBLIC -------------------------------- */
 
-    initStorage() {
-      addToStorage(this.savedFilterPath.default, this.defaultFilters)
-
-      if (!getFromStorage(this.savedFilterPath.custom)) {
-        addToStorage(this.savedFilterPath.custom, [])
-      }
-
-      const lastFilter = getFromStorage(this.savedFilterPath.current)
-      if (lastFilter) {
-        this.extendFilterWith(lastFilter)
-      }
+    initFilter() {
+      this.vuexInitDefaultFilter(this.type)
     },
 
     handleEnableFilter(index) {
@@ -208,6 +125,8 @@ export default {
         ...filter,
         disabled: false,
       })
+
+      this.filter = [...this.filter]
     },
 
     handleDisableFilter(index) {
@@ -217,22 +136,24 @@ export default {
         ...filter,
         disabled: true,
       })
+
+      this.filter = [...this.filter]
     },
 
     handleDeleteFilter(index) {
       this.$delete(this.filter, index)
+
+      this.filter = [...this.filter]
     },
 
     handleUpdateFilter(filter, index) {
       this.$set(this.filter, index, filter)
+
+      this.filter = [...this.filter]
     },
 
     handleAddFilter(filter) {
-      this.filter.push(filter)
-    },
-
-    extendFilterWith(extend) {
-      this.filter = [...this.filter, ...extend]
+      this.filter = [...this.filter, filter]
     },
   },
 }
