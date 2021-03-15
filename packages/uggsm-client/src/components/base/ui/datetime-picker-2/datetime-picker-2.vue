@@ -12,7 +12,7 @@ v-dialog(
       :prepend-inner-icon='icon',
       :outlined='!small',
       :loading='loading',
-      :hide-details='small',
+      :hide-details='small || hideDetails',
       :filled='small',
       :disabled='disabled',
       :color='fill',
@@ -128,7 +128,7 @@ export default {
       type: [String],
       default: 'days',
       validator: (v) => {
-        return ['hours', 'day', 'week', 'month'].includes(v)
+        return ['hours', 'days', 'week', 'month'].includes(v)
       },
     },
 
@@ -147,6 +147,21 @@ export default {
       required: false,
       type: [String],
       default: '',
+    },
+
+    hideDetails: {
+      required: false,
+      type: [Boolean],
+    },
+
+    startOfDay: {
+      required: false,
+      type: Boolean,
+    },
+
+    endOfDay: {
+      required: false,
+      type: Boolean,
     },
   },
 
@@ -169,6 +184,14 @@ export default {
 
   computed: {
     dateToDb() {
+      if (this.endOfDay) {
+        return moment(this.selectedDatetime, 'DD.MM.YYYY HH:mm').endOf('day').toISOString()
+      }
+
+      if (this.startOfDay) {
+        return moment(this.selectedDatetime, 'DD.MM.YYYY HH:mm').startOf('day').toISOString()
+      }
+
       return moment(this.selectedDatetime, 'DD.MM.YYYY HH:mm').toISOString()
     },
 
@@ -199,7 +222,9 @@ export default {
     init() {
       if (!this.datetime) {
         let m
-        if (this.add && this.type) {
+        if (this.add === 0) {
+          m = moment()
+        } else if (this.add && this.type) {
           m = moment().add(this.add, this.type)
         } else {
           m = moment().add(7, 'days')
