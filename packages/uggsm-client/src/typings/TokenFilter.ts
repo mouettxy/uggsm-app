@@ -83,19 +83,14 @@ export type Filter = {
 } & TokenTypesValue
 
 export type VuexFilterListNamespaces = 'tests' | 'orders' | 'clients' | 'cashes' | 'calls'
+export type VuexFilterListItemEntry = {
+  name: string
+  filter: Filter[]
+}
 export type VuexFilterListItem = {
-  default: {
-    name: string
-    filter: Filter
-  }[]
-  custom: {
-    name: string
-    filter: Filter
-  }[]
-  current: {
-    name: string
-    filter: Filter
-  }[]
+  default: VuexFilterListItemEntry[]
+  custom: VuexFilterListItemEntry[]
+  current: Filter[]
 }
 
-export type VuexFilterList = Partial<Record<VuexFilterListNamespaces, VuexFilterListItem>>
+export type VuexFilterList = Record<VuexFilterListNamespaces, VuexFilterListItem>

@@ -7,6 +7,7 @@ import orders from '@/store/orders'
 import cash from '@/store/cash'
 import client from '@/store/client'
 import calls from '@/store/calls'
+import filters from '@/store/filters'
 import createPersistedState from 'vuex-persistedstate'
 
 import { getModule, VuexModule } from 'vuex-module-decorators'
@@ -28,8 +29,17 @@ export const store = new Vuex.Store({
     cash,
     client,
     calls,
+    filters,
   },
-  plugins: [persistedState],
+  plugins: [
+    createPersistedState({
+      paths: ['settings', 'offices', 'auth'],
+    }),
+    createPersistedState({
+      key: 'filters',
+      paths: ['filters'],
+    }),
+  ],
 })
 
 function getModuleProxy<M extends VuexModule>(S: ConstructorOf<M>): M {
@@ -43,5 +53,6 @@ export const ordersModule = getModuleProxy(orders)
 export const cashModule = getModuleProxy(cash)
 export const clientModule = getModuleProxy(client)
 export const callModule = getModuleProxy(calls)
+export const filtersModule = getModuleProxy(filters)
 
 export default store
