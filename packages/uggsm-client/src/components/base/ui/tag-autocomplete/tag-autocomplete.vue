@@ -2,6 +2,7 @@
 v-autocomplete(
   v-model='model',
   :search-input.sync='search',
+  :return-object='returnObject',
   :label='label',
   :items='items',
   :item-value='itemValue',
@@ -9,7 +10,6 @@ v-autocomplete(
   :hide-details='true',
   @input='handleInput',
   small-chips,
-  prepend-inner-icon='mdi-magnify',
   outlined,
   no-data-text='Нет данных',
   multiple,
@@ -60,6 +60,11 @@ export default {
       required: false,
       type: String,
       default: 'value',
+    },
+
+    returnObject: {
+      required: false,
+      type: Boolean,
     },
   },
 

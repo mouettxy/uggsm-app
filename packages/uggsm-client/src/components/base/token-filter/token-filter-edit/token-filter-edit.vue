@@ -1,124 +1,180 @@
 <template lang="pug">
-v-card.ug-token-filter-edit(elevation='6')
-  v-radio-group.mt-0(
-    v-model='selected',
-    mandatory,
-    label='Настройка фильтра',
-    hide-details,
-    column
-  )
-    ug-token-filter-edit-compares(
-      :value='prettyValue',
-      :token='token',
-      :selected.sync='selected'
+ug-responsive-menu(:menu-props='menuProps')
+  template(#activator='{on, attrs}')
+    slot(
+      name='activator',
+      :on='on',
+      :attrs='attrs'
     )
-      // BETWEEN
-      template(#plain-between-input)
-        .d-flex.align-center
-          ug-base-input(
-            v-model='value[0]',
-            label='Введите условие'
-          )
-          .ug-token-filter-edit__delimeter
-            .ug-token-filter-edit__delimeter--inner
-          ug-base-input(
-            v-model='value[1]',
-            label='Введите условие'
-          )
-      template(#date-between-input)
-        div
-          .d-flex.align-center
+      v-list-item(
+        v-on='on',
+        v-bind='attrs'
+      )
+        v-list-item-content
+          v-list-item-title {{ token.name }}
+  template(#default='{ close }')
+    v-card.ug-token-filter-edit(elevation='6')
+      v-radio-group.mt-0(
+        v-model='selected',
+        :label='existing ? `Редактирование фильтра ${token.name}` : `Настройка фильтра ${token.name}`',
+        mandatory,
+        hide-details,
+        column
+      )
+        ug-token-filter-edit-compares(
+          :value='prettyValue',
+          :token='token',
+          :selected.sync='selected'
+        )
+          // BETWEEN
+          template(#plain-between-input)
+            .d-flex.align-center
+              ug-base-input(
+                v-model='value[0]',
+                label='Введите условие'
+              )
+              .ug-token-filter-edit__delimeter
+                .ug-token-filter-edit__delimeter--inner
+              ug-base-input(
+                v-model='value[1]',
+                label='Введите условие'
+              )
+          template(#date-between-input)
+            div
+              .d-flex.align-center
+                div
+                  ug-datetime-picker-2(
+                    v-model='value[0]',
+                    :add='0',
+                    start-of-day,
+                    label='Введите условие',
+                    hide-details
+                  )
+                .ug-token-filter-edit__delimeter
+                  .ug-token-filter-edit__delimeter--inner
+                div
+                  ug-datetime-picker-2(
+                    v-model='value[1]',
+                    :add='0',
+                    label='Введите условие',
+                    hide-details,
+                    end-of-day
+                  )
+
+          // AUTOCOMPLETE
+          template(#autocomplete-endpoint-input)
+            ug-base-autocomplete(
+              v-model='value',
+              :predefined-items='predefinedValue',
+              :endpoint='token.autocomplete',
+              return-object,
+              label='Выберите условие'
+            )
+          template(#autocomplete-input)
+            ug-base-select(
+              v-model='value',
+              :items='token.autocomplete',
+              return-object,
+              label='Выберите условие'
+            )
+          template(#autocomplete-endpoint-select)
+            ug-tag-autocomplete(
+              v-model='value',
+              :path='token.autocomplete',
+              return-object,
+              label='Выберите условие',
+              fetch-on-mount
+            )
+          template(#autocomplete-select)
+            ug-select-many(
+              v-model='value',
+              :items='token.autocomplete',
+              return-object,
+              label='Выберите условие'
+            )
+
+          // PLAIN
+          template(#plain-input)
+            ug-base-input(
+              v-model='value',
+              label='Введите условие'
+            )
+          template(#date-input)
             div
               ug-datetime-picker-2(
-                v-model='value[0]',
+                v-model='value',
                 :add='0',
                 start-of-day,
                 label='Введите условие',
                 hide-details
               )
-            .ug-token-filter-edit__delimeter
-              .ug-token-filter-edit__delimeter--inner
-            div
-              ug-datetime-picker-2(
-                v-model='value[1]',
-                :add='0',
-                label='Введите условие',
-                hide-details,
-                end-of-day
-              )
+          template(#plain-select)
+            ug-tag-input(
+              v-model='value',
+              label='Введите условия'
+            )
 
-      // AUTOCOMPLETE
-      template(#autocomplete-endpoint-input)
-        div autocomplete-endpoint-input
-      template(#autocomplete-input)
-        div autocomplete-input
-      template(#autocomplete-endpoint-select)
-        div autocomplete-endpoint-select
-      template(#autocomplete-select)
-        div autocomplete-select
-
-      // PLAIN
-      template(#plain-input)
-        ug-base-input(
-          v-model='value',
-          label='Введите условие'
-        )
-      template(#date-input)
-        div
-          ug-datetime-picker-2(
-            v-model='value',
-            :add='0',
-            start-of-day,
-            label='Введите условие',
-            hide-details
-          )
-      template(#plain-select)
-        ug-tag-input(
-          v-model='value',
-          label='Введите условия'
-        )
-
-      // MISC
-      template(#switcher)
-        ug-base-switch(
-          v-model='value',
-          label='Введите условие'
-        )
-  v-card-actions.pa-0.py-2
-    v-row(no-gutters)
-      v-col(cols='6')
-        ug-base-btn(
-          @click='$emit("close", $event)',
-          label='Отмена',
-          depressed,
-          color='table_darkgrey'
-        )
-      v-col.text-right(cols='6')
-        ug-base-btn(
-          label='Добавить',
-          depressed,
-          color='primary'
-        )
+          // MISC
+          template(#switcher)
+            ug-base-switch(
+              v-model='value',
+              label='Введите условие'
+            )
+      v-card-actions.pa-0.py-2
+        v-row(no-gutters)
+          v-col(cols='6')
+            ug-base-btn(
+              @click='close()',
+              label='Отмена',
+              depressed,
+              color='#ddd'
+            )
+          v-col.text-right(cols='6')
+            ug-base-btn(
+              :label='existing ? "Обновить" : "Добавить"',
+              @click='handleAddFilter(close)',
+              depressed,
+              color='primary'
+            )
 </template>
 
 <script>
 import UgTokenFilterEditCompares from './token-filter-edit-compares/token-filter-edit-compares'
-import { Portal, PortalTarget } from 'portal-vue'
-import moment from 'moment'
+import { getDefaultTokenValue, prettifyTokenValue } from '../token-filter.helpers'
 
 export default {
   name: 'ug-token-filter-edit',
 
   components: {
     UgTokenFilterEditCompares,
-    Portal,
-    PortalTarget,
   },
 
   props: {
     token: {
       required: true,
       type: Object,
+    },
+
+    tokenIndex: {
+      required: true,
+      type: Number,
+    },
+
+    existing: {
+      required: false,
+      type: Boolean,
+    },
+
+    filterCompare: {
+      required: false,
+      type: String,
+      default: '',
+    },
+
+    filterValue: {
+      required: false,
+      type: [String, Number, Array, Object, Boolean],
+      default: '',
     },
   },
 
@@ -130,57 +186,87 @@ export default {
   },
 
   computed: {
+    predefinedValue() {
+      if (!this.existing) {
+        return []
+      }
+
+      return this.filterValue ? [this.filterValue] : []
+    },
+
+    menuProps() {
+      if (this.existing) {
+        return { 'close-on-content-click': false, 'offset-y': true, 'min-width': 425, 'max-width': 425 }
+      }
+
+      return { 'close-on-content-click': false, 'offset-x': true, 'min-width': 425, 'max-width': 425 }
+    },
+
     prettyValue() {
-      if (this.token.type === 'boolean') {
-        return this.value ? 'Истина' : 'Ложь'
-      }
-
-      if (this.token.type === 'date') {
-        if (this.selected === 'between') {
-          const dates = this.value.map((e) => moment(e).format('DD MMMM YYYY'))
-          return dates.includes('Invalid date') ? ['', ''] : dates
-        }
-
-        const date = moment(this.value).format('DD MMMM YYYY')
-
-        return date === 'Invalid date' ? '' : date
-      }
-
-      return this.value
+      return prettifyTokenValue(this.token, this.value, this.selected)
     },
   },
 
   watch: {
     selected: {
       immediate: true,
-      handler: function (value) {
-        if (value === 'between') {
-          if (this.token.type === 'number') {
-            this.value = [0, 1]
-            return
-          }
-
-          this.value = ['', '']
-          return
-        }
-
-        if (this.token.type === 'array') {
-          this.value = []
-          return
-        }
-
-        if (this.token.type === 'number') {
-          this.value = 0
-          return
-        }
-
-        if (this.token.type === 'boolean') {
-          this.value = false
-          return
-        }
-
-        this.value = ''
+      handler: function () {
+        this.resetValue()
       },
+    },
+  },
+
+  mounted: function () {
+    if (this.existing) {
+      this.selected = this.filterCompare
+      this.value = this.filterValue
+    }
+  },
+
+  methods: {
+    resetValue() {
+      const newValue = getDefaultTokenValue(this.token.type, this.selected)
+
+      if (this.filterCompare === this.selected) {
+        this.value = this.filterValue || newValue
+        return
+      }
+
+      this.value = newValue
+    },
+
+    handleAddFilter(closeFn) {
+      if (this.existing) {
+        this.$emit(
+          'update-filter',
+          {
+            token: this.token,
+            value: this.value,
+            compares: this.selected,
+            disabled: false,
+            display: false,
+          },
+          this.tokenIndex
+        )
+
+        closeFn()
+
+        this.resetValue()
+
+        return
+      }
+
+      this.$emit('add-filter', {
+        token: this.token,
+        value: this.value,
+        compares: this.selected,
+        disabled: false,
+        display: false,
+      })
+
+      closeFn()
+
+      this.resetValue()
     },
   },
 }

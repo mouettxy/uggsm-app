@@ -1,84 +1,6 @@
-export type TokenCompares =
-  | 'is'
-  | 'not is'
-  | 'contains'
-  | 'not contains'
-  | 'between'
-  | 'greater than'
-  | 'not greater than'
-
-export type TokenTypeString = {
-  type: 'string'
-  compares: Extract<TokenCompares, 'is' | 'not is' | 'contains' | 'not contains'>[]
-}
-export type TokenTypeStringValue = {
-  value: string
-  type: 'string'
-  compares: Extract<TokenCompares, 'is' | 'not is' | 'contains' | 'not contains'>
-}
-
-export type TokenTypeNumber = {
-  type: 'number'
-  compares: Extract<TokenCompares, 'is' | 'not is' | 'between' | 'greater than' | 'not greater than'>[]
-}
-export type TokenTypeNumberValue = {
-  value: number
-  type: 'number'
-  compares: Extract<TokenCompares, 'is' | 'not is' | 'between' | 'greater than' | 'not greater than'>
-}
-
-export type TokenTypeBoolean = {
-  type: 'boolean'
-  compares: Extract<TokenCompares, 'is' | 'not is'>[]
-}
-export type TokenTypeBooleanValue = {
-  value: boolean
-  type: 'boolean'
-  compares: Extract<TokenCompares, 'is' | 'not is'>
-}
-
-export type TokenTypeDate = {
-  type: 'date'
-  compares: Extract<TokenCompares, 'between' | 'greater than' | 'not greater than'>[]
-}
-export type TokenTypeDateValue = {
-  value: Date | Array<Date>
-  type: 'date'
-  compares: Extract<TokenCompares, 'between' | 'greater than' | 'not greater than'>
-}
-
-export type TokenTypeArray = {
-  type: 'array'
-  compares: Extract<TokenCompares, 'contains' | 'not contains'>[]
-}
-export type TokenTypeArrayValue = {
-  value: Array<string | number>
-  type: 'array'
-  compares: Extract<TokenCompares, 'contains' | 'not contains'>
-}
-
-export type TokenTypes = TokenTypeString | TokenTypeNumber | TokenTypeBoolean | TokenTypeDate | TokenTypeArray
-export type TokenTypesValue =
-  | TokenTypeStringValue
-  | TokenTypeNumberValue
-  | TokenTypeBooleanValue
-  | TokenTypeDateValue
-  | TokenTypeArrayValue
-
-export type Token = {
-  value: string
-  name: string
-  autocomplete?: string | Array<{ text: string; value: string }>
-  unique?: boolean
-  disabled?: boolean
-} & TokenTypes
-
-export type Filter = {
-  id?: number
-  token: Token
-  disabled: boolean
-  display: boolean
-} & TokenTypesValue
+import { Token, TokenCompares, TokenPlainTypes, TokenValues } from '@/typings/TokenFilter'
+import moment from 'moment'
+import { sprintf } from 'sprintf-js'
 
 export const comparesTranslate: Record<TokenCompares, string> = {
   is: 'равно %s',
@@ -88,4 +10,87 @@ export const comparesTranslate: Record<TokenCompares, string> = {
   between: 'между %s и %s',
   'greater than': 'больше чем %s',
   'not greater than': 'не больше чем %s',
+}
+
+export const comparesTranslateSolo = (compare: TokenCompares) => {
+  return comparesTranslate[compare].replace(/(\s%.{1})/g, '')
+}
+
+export const comparesTranslateSprintf = (compare: TokenCompares, ...args: any[]) => {
+  const modifyArgs = (compare: TokenCompares, a: any[]) => {
+    const args = a[0]
+    if (compare === 'between') {
+      return args
+    }
+
+    if (['contains', 'not contains'].includes(compare)) {
+      return [args.join(', ')]
+    }
+
+    return a
+  }
+  const translated = comparesTranslate[compare]
+
+  const modifiedArgs = modifyArgs(compare, args)
+
+  if (modifiedArgs) {
+    return sprintf(translated, ...modifiedArgs)
+  }
+
+  return sprintf(translated, ' ', ' ')
+}
+
+export const prettifyTokenValue = (token: Token, value: TokenValues, type: TokenCompares) => {
+  if (token.type === 'boolean') {
+    return value ? 'Да' : 'Нет'
+  }
+
+  if (token.type === 'date') {
+    if (type === 'between') {
+      //@ts-ignore
+      const dates = value.map((e) => moment(e).format('DD.MM.YYYY'))
+      return dates.includes('Invalid date') ? ['', ''] : dates
+    }
+
+    //@ts-ignore
+    const date = moment(value).format('DD.MM.YYYY')
+
+    return date === 'Invalid date' ? '' : date
+  }
+
+  if (token.autocomplete) {
+    if (Array.isArray(value)) {
+      //@ts-ignore
+      return value.map((e) => e.text || e)
+    } else if (typeof value === 'object') {
+      //@ts-ignore
+      return value.text
+    }
+  }
+
+  return value || ''
+}
+
+export const getDefaultTokenValue = (type: TokenPlainTypes, compare: TokenCompares) => {
+  if (compare === 'between') {
+    if (type === 'number') {
+      return [0, 1]
+    }
+
+    return ['', '']
+  }
+
+  if (type === 'array') {
+    return []
+  }
+
+  if (type === 'number') {
+    return 0
+  }
+
+  if (type === 'boolean') {
+    return false
+  }
+
+  return ''
 }

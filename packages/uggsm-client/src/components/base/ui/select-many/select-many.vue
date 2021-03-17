@@ -1,6 +1,7 @@
 <template lang="pug">
 ug-base-select.ug-select-many(
   v-model='model',
+  :return-object='returnObject',
   :label='label',
   :items='items',
   :cache='cache',
@@ -64,6 +65,11 @@ export default {
       required: false,
       type: [String],
       default: '',
+    },
+
+    returnObject: {
+      required: false,
+      type: [Boolean],
     },
   },
 
