@@ -44,6 +44,12 @@ module.exports = {
         minLineOfMultilineProperty: 2,
       },
     ],
+    'vue/no-unregistered-components': [
+      'error',
+      {
+        ignorePatterns: [],
+      },
+    ],
     'vue/component-definition-name-casing': ['error', 'kebab-case'],
     'vue/order-in-components': [
       'error',

@@ -2,6 +2,8 @@
 v-chip.ug-base-chip(
   :small='small',
   :color='color',
+  :class='{ "ug-base-chip--clickable": clickable }',
+  @click='$emit("click", $event)',
   label
 )
   slot
@@ -22,6 +24,17 @@ export default {
       required: false,
       type: Boolean,
     },
+
+    clickable: {
+      required: false,
+      type: Boolean,
+    },
   },
 }
 </script>
+
+<style lang="sass">
+.ug-base-chip
+  .ug-base-chip--clickable
+    cursor: pointer !important
+</style>

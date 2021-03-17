@@ -7,7 +7,7 @@
           template(v-if='compare === compareType')
             v-radio(
               :value='compare',
-              :label='getRadioLabel(selectedType === compareType, compare)'
+              :label='getRadioLabel(compare)'
             )
 
             .ug-token-filter-edit-compare__field
@@ -30,7 +30,7 @@
           template(v-if='compare === compareType')
             v-radio(
               :value='compare',
-              :label='getRadioLabel(selectedType === compareType, compare)'
+              :label='getRadioLabel(compare)'
             )
 
             .ug-token-filter-edit-compare__field
@@ -57,7 +57,7 @@
           template(v-if='compare === compareType')
             v-radio(
               :value='compare',
-              :label='getRadioLabel(selectedType === compareType, compare)'
+              :label='getRadioLabel(compare)'
             )
 
             .ug-token-filter-edit-compare__field
@@ -72,7 +72,7 @@
           template(v-if='compare === compareType')
             v-radio(
               :value='compare',
-              :label='getRadioLabel(selectedType === compareType, compare)'
+              :label='getRadioLabel(compare)'
             )
 
             .ug-token-filter-edit-compare__field
@@ -97,7 +97,7 @@
           template(v-if='compare === compareType')
             v-radio(
               :value='compare',
-              :label='getRadioLabel(selectedType === compareType, compare)'
+              :label='getRadioLabel(compare)'
             )
 
             .ug-token-filter-edit-compare__field
@@ -117,8 +117,7 @@
 </template>
 
 <script>
-import { comparesTranslate } from '../../token-filter.helpers'
-import { sprintf } from 'sprintf-js'
+import { comparesTranslateSolo } from '../../token-filter.helpers'
 
 export default {
   name: 'ug-token-filter-edit-compares',
@@ -186,40 +185,8 @@ export default {
   },
 
   methods: {
-    getRadioLabel(isSelected, compare) {
-      if (isSelected) {
-        return this.spf(compare, this.value)
-      }
-
-      return this.getTranslatedCompare(compare).replace(/(\s%.{1})/g, '')
-    },
-
-    getTranslatedCompare(compare) {
-      return comparesTranslate[compare]
-    },
-
-    spf(compare, ...args) {
-      const modifyArgs = (compare, a) => {
-        const args = a[0]
-        if (compare === 'between') {
-          return args
-        }
-
-        if (['contains', 'not contains'].includes(compare)) {
-          return [args.join(', ')]
-        }
-
-        return a
-      }
-      const translated = this.getTranslatedCompare(compare)
-
-      const modifiedArgs = modifyArgs(compare, args)
-
-      if (modifiedArgs) {
-        return sprintf(translated, ...modifiedArgs)
-      }
-
-      return sprintf(translated, ' ', ' ')
+    getRadioLabel(compare) {
+      return comparesTranslateSolo(compare)
     },
   },
 }
@@ -231,6 +198,8 @@ export default {
     .ug-token-filter-edit-compare__field
       padding: 12px 0 12px 32px
 
+      .ug-base-switch
+        margin-top: 0
 
       fieldset
         background: var(--v-light-base)

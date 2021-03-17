@@ -3,6 +3,7 @@ v-select.ug-base-select(
   v-model='model',
   :smallChips='smallChips',
   :single-line='singleLine',
+  :return-object='returnObject',
   :readonly='readonly',
   :prepend-inner-icon='icon',
   :multiple='multiple',
@@ -34,6 +35,7 @@ v-select.ug-base-select(
 <script>
 export default {
   name: 'ug-base-select',
+
   props: {
     value: {
       required: true,
@@ -111,6 +113,11 @@ export default {
     },
 
     disabled: {
+      required: false,
+      type: [Boolean],
+    },
+
+    returnObject: {
       required: false,
       type: [Boolean],
     },
