@@ -55,6 +55,21 @@ import moment from 'moment'
 export default class PageIndex extends Vue {
   public news = [
     {
+      date: moment('14.03.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      breaking: true,
+      items: [
+        {
+          type: 'feature',
+          text:
+            'Убрана кнопка "Закрытые" которая позволяла показать только закрытые или все кроме закрытых заказы. Теперь кнопка выключена (отображаются все заказы) по умолчанию. При необходимости скрыть закрытые заказы необходимо сделать это через фильтр.',
+        },
+        {
+          type: 'feature',
+          text: 'Добавлена функциональность сброса всех фильтров',
+        },
+      ],
+    },
+    {
       date: moment('10.03.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       items: [
         {
