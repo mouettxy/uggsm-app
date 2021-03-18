@@ -1,6 +1,35 @@
+import { VuexFilterList, VuexFilterListNamespaces } from '@/typings/TokenFilter'
+
+const generateFilters = (filters: VuexFilterListNamespaces[]) => {
+  const defaultFilterEntry = Object.fromEntries(filters.map((e) => [e, ''])) as Record<VuexFilterListNamespaces, string>
+  const filterList = (Object.fromEntries(
+    filters.map((e) => [
+      e,
+      {
+        default: [],
+        custom: [],
+        current: [],
+      },
+    ])
+  ) as unknown) as VuexFilterList
+
+  const returned: {
+    defaultFilterEntry: Record<VuexFilterListNamespaces, string>
+    filterList: VuexFilterList
+  } = {
+    defaultFilterEntry,
+    filterList,
+  }
+
+  return returned
+}
+
+const filterList: VuexFilterListNamespaces[] = ['calls', 'cashes', 'clients', 'orders', 'tests']
+
+export const generatedFilters = generateFilters(filterList)
+
 import { Token, TokenCompares, TokenPlainTypes, TokenValues } from '@/typings/TokenFilter'
 import moment from 'moment'
-import { sprintf } from 'sprintf-js'
 
 export const comparesTranslate: Record<TokenCompares, string> = {
   is: 'равно %s',
@@ -14,30 +43,6 @@ export const comparesTranslate: Record<TokenCompares, string> = {
 
 export const comparesTranslateSolo = (compare: TokenCompares) => {
   return comparesTranslate[compare].replace(/(\s%.{1})/g, '')
-}
-
-export const comparesTranslateSprintf = (compare: TokenCompares, ...args: any[]) => {
-  const modifyArgs = (compare: TokenCompares, a: any[]) => {
-    const args = a[0]
-    if (compare === 'between') {
-      return args
-    }
-
-    if (['contains', 'not contains'].includes(compare)) {
-      return [args.join(', ')]
-    }
-
-    return a
-  }
-  const translated = comparesTranslate[compare]
-
-  const modifiedArgs = modifyArgs(compare, args)
-
-  if (modifiedArgs) {
-    return sprintf(translated, ...modifiedArgs)
-  }
-
-  return sprintf(translated, ' ', ' ')
 }
 
 export const prettifyTokenValue = (token: Token, value: TokenValues, type: TokenCompares) => {

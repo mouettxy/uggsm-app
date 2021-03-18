@@ -1,11 +1,7 @@
+import { generatedFilters } from '@/helpers/filterHelper'
 import { Filter } from './../typings/TokenFilter'
-import {
-  VuexFilterList,
-  VuexFilterListItem,
-  VuexFilterListItemEntry,
-  VuexFilterListNamespaces,
-} from '@/typings/TokenFilter'
-import { cloneDeep, isUndefined } from 'lodash'
+import { VuexFilterListItemEntry, VuexFilterListNamespaces } from '@/typings/TokenFilter'
+import { cloneDeep } from 'lodash'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { authModule } from '.'
 @Module({
@@ -13,41 +9,9 @@ import { authModule } from '.'
   name: 'filters',
 })
 export default class Filters extends VuexModule {
-  public defaultFilterEntry = {
-    tests: '',
-    orders: '',
-    clients: '',
-    calls: '',
-    cashes: '',
-  }
+  public defaultFilterEntry = generatedFilters.defaultFilterEntry
 
-  public filterList: VuexFilterList = {
-    tests: {
-      default: [],
-      custom: [],
-      current: [],
-    },
-    orders: {
-      default: [],
-      custom: [],
-      current: [],
-    },
-    clients: {
-      default: [],
-      custom: [],
-      current: [],
-    },
-    calls: {
-      default: [],
-      custom: [],
-      current: [],
-    },
-    cashes: {
-      default: [],
-      custom: [],
-      current: [],
-    },
-  }
+  public filterList = generatedFilters.filterList
 
   @Mutation
   SET_DEFAULT_FILTER_ENTRY(filter: { name: VuexFilterListNamespaces; filterName: string }) {

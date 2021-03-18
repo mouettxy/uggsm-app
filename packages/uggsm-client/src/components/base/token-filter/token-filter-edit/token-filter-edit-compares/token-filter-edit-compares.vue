@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { comparesTranslateSolo } from '../../token-filter.helpers'
+import { comparesTranslateSolo } from '@/helpers/filterHelper'
 
 export default {
   name: 'ug-token-filter-edit-compares',

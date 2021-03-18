@@ -140,7 +140,7 @@ ug-responsive-menu(:menu-props='menuProps')
 
 <script>
 import UgTokenFilterEditCompares from './token-filter-edit-compares/token-filter-edit-compares'
-import { getDefaultTokenValue, prettifyTokenValue } from '../token-filter.helpers'
+import { getDefaultTokenValue, prettifyTokenValue } from '@/helpers/filterHelper'
 
 export default {
   name: 'ug-token-filter-edit',
