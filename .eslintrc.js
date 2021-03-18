@@ -31,6 +31,8 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+    'vue/valid-v-for': [0],
+    'vue/require-v-for-key': [0],
     'vue/attributes-order': [
       'error',
       {
@@ -62,6 +64,12 @@ module.exports = {
       'error',
       {
         minLineOfMultilineProperty: 2,
+      },
+    ],
+    'vue/valid-v-slot': [
+      2,
+      {
+        allowModifiers: true,
       },
     ],
     'vue/no-unregistered-components': [
