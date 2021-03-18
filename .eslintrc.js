@@ -27,7 +27,27 @@ module.exports = {
         singleQuote: true,
         semi: false,
         printWidth: 120,
+        htmlWhitespaceSensitivity: 'ignore',
         endOfLine: 'auto',
+      },
+    ],
+    'vue/attributes-order': [
+      'error',
+      {
+        order: [
+          'DEFINITION',
+          'LIST_RENDERING',
+          'CONDITIONALS',
+          'RENDER_MODIFIERS',
+          'GLOBAL',
+          ['UNIQUE', 'SLOT'],
+          'TWO_WAY_BINDING',
+          'OTHER_DIRECTIVES',
+          'OTHER_ATTR',
+          'EVENTS',
+          'CONTENT',
+        ],
+        alphabetical: true,
       },
     ],
     '@typescript-eslint/ban-ts-comment': 'off',
@@ -47,7 +67,7 @@ module.exports = {
     'vue/no-unregistered-components': [
       'error',
       {
-        ignorePatterns: [],
+        ignorePatterns: ['v(\\-\\w+)+', 'router-view'],
       },
     ],
     'vue/component-definition-name-casing': ['error', 'kebab-case'],
