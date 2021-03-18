@@ -1,38 +1,35 @@
-<template lang="pug">
-v-main.layout-centered(
-  :class='{ "layout-centered--mobile": isMobile }',
-  app
-)
-  ug-side-menu(
-    :mobile='isMobile',
-    :menu-items='items'
-  )
-  v-container(
-    fluid,
-    fill-height
-  )
-    router-view
+<template>
+  <v-main app class="ug-layout-centered" :class="{ 'ug-layout-centered--mobile': isMobile }">
+    <ug-side-menu :menu-items="items" :mobile="isMobile"></ug-side-menu>
+    <v-container fill-height fluid>
+      <router-view></router-view>
+    </v-container>
+  </v-main>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
 import { defaultMenu } from '@/api/helpers/menus'
 import UgSideMenu from '@/components/base/ui/side-menu/side-menu.vue'
 import Responsive from '@/mixins/responsive'
 
-@Component({
+export default {
+  name: 'ug-layout-centered',
+
   components: {
     UgSideMenu,
   },
-})
-export default class LayoutDefault extends Responsive {
-  public items = defaultMenu
+
+  mixins: [Responsive],
+
+  data: () => ({
+    items: defaultMenu,
+  }),
 }
 </script>
 
 <style lang="sass">
-.layout-centered
+.ug-layout-centered
   padding-left: 48px !important
-  &.layout-centered--mobile
+  &.ug-layout-centered--mobile
     padding-left: 16px !important
 </style>

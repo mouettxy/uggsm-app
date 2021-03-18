@@ -1,35 +1,34 @@
-<template lang="pug">
-v-main.layout-default(
-  :class='{ "layout-default--mobile": isMobile }',
-  app
-)
-  ug-side-menu(
-    :mobile='isMobile',
-    :menu-items='items'
-  )
-  router-view
+<template>
+  <v-main app class="ug-layout-default" :class="{ 'ug-layout-default--mobile': isMobile }">
+    <ug-side-menu :menu-items="items" :mobile="isMobile"></ug-side-menu>
+    <router-view></router-view>
+  </v-main>
 </template>
 
-<script lang="ts">
-import { Component } from 'vue-property-decorator'
+<script>
 import { defaultMenu } from '@/api/helpers/menus'
 import UgSideMenu from '@/components/base/ui/side-menu/side-menu.vue'
 import Responsive from '@/mixins/responsive'
 
-@Component({
+export default {
+  name: 'ug-layout-default',
+
   components: {
     UgSideMenu,
   },
-})
-export default class LayoutDefault extends Responsive {
-  public items = defaultMenu
+
+  mixins: [Responsive],
+
+  data: () => ({
+    items: defaultMenu,
+  }),
 }
 </script>
 
 <style lang="sass">
-.layout-default
+.ug-layout-default
   height: 100%
   padding-left: 48px !important
-  &.layout-default--mobile
+  &.ug-layout-default--mobile
     padding-left: 16px !important
 </style>
