@@ -9,18 +9,18 @@
 
 <template>
   <div class="ug-page-clients">
-    <t-clients-main></t-clients-main>
+    <o-clients-table></o-clients-table>
   </div>
 </template>
 
 <script>
-import TClientsMain from '@/templates/TClientsMain'
+import OClientsTable from '@/components/organizms/OClientsTable'
 
 export default {
   name: 'ug-page-clients',
 
   components: {
-    TClientsMain,
+    OClientsTable,
   },
 }
 </script>

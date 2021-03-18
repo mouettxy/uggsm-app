@@ -9,18 +9,18 @@
 
 <template>
   <div class="ug-page-orders">
-    <t-orders-main></t-orders-main>
+    <o-orders-table></o-orders-table>
   </div>
 </template>
 
 <script>
-import TOrdersMain from '@/templates/TOrdersMain'
+import OOrdersTable from '@/components/organizms/OOrdersTable'
 
 export default {
   name: 'ug-page-orders',
 
   components: {
-    TOrdersMain,
+    OOrdersTable,
   },
 }
 </script>

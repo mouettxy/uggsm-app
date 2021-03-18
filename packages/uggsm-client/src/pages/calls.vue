@@ -9,18 +9,18 @@
 
 <template>
   <div class="ug-page-calls">
-    <t-calls-main></t-calls-main>
+    <o-calls-table></o-calls-table>
   </div>
 </template>
 
 <script>
-import TCallsMain from '@/templates/TCallsMain'
+import OCallsTable from '@/components/organizms/OCallsTable'
 
 export default {
   name: 'ug-page-calls',
 
   components: {
-    TCallsMain,
+    OCallsTable,
   },
 }
 </script>

@@ -9,18 +9,18 @@
 
 <template>
   <div class="ug-page-cash">
-    <t-cash-main></t-cash-main>
+    <o-cash-table></o-cash-table>
   </div>
 </template>
 
 <script>
-import TCashMain from '@/templates/TCashMain'
+import OCashTable from '@/components/organizms/OCashTable'
 
 export default {
   name: 'ug-page-cash',
 
   components: {
-    TCashMain,
+    OCashTable,
   },
 }
 </script>
