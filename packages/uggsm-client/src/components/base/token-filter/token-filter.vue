@@ -19,6 +19,13 @@ v-slide-x-transition.ug-token-filter(
     :tokens='uniqueTokens',
     @add-filter='handleAddFilter'
   )
+  ug-base-chip(
+    key='token-delete',
+    v-if='filter.length',
+    @click='handleClearFilter',
+    color='#ddd'
+  )
+    v-icon mdi-close
 </template>
 
 <script>
@@ -83,6 +90,7 @@ export default {
     ...mapActions({
       vuexInitDefaultFilter: 'filters/initDefaultFilter',
       vuexAddCurrentFilter: 'filters/addCurrent',
+      vuexRemoveCurrentFilter: 'filters/removeCurrent',
     }),
 
     /* --------------------------------- /PUBLIC --------------------------------- */
@@ -116,6 +124,12 @@ export default {
 
     initFilter() {
       this.vuexInitDefaultFilter(this.type)
+    },
+
+    handleClearFilter() {
+      this.vuexRemoveCurrentFilter({
+        name: this.type,
+      })
     },
 
     handleEnableFilter(index) {

@@ -34,8 +34,17 @@
                   @click='selectFilter("default", filter.name)',
                   link
                 )
+                  v-list-item-icon(v-if='defaultFilterName === filter.name')
+                    v-icon(color='success') mdi-bookmark-check
                   v-list-item-content
                     v-list-item-title {{ filter.name }}
+                  v-list-item-action
+                    ug-base-btn(
+                      v-if='defaultFilterName !== filter.name',
+                      @click='setDefaultFilter(filter.name)',
+                      small,
+                      icon='mdi-bookmark-check'
+                    )
             template(v-else)
               v-list-item
                 v-list-item-icon
@@ -56,9 +65,17 @@
                   :key='filter.name',
                   @click='selectFilter("custom", filter.name)'
                 )
+                  v-list-item-icon(v-if='defaultFilterName === filter.name')
+                    v-icon(color='success') mdi-bookmark-check
                   v-list-item-content
                     v-list-item-title {{ filter.name }}
-                  v-list-item-action
+                  v-list-item-action.d-flex.flex-row
+                    ug-base-btn(
+                      v-if='defaultFilterName !== filter.name',
+                      @click='setDefaultFilter(filter.name)',
+                      small,
+                      icon='mdi-bookmark-check'
+                    )
                     ug-base-btn(
                       @click='removeCustomFilter(filter.name)',
                       small,
@@ -108,17 +125,6 @@
         v-col(cols='4')
           v-row(align='center')
             v-col(cols='6')
-              ug-base-input(v-model='setFilterModel')
-            v-col(cols='6')
-              ug-base-btn(
-                label='Установить фильтр',
-                depressed,
-                color='primary',
-                block
-              )
-
-          v-row(align='center')
-            v-col(cols='6')
               ug-base-input(v-model.trim='saveFilterModel')
             v-col(cols='6')
               ug-base-btn(
@@ -133,7 +139,7 @@
 <script>
 import { statusesSelect } from '@/api/helpers/enums'
 import UgTokenFilter from '@/components/base/token-filter/token-filter.vue'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ug-page-filter-playground',
@@ -193,10 +199,29 @@ export default {
   computed: {
     ...mapState({
       vuexSavedFilters: (state) => state.filters.filterList,
+      vuexDefaultFilterEntry: (state) => state.filters.defaultFilterEntry,
     }),
 
     savedFilters() {
       return this.vuexSavedFilters.tests
+    },
+
+    defaultFilter() {
+      return this.vuexDefaultFilterEntry.tests
+    },
+
+    defaultFilterName() {
+      if (this.defaultFilter) {
+        return this.defaultFilter
+      }
+
+      const unitedFilters = [...this.savedFilters.default, ...this.savedFilters.custom]
+
+      if (unitedFilters.length) {
+        return unitedFilters[0].name
+      }
+
+      return ''
     },
   },
 
@@ -205,7 +230,19 @@ export default {
       vuexSetFromSaved: 'filters/setFromSaved',
       vuexAddCustom: 'filters/addCustom',
       vuexRemoveCustom: 'filters/removeCustom',
+      vuexGetDefaultFilterName: 'filters/getDefaultFilterName',
     }),
+
+    ...mapMutations({
+      vuexSetDefaultFilter: 'filters/SET_DEFAULT_FILTER_ENTRY',
+    }),
+
+    setDefaultFilter(filterName) {
+      this.vuexSetDefaultFilter({
+        name: 'tests',
+        filterName,
+      })
+    },
 
     removeCustomFilter(filterName) {
       this.vuexRemoveCustom({
