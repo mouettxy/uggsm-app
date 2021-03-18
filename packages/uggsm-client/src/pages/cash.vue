@@ -3,19 +3,24 @@
   "name": "cash",
   "meta": {
     "header": "Касса",
-    "resource": "Cash"
   }
 }
 </route>
 
-<template lang="pug">
-.page-cash
-  t-cash-main
+<template>
+  <div class="ug-page-cash">
+    <t-cash-main></t-cash-main>
+  </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import TCashMain from '@/templates/TCashMain'
 
-@Component
-export default class PageCash extends Vue {}
+export default {
+  name: 'ug-page-cash',
+
+  components: {
+    TCashMain,
+  },
+}
 </script>

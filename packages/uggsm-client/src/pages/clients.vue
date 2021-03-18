@@ -3,19 +3,24 @@
   "name": "clients",
   "meta": {
     "header": "Клиенты",
-    "resource": "Client"
   }
 }
 </route>
 
-<template lang="pug">
-.page-clients
-  t-clients-main
+<template>
+  <div class="ug-page-clients">
+    <t-clients-main></t-clients-main>
+  </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import TClientsMain from '@/templates/TClientsMain'
 
-@Component
-export default class PageClients extends Vue {}
+export default {
+  name: 'ug-page-clients',
+
+  components: {
+    TClientsMain,
+  },
+}
 </script>

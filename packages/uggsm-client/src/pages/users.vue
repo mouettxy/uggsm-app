@@ -7,96 +7,103 @@
 }
 </route>
 
-<template lang="pug">
-.page-users
-  ug-table-remote(
-    :include-search-field='true',
-    :include-middle-toolbar='false',
-    :headers-schema='headersSchema',
-    :fetch-function='fetchFunction',
-    socket-event='users updated',
-    headers-schema-id='headers-id'
-  )
-    template(#item.role='{ item }')
-      ug-base-select.pa-2(
-        v-model='item.role',
-        :items='roles',
-        @change='handleRoleChange(item)',
-        single-line,
-        label='Роль',
-        item-value='value',
-        item-text='text'
-      )
-    template(#item.actions='{ item }')
-      ug-base-btn(
-        @click='handleRoleDelete(item)',
-        icon='mdi-trash-can',
-        color='red'
-      )
+<template>
+  <div class="ug-page-users">
+    <ug-table-remote
+      :fetch-function="fetchFunction"
+      :headers-schema="headersSchema"
+      headers-schema-id="headers-id"
+      :include-middle-toolbar="false"
+      :include-search-field="true"
+      socket-event="users updated"
+    >
+      <template #item.role="{ item }">
+        <ug-base-select
+          v-model="item.role"
+          class="pa-2"
+          item-text="text"
+          item-value="value"
+          :items="roles"
+          label="Роль"
+          single-line
+          @change="handleRoleChange(item)"
+        ></ug-base-select>
+      </template>
+      <template #item.actions="{ item }">
+        <ug-base-btn color="red" icon="mdi-trash-can" @click="handleRoleDelete(item)"></ug-base-btn>
+      </template>
+    </ug-table-remote>
+  </div>
 </template>
 
-<script lang="ts">
+<script>
 import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
+import UgTableRemote from '@/components/base/table/table-remote/table-remote'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
 import UserAPI from '@/api/user'
-import { User } from '@/typings/api/user'
-import { Component, Vue } from 'vue-property-decorator'
 
-@Component({
+export default {
+  name: 'ug-page-users',
+
   components: {
+    UgTableRemote,
     UgBaseSelect,
+    UgBaseBtn,
   },
-})
-export default class PageUsers extends Vue {
-  public headersSchema = {
-    id: 'Идентификатор',
-    username: 'Логин',
-    role: 'Роль',
-    credentials: 'Имя',
-    actions: 'Действия',
-  }
 
-  public roles: { text: string; value: string }[] = []
-
-  async fetchFunction(data: any) {
-    const response = await UserAPI.getPaginated(data)
-
-    if (response.status !== 200) {
-      this.$notification.error('Не удалось получить данные')
-      return []
-    }
-
-    return response.data
-  }
-
-  async handleRoleChange(item: User) {
-    const apiResponse = await UserAPI.update(item._id, { role: item.role })
-
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error('Ошибка сервера при назначении роли')
-      return
-    }
-
-    this.$notification.success('Пользователю успешно назначена роль')
-  }
-
-  async handleRoleDelete(item: User) {
-    const apiResponse = await UserAPI.delete(item._id)
-
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error('Ошибка сервера при удалении пользователя')
-      return
-    }
-
-    this.$notification.success('Пользователь удалён')
-  }
-
-  async fetchRoles() {
-    this.roles = (await this.$axios.get('/autocomplete/roles')).data
-  }
+  data: () => ({
+    roles: [],
+    headersSchema: {
+      id: 'Идентификатор',
+      username: 'Логин',
+      role: 'Роль',
+      credentials: 'Имя',
+      actions: 'Действия',
+    },
+  }),
 
   mounted() {
     this.fetchRoles()
-  }
+  },
+
+  methods: {
+    async fetchFunction(data) {
+      const response = await UserAPI.getPaginated(data)
+
+      if (response.status !== 200) {
+        this.$notification.error('Не удалось получить данные')
+        return []
+      }
+
+      return response.data
+    },
+
+    async handleRoleChange(item) {
+      const apiResponse = await UserAPI.update(item._id, { role: item.role })
+
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error('Ошибка сервера при назначении роли')
+        return
+      }
+
+      this.$notification.success('Пользователю успешно назначена роль')
+    },
+
+    async handleRoleDelete(item) {
+      const apiResponse = await UserAPI.delete(item._id)
+
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error('Ошибка сервера при удалении пользователя')
+        return
+      }
+
+      this.$notification.success('Пользователь удалён')
+    },
+
+    async fetchRoles() {
+      this.roles = (await this.$axios.get('/autocomplete/roles')).data
+    },
+  },
 }
 </script>

@@ -7,18 +7,19 @@
 }
 </route>
 
-<template lang="pug">
-.page-orders
-  ug-table-remote(
-    :headers-schema='headersSchema',
-    :fetch-function='fetchFunction',
-    socket-event='orders updated',
-    include-search-field,
-    include-office-field,
-    include-middle-toolbar,
-    include-header,
-    headers-schema-id='orders-id'
-  )
+<template>
+  <div class="page-orders">
+    <ug-table-remote
+      :fetch-function="fetchFunction"
+      :headers-schema="headersSchema"
+      headers-schema-id="orders-id"
+      include-header
+      include-middle-toolbar
+      include-office-field
+      include-search-field
+      socket-event="orders updated"
+    ></ug-table-remote>
+  </div>
 </template>
 
 <script>

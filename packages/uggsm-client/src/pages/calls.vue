@@ -3,19 +3,24 @@
   "name": "calls",
   "meta": {
     "header": "Звонки",
-    "resource": "Calls"
   }
 }
 </route>
 
-<template lang="pug">
-.page-calls
-  t-calls-main
+<template>
+  <div class="ug-page-calls">
+    <t-calls-main></t-calls-main>
+  </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import TCallsMain from '@/templates/TCallsMain'
 
-@Component
-export default class PageCalls extends Vue {}
+export default {
+  name: 'ug-page-calls',
+
+  components: {
+    TCallsMain,
+  },
+}
 </script>

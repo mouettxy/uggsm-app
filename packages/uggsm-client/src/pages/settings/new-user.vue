@@ -7,89 +7,67 @@
 }
 </route>
 
-<template lang="pug">
-.page-settings-new-user
-  v-card.pa-8
-    v-card-title Новый пользователь
-    v-card-text
-      v-form(
-        ref='form',
-        v-model='isFormValid',
-        @submit.prevent='handleUserRegister'
-      )
-        v-row
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='user.username',
-              :rules='requiredField',
-              label='Логин',
-              icon='mdi-account'
-            )
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='user.password',
-              :rules='requiredField',
-              type='password',
-              label='Пароль',
-              icon='mdi-lock'
-            )
-        v-row
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='user.credentials',
-              :rules='requiredField',
-              label='Имя',
-              icon='mdi-rename-box'
-            )
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-select(
-              v-model.trim='user.role',
-              :items='roles',
-              :hide-details='false',
-              label='Роль',
-              icon='mdi-account-hard-hat',
-              dense
-            )
-              template(#selection='{item}')
-                span {{ item.text }}
-        v-row
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-select.mb-1(
-              v-model='user.office',
-              :items='offices',
-              label='Офис'
-            )
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-btn(
-              type='submit',
-              label='Создать',
-              color='primary',
-              block
-            )
+<template>
+  <div class="page-settings-new-user">
+    <v-card class="pa-8">
+      <v-card-title>Новый пользователь</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="isFormValid" @submit.prevent="handleUserRegister">
+          <v-row>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="user.username"
+                icon="mdi-account"
+                label="Логин"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="user.password"
+                icon="mdi-lock"
+                label="Пароль"
+                :rules="requiredField"
+                type="password"
+              ></ug-base-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="user.credentials"
+                icon="mdi-rename-box"
+                label="Имя"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-select
+                v-model.trim="user.role"
+                dense
+                :hide-details="false"
+                icon="mdi-account-hard-hat"
+                :items="roles"
+                label="Роль"
+              >
+                <template #selection="{ item }">
+                  <span>{{ item.text }}</span>
+                </template>
+              </ug-base-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-select v-model="user.office" class="mb-1" :items="offices" label="Офис"></ug-base-select>
+            </v-col>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-btn block color="primary" label="Создать" type="submit"></ug-base-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>

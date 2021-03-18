@@ -7,87 +7,84 @@
 }
 </route>
 
-<template lang="pug">
-.page-settings-new-office
-  v-card.pa-8
-    v-card-title Новый офис
-    v-card-text
-      v-form.office-form(
-        ref='form',
-        v-model='isFormValid',
-        @submit.prevent='handleOfficeCreate'
-      )
-        v-row
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='office.name',
-              :rules='requiredField',
-              label='Название',
-              icon='mdi-account'
-            )
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='office.code',
-              :rules='requiredField',
-              label='Код',
-              icon='mdi-account'
-            )
-        v-row
-          v-col(cols='12')
-            ug-base-input(
-              v-model.trim='office.address',
-              :rules='requiredField',
-              label='Адрес',
-              icon='mdi-account'
-            )
-        v-row
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='office.ordersTemplate',
-              :rules='requiredField',
-              label='Шаблон ID заявок',
-              icon='mdi-account',
-              hint='Например ```4{C:4}```'
-            )
-          v-col(
-            cols='12',
-            md='6',
-            lg='6'
-          )
-            ug-base-input(
-              v-model.trim='office.docsTemplate',
-              :rules='requiredField',
-              label='Шаблон ID документа',
-              icon='mdi-account',
-              hint='Например ```BA{C:4}``` (Пока нигде не используется)'
-            )
-        v-row
-          v-col(cols='12')
-            ug-base-btn(
-              type='submit',
-              label='Создать',
-              color='primary',
-              block
-            )
+<template>
+  <div class="page-settings-new-office">
+    <v-card class="pa-8">
+      <v-card-title>Новый офис</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="isFormValid" class="office-form" @submit.prevent="handleOfficeCreate">
+          <v-row>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="office.name"
+                icon="mdi-account"
+                label="Название"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="office.code"
+                icon="mdi-account"
+                label="Код"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <ug-base-input
+                v-model.trim="office.address"
+                icon="mdi-account"
+                label="Адрес"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="office.ordersTemplate"
+                hint="Например ```4{C:4}```"
+                icon="mdi-account"
+                label="Шаблон ID заявок"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+            <v-col cols="12" lg="6" md="6">
+              <ug-base-input
+                v-model.trim="office.docsTemplate"
+                hint="Например ```BA{C:4}``` (Пока нигде не используется)"
+                icon="mdi-account"
+                label="Шаблон ID документа"
+                :rules="requiredField"
+              ></ug-base-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <ug-base-btn block color="primary" label="Создать" type="submit"></ug-base-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
 import OfficeAPI from '@/api/office'
+import UgBaseInput from '@/components/base/ui/base-input/base-input'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
 export default {
   name: 'ug-settings-new-office',
+
+  components: {
+    UgBaseInput,
+    UgBaseBtn,
+  },
+
   layout: 'centered',
 
   data: function () {

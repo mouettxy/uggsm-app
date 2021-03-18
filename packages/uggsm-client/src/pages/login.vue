@@ -7,40 +7,44 @@
 }
 </route>
 
-<template lang="pug">
-.page-login
-  v-card.pa-8
-    v-card-title Авторизация
-    v-card-text
-      v-form.ug-login-form(
-        ref='form',
-        v-model='isFormValid',
-        @submit.prevent.stop='handleLogin'
-      )
-        v-row
-          v-col(cols='12')
-            ug-base-input.mb-1(
-              v-model='user.username',
-              :rules='usernameRules',
-              label='Логин',
-              icon='mdi-account'
-            )
-        v-row
-          v-col(cols='12')
-            ug-base-input.mb-1(
-              v-model='user.password',
-              :rules='passwordRules',
-              type='password',
-              label='Пароль',
-              icon='mdi-lock'
-            )
-        v-row
-          v-col.text-right(cols='12')
-            ug-base-btn(
-              type='submit',
-              label='Войти',
-              color='primary'
-            )
+<template>
+  <div class="ug-page-login">
+    <v-card class="pa-8">
+      <v-card-title>Авторизация</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="isFormValid" class="ug-login-form" @submit.prevent.stop="handleLogin">
+          <v-row>
+            <v-col cols="12">
+              <ug-base-input
+                v-model="user.username"
+                class="mb-1"
+                icon="mdi-account"
+                label="Логин"
+                :rules="usernameRules"
+              ></ug-base-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12">
+              <ug-base-input
+                v-model="user.password"
+                class="mb-1"
+                icon="mdi-lock"
+                label="Пароль"
+                :rules="passwordRules"
+                type="password"
+              ></ug-base-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col class="text-right" cols="12">
+              <ug-base-btn color="primary" label="Войти" type="submit"></ug-base-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -98,6 +102,6 @@ export default {
 </script>
 
 <style lang="sass">
-.page-login
+.ug-page-login
   margin: 0 auto
 </style>

@@ -7,56 +7,47 @@
 }
 </route>
 
-<template lang="pug">
-.page-settings-daily-subscriptions
-  v-card.pa-8
-    v-card-title Подписка на ежедневные отчёты
-    v-card-text
-      v-form(
-        ref='form',
-        v-model='isFormValid',
-        @submit.prevent='handleCreateSubscription'
-      )
-        v-row
-          v-col(
-            cols='12',
-            md='8',
-            lg='8'
-          )
-            ug-base-input(
-              v-model='email',
-              :rules='emailRules',
-              label='E-mail'
-            )
-          v-col(
-            cols='12',
-            md='4',
-            lg='4'
-          )
-            ug-base-btn(
-              type='submit',
-              label='Добавить',
-              color='primary',
-              block
-            ) 
-      v-slide-y-transition(group)
-        template(v-if='dailySubscriptions.length')
-          v-row.align-center(
-            v-for='subscription in dailySubscriptions',
-            :key='subscription.email'
-          )
-            v-col(cols='10')
-              span.text-subtitle-1 {{ subscription.email }}
-            v-col.text-center(cols='2')
-              ug-base-btn(
-                @click='handleDeleteSubscription(subscription._id)',
-                icon='mdi-delete',
-                color='error'
-              )
-      v-slide-y-reverse-transition
-        v-row(v-if='!dailySubscriptions.length')
-          v-col(cols='12')
-            v-alert(type='info') Нет подписанных адресов
+<template>
+  <div class="page-settings-daily-subscriptions">
+    <v-card class="pa-8">
+      <v-card-title>Подписка на ежедневные отчёты</v-card-title>
+      <v-card-text>
+        <v-form ref="form" v-model="isFormValid" @submit.prevent="handleCreateSubscription">
+          <v-row>
+            <v-col cols="12" lg="8" md="8">
+              <ug-base-input v-model="email" label="E-mail" :rules="emailRules"></ug-base-input>
+            </v-col>
+            <v-col cols="12" lg="4" md="4">
+              <ug-base-btn block color="primary" label="Добавить" type="submit"></ug-base-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+        <v-slide-y-transition group>
+          <template v-if="dailySubscriptions.length">
+            <v-row v-for="subscription in dailySubscriptions" :key="subscription.email" class="align-center">
+              <v-col cols="10">
+                <span class="text-subtitle-1">{{ subscription.email }}</span>
+              </v-col>
+              <v-col class="text-center" cols="2">
+                <ug-base-btn
+                  color="error"
+                  icon="mdi-delete"
+                  @click="handleDeleteSubscription(subscription._id)"
+                ></ug-base-btn>
+              </v-col>
+            </v-row>
+          </template>
+        </v-slide-y-transition>
+        <v-slide-y-reverse-transition>
+          <v-row v-if="!dailySubscriptions.length">
+            <v-col cols="12">
+              <v-alert type="info">Нет подписанных адресов</v-alert>
+            </v-col>
+          </v-row>
+        </v-slide-y-reverse-transition>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>

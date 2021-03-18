@@ -7,9 +7,10 @@
 }
 </route>
 
-<template lang="pug">
-.page-reports-orders-count.pa-4
-  ug-report-orders-count
+<template>
+  <div class="ug-page-reports-orders-count pa-4">
+    <ug-report-orders-count></ug-report-orders-count>
+  </div>
 </template>
 
 <script>
@@ -25,6 +26,6 @@ export default {
 </script>
 
 <style lang="sass">
-.page-reports-orders-count
+.ug-page-reports-orders-count
   width: 100%
 </style>

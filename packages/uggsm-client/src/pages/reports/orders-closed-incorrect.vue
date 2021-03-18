@@ -7,9 +7,10 @@
 }
 </route>
 
-<template lang="pug">
-.page-reports-orders-without-work.pa-4
-  ug-report-orders-closed-incorrect
+<template>
+  <div class="ug-page-reports-orders-without-work pa-4">
+    <ug-report-orders-closed-incorrect></ug-report-orders-closed-incorrect>
+  </div>
 </template>
 
 <script>
@@ -25,6 +26,6 @@ export default {
 </script>
 
 <style lang="sass">
-.page-reports-orders-without-work
+.ug-page-reports-orders-without-work
   width: 100%
 </style>

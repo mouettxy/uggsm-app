@@ -3,19 +3,16 @@
   "name": "analytic",
   "meta": {
     "header": "Аналитика",
-    "resource": "Analytics"
   }
 }
 </route>
 
-<template lang="pug">
-.page-analytics.pa-4
-  span Страница используется в тестовых целях
+<template>
+  <div class="ug-page-analytics pa-4"><span>Страница используется в тестовых целях</span></div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-
-@Component
-export default class PageAnalytics extends Vue {}
+<script>
+export default {
+  name: 'ug-page-analytics',
+}
 </script>

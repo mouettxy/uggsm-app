@@ -3,19 +3,24 @@
   "name": "settings",
   "meta": {
     "header": "Настройки",
-    "resource": "Settings"
   }
 }
 </route>
 
-<template lang="pug">
-.page-settings.pa-4
-  ug-role-widget
+<template>
+  <div class="ug-page-settings pa-4">
+    <ug-role-widget></ug-role-widget>
+  </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import UgRoleWidget from '@/components/role/role-widget'
 
-@Component
-export default class PageSettings extends Vue {}
+export default {
+  name: 'ug-page-settings',
+
+  components: {
+    UgRoleWidget,
+  },
+}
 </script>

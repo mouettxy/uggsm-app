@@ -3,14 +3,14 @@
   "name": "reports",
   "meta": {
     "header": "Ежедневный отчёт",
-    "resource": "Report"
   }
 }
 </route>
 
-<template lang="pug">
-.page-orders.pa-4
-  ug-report-orders-daily
+<template>
+  <div class="ug-page-orders pa-4">
+    <ug-report-orders-daily></ug-report-orders-daily>
+  </div>
 </template>
 
 <script>
@@ -26,6 +26,6 @@ export default {
 </script>
 
 <style lang="sass">
-.page-orders
+.ug-page-orders
   width: 100%
 </style>

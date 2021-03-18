@@ -3,19 +3,24 @@
   "name": "orders",
   "meta": {
     "header": "Заказы",
-    "resource": "Order"
   }
 }
 </route>
 
-<template lang="pug">
-.page-orders
-  t-orders-main
+<template>
+  <div class="ug-page-orders">
+    <t-orders-main></t-orders-main>
+  </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import TOrdersMain from '@/templates/TOrdersMain'
 
-@Component
-export default class PageOrders extends Vue {}
+export default {
+  name: 'ug-page-orders',
+
+  components: {
+    TOrdersMain,
+  },
+}
 </script>
