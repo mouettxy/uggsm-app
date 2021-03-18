@@ -60,7 +60,7 @@ import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 import UgTokenFilterEdit from '../token-filter-edit/token-filter-edit'
 
 import { sprintf } from 'sprintf-js'
-import { comparesTranslate, prettifyTokenValue } from '../token-filter.helpers'
+import { comparesTranslate, prettifyTokenValue } from '@/helpers/filterHelper'
 
 export default {
   name: 'ug-token-filter-entry',
