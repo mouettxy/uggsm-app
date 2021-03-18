@@ -1,7 +1,7 @@
 <template lang="pug">
 .order-print-menu
   .d-none(v-if='order && printMenu')
-    m-print-receipt(
+    ug-print-receipt(
       :serial-number='order.serialNumber',
       :phone-model='order.phoneModel',
       :password='order.password',
@@ -16,7 +16,7 @@
       :appearance='order.appearance',
       avance=''
     )
-    m-print-warranty(
+    ug-print-warranty(
       :serial-number='order.serialNumber',
       :phone-model='order.phoneModel',
       :order-id='orderId',
@@ -25,12 +25,12 @@
       :customer-name='order.customerName',
       :created-at='order.createdAt'
     )
-    m-print-check(
+    ug-print-check(
       :works='order.statusWork',
       :order-id='orderId',
       :customer-name='order.customerName'
     )
-    m-print-repair-contract-i-market(
+    ug-print-repair-contract-i-market(
       :serial-number='order.serialNumber',
       :password='order.password',
       :model='order.phoneModel',
@@ -40,7 +40,7 @@
       :client-name='order.customerName',
       :appearance='order.appearance'
     )
-    m-print-warranty-i-market
+    ug-print-warranty-i-market
 
     ug-print-volgograd(
       :serial-number='order.serialNumber',
@@ -93,10 +93,24 @@
 import { Order } from '@/typings/api/order'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import UgPrintVolgograd from '@/components/print/print-volgograd/print-volgograd.vue'
+import UgPrintAdversitement from '@/components/print/print-adversitement/print-adversitement.vue'
+import UgPrintCheck from '@/components/print/print-check/print-check.vue'
+import UgPrintReceipt from '@/components/print/print-receipt/print-receipt.vue'
+import UgPrintRepairContract from '@/components/print/print-repair-contract/print-repair-contract.vue'
+import UgPrintWarranty from '@/components/print/print-warranty/print-warranty.vue'
+import UgPrintWarrantyIMarket from '@/components/print/print-warranty-i-market/print-warranty-i-market.vue'
+import UgPrintRepairContractIMarket from '@/components/print/print-repair-contract-i-market/print-repair-contract-i-market.vue'
 
 @Component({
   components: {
     UgPrintVolgograd,
+    UgPrintAdversitement,
+    UgPrintCheck,
+    UgPrintReceipt,
+    UgPrintRepairContract,
+    UgPrintWarranty,
+    UgPrintWarrantyIMarket,
+    UgPrintRepairContractIMarket,
   },
 })
 export default class OOrderModalRegularPrinter extends Vue {

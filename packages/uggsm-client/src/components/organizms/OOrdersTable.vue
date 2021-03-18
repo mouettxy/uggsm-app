@@ -1,8 +1,6 @@
 <template lang="pug">
 .orders-table
   m-remote-table(:store='store')
-    template(#top-toolbar='{store}')
-      .success--text {{ store.tableRows }}
     template(#main-toolbar)
       template(v-if='selectedOffice')
         template(v-if='$can("createOrder", "Global")')
