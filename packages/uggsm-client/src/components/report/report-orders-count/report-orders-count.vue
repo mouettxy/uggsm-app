@@ -1,71 +1,55 @@
-<template lang="pug">
-.report-orders-count
-  v-card
-    v-card-title Создано
-    v-card-text
-      v-row(align='center')
-        v-col(
-          cols='12',
-          md='5',
-          lg='5'
-        )
-          ug-datetime-picker(
-            v-model='search.date',
-            range
-          )
-        v-col(
-          cols='12',
-          md='5',
-          lg='5'
-        )
-          ug-select-many(
-            v-model='search.status',
-            :items='statusList',
-            label='Статус'
-          )
-        v-col.text-center(
-          cols='12',
-          md='2',
-          lg='2'
-        )
-          v-row
-            v-col(cols='6')
-              ug-base-btn(
-                @click='getReport',
-                label='Выбрать',
-                color='primary'
-              ) 
-            v-col(cols='6')
-              json-excel.d-inline(
-                :fields='reportExcel.fields',
-                :data='reportExcel.data'
-              )
-                ug-base-btn(
-                  :disabled='!report || (report && !report.length)',
-                  icon='mdi-file-excel',
-                  color='primary'
-                )
-
-      .ug-report-orders-count__content(v-if='report && report.length')
-        v-card.mb-4
-          v-card-text
-            .text-medium.text-center Итого: {{ sumOfReport }}
-
-        v-expansion-panels
-          v-expansion-panel(
-            v-for='report in report',
-            :key='report.office'
-          )
-            v-expansion-panel-header
-              strong {{ report.office }}
-              template(#actions)
-                v-chip(
-                  small,
-                  label,
-                  color='success'
-                ) {{ report.count }}
-            v-expansion-panel-content
-              span Статусы: {{ joinArray(report.statuses) }}
+<template>
+  <div class="report-orders-count">
+    <v-card>
+      <v-card-title>Создано</v-card-title>
+      <v-card-text>
+        <v-row align="center">
+          <v-col cols="12" lg="5" md="5">
+            <ug-datetime-picker v-model="search.date" range></ug-datetime-picker>
+          </v-col>
+          <v-col cols="12" lg="5" md="5">
+            <ug-select-many v-model="search.status" :items="statusList" label="Статус"></ug-select-many>
+          </v-col>
+          <v-col class="text-center" cols="12" lg="2" md="2">
+            <v-row>
+              <v-col cols="6">
+                <ug-base-btn color="primary" label="Выбрать" @click="getReport"></ug-base-btn>
+              </v-col>
+              <v-col cols="6">
+                <json-excel class="d-inline" :data="reportExcel.data" :fields="reportExcel.fields">
+                  <ug-base-btn
+                    color="primary"
+                    :disabled="!report || (report && !report.length)"
+                    icon="mdi-file-excel"
+                  ></ug-base-btn>
+                </json-excel>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+        <div v-if="report && report.length" class="ug-report-orders-count__content">
+          <v-card class="mb-4">
+            <v-card-text>
+              <div class="text-medium text-center">Итого: {{ sumOfReport }}</div>
+            </v-card-text>
+          </v-card>
+          <v-expansion-panels>
+            <v-expansion-panel v-for="reportItem in report" :key="reportItem.office">
+              <v-expansion-panel-header>
+                <strong>{{ reportItem.office }}</strong>
+                <template #actions>
+                  <v-chip color="success" label small>{{ reportItem.count }}</v-chip>
+                </template>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <span>Статусы: {{ joinArray(reportItem.statuses) }}</span>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </div>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>

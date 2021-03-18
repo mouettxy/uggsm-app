@@ -1,108 +1,84 @@
-<template lang="pug">
-v-card.ug-report-orders-closed
-  v-card-title Закрыто
-  v-card-text
-    v-row(align='center')
-      v-col(
-        cols='12',
-        md='3',
-        lg='3'
-      )
-        ug-datetime-picker(
-          v-model='search.date',
-          range
-        )
-      v-col(
-        cols='12',
-        md='4',
-        lg='4'
-      )
-        ug-base-select(
-          v-model='search.office',
-          :items='offices',
-          label='Офис'
-        )
-      v-col(
-        cols='12',
-        md='3',
-        lg='3'
-      )
-        ug-base-select(
-          v-model='search.status',
-          :items='["Закрыт", "Готов"]',
-          multiple,
-          label='Статус',
-          dense
-        )
-      v-col(
-        cols='12',
-        md='2',
-        lg='2'
-      )
-        v-row.text-center
-          v-col(cols='6')
-            ug-base-btn(
-              @click='getReport',
-              label='Выбрать',
-              color='primary'
-            ) 
-          v-col(cols='6')
-            json-excel.d-inline(
-              :fields='reportExcel.fields',
-              :data='reportExcel.data'
-            )
-              ug-base-btn(
-                :disabled='!report || (report && !report.length)',
-                icon='mdi-file-excel',
-                color='primary'
-              )
-    .ug-report-orders-closed__content(v-if='report && report.length')
-      v-card.mb-4
-        v-card-text
-          .text-medium.text-center Итого: {{ sumOfReport }}
-
-      v-expansion-panels
-        v-expansion-panel(
-          v-for='(report, master) in formattedReport',
-          :key='master'
-        )
-          v-expansion-panel-header
-            strong {{ master }}
-            template(#actions)
-              v-chip.dark--text.mr-1(
-                small,
-                label,
-                color='warning'
-              ) {{ report.length }}
-
-              v-chip.dark--text(
-                v-if='getSumOfReport(report) > 0',
-                small,
-                label,
-                color='green'
-              ) {{ getSumOfReport(report) }}
-              v-chip.dark--text(
-                v-else,
-                small,
-                label,
-                color='green'
-              ) {{ getSumOfReport(report) }}
-
-          v-expansion-panel-content
-            v-data-table.elevation-2(
-              :items-per-page='Infinity',
-              :items='report',
-              :headers='tableHeaders',
-              show-expand,
-              hide-default-footer
-            )
-              template(#expanded-item='{item, headers}')
-                td.expanded-item__cell(:colspan='headers.length')
-                  v-data-table.elevation-1(
-                    :items='item.works',
-                    :headers='embeddedHeaders',
-                    hide-default-footer
-                  )
+<template>
+  <v-card class="ug-report-orders-closed">
+    <v-card-title>Закрыто</v-card-title>
+    <v-card-text>
+      <v-row align="center">
+        <v-col cols="12" lg="3" md="3">
+          <ug-datetime-picker v-model="search.date" range></ug-datetime-picker>
+        </v-col>
+        <v-col cols="12" lg="4" md="4">
+          <ug-base-select v-model="search.office" :items="offices" label="Офис"></ug-base-select>
+        </v-col>
+        <v-col cols="12" lg="3" md="3">
+          <ug-base-select
+            v-model="search.status"
+            dense
+            :items="['Закрыт', 'Готов']"
+            label="Статус"
+            multiple
+          ></ug-base-select>
+        </v-col>
+        <v-col cols="12" lg="2" md="2">
+          <v-row class="text-center">
+            <v-col cols="6">
+              <ug-base-btn color="primary" label="Выбрать" @click="getReport"></ug-base-btn>
+            </v-col>
+            <v-col cols="6">
+              <json-excel class="d-inline" :data="reportExcel.data" :fields="reportExcel.fields">
+                <ug-base-btn
+                  color="primary"
+                  :disabled="!report || (report && !report.length)"
+                  icon="mdi-file-excel"
+                ></ug-base-btn>
+              </json-excel>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <div v-if="report && report.length" class="ug-report-orders-closed__content">
+        <v-card class="mb-4">
+          <v-card-text>
+            <div class="text-medium text-center">Итого: {{ sumOfReport }}</div>
+          </v-card-text>
+        </v-card>
+        <v-expansion-panels>
+          <v-expansion-panel v-for="(reportItem, master) in formattedReport" :key="master">
+            <v-expansion-panel-header>
+              <strong>{{ master }}</strong>
+              <template #actions>
+                <v-chip class="dark--text mr-1" color="warning" label small>{{ reportItem.length }}</v-chip>
+                <v-chip v-if="getSumOfReport(reportItem) > 0" class="dark--text" color="green" label small>
+                  {{ getSumOfReport(reportItem) }}
+                </v-chip>
+                <v-chip v-else class="dark--text" color="green" label small>{{ getSumOfReport(reportItem) }}</v-chip>
+              </template>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-data-table
+                class="elevation-2"
+                :headers="tableHeaders"
+                hide-default-footer
+                :items="reportItem"
+                :items-per-page="Infinity"
+                show-expand
+              >
+                <template #expanded-item="{ item, headers }">
+                  <td class="expanded-item__cell" :colspan="headers.length">
+                    <v-data-table
+                      class="elevation-1"
+                      :headers="embeddedHeaders"
+                      hide-default-footer
+                      :items="item.works"
+                    ></v-data-table>
+                  </td>
+                </template>
+              </v-data-table>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

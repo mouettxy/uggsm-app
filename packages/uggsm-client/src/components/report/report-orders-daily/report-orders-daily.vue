@@ -1,130 +1,118 @@
-<template lang="pug">
-.ug-report-orders-daily
-  v-card
-    v-card-title Ежедневный отчёт
-    v-card-text
-      template(v-if='report && report.new.length && report.closed.length')
-        v-card
-          v-card-text.text-medium.text-center.dark--text
-            v-row
-              v-col(
-                cols='12',
-                md='3',
-                lg='3'
-              )
-                span Итого новых: {{ sumOfReport.new }}
-              v-col(
-                cols='12',
-                md='3',
-                lg='3'
-              )
-                span Итого закрытых: {{ sumOfReport.closed }}
-              v-col(
-                cols='12',
-                md='3',
-                lg='3'
-              )
-                span Сумма работ: {{ sumOfReport.worksPrice }}
-              v-col(
-                cols='12',
-                md='3',
-                lg='3'
-              )
-                span Сумма в кассу: {{ sumOfReport.cashPrice }}
-        .text-h6.my-4 Созданы сегодня
-        v-expansion-panels
-          v-expansion-panel(
-            v-for='reportNewItem in report.new',
-            :key='reportNewItem.office'
-          )
-            v-expansion-panel-header
-              strong {{ reportNewItem.office }}
-              template(#actions)
-                v-chip.dark--text(
-                  small,
-                  label,
-                  color='warning'
-                ) {{ reportNewItem.ordersTotal }}
-            v-expansion-panel-content
-              v-data-table.elevation-1(
-                :items-per-page='Infinity',
-                :items='reportNewItem.orders',
-                :headers='tableNewHeaders',
-                light,
-                hide-default-footer
-              )
-                template(#item.id='{item}')
-                  template(v-if='item.id')
-                    o-order-modal-regular(:orderid='item.id')
-                      template(#activator='{on, attrs}')
-                        v-btn(
-                          v-on='on',
-                          v-bind='attrs',
-                          icon
-                        )
-                          v-icon mdi-eye
-        .text-h6.my-4 Закрыты сегодня
-        v-expansion-panels
-          v-expansion-panel(
-            v-for='reportClosedItem in report.closed',
-            :key='reportClosedItem.office'
-          )
-            v-expansion-panel-header
-              strong {{ reportClosedItem.office }}
-              template(#actions)
-                v-row.text-right(no-gutters)
-                  v-col(
-                    cols='12',
-                    md='auto',
-                    lg='auto'
-                  )
-                    v-tooltip(bottom)
-                      template(#activator='{on, attrs}')
-                        v-chip.dark--text(
-                          v-on='on',
-                          v-bind='attrs',
-                          small,
-                          label,
-                          color='success'
-                        ) {{ reportClosedItem.worksSum }} / {{ reportClosedItem.cashSum }}
-                      span Работы / Касса
-                  v-col.pl-0.pl-lg-1.pl-md-1(
-                    cols='12',
-                    md='auto',
-                    lg='auto'
-                  )
-                    v-chip.dark--text(
-                      small,
-                      label,
-                      color='warning'
-                    ) {{ reportClosedItem.ordersTotal }}
-            v-expansion-panel-content
-              v-data-table.elevation-1(
-                :items-per-page='Infinity',
-                :items='reportClosedItem.orders',
-                :headers='tableClosedHeaders',
-                light,
-                hide-default-footer
-              )
-                template(#item.id='{item}')
-                  template(v-if='item.id')
-                    o-order-modal-regular(:orderid='item.id')
-                      template(#activator='{on, attrs}')
-                        ug-base-btn(
-                          v-on='on',
-                          v-bind='attrs',
-                          icon='mdi-eye',
-                          color='dark'
-                        )
-      template(v-else)
-        ug-base-alert(persistent) Сегодня ещё не было создано или закрыто заявок
+<template>
+  <div class="ug-report-orders-daily">
+    <v-card>
+      <v-card-title>Ежедневный отчёт</v-card-title>
+      <v-card-text>
+        <template v-if="report && report.new.length && report.closed.length">
+          <v-card>
+            <v-card-text class="text-medium text-center dark--text">
+              <v-row>
+                <v-col cols="12" lg="3" md="3">
+                  <span>Итого новых: {{ sumOfReport.new }}</span>
+                </v-col>
+                <v-col cols="12" lg="3" md="3">
+                  <span>Итого закрытых: {{ sumOfReport.closed }}</span>
+                </v-col>
+                <v-col cols="12" lg="3" md="3">
+                  <span>Сумма работ: {{ sumOfReport.worksPrice }}</span>
+                </v-col>
+                <v-col cols="12" lg="3" md="3">
+                  <span>Сумма в кассу: {{ sumOfReport.cashPrice }}</span>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+          <div class="text-h6 my-4">Созданы сегодня</div>
+          <v-expansion-panels>
+            <v-expansion-panel v-for="reportNewItem in report.new" :key="reportNewItem.office">
+              <v-expansion-panel-header>
+                <strong>{{ reportNewItem.office }}</strong>
+                <template #actions>
+                  <v-chip class="dark--text" color="warning" label small>{{ reportNewItem.ordersTotal }}</v-chip>
+                </template>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-data-table
+                  class="elevation-1"
+                  :headers="tableNewHeaders"
+                  hide-default-footer
+                  :items="reportNewItem.orders"
+                  :items-per-page="Infinity"
+                  light
+                >
+                  <template #item.id="{ item }">
+                    <template v-if="item.id">
+                      <o-order-modal-regular :orderid="item.id">
+                        <template #activator="{ on, attrs }">
+                          <v-btn v-bind="attrs" icon v-on="on">
+                            <v-icon>mdi-eye</v-icon>
+                          </v-btn>
+                        </template>
+                      </o-order-modal-regular>
+                    </template>
+                  </template>
+                </v-data-table>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <div class="text-h6 my-4">Закрыты сегодня</div>
+          <v-expansion-panels>
+            <v-expansion-panel v-for="reportClosedItem in report.closed" :key="reportClosedItem.office">
+              <v-expansion-panel-header>
+                <strong>{{ reportClosedItem.office }}</strong>
+                <template #actions>
+                  <v-row class="text-right" no-gutters>
+                    <v-col cols="12" lg="auto" md="auto">
+                      <v-tooltip bottom>
+                        <template #activator="{ on, attrs }">
+                          <v-chip class="dark--text" v-bind="attrs" color="success" label small v-on="on">
+                            {{ reportClosedItem.worksSum }} / {{ reportClosedItem.cashSum }}
+                          </v-chip>
+                        </template>
+                        <span>Работы / Касса</span>
+                      </v-tooltip>
+                    </v-col>
+                    <v-col class="pl-0 pl-lg-1 pl-md-1" cols="12" lg="auto" md="auto">
+                      <v-chip class="dark--text" color="warning" label small>{{ reportClosedItem.ordersTotal }}</v-chip>
+                    </v-col>
+                  </v-row>
+                </template>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-data-table
+                  class="elevation-1"
+                  :headers="tableClosedHeaders"
+                  hide-default-footer
+                  :items="reportClosedItem.orders"
+                  :items-per-page="Infinity"
+                  light
+                >
+                  <template #item.id="{ item }">
+                    <template v-if="item.id">
+                      <o-order-modal-regular :orderid="item.id">
+                        <template #activator="{ on, attrs }">
+                          <ug-base-btn v-bind="attrs" color="dark" icon="mdi-eye" v-on="on"></ug-base-btn>
+                        </template>
+                      </o-order-modal-regular>
+                    </template>
+                  </template>
+                </v-data-table>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </template>
+        <template v-else>
+          <ug-base-alert persistent>Сегодня ещё не было создано или закрыто заявок</ug-base-alert>
+        </template>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 import UgBaseAlert from '@/components/base/ui/base-alert/base-alert'
-import JsonExcel from 'vue-json-excel'
-
+import OOrderModalRegular from '@/components/organizms/modals/order/ModalRegular/OOrderModalRegular'
 import OrderAPI from '@/api/order'
 import moment from 'moment'
 
@@ -138,7 +126,7 @@ export default {
   },
 
   components: {
-    JsonExcel,
+    OOrderModalRegular,
     UgBaseAlert,
     UgBaseBtn,
   },
