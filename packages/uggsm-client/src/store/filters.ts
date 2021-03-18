@@ -8,12 +8,19 @@ import {
 import { cloneDeep, isUndefined } from 'lodash'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { authModule } from '.'
-
 @Module({
   namespaced: true,
   name: 'filters',
 })
 export default class Filters extends VuexModule {
+  public defaultFilterEntry = {
+    tests: '',
+    orders: '',
+    clients: '',
+    calls: '',
+    cashes: '',
+  }
+
   public filterList: VuexFilterList = {
     tests: {
       default: [],
@@ -43,6 +50,11 @@ export default class Filters extends VuexModule {
   }
 
   @Mutation
+  SET_DEFAULT_FILTER_ENTRY(filter: { name: VuexFilterListNamespaces; filterName: string }) {
+    this.defaultFilterEntry[filter.name] = filter.filterName
+  }
+
+  @Mutation
   SET_DEFAULT_FILTER(filter: { name: VuexFilterListNamespaces; data: VuexFilterListItemEntry[] }) {
     this.filterList[filter.name].default = filter.data
   }
@@ -58,7 +70,7 @@ export default class Filters extends VuexModule {
   }
 
   @Action
-  addDefault(filter: { name: VuexFilterListNamespaces; data: VuexFilterListItemEntry }) {
+  async addDefault(filter: { name: VuexFilterListNamespaces; data: VuexFilterListItemEntry }) {
     const defaultFilter = this.filterList[filter.name].default || []
 
     const exitingFilterIndex = defaultFilter.findIndex((e) => e.name === filter.data.name)
@@ -162,11 +174,64 @@ export default class Filters extends VuexModule {
   }
 
   @Action
-  initDefaultFilter(type: VuexFilterListNamespaces) {
+  trySetDefaultFilter(payload: { name: VuexFilterListNamespaces }) {
+    const defaultFilter = this.defaultFilterEntry[payload.name]
+
+    const isCurrentFilterEmpty = this.filterList[payload.name].current.length === 0
+    const isDefaultFilterExists = !!defaultFilter
+
+    const unitedFilters = [...this.filterList[payload.name].default, ...this.filterList[payload.name].custom]
+
+    const firstAviableFilter = () => {
+      if (unitedFilters.length) {
+        return unitedFilters[0].filter
+      }
+
+      return []
+    }
+
+    if (isCurrentFilterEmpty) {
+      if (isDefaultFilterExists) {
+        const filter = unitedFilters.find((e) => e.name === defaultFilter)
+
+        if (!filter) {
+          this.context.commit('SET_DEFAULT_FILTER_ENTRY', {
+            name: payload.name,
+            filterName: '',
+          })
+
+          this.context.commit('SET_CURRENT_FILTER', {
+            name: payload.name,
+            data: firstAviableFilter(),
+          })
+
+          return true
+        }
+
+        this.context.commit('SET_CURRENT_FILTER', {
+          name: payload.name,
+          data: filter.filter,
+        })
+
+        return true
+      }
+
+      this.context.commit('SET_CURRENT_FILTER', {
+        name: payload.name,
+        data: firstAviableFilter(),
+      })
+
+      return true
+    }
+
+    return false
+  }
+
+  @Action
+  async initDefaultFilter(type: VuexFilterListNamespaces) {
     if (type === 'tests') {
-      this.context.dispatch('addDefault', {
-        name: type,
-        data: {
+      const filtersList = [
+        {
           name: 'Текущий пользователь',
           filter: [
             {
@@ -192,6 +257,17 @@ export default class Filters extends VuexModule {
             },
           ],
         },
+      ]
+
+      for (const filterKey in filtersList) {
+        await this.context.dispatch('addDefault', {
+          name: type,
+          data: filtersList[filterKey],
+        })
+      }
+
+      await this.context.dispatch('trySetDefaultFilter', {
+        name: type,
       })
     }
   }
