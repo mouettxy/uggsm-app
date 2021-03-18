@@ -29,12 +29,3 @@ if (module.hot) {
     requireComponents(req1)
   })
 }
-
-let req2 = require.context('../templates', true, /\.(vue)$/i)
-if (module.hot) {
-  module.hot.accept(req2.id, () => {
-    req2 = require.context('../templates', true, /\.(vue)$/i)
-    requireComponents(req2)
-  })
-}
-requireComponents(req2)

@@ -2,7 +2,7 @@
 {
   "name": "settings",
   "meta": {
-    "header": "Настройки",
+    "header": "Настройки"
   }
 }
 </route>

@@ -2,7 +2,7 @@
 {
   "name": "orders",
   "meta": {
-    "header": "Заказы",
+    "header": "Заказы"
   }
 }
 </route>

@@ -2,7 +2,7 @@
 {
   "name": "calls",
   "meta": {
-    "header": "Звонки",
+    "header": "Звонки"
   }
 }
 </route>
