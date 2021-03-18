@@ -1,97 +1,93 @@
-<template lang="pug">
-form(@submit.prevent='handleSubmit')
-  v-row
-    v-col(cols='5')
-      ug-base-input(
-        v-model='name',
-        :rules='validators.name',
-        :hint='nameHint',
-        label='Название роли'
-      )
-    v-col(cols='5')
-      ug-base-input(
-        v-model='value',
-        :rules='validators.value',
-        :hint='valueHint',
-        label='Переменная роли'
-      )
-    v-col(cols='2')
-      v-btn(
-        type='submit',
-        height='40',
-        depressed,
-        color='primary',
-        block
-      )
-        v-icon(left) mdi-content-save
-        span Добавить
-  v-row
-    v-col(cols='12')
-      v-textarea(
-        v-model='description',
-        outlined,
-        label='Опциональный комментарий описывающий роль в системе',
-        hide-details,
-        height='2'
-      )
+<template>
+  <form @submit.prevent="handleSubmit">
+    <v-row>
+      <v-col cols="5">
+        <ug-base-input v-model="name" :hint="nameHint" label="Название роли" :rules="validators.name"></ug-base-input>
+      </v-col>
+      <v-col cols="5">
+        <ug-base-input
+          v-model="value"
+          :hint="valueHint"
+          label="Переменная роли"
+          :rules="validators.value"
+        ></ug-base-input>
+      </v-col>
+      <v-col cols="2">
+        <v-btn block color="primary" depressed height="40" type="submit">
+          <v-icon left>mdi-content-save</v-icon>
+          <span>Добавить</span>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-textarea
+          v-model="description"
+          height="2"
+          hide-details
+          label="Опциональный комментарий описывающий роль в системе"
+          outlined
+        ></v-textarea>
+      </v-col>
+    </v-row>
+  </form>
 </template>
 
-<script lang="ts">
+<script>
+import UgBaseInput from '@/components/base/ui/base-input/base-input'
+
 import RoleAPI from '@/api/role'
-import { Component, Vue } from 'vue-property-decorator'
 
-@Component
-export default class UgRoleAdd extends Vue {
-  public value = ''
+export default {
+  name: 'ug-role-add',
 
-  public name = ''
+  components: {
+    UgBaseInput,
+  },
 
-  public description = ''
+  data: () => ({
+    validators: {
+      name: [(v) => (v || '').length > 0 || 'Обязательное поле для заполнения'],
+      value: [(v) => (v || '').length > 0 || 'Обязательное поле для заполнения'],
+    },
 
-  public showForm = false
+    value: '',
 
-  public nameHint = `
-  #### Рекомендации к заполнению
-  
-  - Должно быть написано на русском, отображается в интерфейсе
-  - Должно отражать краткое значение роли в системе
-  `
+    name: '',
 
-  public valueHint = `
-  #### Рекомендации к заполнению
+    description: '',
 
-  - Должно быть написано на английском, используется в коде
-  `
+    showForm: false,
 
-  public validators = {
-    name: [(v: any) => (v || '').length > 0 || 'Обязательное поле для заполнения'],
-    value: [(v: any) => (v || '').length > 0 || 'Обязательное поле для заполнения'],
-  }
+    nameHint: `#### Рекомендации к заполнению \n - Должно быть написано на русском, отображается в интерфейсе \n - Должно отражать краткое значение роли в системе`,
 
-  clearModel() {
-    this.value = ''
-    this.name = ''
-    this.description = ''
-  }
+    valueHint: `#### Рекомендации к заполнению \n - Должно быть написано на английском, используется в коде`,
+  }),
 
-  async handleSubmit() {
-    const apiResponse = await RoleAPI.create({
-      value: this.value,
-      name: this.name,
-      description: this.description,
-    })
+  methods: {
+    clearModel() {
+      this.value = ''
+      this.name = ''
+      this.description = ''
+    },
 
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error(`Произошла ошибка при создании роли ${this.name} <${this.value}>`)
-      return
-    }
+    async handleSubmit() {
+      const apiResponse = await RoleAPI.create({
+        value: this.value,
+        name: this.name,
+        description: this.description,
+      })
 
-    this.$notification.success(`Роль ${this.name} <${this.value}> успешно создана`)
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error(`Произошла ошибка при создании роли ${this.name} <${this.value}>`)
+        return
+      }
 
-    this.clearModel()
-    this.$emit('deactivate')
-  }
+      this.$notification.success(`Роль ${this.name} <${this.value}> успешно создана`)
+
+      this.clearModel()
+      this.$emit('deactivate')
+    },
+  },
 }
 </script>
-
-<style lang="sass"></style>

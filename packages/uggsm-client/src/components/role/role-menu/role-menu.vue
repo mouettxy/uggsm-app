@@ -1,138 +1,142 @@
-<template lang="pug">
-v-card.ug-role-menu(
-  width='278',
-  dark
-)
-  v-list(
-    nav,
-    dark
-  )
-    v-subheader Доступные роли
-    v-list-item-group(
-      v-model='selectedItem',
-      @change='roleChange',
-      mandatory,
-      active-class='ug-role-menu__item--active'
-    )
-      v-slide-y-transition(group)
-        v-list-item(
-          v-for='item in roles',
-          :key='item.name',
-          two-line
-        )
-          v-list-item-content
-            v-list-item-title {{ item.name }}
-            v-list-item-subtitle
-              v-chip.ug-role-menu__item-chip(
-                x-small,
-                label,
-                color='secondary'
-              ) {{ item.value }}
-          v-list-item-action
-            v-menu(offset-x)
-              template(#activator='{ on, attrs }')
-                v-btn(
-                  v-on='on',
-                  v-bind='attrs',
-                  icon
-                )
-                  v-icon mdi-dots-horizontal
-              v-list(dense)
-                v-list-item(@click='roleDelete(item.value)')
-                  v-list-item-title.error--text Удалить роль
-                v-menu(
-                  :close-on-content-click='false',
-                  offset-y,
-                  offset-overwlof
-                )
-                  template(#activator='{ on, attrs }')
-                    v-list-item(
-                      v-on='on',
-                      v-bind='attrs'
-                    )
-                      v-list-item-title.primary--text Назначить роль
-                  v-card
-                    v-card-text
-                      ug-base-autocomplete.mb-2(
-                        v-model='user',
-                        label='Пользователь',
-                        hide-details,
-                        endpoint='/master',
-                        disallow-free-type,
-                        dense
-                      )
-                      v-btn.mt-2(
-                        @click='roleAssign(item.value)',
-                        depressed,
-                        color='secondary',
-                        block
-                      ) Назначить
-                v-list-item(@click='roleCopyResources(item.value)')
-                  v-list-item-title.secondary--text Скопировать ресурсы
+<template>
+  <v-card class="ug-role-menu" dark width="278">
+    <v-list dark nav>
+      <v-subheader>Доступные роли</v-subheader>
+      <v-list-item-group
+        v-model="selectedItem"
+        active-class="ug-role-menu__item--active"
+        mandatory
+        @change="roleChange"
+      >
+        <v-slide-y-transition group>
+          <v-list-item v-for="item in roles" :key="item.name" two-line>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+              <v-list-item-subtitle>
+                <v-chip class="ug-role-menu__item-chip" color="secondary" label x-small>{{ item.value }}</v-chip>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-menu offset-x>
+                <template #activator="{ on, attrs }">
+                  <v-btn v-bind="attrs" icon v-on="on">
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list dense>
+                  <v-list-item @click="roleDelete(item.value)">
+                    <v-list-item-title class="error--text">Удалить роль</v-list-item-title>
+                  </v-list-item>
+                  <v-menu :close-on-content-click="false" offset-overwlof offset-y>
+                    <template #activator="{ on, attrs }">
+                      <v-list-item v-bind="attrs" v-on="on">
+                        <v-list-item-title class="primary--text">Назначить роль</v-list-item-title>
+                      </v-list-item>
+                    </template>
+                    <v-card>
+                      <v-card-text>
+                        <ug-base-autocomplete
+                          v-model="user"
+                          class="mb-2"
+                          dense
+                          disallow-free-type
+                          endpoint="/master"
+                          hide-details
+                          label="Пользователь"
+                        ></ug-base-autocomplete>
+                        <v-btn block class="mt-2" color="secondary" depressed @click="roleAssign(item.value)">
+                          Назначить
+                        </v-btn>
+                      </v-card-text>
+                    </v-card>
+                  </v-menu>
+                  <v-list-item @click="roleCopyResources(item.value)">
+                    <v-list-item-title class="secondary--text">Скопировать ресурсы</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </v-list-item-action>
+          </v-list-item>
+        </v-slide-y-transition>
+      </v-list-item-group>
+    </v-list>
+  </v-card>
 </template>
 
-<script lang="ts">
-import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
+<script>
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete'
 
 import { copyTextToClipboard } from '@/api/helpers'
 import RoleAPI from '@/api/role'
 import UserAPI from '@/api/user'
-import { Roles } from '@/typings/api/role'
 import { compact, find, includes, map } from 'lodash'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component({
-  components: {
-    UgBaseAutocomplete,
+export default {
+  name: 'ug-role-menu',
+
+  components: { UgBaseAutocomplete },
+
+  props: {
+    items: {
+      required: false,
+      type: Array,
+      default: () => [],
+    },
+
+    rolesToHide: {
+      required: false,
+      type: Array,
+      default: () => [],
+    },
   },
-})
-export default class UgRoleMenu extends Vue {
-  @Prop() items!: Roles
 
-  @Prop() rolesToHide!: Array<string>
+  data: () => ({
+    user: '',
+    selectedItem: 0,
+  }),
 
-  public user = ''
+  computed: {
+    roles() {
+      return compact(map(this.items, (e) => (!includes(this.rolesToHide, e.value) ? e : null)))
+    },
+  },
 
-  public selectedItem = 0
+  methods: {
+    roleChange() {
+      if (this.items[this.selectedItem]) {
+        this.$emit('select', this.roles[this.selectedItem])
+      }
+    },
 
-  get roles() {
-    return compact(map(this.items, (e) => (!includes(this.rolesToHide, e.value) ? e : null)))
-  }
-
-  roleChange() {
-    if (this.items[this.selectedItem]) {
-      this.$emit('select', this.roles[this.selectedItem])
-    }
-  }
-
-  async roleDelete(role: string) {
-    const apiResponse = await RoleAPI.delete(role)
-
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error(`Ошибка при удалении роли <${role}>`)
-    }
-
-    this.$notification.success(`Роль <${role}> успешно удалена`)
-  }
-
-  async roleAssign(role: string) {
-    if (this.user) {
-      const apiResponse = await UserAPI.update(this.user, { role })
+    async roleDelete(role) {
+      const apiResponse = await RoleAPI.delete(role)
 
       if (!(apiResponse.status === 200)) {
-        this.$notification.error('Ошибка сервера при назначении роли')
-        return
+        this.$notification.error(`Ошибка при удалении роли <${role}>`)
       }
 
-      this.$notification.success('Пользователю успешно назначена роль')
-    } else {
-      this.$notification.error('Не выбран пользователь')
-    }
-  }
+      this.$notification.success(`Роль <${role}> успешно удалена`)
+    },
 
-  roleCopyResources(role: string) {
-    copyTextToClipboard(JSON.stringify(find(this.items, { value: role })?.abilities))
-  }
+    async roleAssign(role) {
+      if (this.user) {
+        const apiResponse = await UserAPI.update(this.user, { role })
+
+        if (!(apiResponse.status === 200)) {
+          this.$notification.error('Ошибка сервера при назначении роли')
+          return
+        }
+
+        this.$notification.success('Пользователю успешно назначена роль')
+      } else {
+        this.$notification.error('Не выбран пользователь')
+      }
+    },
+
+    roleCopyResources(role) {
+      copyTextToClipboard(JSON.stringify(find(this.items, { value: role })?.abilities))
+    },
+  },
 }
 </script>
 

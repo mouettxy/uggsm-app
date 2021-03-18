@@ -1,71 +1,79 @@
-<template lang="pug">
-.ug-role-list
-  v-row
-    v-col(cols='2')
-      ug-role-menu(
-        :roles-to-hide='rolesToHide',
-        :items='roles',
-        @select='handleMenuSelect'
-      )
-    v-col(cols='10')
-      ug-role-information(:role='currentRole')
+<template>
+  <div class="ug-role-list">
+    <v-row>
+      <v-col cols="2">
+        <ug-role-menu :items="roles" :roles-to-hide="rolesToHide" @select="handleMenuSelect"></ug-role-menu>
+      </v-col>
+      <v-col cols="10">
+        <ug-role-information :role="currentRole"></ug-role-information>
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
-<script lang="ts">
+<script>
+import UgRoleMenu from '../role-menu/role-menu'
+import UgRoleInformation from '../role-information/role-information'
 import RoleAPI from '@/api/role'
-import { Role, Roles } from '@/typings/api/role'
-import { Socket } from 'vue-socket.io-extended'
-import { Component, Vue } from 'vue-property-decorator'
 import { find } from 'lodash'
 
 const HIDE_ROLES = {
   ADMINISTRATOR: 'administrator',
 }
 
-@Component
-export default class UgRoleList extends Vue {
-  public roles: Roles | null = null
+export default {
+  name: 'ug-role-list',
 
-  public role: Role | null = null
+  components: {
+    UgRoleMenu,
+    UgRoleInformation,
+  },
 
-  public rolesToHide = [HIDE_ROLES.ADMINISTRATOR]
+  sockets: {
+    async ['roles updated']() {
+      this.roles = await this.fetchRoles()
+    },
+  },
 
-  @Socket('roles updated')
-  async onSocketRolesUpdated() {
+  data: () => ({
+    roles: null,
+    role: null,
+    rolesToHide: [HIDE_ROLES.ADMINISTRATOR],
+  }),
+
+  computed: {
+    currentRole() {
+      if (!this.role && this.roles) {
+        return find(this.roles, (e) => !this.rolesToHide.includes(e.value))
+      } else if (this.role) {
+        return this.role
+      }
+
+      return ''
+    },
+  },
+
+  mounted: async function () {
     this.roles = await this.fetchRoles()
-  }
+  },
 
-  get currentRole() {
-    if (!this.role && this.roles) {
-      return find(this.roles, (e) => !this.rolesToHide.includes(e.value))
-    } else if (this.role) {
-      return this.role
-    }
+  methods: {
+    async fetchRoles() {
+      this.$emit('loading', true)
+      const apiResponse = await RoleAPI.getAll()
 
-    return ''
-  }
+      if (!(apiResponse.status === 200)) {
+        return null
+      }
 
-  async fetchRoles() {
-    this.$emit('loading', true)
-    const apiResponse = await RoleAPI.getAll()
+      this.$emit('loading', false)
 
-    if (!(apiResponse.status === 200)) {
-      return null
-    }
+      return apiResponse.data
+    },
 
-    this.$emit('loading', false)
-
-    return apiResponse.data
-  }
-
-  handleMenuSelect(role: Role) {
-    this.role = role
-  }
-
-  async mounted() {
-    this.roles = await this.fetchRoles()
-  }
+    handleMenuSelect(role) {
+      this.role = role
+    },
+  },
 }
 </script>
-
-<style lang="sass"></style>

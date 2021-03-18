@@ -1,47 +1,57 @@
-<template lang="pug">
-v-card
-  v-progress-linear(
-    :active='isLoading',
-    indeterminate
-  )
-  v-card-title 
-    span Панель ролей
-    v-spacer
-    ug-btn-toggle(
-      v-model='showAddRole',
-      label='Добавить роль',
-      icon-right='mdi-plus',
-      depressed,
-      color='primary',
-      active-icon='mdi-plus mdi-rotate-45',
-      active-color='error'
-    )
-
-  v-card-text
-    v-slide-y-transition
-      ug-role-add(
-        v-if='showAddRole',
-        @deactivate='handleRoleAddDeactivate'
-      )
-    v-divider
-    ug-role-list(@loading='handleListLoading')
+<template>
+  <v-card>
+    <v-progress-linear :active="isLoading" indeterminate></v-progress-linear>
+    <v-card-title>
+      <span>Панель ролей</span>
+      <v-spacer></v-spacer>
+      <ug-btn-toggle
+        v-model="showAddRole"
+        active-color="error"
+        active-icon="mdi-plus mdi-rotate-45"
+        color="primary"
+        depressed
+        icon-right="mdi-plus"
+        label="Добавить роль"
+      ></ug-btn-toggle>
+    </v-card-title>
+    <v-card-text>
+      <v-slide-y-transition>
+        <ug-role-add v-if="showAddRole" @deactivate="handleRoleAddDeactivate"></ug-role-add>
+      </v-slide-y-transition>
+      <v-divider></v-divider>
+      <ug-role-list @loading="handleListLoading"></ug-role-list>
+    </v-card-text>
+  </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import UgBtnToggle from '@/components/base/ui/btn-toggle/btn-toggle'
+import UgRoleAdd from './role-add/role-add'
+import UgRoleList from './role-list/role-list'
 
-@Component
-export default class UgRoleWidget extends Vue {
-  public showAddRole = false
+export default {
+  name: 'ug-role-widget',
 
-  public isLoading = false
+  components: {
+    UgBtnToggle,
+    UgRoleAdd,
+    UgRoleList,
+  },
 
-  handleRoleAddDeactivate() {
-    this.showAddRole = false
-  }
+  data: () => ({
+    showAddRole: false,
 
-  handleListLoading(state: boolean) {
-    this.isLoading = state
-  }
+    isLoading: false,
+  }),
+
+  methods: {
+    handleRoleAddDeactivate() {
+      this.showAddRole = false
+    },
+
+    handleListLoading(state) {
+      this.isLoading = state
+    },
+  },
 }
 </script>
