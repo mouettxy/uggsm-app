@@ -33,7 +33,7 @@
       )
         span
           | Результатов на странице:
-          v-menu(content-class='ug-table-remote__meta-limit')
+          ug-responsive-menu.d-inline-block(:menu-props='{ "content-class": "ug-table-remote__meta-limit" }')
             template(#activator='{on, attrs}')
               .ug-table-remote__meta-limit__chip(
                 v-on='on',
@@ -92,38 +92,40 @@
       v-intersect.quiet='handlePaginationIntersect'
     )
 
-  v-fab-transition
-    v-btn(
-      v-if='!isTopPanelVisible',
-      :style='{ bottom: "64px" }',
-      @click='moveToTopPanelVisible',
-      small,
-      left,
-      fixed,
-      fab,
-      dark,
-      color='primary',
-      bottom
-    )
-      v-icon mdi-chevron-up
-  v-fab-transition
-    v-btn(
-      v-if='!isPaginationVisible',
-      @click='moveToPaginationVisible',
-      small,
-      left,
-      fixed,
-      fab,
-      dark,
-      color='primary',
-      bottom
-    )
-      v-icon mdi-chevron-down
+  template(v-if='isMobile')
+    v-fab-transition
+      v-btn(
+        v-if='!isTopPanelVisible',
+        :style='{ bottom: "64px" }',
+        @click='moveToTopPanelVisible',
+        small,
+        left,
+        fixed,
+        fab,
+        dark,
+        color='primary',
+        bottom
+      )
+        v-icon mdi-chevron-up
+    v-fab-transition
+      v-btn(
+        v-if='!isPaginationVisible',
+        @click='moveToPaginationVisible',
+        small,
+        left,
+        fixed,
+        fab,
+        dark,
+        color='primary',
+        bottom
+      )
+        v-icon mdi-chevron-down
 </template>
 
 <script>
 import { debounce } from 'lodash'
 import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
 import UgTableRemotePagination from './table-remote-pagination/table-remote-pagination'
 import TableRemoteHelpers from './table-remote.helpers'
 import UgTabelRemotePanel from './table-remote-panel/table-remote-panel'
@@ -137,6 +139,7 @@ export default {
     UgTabelRemotePanel,
     UgBaseChip,
     UgTableRemotePagination,
+    UgResponsiveMenu,
   },
 
   mixins: [TableRemoteHelpers, Responsive],
