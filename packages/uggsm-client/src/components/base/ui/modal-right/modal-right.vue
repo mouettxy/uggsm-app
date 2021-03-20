@@ -3,7 +3,7 @@ v-dialog.ug-modal-right(
   v-model='model',
   :fullscreen='isMobile',
   :content-class='`right-modal${isMobile ? " is-mobile" : ""}`',
-  transition='dialog-bottom-transition'
+  transition='dialog-right-transition'
 )
   template(#activator='{on, attrs}')
     slot(
@@ -11,7 +11,7 @@ v-dialog.ug-modal-right(
       :on='on',
       :attrs='attrs'
     )
-  v-card
+  v-card.ug-modal-right__card
     slot
     slot(name='content')
 </template>
@@ -38,18 +38,24 @@ export default {
       },
 
       set: function (value) {
-        if (!value) {
-          document.documentElement.classList.remove('overflow-y-hidden')
-        } else {
-          document.documentElement.classList.add('overflow-y-hidden')
-        }
         this.$emit('input', value)
       },
     },
   },
 
-  mounted: function () {
-    document.documentElement.classList.add('overflow-y-hidden')
+  watch: {
+    model: {
+      immediate: true,
+      handler: function (value) {
+        if (this.isMobile) {
+          if (!value) {
+            document.documentElement.classList.remove('overflow-y-hidden')
+          } else {
+            document.documentElement.classList.add('overflow-y-hidden')
+          }
+        }
+      },
+    },
   },
 }
 </script>
@@ -61,10 +67,21 @@ export default {
   width: 65vw !important
   top: 0
   left: 35vw
+  max-height: 100% !important
   border-radius: 0px !important
-  max-height: 100%
   margin: 0
   &.is-mobile
     width: 100% !important
     left: 0
+
+  .ug-modal-right__card
+    height: 100%
+
+.dialog-right-transition
+  &-leave-active
+    position: absolute
+  &-enter-active, &-leave, &-leave-to
+    transition: all .5s
+  &-enter, &-leave-to
+    transform: translateX(110%)
 </style>
