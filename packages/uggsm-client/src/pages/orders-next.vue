@@ -10,28 +10,72 @@
 <template lang="pug">
 .page-orders
   ug-table-remote(
+    ref='table',
+    :modify-items-function='modifyItems',
     :headers-schema='headersSchema',
+    :filter-tokens='filterTokens',
     :fetch-function='fetchFunction',
     socket-event='orders updated',
     include-search-field,
     include-office-field,
     include-middle-toolbar,
     include-header,
-    headers-schema-id='orders-id'
+    headers-schema-id='orders-id',
+    filter-name='orders'
   )
+    template(#item.id='{value, item}')
+      o-order-modal-regular(
+        :orderid='item.trueId',
+        :new-order='false'
+      )
+        template(#activator='{on, attrs}')
+          v-btn(
+            v-on='on',
+            v-bind='attrs',
+            :style='{ background: item.quick ? "rgba(255, 82, 82, .4)" : "" }',
+            text,
+            small
+          )
+            v-icon(left) mdi-pencil
+            span {{ value }}
+    template(#item.status='{value, item}')
+      ug-order-status(
+        :status='value',
+        :orderid='item.id',
+        scope='table'
+      )
+    template(#item.estimatedCloseAt='{value, item}')
+      ug-order-edit-time(
+        :time='value',
+        :orderid='item.id',
+        :order-status='item.status',
+        small,
+        path='estimatedCloseAt'
+      )
+    template(#item.customer='{value}')
+      span {{ value }}
+    template(#item.master='{value}')
+      span {{ value }}
 </template>
 
 <script>
 import UgTableRemote from '@/components/base/table/table-remote/table-remote'
+import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time'
+import UgOrderStatus from '@/components/order/order-status/order-status'
 
 import OrderAPI from '@/api/order'
 import { mapState } from 'vuex'
+import { Filters } from '@/helpers/filterHelper'
+import { map, reduce } from 'lodash'
+import moment from 'moment'
 
 export default {
   name: 'ug-page-orders',
 
   components: {
     UgTableRemote,
+    UgOrderEditTime,
+    UgOrderStatus,
   },
 
   data: function () {
@@ -40,7 +84,7 @@ export default {
         id: '№',
         estimatedCloseAt: 'Срок заказа',
         status: 'Статус',
-        client: 'Клиент',
+        customer: 'Клиент',
         master: 'Мастер',
         created: 'Создан',
         phoneBrand: 'Бренд',
@@ -51,6 +95,8 @@ export default {
         notifications: 'Уведомления',
         adversitement: 'Рекламная кампания',
       },
+
+      filterTokens: Filters.orders,
     }
   },
 
@@ -60,9 +106,57 @@ export default {
     }),
   },
 
+  watch: {
+    office: function () {
+      const { table } = this.$refs
+
+      table.updateTable()
+    },
+  },
+
   methods: {
+    getTime(date) {
+      const m = moment(date)
+      return `${m.format('DD.MM.YYYY')} ${m.format('HH:mm')}`
+    },
+
+    modifyItems(items) {
+      return map(items, (e) => {
+        const createTime = this.getTime(e.createdAt)
+        const totalWorks = reduce(
+          e.statusWork,
+          (a, el) => {
+            a += el.price
+            return a
+          },
+          0
+        )
+        let id = String(e.id)
+        if (e.warrantyOrderId) {
+          id = `${e.warrantyOrderId}/${e.warrantyCounter}`
+        }
+
+        return {
+          id,
+          trueId: e.id,
+          estimatedCloseAt: e.estimatedCloseAt,
+          status: e.status,
+          created: createTime,
+          master: e.master?.credentials || '',
+          phoneModel: e.phoneModel,
+          phoneBrand: e.phoneBrand,
+          password: e.password,
+          declaredDefect: e.declaredDefect,
+          quick: e.quick,
+          customer: e.customerName,
+          clientId: e.customer ? e.customer.id : false,
+          totalWorks,
+        }
+      })
+    },
+
     async fetchFunction(data) {
-      const response = await OrderAPI.getPaginated({
+      const response = await OrderAPI.getPaginatedNew({
         ...data,
         office: this.office._id,
       })
