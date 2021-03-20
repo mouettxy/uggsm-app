@@ -175,7 +175,7 @@ export default {
 
     filterValue: {
       required: false,
-      type: [String, Number, Array, Object, Boolean],
+      type: [String, Number, Array, Object, Boolean, Date],
       default: '',
     },
   },
