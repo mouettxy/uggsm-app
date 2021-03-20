@@ -377,4 +377,7 @@ export default {
 
   thead tr th
     white-space: nowrap
+
+  tbody tr td
+    white-space: nowrap
 </style>

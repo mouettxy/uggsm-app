@@ -2,6 +2,7 @@
 v-btn.ug-base-btn(
   :type='type',
   :text='text',
+  :small='small',
   :icon='!!icon && !label',
   :disabled='disabled',
   :depressed='depressed',
@@ -79,6 +80,11 @@ export default {
     },
 
     block: {
+      required: false,
+      type: Boolean,
+    },
+
+    small: {
       required: false,
       type: Boolean,
     },

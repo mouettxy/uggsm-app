@@ -13,16 +13,16 @@
     :menu-props='{ "close-on-content-click": false, "min-width": 200, "max-height": 300, bottom: true }'
   )
     template(v-slot:activator='{ on, attrs }')
-      v-btn(
+      ug-base-btn(
         v-on='on',
         v-bind='attrs',
         :style='{ color: accessibleColor(statusColor) }',
+        :label='status',
         :color='statusColor',
         small,
+        iconRight='mdi-chevron-down',
         depressed
       )
-        span {{ status }}
-        v-icon(right) mdi-chevron-down
     .ug-order-status__lists
       template(v-for='head in statusList')
         v-list.ug-order-status__list(
@@ -47,6 +47,7 @@
 <script>
 import { filter, each } from 'lodash'
 import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 import { getCorrectTextColor } from '@/api/helpers'
 import { groupedStatuses } from '@/api/helpers/enums'
 import OrderAPI from '@/api/order'
@@ -57,6 +58,7 @@ export default {
 
   components: {
     UgResponsiveMenu,
+    UgBaseBtn,
   },
 
   props: {
@@ -153,7 +155,8 @@ export default {
 
 <style lang="sass">
 .ug-order-status
-  width: 250px !important
+  .ug-base-btn
+    width: 100%
   &__list
     &-subheader
       height: 24px !important

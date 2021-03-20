@@ -15,7 +15,9 @@
       :label='label',
       :hide-details='true',
       :disabled='disabled',
+      :clearable='displayClearIcon',
       @focus='handleFocus',
+      @click:clear='$emit("clear", $event)',
       @blur='handleBlur',
       dense
     )
@@ -53,7 +55,9 @@
       :label='label',
       :hide-details='true',
       :disabled='disabled',
+      :clearable='displayClearIcon',
       @focus='handleFocus',
+      @click:clear='$emit("clear", $event)',
       @blur='handleBlur',
       v-mask='phoneMask',
       dense
@@ -160,6 +164,11 @@ export default {
       default: true,
     },
 
+    clearable: {
+      required: false,
+      type: [Boolean],
+    },
+
     placeholder: {
       required: false,
       type: [String],
@@ -190,6 +199,14 @@ export default {
       } else {
         return false
       }
+    },
+
+    displayClearIcon() {
+      if (this.clearable && this.model) {
+        return true
+      }
+
+      return false
     },
 
     attrs() {
