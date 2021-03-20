@@ -68,6 +68,7 @@ ug-responsive-menu(:menu-props='menuProps')
               :predefined-items='predefinedValue',
               :endpoint='token.autocomplete',
               return-object,
+              query-search='q',
               label='Выберите условие'
             )
           template(#autocomplete-input)
@@ -82,6 +83,7 @@ ug-responsive-menu(:menu-props='menuProps')
               v-model='value',
               :path='token.autocomplete',
               return-object,
+              query-search='q',
               label='Выберите условие',
               fetch-on-mount
             )

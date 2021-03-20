@@ -66,6 +66,12 @@ export default {
       required: false,
       type: Boolean,
     },
+
+    querySearch: {
+      required: false,
+      type: String,
+      default: 'search',
+    },
   },
 
   data: function () {
@@ -109,7 +115,7 @@ export default {
         url: this.endpoint,
         method: 'get',
         params: {
-          search: search,
+          [this.querySearch]: search,
         },
       })
 
