@@ -128,6 +128,7 @@ import UgTableRemotePagination from './table-remote-pagination/table-remote-pagi
 import TableRemoteHelpers from './table-remote.helpers'
 import UgTabelRemotePanel from './table-remote-panel/table-remote-panel'
 import Responsive from '@/mixins/responsive'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ug-table-remote',
@@ -156,10 +157,13 @@ export default {
       type: Function,
     },
 
-    includeSearchField: {
+    modifyItemsFunction: {
       required: false,
-      type: Boolean,
+      type: Function,
+      default: (items) => {
+        return items
       },
+    },
 
     filterName: {
       required: true,
@@ -172,7 +176,7 @@ export default {
       default: () => [],
     },
 
-    includeMiddleToolbar: {
+    includeOfficeField: {
       required: false,
       type: Boolean,
     },
@@ -210,10 +214,24 @@ export default {
 
       serverItems: 0,
       serverPages: 1,
+
+      debounce: 300,
     }
   },
 
   computed: {
+    ...mapState({
+      vuexCurrentFilter: (state) => state.filters.filterList,
+    }),
+
+    currentFilter() {
+      return this.vuexCurrentFilter[this.filterName].current
+    },
+
+    debouncedUpdateTable() {
+      return debounce(this.updateTable, this.debounce)
+    },
+
     tableHeight() {
       if (this.isMobile) {
         return '100%'
@@ -224,7 +242,9 @@ export default {
 
     tableItems() {
       if (this.items && this.items.docs) {
-        return this.items.docs
+        const items = this.items.docs
+
+        return this.modifyItemsFunction(items)
       }
 
       return []
@@ -245,6 +265,15 @@ export default {
 
   watch: {
     search: function () {
+      this.debouncedUpdateTable()
+    },
+
+    currentFilter: function () {
+      this.options = {
+        ...this.options,
+        filter: this.currentFilter,
+      }
+
       this.debouncedUpdateTable()
     },
   },
@@ -295,7 +324,8 @@ export default {
     async updateTable() {
       this.isLoading = true
       if (this.options) {
-        const response = await this.fetchFunction(this.processQuery(this.options))
+        const processedQuery = this.processQuery(this.options)
+        const response = await this.fetchFunction(processedQuery)
 
         this.serverItems = response.totalDocs
         this.serverPages = response.totalPages
@@ -310,7 +340,10 @@ export default {
       this.options = this.generateOptions(1, this.resultsPerPage, this.itemKeyField)
       this.headers = this.generateHeaders(this.headersSchema, this.headersSchemaId)
 
-      this.isLoading = true
+      this.options = {
+        ...this.options,
+        filter: this.currentFilter,
+      }
 
       this.updateTable()
 
