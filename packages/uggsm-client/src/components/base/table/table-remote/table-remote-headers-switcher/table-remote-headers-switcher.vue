@@ -1,9 +1,6 @@
 <template lang="pug">
-v-menu(
-  v-model='menu',
-  :close-on-content-click='false',
-  max-height='400',
-  content-class='ug-table-remote-headers-switcher'
+ug-responsive-menu(
+  :menu-props='{ "close-on-content-click": false, "max-height": 400, "content-class": "ug-table-remote-headers-switcher" }'
 )
   template(#activator='{ on, attrs }')
     .ug-table-remote-headers-switcher__activator(
@@ -32,12 +29,14 @@ v-menu(
 
 <script>
 import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
 
 export default {
   name: 'ug-table-remote-headers-switcher',
 
   components: {
     UgBaseChip,
+    UgResponsiveMenu,
   },
 
   model: {

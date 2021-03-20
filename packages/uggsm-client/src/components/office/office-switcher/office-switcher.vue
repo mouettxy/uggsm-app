@@ -13,11 +13,7 @@
       )
       span.pl-2.accent--text Загрузка...
   template(v-else)
-    v-menu(
-      right,
-      min-width='1',
-      content-class='ug-office-switcher__menu'
-    )
+    ug-responsive-menu(:menu-props='{ right: true, "min-width": 1, "content-class": "ug-office-switcher__menu" }')
       template(#activator='{on, attrs}')
         template(v-if='!currentOffice')
           v-chip(
@@ -58,6 +54,7 @@
 
 <script>
 import UgOfficeSwitcherItem from './office-switcher-item/office-switcher-item'
+import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
 import OfficeAPI from '@/api/office'
 import { mapActions, mapState } from 'vuex'
 
@@ -66,6 +63,7 @@ export default {
 
   components: {
     UgOfficeSwitcherItem,
+    UgResponsiveMenu,
   },
 
   props: {

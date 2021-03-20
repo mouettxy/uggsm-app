@@ -17,7 +17,7 @@
       )
   template(v-else)
     v-bottom-sheet(
-      v-bind='sheetProps',
+      v-bind='sheetPropsModified',
       v-model='model'
     )
       template(#activator='{on, attrs}')
@@ -60,6 +60,15 @@ export default {
     }
   },
 
+  computed: {
+    sheetPropsModified() {
+      return {
+        ...this.sheetProps,
+        'content-class': [this.sheetProps['content-class'] || '', 'ug-responsive-menu-sheet'].join(' '),
+      }
+    },
+  },
+
   methods: {
     close() {
       this.model = false
@@ -67,3 +76,8 @@ export default {
   },
 }
 </script>
+
+<style lang="sass">
+.ug-responsive-menu-sheet.v-bottom-sheet
+  overflow-y: scroll !important
+</style>
