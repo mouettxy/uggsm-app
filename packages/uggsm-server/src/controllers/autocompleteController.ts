@@ -1,16 +1,21 @@
 import { ExtendedRouter } from './../routes/heplers/BaseRouter'
 import { ControllerMethod } from './../interfaces/controller'
 import { BaseController } from './base/BaseController'
-import { filter, isString, map, reduce } from 'lodash'
+import { compact, filter, flatten, isString, lowerCase, map, reduce } from 'lodash'
 import { IAutocompleteController } from '../interfaces'
 import { ClientModel, OfficeModel, OrderModel, RoleModel, UserModel } from '../models'
 import { api } from '../server'
+import { mongoose } from '@typegoose/typegoose'
 
 export class AutocompleteController extends BaseController implements IAutocompleteController {
   private user = UserModel
+
   private order = OrderModel
+
   private client = ClientModel
+
   private office = OfficeModel
+
   private role = RoleModel
 
   private _normalizeQuery = (query: string) => {
@@ -19,6 +24,139 @@ export class AutocompleteController extends BaseController implements IAutocompl
     }
 
     return query
+  }
+
+  public customAutocomplete: ControllerMethod = async (req, res, next) => {
+    const autocompleteInformation: {
+      query: string
+      model: string
+      field: string
+      value: string
+      match: string
+    } = {
+      query: (req.query.q || '') as string,
+      model: (req.query.m || '') as string,
+      field: (req.query.f || '') as string,
+      value: (req.query.v || '') as string,
+      match: (req.query.match || '') as string,
+    }
+
+    const getLookupFields = ({ field, value }: { field: string; value: string }) => {
+      const lookupFields = []
+      const fieldSplit = field.split('.')
+      const valueSplit = value.split('.')
+
+      if (fieldSplit.length > 1) {
+        const lookupField = fieldSplit[0]
+        lookupFields.push(lookupField)
+      }
+
+      if (valueSplit.length > 1) {
+        const lookupField = valueSplit[0]
+        lookupFields.push(lookupField)
+      }
+
+      return lookupFields
+    }
+
+    const getModelLookup = (model: string, fields: Array<string>) => {
+      const skip = ['Adversitement']
+      const schema = Object.entries(mongoose.model(model).schema.obj)
+
+      const refList = filter(schema, (e) => (e[1] as any)?.autopopulate)
+
+      // in e[0] we have name of field
+      const toBePopulated = filter(refList, (e) => fields.includes(e[0]))
+
+      return flatten(
+        compact(
+          map(toBePopulated, (e) => {
+            if (!skip.includes(e[1].ref)) {
+              const from = lowerCase(e[1].ref) + 's'
+              const localField = e[0]
+
+              return [
+                {
+                  $lookup: {
+                    from,
+                    localField,
+                    foreignField: '_id',
+                    as: localField,
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$' + localField,
+                  },
+                },
+              ]
+            }
+          })
+        )
+      )
+    }
+
+    const getCustomMatch = (match) => {
+      if (!match) {
+        return {}
+      }
+
+      const splitted = match.split(':')
+
+      return { [splitted[0]]: splitted[1] }
+    }
+
+    if (!autocompleteInformation.model || !autocompleteInformation.field) {
+      this.badRequest(next, 'Не указан один из необходимых параметров')
+      return
+    }
+
+    if (!mongoose.modelNames().includes(autocompleteInformation.model)) {
+      this.badRequest(next, 'Неверно указана модель')
+      return
+    }
+
+    if (!autocompleteInformation.value) {
+      autocompleteInformation.value = autocompleteInformation.field
+    }
+
+    const aggregation = [
+      ...getModelLookup(
+        autocompleteInformation.model,
+        getLookupFields({
+          field: autocompleteInformation.field,
+          value: autocompleteInformation.value,
+        })
+      ),
+      {
+        $match: {
+          [autocompleteInformation.field]: new RegExp(autocompleteInformation.query || '', 'i') || '',
+          ...getCustomMatch(autocompleteInformation.match),
+        },
+      },
+      {
+        $group: {
+          _id: {
+            text: '$' + autocompleteInformation.field,
+            value: '$' + autocompleteInformation.value,
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          text: '$_id.text',
+          value: '$_id.value',
+        },
+      },
+      {
+        $limit: 20,
+      },
+    ]
+
+    const data = await mongoose.model(autocompleteInformation.model).aggregate(aggregation)
+
+    this.success(res, data)
   }
 
   public customerName: ControllerMethod = async (req, res, next) => {
