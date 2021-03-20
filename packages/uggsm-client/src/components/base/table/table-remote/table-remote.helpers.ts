@@ -60,6 +60,10 @@ export class TableRemoteHelpers extends Vue {
       query.search = this.search
     }
 
+    if (options.filter) {
+      query.filter = options.filter
+    }
+
     const sortDesc = map(options.sortDesc, (e) => (e ? 'desc' : 'asc'))
 
     query.sort = fromPairs(zip(options.sortBy, sortDesc))
