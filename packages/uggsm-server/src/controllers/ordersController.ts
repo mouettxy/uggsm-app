@@ -1,3 +1,5 @@
+import { parsePaginationQuery } from './../services/pagination'
+import { BaseController } from './base/BaseController'
 import { order } from './../middlewares/validators/validateOrder'
 import { MessageInput, MessageItem } from '../services/sms/RedSmsClient'
 import { api } from '../server'
@@ -11,7 +13,7 @@ import generateReport from '../services/reports'
 import { ControllerMethod } from '../interfaces/controller'
 import { RedSmsClient } from '../services/sms/RedSmsClient'
 
-export class OrdersController implements IOrdersController {
+export class OrdersController extends BaseController implements IOrdersController {
   private model = OrderModel
 
   private smsClient = new RedSmsClient()
@@ -60,6 +62,24 @@ export class OrdersController implements IOrdersController {
       res.send(response)
     } catch (error) {
       next(new HttpException(500, error.message))
+    }
+  }
+
+  public getPaginatedFiltered: ControllerMethod = async (req, res, next) => {
+    try {
+      const { query, options } = parsePaginationQuery(req.body, this.model, (query) => {
+        return {
+          ...query,
+          office: req.body.office,
+        }
+      })
+
+      // @ts-ignore
+      const response = await this.model.paginate(query, options)
+
+      this.success(res, response)
+    } catch (error) {
+      this.criticalError(next, error.message)
     }
   }
 

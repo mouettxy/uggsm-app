@@ -23,4 +23,5 @@ export type IOrdersController = {
   createByOffice: ControllerMethod
   updateById: ControllerMethod
   deleteById: ControllerMethod
+  getPaginatedFiltered: ControllerMethod
 }
