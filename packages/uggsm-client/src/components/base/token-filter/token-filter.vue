@@ -175,6 +175,7 @@ export default {
 
 <style lang="sass">
 .ug-token-filter
+  overflow-x: auto
   display: flex
   gap: 4px
   flex-wrap: wrap

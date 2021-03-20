@@ -8,7 +8,12 @@ ug-modal-right(v-model='modal')
       :block='isMobile',
       icon='mdi-filter-menu'
     )
-  v-card-title.table_lightgrey Управление фильтром
+  v-card-title.table_lightgrey.d-flex.justify-space-between
+    span Управление фильтром
+    ug-base-btn(
+      @click='modal = false',
+      icon='mdi-close'
+    )
   v-card-text.py-4
     ug-token-filter(
       ref='filter',
