@@ -4,6 +4,7 @@ import { VuexFilterListItemEntry, VuexFilterListNamespaces } from '@/typings/Tok
 import { cloneDeep } from 'lodash'
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { authModule } from '.'
+import moment from 'moment'
 @Module({
   namespaced: true,
   name: 'filters',
@@ -193,8 +194,9 @@ export default class Filters extends VuexModule {
 
   @Action
   async initDefaultFilter(type: VuexFilterListNamespaces) {
+    let filtersList: any = []
     if (type === 'tests') {
-      const filtersList = [
+      filtersList = [
         {
           name: 'Текущий пользователь',
           filter: [
@@ -222,17 +224,165 @@ export default class Filters extends VuexModule {
           ],
         },
       ]
+    } else if (type === 'orders') {
+      filtersList = [
+        {
+          name: 'Заказы где я мастер',
+          filter: [
+            {
+              token: {
+                value: 'master',
+                type: 'array',
+                name: 'Мастер',
+                autocomplete: '/custom?m=Order&f=master.credentials&v=master._id',
+                compares: ['contains', 'not contains'],
+                disabled: false,
+              },
 
-      for (const filterKey in filtersList) {
-        await this.context.dispatch('addDefault', {
-          name: type,
-          data: filtersList[filterKey],
-        })
-      }
+              value: [
+                {
+                  text: authModule.user?.credentials as string,
+                  value: authModule.user?._id as string,
+                },
+              ],
 
-      await this.context.dispatch('trySetDefaultFilter', {
+              compares: 'contains',
+              disabled: false,
+              display: false,
+            },
+          ],
+        },
+        {
+          name: 'Заказы где я менеджер',
+          filter: [
+            {
+              token: {
+                value: 'manager',
+                type: 'array',
+                name: 'Менеджер',
+                autocomplete: '/custom?m=Order&f=manager.credentials&v=manager._id',
+                compares: ['contains', 'not contains'],
+                disabled: false,
+              },
+
+              value: [
+                {
+                  text: authModule.user?.credentials as string,
+                  value: authModule.user?._id as string,
+                },
+              ],
+
+              compares: 'contains',
+              disabled: false,
+              display: false,
+            },
+          ],
+        },
+        {
+          name: 'Просроченые заказы',
+          filter: [
+            {
+              token: {
+                value: 'estimatedCloseAt',
+                type: 'date',
+                name: 'Примерная дата готовности',
+                compares: ['between', 'greater than', 'not greater than'],
+                disabled: false,
+              },
+
+              value: moment().startOf('day').toISOString(),
+
+              compares: 'not greater than',
+              disabled: false,
+              display: false,
+            },
+            {
+              token: {
+                value: 'status',
+                type: 'array',
+                name: 'Статус',
+                autocomplete: '/custom?m=Order&f=status',
+                compares: ['contains', 'not contains'],
+                disabled: false,
+              },
+
+              value: [
+                {
+                  text: 'Закрыт',
+                  value: 'Закрыт',
+                },
+              ],
+
+              compares: 'not contains',
+              disabled: false,
+              display: false,
+            },
+          ],
+        },
+        {
+          name: 'Исключить закрытые заказы',
+          filter: [
+            {
+              token: {
+                value: 'status',
+                type: 'array',
+                name: 'Статус',
+                autocomplete: '/custom?m=Order&f=status',
+                compares: ['contains', 'not contains'],
+                disabled: false,
+              },
+
+              value: [
+                {
+                  text: 'Закрыт',
+                  value: 'Закрыт',
+                },
+              ],
+
+              compares: 'not contains',
+              disabled: false,
+              display: false,
+            },
+          ],
+        },
+        {
+          name: 'Только закрытые заказы',
+          filter: [
+            {
+              token: {
+                value: 'status',
+                type: 'array',
+                name: 'Статус',
+                autocomplete: '/custom?m=Order&f=status',
+                compares: ['contains', 'not contains'],
+                disabled: false,
+              },
+
+              value: [
+                {
+                  text: 'Закрыт',
+                  value: 'Закрыт',
+                },
+              ],
+
+              compares: 'contains',
+              disabled: false,
+              display: false,
+            },
+          ],
+        },
+      ]
+    }
+
+    for (const filterKey in filtersList) {
+      await this.context.dispatch('addDefault', {
         name: type,
+        data: filtersList[filterKey],
       })
     }
+
+    await this.context.dispatch('trySetDefaultFilter', {
+      name: type,
+    })
   }
 }
