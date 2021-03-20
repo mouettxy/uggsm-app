@@ -7,16 +7,16 @@
       v-model.number='model',
       :type='type',
       :suffix='suffix',
+      :single-line='singleLine',
       :rules='rules',
       :prepend-inner-icon='icon',
       :prefix='prefix',
-      :placeholder='label',
+      :placeholder='placeholder',
       :label='label',
       :hide-details='true',
       :disabled='disabled',
       @focus='handleFocus',
       @blur='handleBlur',
-      single-line,
       dense
     )
       template(#append)
@@ -45,17 +45,17 @@
       v-model='model',
       :type='type',
       :suffix='suffix',
+      :single-line='singleLine',
       :rules='rules',
       :prepend-inner-icon='icon',
       :prefix='prefix',
-      :placeholder='label',
+      :placeholder='placeholder',
       :label='label',
       :hide-details='true',
       :disabled='disabled',
       @focus='handleFocus',
       @blur='handleBlur',
       v-mask='phoneMask',
-      single-line,
       dense
     )
       template(#append)
@@ -152,6 +152,18 @@ export default {
     onFocusSolo: {
       required: false,
       type: [Boolean],
+    },
+
+    singleLine: {
+      required: false,
+      type: [Boolean],
+      default: true,
+    },
+
+    placeholder: {
+      required: false,
+      type: [String],
+      default: '',
     },
   },
 
