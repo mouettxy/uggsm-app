@@ -8,12 +8,9 @@
     depressed
   )
     span {{ status }}
-  v-menu.ug-order-status(
+  ug-responsive-menu.ug-order-status(
     v-if='$can("editOrderStatus", "Global")',
-    :close-on-content-click='false',
-    min-width='200px',
-    max-height='300px',
-    bottom
+    :menu-props='{ "close-on-content-click": false, "min-width": 200, "max-height": 300, bottom: true }'
   )
     template(v-slot:activator='{ on, attrs }')
       v-btn(
@@ -45,11 +42,11 @@
           )
             v-list-item-content
               v-list-item-title {{ s.status }}
-          v-divider
 </template>
 
 <script>
 import { filter, each } from 'lodash'
+import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
 import { getCorrectTextColor } from '@/api/helpers'
 import { groupedStatuses } from '@/api/helpers/enums'
 import OrderAPI from '@/api/order'
@@ -57,6 +54,10 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'ug-order-status',
+
+  components: {
+    UgResponsiveMenu,
+  },
 
   props: {
     status: {
