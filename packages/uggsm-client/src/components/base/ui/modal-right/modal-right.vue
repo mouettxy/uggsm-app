@@ -76,6 +76,7 @@ export default {
 
   .ug-modal-right__card
     height: 100%
+    overflow-y: auto
 
 .dialog-right-transition
   &-leave-active
