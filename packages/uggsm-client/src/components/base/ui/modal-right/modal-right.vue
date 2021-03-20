@@ -2,6 +2,7 @@
 v-dialog.ug-modal-right(
   v-model='model',
   :fullscreen='isMobile',
+  :eager='eager',
   :content-class='`right-modal${isMobile ? " is-mobile" : ""}`',
   transition='dialog-right-transition'
 )
@@ -28,6 +29,11 @@ export default {
     value: {
       required: true,
       type: [Boolean],
+    },
+
+    eager: {
+      required: false,
+      type: Boolean,
     },
   },
 
