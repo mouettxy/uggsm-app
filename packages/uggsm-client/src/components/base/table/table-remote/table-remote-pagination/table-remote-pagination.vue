@@ -66,7 +66,6 @@ export default {
 
   methods: {
     handlePageChange(event) {
-      console.log(event)
       if (event.inputType !== 'deleteContentBackward') {
         if ((this.serverPages > 0 && this.pageBuffer > this.serverPages) || typeof this.pageBuffer !== 'number') {
           this.pageBuffer = this.serverPages
