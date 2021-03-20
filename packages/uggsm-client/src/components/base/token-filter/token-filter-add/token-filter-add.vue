@@ -1,6 +1,9 @@
 <template lang="pug">
 .ug-token-filter-add
-  ug-responsive-menu(:menu-props='{ "close-on-content-click": false, "offset-x": true, "max-height": 300 }')
+  ug-responsive-menu(
+    ref='responsiveMenu',
+    :menu-props='{ "close-on-content-click": false, "offset-x": true, "max-height": 300 }'
+  )
     template(#activator='{on, attrs}')
       .ug-token-filter-add__button(
         v-on='on',
@@ -16,7 +19,7 @@
             ug-token-filter-edit(
               :token-index='tokenIndex',
               :token='token',
-              @add-filter='$emit("add-filter", $event)'
+              @add-filter='handleAddFilter'
             )
         template(v-else)
           .ug-token-filter-add__options--no-tokens
@@ -45,6 +48,20 @@ export default {
       required: false,
       type: Array,
       default: () => [],
+    },
+  },
+
+  data: () => ({
+    menu: false,
+  }),
+
+  methods: {
+    handleAddFilter(event) {
+      this.$emit('add-filter', event)
+
+      const { responsiveMenu } = this.$refs
+
+      responsiveMenu.close()
     },
   },
 }
