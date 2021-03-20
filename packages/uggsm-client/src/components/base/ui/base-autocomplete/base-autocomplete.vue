@@ -109,6 +109,12 @@ export default {
       type: [String],
       default: 'value',
     },
+
+    querySearch: {
+      required: false,
+      type: String,
+      default: 'search',
+    },
   },
 
   data: function () {
@@ -177,7 +183,7 @@ export default {
     async getItems() {
       try {
         let params = {
-          search: this.query,
+          [this.querySearch]: this.query,
         }
 
         if (this.uriQuery) {
@@ -188,7 +194,7 @@ export default {
         }
 
         if (this.replaceSearchWith) {
-          params.search = this.replaceSearchWith
+          params[this.querySearch] = this.replaceSearchWith
         }
 
         const response = await this.$axios.get(`autocomplete${this.endpoint}`, { params })
