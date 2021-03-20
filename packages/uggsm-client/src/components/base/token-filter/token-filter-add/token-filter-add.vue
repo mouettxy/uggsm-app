@@ -1,6 +1,6 @@
 <template lang="pug">
 .ug-token-filter-add
-  ug-responsive-menu(:menu-props='{ "close-on-content-click": false, "offset-x": true }')
+  ug-responsive-menu(:menu-props='{ "close-on-content-click": false, "offset-x": true, "max-height": 300 }')
     template(#activator='{on, attrs}')
       .ug-token-filter-add__button(
         v-on='on',
@@ -11,12 +11,19 @@
     v-card.ug-token-filter-add__options(elevation='4')
       v-list(dense)
         v-subheader Выберите фильтр
-        template(v-for='(token, tokenIndex) in tokens')
-          ug-token-filter-edit(
-            :token-index='tokenIndex',
-            :token='token',
-            @add-filter='$emit("add-filter", $event)'
-          )
+        template(v-if='tokens.length')
+          template(v-for='(token, tokenIndex) in tokens')
+            ug-token-filter-edit(
+              :token-index='tokenIndex',
+              :token='token',
+              @add-filter='$emit("add-filter", $event)'
+            )
+        template(v-else)
+          .ug-token-filter-add__options--no-tokens
+            span.text-subtitle-1.warning--text
+              | Пока нет доступных токенов, в скором времени они будут добавлены.
+              br
+              | Спасибо за ваше терпение!
 </template>
 
 <script>
@@ -59,4 +66,8 @@ export default {
     background: transparent
     .v-subheader
       font-size: 0.875rem
+
+  &--no-tokens
+    padding: 0 8px
+    max-width: 400px
 </style>

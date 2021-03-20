@@ -1,6 +1,7 @@
 <template lang="pug">
 ug-base-input.ug-table-remote-search(
   v-model='searchModel',
+  placeholder='Поиск...',
   on-focus-solo,
   label='Поиск...',
   icon='mdi-magnify'
@@ -52,7 +53,7 @@ export default {
       background: var(--v-light-base)
       font-size: 14px !important
 
-      border-radius: 8px
+      border-radius: 4px
       padding: 0 8px !important
       min-height: 32px !important
       .v-input__prepend-inner
