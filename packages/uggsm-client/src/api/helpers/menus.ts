@@ -40,6 +40,12 @@ export const defaultMenu = [
     linkName: 'orders',
     title: 'Заявки',
     icon: 'mdi-archive',
+    submenu: [
+      {
+        linkName: 'ordersNext',
+        title: '[Beta] Заказы',
+      },
+    ],
   },
   {
     linkName: 'clients',
