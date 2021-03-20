@@ -1,5 +1,4 @@
 import { parseFilterList } from './filters'
-import util from 'util'
 
 export function parsePaginationQuery(
   paginationQuery: any,
@@ -54,8 +53,6 @@ export function parsePaginationQuery(
   if (modifyOptions && typeof modifyOptions === 'function') {
     options = modifyOptions(options)
   }
-
-  console.log(util.inspect(query, false, null, true /* enable colors */))
 
   return {
     query,
