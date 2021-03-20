@@ -14,7 +14,11 @@
       )
   .ug-table-remote-panel__delimeter
     .ug-table-remote-panel__delimeter--inner
-  ug-table-remote-panel-bottom(:search.sync='searchModel')
+  ug-table-remote-panel-bottom(
+    :search.sync='searchModel',
+    :filter-tokens='filterTokens',
+    :filter-name='filterName'
+  )
 </template>
 
 <script>
@@ -44,6 +48,17 @@ export default {
     search: {
       required: true,
       type: String,
+    },
+
+    filterName: {
+      required: true,
+      type: String,
+    },
+
+    filterTokens: {
+      required: false,
+      type: Array,
+      default: () => [],
     },
   },
 

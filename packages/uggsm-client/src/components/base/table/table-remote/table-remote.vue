@@ -5,6 +5,8 @@
     :search.sync='search',
     :include-office-field='includeOfficeField',
     :headers.sync='headers',
+    :filter-tokens='filterTokens',
+    :filter-name='filterName',
     v-intersect.quiet='handleTopPanelIntersect'
   )
 
@@ -157,16 +159,17 @@ export default {
     includeSearchField: {
       required: false,
       type: Boolean,
+      },
+
+    filterName: {
+      required: true,
+      type: String,
     },
 
-    includeOfficeField: {
+    filterTokens: {
       required: false,
-      type: Boolean,
-    },
-
-    includeHeader: {
-      required: false,
-      type: Boolean,
+      type: Array,
+      default: () => [],
     },
 
     includeMiddleToolbar: {
@@ -204,7 +207,6 @@ export default {
       messageWhenNoData: 'Нет данных для отображения',
       messageWhenLoading: 'Данные загружаются...',
       items: null,
-      debouncedUpdateTable: debounce(this.updateTable, 200),
 
       serverItems: 0,
       serverPages: 1,
