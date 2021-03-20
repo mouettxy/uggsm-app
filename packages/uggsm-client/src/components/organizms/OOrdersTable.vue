@@ -262,7 +262,6 @@ export default class OOrdersTable extends Vue {
   }
 
   onManagersFilter() {
-    console.log(this.managerFilter)
     this.store.setTableOptions({
       ...this.store.tableOptions,
       managers: this.managerFilter,
