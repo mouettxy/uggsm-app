@@ -1,5 +1,8 @@
 <template lang="pug">
-ug-modal-right(v-model='modal')
+ug-modal-right(
+  v-model='modal',
+  eager
+)
   template(#activator='{on, attrs}')
     ug-table-remote-btn(
       v-on='on',
