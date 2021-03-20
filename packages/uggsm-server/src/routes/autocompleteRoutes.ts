@@ -9,6 +9,12 @@ export class AutocompleteRouter extends ExtendedRouter<IAutocompleteController> 
   defineRoutes() {
     this.addRoutes([
       {
+        path: 'custom',
+        description: 'Динамический поиск',
+        controllerMethod: 'customAutocomplete',
+        method: 'get',
+      },
+      {
         path: 'customer-name',
         description: 'Имена клиента',
         controllerMethod: 'customerName',
