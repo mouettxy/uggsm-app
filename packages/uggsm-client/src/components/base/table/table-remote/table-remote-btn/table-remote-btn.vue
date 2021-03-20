@@ -3,6 +3,7 @@ ug-base-btn.ug-table-remote-btn.text-subtitle-1(
   :label='label',
   :icon-left='icon',
   :block='block',
+  @click='$emit("click", $event)',
   depressed
 )
 </template>
@@ -45,7 +46,7 @@ export default {
   box-sizing: border-box
   max-height: 32px
   background: var(--v-light-base)
-  border-radius: 8px
+  border-radius: 4px
   text-transform: none
 
   .v-icon
