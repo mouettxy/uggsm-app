@@ -30,6 +30,7 @@
           ug-table-remote-btn.ml-2(
             :label='isMobile ? "Сброс" : "Сброс фильтра"',
             :block='isMobile',
+            @click='handleClearFilter',
             icon='mdi-filter-remove'
           )
     v-col.mt-2.mt-lg-0.mt-md-0(
@@ -47,11 +48,7 @@
           md='auto',
           lg='auto'
         )
-          ug-table-remote-btn(
-            :label='isMobile ? "Мои" : "Мои фильтры"',
-            :block='isMobile',
-            icon='mdi-filter-plus'
-          )
+          ug-table-remote-menu-filter(:filter-name='filterName')
         v-col.text-center(cols='auto')
           .ug-table-remote-panel-bottom__vertical-delimeter(
             :class='{ "ug-table-remote-panel-bottom__vertical-delimeter--mobile": isMobile }'
@@ -62,22 +59,26 @@
           md='auto',
           lg='auto'
         )
-          ug-table-remote-btn(
-            :label='isMobile ? "Фильтры" : "Управление фильтром"',
-            :block='isMobile',
-            icon='mdi-filter-menu'
+          ug-table-remote-modal-filter(
+            :filter-tokens='filterTokens',
+            :filter-name='filterName'
           )
 </template>
 
 <script>
 import Responsive from '@/mixins/responsive'
 import UgTableRemoteSearch from './../../table-remote-search/table-remote-search'
+import UgTableRemoteModalFilter from '@/components/base/table/table-remote-modal-filter/table-remote-modal-filter'
+import UgTableRemoteMenuFilter from '@/components/base/table/table-remote-menu-filter/table-remote-menu-filter'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'ug-table-remote-panel-bottom',
 
   components: {
     UgTableRemoteSearch,
+    UgTableRemoteModalFilter,
+    UgTableRemoteMenuFilter,
   },
 
   mixins: [Responsive],
@@ -86,6 +87,17 @@ export default {
     search: {
       required: true,
       type: String,
+    },
+
+    filterName: {
+      required: true,
+      type: String,
+    },
+
+    filterTokens: {
+      required: false,
+      type: Array,
+      default: () => [],
     },
   },
 
@@ -98,6 +110,18 @@ export default {
       set: function (value) {
         this.$emit('update:search', value)
       },
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      vuexRemoveCurrentFilter: 'filters/removeCurrent',
+    }),
+
+    handleClearFilter() {
+      this.vuexRemoveCurrentFilter({
+        name: this.filterName,
+      })
     },
   },
 }
