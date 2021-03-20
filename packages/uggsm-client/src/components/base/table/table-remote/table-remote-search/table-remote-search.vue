@@ -4,7 +4,8 @@ ug-base-input.ug-table-remote-search(
   placeholder='Поиск...',
   on-focus-solo,
   label='Поиск...',
-  icon='mdi-magnify'
+  icon='mdi-magnify',
+  clearable
 )
 </template>
 
