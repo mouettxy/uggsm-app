@@ -24,6 +24,39 @@
     headers-schema-id='orders-id',
     filter-name='orders'
   )
+    template(#bottom-panel)
+      v-row.mr-2.mr-lg-0.mr-md-0(
+        no-gutters,
+        align-items='center'
+      )
+        v-col(
+          cols='6',
+          v-if='$can("addCashIncome", "Global")',
+          md='auto',
+          lg='auto'
+        ) 
+          o-order-modal-new
+            template(#activator='{on, attrs}')
+              ug-table-remote-btn(
+                v-on='on',
+                v-bind='attrs',
+                label='Новый',
+                icon='mdi-plus'
+              )
+        v-col(
+          cols='6',
+          v-if='$can("addCashConsumption", "Global")',
+          md='auto',
+          lg='auto'
+        ) 
+          o-order-modal-warranty
+            template(#activator='{on, attrs}')
+              ug-table-remote-btn.ml-2(
+                v-on='on',
+                v-bind='attrs',
+                label='Гарантия',
+                icon='mdi-eye-plus'
+              )
     template(#item.id='{value, item}')
       o-order-modal-regular(
         :orderid='item.trueId',
