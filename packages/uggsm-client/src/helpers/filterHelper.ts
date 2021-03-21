@@ -101,6 +101,52 @@ export const getDefaultTokenValue = (type: TokenPlainTypes, compare: TokenCompar
 }
 
 export const Filters: Record<string, Token[]> = {
+  calls: [
+    {
+      value: 'manager',
+      type: 'array',
+      name: 'Менеджер',
+      autocomplete: '/custom?m=Call&f=manager',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'startTime',
+      type: 'date',
+      name: 'Старт звонка',
+      compares: ['between', 'greater than', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'endTime',
+      type: 'date',
+      name: 'Конец звонка',
+      compares: ['between', 'greater than', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'answerTime',
+      type: 'date',
+      name: 'Ответ звонка',
+      compares: ['between', 'greater than', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'incoming',
+      type: 'boolean',
+      name: 'Входящий',
+      compares: ['is', 'not is'],
+      disabled: false,
+    },
+    {
+      value: 'answered',
+      type: 'boolean',
+      name: 'Отвечен',
+      compares: ['is', 'not is'],
+      disabled: false,
+    },
+  ],
+
   cashes: [
     {
       value: 'createdAt',

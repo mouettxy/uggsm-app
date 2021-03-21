@@ -16,7 +16,7 @@
     :filter-tokens='filterTokens',
     :fetch-function='fetchFunction',
     socket-event='users updated',
-    headers-schema-id='headers-id',
+    headers-schema-id='users-table-headers',
     filter-name='users'
   )
     template(#item.role='{ item }')

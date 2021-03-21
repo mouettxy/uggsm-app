@@ -9,6 +9,7 @@ import { Order } from '../models'
 import { CallsWebhookCallStart, CallsWebhookCallAnswer, CallsWebhookCallFinish } from '../interfaces/CallsAPI'
 import { formatPhone } from '../utils/helpers'
 import BaseController from './base/BaseController'
+import { parsePaginationQuery } from '../services/pagination'
 
 export class CallsController extends BaseController implements ICallsController {
   private model = CallModel
@@ -24,6 +25,20 @@ export class CallsController extends BaseController implements ICallsController 
       res.send(response)
     } catch (error) {
       this.criticalError(next)
+    }
+  }
+
+  public getPaginatedNew: ControllerMethod = async (req, res, next) => {
+    try {
+      const { query, options } = parsePaginationQuery(req.body, this.model)
+
+      // @ts-ignore
+      const paginated = await this.model.paginate(query, { ...options, populate: 'relatedOrder' })
+
+      this.success(res, paginated)
+    } catch (error) {
+      console.log(error)
+      this.criticalError(next, error)
     }
   }
 

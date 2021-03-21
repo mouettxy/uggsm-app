@@ -16,6 +16,12 @@ export class CallsRouter extends ExtendedRouter<ICallsController> {
         method: 'get',
       },
       {
+        path: 'paginated',
+        description: 'Получить все звонки',
+        controllerMethod: 'getPaginatedNew',
+        method: 'post',
+      },
+      {
         path: 'callbacks/call-start',
         description: 'moizvonki callback call-start',
         controllerMethod: 'callbackCallStart',
