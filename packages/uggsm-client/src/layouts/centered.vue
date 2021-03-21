@@ -34,5 +34,6 @@ export default class LayoutDefault extends Responsive {
 .layout-centered
   padding-left: 48px !important
   &.layout-centered--mobile
-    padding-left: 16px !important
+    padding-left: 0 !important
+    padding-top: 48px !important
 </style>

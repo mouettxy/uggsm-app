@@ -8,24 +8,30 @@ v-btn.ug-base-btn(
   :depressed='depressed',
   :color='color',
   :block='block',
-  @click='handleClick'
+  @click='handleClick',
+  @blur.native='handleBlur'
 )
   template(v-if='renderSlot')
     slot
   template(v-else)
     template(v-if='icon && label')
-      v-icon(left) {{ icon }}
+      v-icon(
+        :size='iconSize',
+        left
+      ) {{ icon }}
       span {{ label }}
     template(v-else-if='icon && !label')
-      v-icon {{ icon }}
+      v-icon(:size='iconSize') {{ icon }}
     template(v-else)
       v-icon(
         v-if='iconLeft',
+        :size='iconSize',
         left
       ) {{ iconLeft }}
       span {{ label }}
       v-icon(
         v-if='iconRight',
+        :size='iconSize',
         right
       ) {{ iconRight }}
 </template>
@@ -99,11 +105,21 @@ export default {
       required: false,
       type: Boolean,
     },
+
+    iconSize: {
+      required: false,
+      type: [String, Number],
+      default: '',
+    },
   },
 
   methods: {
     handleClick(event) {
       this.$emit('click', event)
+    },
+
+    handleBlur(event) {
+      this.$emit('blur', event)
     },
   },
 }

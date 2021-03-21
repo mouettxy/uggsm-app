@@ -1,9 +1,15 @@
 <template lang="pug">
 .ug-side-menu-container(v-if='userIsLoggedIn')
-  template(v-if='mobile')
-    ug-side-menu-mobile(:menu-items='menuItems')
-  template(v-else)
-    ug-side-menu-desktop(:menu-items='menuItems')
+  v-fade-transition(appear)
+    ug-side-menu-mobile(
+      v-if='mobile && userIsLoggedIn',
+      :menu-items='menuItems'
+    )
+  v-slide-x-transition(appear)
+    ug-side-menu-desktop(
+      v-if='!mobile && userIsLoggedIn',
+      :menu-items='menuItems'
+    )
 </template>
 
 <script>

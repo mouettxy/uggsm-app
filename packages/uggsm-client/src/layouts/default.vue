@@ -31,5 +31,6 @@ export default class LayoutDefault extends Responsive {
   height: 100%
   padding-left: 48px !important
   &.layout-default--mobile
-    padding-left: 16px !important
+    padding-left: 0 !important
+    padding-top: 48px !important
 </style>
