@@ -129,7 +129,7 @@ module.exports = {
       locales: ['ru'],
     },
     autoRouting: {
-      chunkNamePrefix: 'page-',
+      dynamicImport: false,
     },
   },
 
