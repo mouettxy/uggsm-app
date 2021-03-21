@@ -16,6 +16,7 @@
     :filter-tokens='filterTokens',
     :fetch-function='fetchFunction',
     socket-event='orders updated',
+    item-key-field='trueId',
     include-search-field,
     include-office-field,
     include-middle-toolbar,
