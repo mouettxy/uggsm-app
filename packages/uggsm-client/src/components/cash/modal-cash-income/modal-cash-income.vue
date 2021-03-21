@@ -1,13 +1,18 @@
 <template lang="pug">
 ug-modal-center.ug-modal-cash-income(v-model='modal')
   template(#activator='{on, attrs}')
-    ug-base-btn(
-      v-on='on',
-      v-bind='attrs',
-      label='Приход',
-      icon-left='mdi-plus',
-      color='success'
+    slot(
+      name='activator',
+      :on='on',
+      :attrs='attrs'
     )
+      ug-base-btn(
+        v-on='on',
+        v-bind='attrs',
+        label='Приход',
+        icon-left='mdi-plus',
+        color='success'
+      )
   template(#default='{close}')
     v-card
       v-toolbar(tile)

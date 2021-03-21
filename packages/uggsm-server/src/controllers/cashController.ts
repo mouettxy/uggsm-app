@@ -1,3 +1,4 @@
+import { parsePaginationQuery } from '../services/pagination'
 import { mongoose } from '@typegoose/typegoose'
 import { api } from '../server'
 import { NextFunction } from 'connect'
@@ -10,6 +11,7 @@ import { OfficeModel } from '../models'
 import { parsePaginateResponse } from '../utils/helpers'
 import { ControllerMethod } from '../interfaces/controller'
 import BaseController from './base/BaseController'
+import { reduce } from 'lodash'
 
 export class CashController extends BaseController implements ICashController {
   private cash = CashModel
@@ -109,6 +111,44 @@ export class CashController extends BaseController implements ICashController {
       response.send(cash)
     } catch (error) {
       next(new HttpException(500, error.message))
+    }
+  }
+
+  public getPaginatedNew: ControllerMethod = async (req, res, next) => {
+    try {
+      const { query, options } = parsePaginationQuery(req.body, this.cash, (query) => {
+        return {
+          ...query,
+          office: req.body.office,
+        }
+      })
+
+      // @ts-ignore
+      const response = await this.cash.paginate(query, options)
+
+      const firstCashEntry = await this.cash.findOne(query, 'id balance').sort({ id: -1 })
+      const totalBalance = firstCashEntry.balance || 0
+      const incomeAndConsumption = reduce(
+        response.docs,
+        (a, e) => {
+          a.income += e.income
+          a.consumption -= e.consumption
+
+          return a
+        },
+        {
+          income: 0,
+          consumption: 0,
+        }
+      )
+
+      response.total = totalBalance
+      response.income = incomeAndConsumption.income
+      response.consumption = incomeAndConsumption.consumption
+
+      this.success(res, response)
+    } catch (error) {
+      this.criticalError(next, error.message)
     }
   }
 

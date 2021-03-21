@@ -1,13 +1,18 @@
 <template lang="pug">
 ug-modal-center.ug-modal-cash-consumption(v-model='modal')
   template(#activator='{on, attrs}')
-    ug-base-btn(
-      v-on='on',
-      v-bind='attrs',
-      label='Расход',
-      icon-left='mdi-minus',
-      color='error'
+    slot(
+      name='activator',
+      :on='on',
+      :attrs='attrs'
     )
+      ug-base-btn(
+        v-on='on',
+        v-bind='attrs',
+        label='Расход',
+        icon-left='mdi-minus',
+        color='error'
+      )
   template(#default='{close}')
     v-card
       v-toolbar(tile)

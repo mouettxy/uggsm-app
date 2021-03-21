@@ -22,6 +22,20 @@ export class CashAPI extends BaseAPI {
     }
   }
 
+  async getPaginatedNew(data: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request<any>({
+        url: `/paginated`,
+        method: 'post',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async getBalance(officeCode: string): AxiosResponseAPI<{ balance: number }> {
     try {
       const response = await this.api.request<{ balance: number }>({

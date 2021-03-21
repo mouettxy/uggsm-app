@@ -9,6 +9,8 @@
     :filter-name='filterName',
     v-intersect.quiet='handleTopPanelIntersect'
   )
+    template(#bottom-panel)
+      slot(name='bottom-panel')
 
   v-slide-y-transition
     v-row.ug-table-remote__meta(
@@ -91,6 +93,11 @@
       :server-pages='serverPages',
       v-intersect.quiet='handlePaginationIntersect'
     )
+      template(#pagination-left)
+        slot(
+          name='pagination-left',
+          :items='items'
+        )
 
   template(v-if='isMobile')
     v-fab-transition

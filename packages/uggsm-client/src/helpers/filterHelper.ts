@@ -101,14 +101,55 @@ export const getDefaultTokenValue = (type: TokenPlainTypes, compare: TokenCompar
 }
 
 export const Filters: Record<string, Token[]> = {
-  clients: [
+  cashes: [
     {
-      value: 'id',
-      type: 'number',
-      name: '№ Клиента',
-      compares: ['is', 'between', 'greater than', 'not is', 'not greater than'],
+      value: 'createdAt',
+      type: 'date',
+      name: 'Дата создания',
+      compares: ['between', 'greater than', 'not greater than'],
       disabled: false,
     },
+    {
+      value: 'cashier',
+      type: 'array',
+      name: 'Кассир',
+      autocomplete: '/custom?m=Cash&f=cashier.credentials&v=cashier._id',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'client',
+      type: 'array',
+      name: 'Клиент',
+      autocomplete: '/custom?m=Cash&f=client.name&v=client._id',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'income',
+      type: 'number',
+      name: 'Приход',
+      compares: ['between', 'greater than', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'consumption',
+      type: 'number',
+      name: 'Приход',
+      compares: ['between', 'greater than', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'comment',
+      type: 'string',
+      name: 'Тип клиента',
+      autocomplete: '/custom?m=Cash&f=comment',
+      compares: ['is', 'contains', 'not is', 'not contains'],
+      disabled: false,
+    },
+  ],
+
+  clients: [
     {
       value: 'createdAt',
       type: 'date',

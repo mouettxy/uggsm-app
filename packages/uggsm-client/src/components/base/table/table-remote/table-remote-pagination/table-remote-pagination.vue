@@ -1,26 +1,29 @@
 <template lang="pug">
-.ug-table-remote-pagination
-  v-icon(
-    @click='handlePaginateBack',
-    color='dark'
-  ) mdi-chevron-left
-  .ug-table-remote-pagination-delimeter
-    .ug-table-remote-pagination-delimeter--inner
-  input(
-    v-model.number='pageBuffer',
-    :style='{ width: paginationInputWidth }',
-    @input='handlePageChange',
-    type='number',
-    step='1',
-    min='1'
-  )
-  span.ml-2 из {{ serverPages }}
-  .ug-table-remote-pagination-delimeter
-    .ug-table-remote-pagination-delimeter--inner
-  v-icon(
-    @click='handlePaginateForward',
-    color='dark'
-  ) mdi-chevron-right
+.ug-table-remote-pagination.d-flex(:class='{ "justify-space-between": !!$scopedSlots["pagination-left"] }')
+  .ug-table-remote-pagination__slot
+    slot(name='pagination-left')
+  .ug-table-remote-pagination__content.d-flex.align-center
+    v-icon(
+      @click='handlePaginateBack',
+      color='dark'
+    ) mdi-chevron-left
+    .ug-table-remote-pagination-delimeter
+      .ug-table-remote-pagination-delimeter--inner
+    input(
+      v-model.number='pageBuffer',
+      :style='{ width: paginationInputWidth }',
+      @input='handlePageChange',
+      type='number',
+      step='1',
+      min='1'
+    )
+    span.ml-2.text-no-wrap из {{ serverPages }}
+    .ug-table-remote-pagination-delimeter
+      .ug-table-remote-pagination-delimeter--inner
+    v-icon(
+      @click='handlePaginateForward',
+      color='dark'
+    ) mdi-chevron-right
 </template>
 
 <script>

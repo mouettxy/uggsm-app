@@ -7,6 +7,7 @@
   )
     v-col(
       cols='12',
+      order='1',
       md='3',
       lg='3'
     )
@@ -35,6 +36,18 @@
           )
     v-col.mt-2.mt-lg-0.mt-md-0(
       cols='12',
+      order-md='2',
+      order-lg='2',
+      order='3',
+      md='auto',
+      lg='auto'
+    )
+      slot(name='bottom-panel')
+    v-col.mt-2.mt-lg-0.mt-md-0(
+      cols='12',
+      order-md='3',
+      order-lg='3',
+      order='2',
       md='auto',
       lg='auto'
     )

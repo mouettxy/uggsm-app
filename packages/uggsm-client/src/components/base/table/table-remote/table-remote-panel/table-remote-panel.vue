@@ -19,6 +19,8 @@
     :filter-tokens='filterTokens',
     :filter-name='filterName'
   )
+    template(#bottom-panel)
+      slot(name='bottom-panel')
 </template>
 
 <script>
