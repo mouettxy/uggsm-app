@@ -13,19 +13,18 @@
     :include-search-field='true',
     :include-middle-toolbar='false',
     :headers-schema='headersSchema',
+    :filter-tokens='filterTokens',
     :fetch-function='fetchFunction',
     socket-event='users updated',
-    headers-schema-id='headers-id'
+    headers-schema-id='headers-id',
+    filter-name='users'
   )
     template(#item.role='{ item }')
-      ug-base-select.pa-2(
+      ug-table-select(
         v-model='item.role',
         :items='roles',
         @change='handleRoleChange(item)',
-        single-line,
-        label='Роль',
-        item-value='value',
-        item-text='text'
+        label='Выберите роль'
       )
     template(#item.actions='{ item }')
       ug-base-btn(
@@ -35,68 +34,71 @@
       )
 </template>
 
-<script lang="ts">
-import UgBaseSelect from '@/components/base/ui/base-select/base-select.vue'
-
+<script>
+import UgTableSelect from '@/components/base/table/table-select/table-select'
 import UserAPI from '@/api/user'
-import { User } from '@/typings/api/user'
-import { Component, Vue } from 'vue-property-decorator'
+import { Filters } from '@/helpers/filterHelper'
 
-@Component({
+export default {
   components: {
-    UgBaseSelect,
+    UgTableSelect,
   },
-})
-export default class PageUsers extends Vue {
-  public headersSchema = {
-    id: 'Идентификатор',
-    username: 'Логин',
-    role: 'Роль',
-    credentials: 'Имя',
-    actions: 'Действия',
-  }
 
-  public roles: { text: string; value: string }[] = []
+  data: () => ({
+    headersSchema: {
+      id: 'Идентификатор',
+      username: 'Логин',
+      role: 'Роль',
+      credentials: 'Имя',
+      actions: 'Действия',
+    },
 
-  async fetchFunction(data: any) {
-    const response = await UserAPI.getPaginated(data)
+    roles: [],
 
-    if (response.status !== 200) {
-      this.$notification.error('Не удалось получить данные')
-      return []
-    }
-
-    return response.data
-  }
-
-  async handleRoleChange(item: User) {
-    const apiResponse = await UserAPI.update(item._id, { role: item.role })
-
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error('Ошибка сервера при назначении роли')
-      return
-    }
-
-    this.$notification.success('Пользователю успешно назначена роль')
-  }
-
-  async handleRoleDelete(item: User) {
-    const apiResponse = await UserAPI.delete(item._id)
-
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error('Ошибка сервера при удалении пользователя')
-      return
-    }
-
-    this.$notification.success('Пользователь удалён')
-  }
-
-  async fetchRoles() {
-    this.roles = (await this.$axios.get('/autocomplete/roles')).data
-  }
+    filterTokens: Filters.users,
+  }),
 
   mounted() {
     this.fetchRoles()
-  }
+  },
+
+  methods: {
+    async fetchFunction(data) {
+      const response = await UserAPI.getPaginated(data)
+
+      if (response.status !== 200) {
+        this.$notification.error('Не удалось получить данные')
+        return []
+      }
+
+      return response.data
+    },
+
+    async handleRoleChange(item) {
+      const apiResponse = await UserAPI.update(item._id, { role: item.role })
+
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error('Ошибка сервера при назначении роли')
+        return
+      }
+
+      this.$notification.success('Пользователю успешно назначена роль')
+    },
+
+    async handleRoleDelete(item) {
+      const apiResponse = await UserAPI.delete(item._id)
+
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error('Ошибка сервера при удалении пользователя')
+        return
+      }
+
+      this.$notification.success('Пользователь удалён')
+    },
+
+    async fetchRoles() {
+      this.roles = (await this.$axios.get('/autocomplete/roles')).data
+    },
+  },
 }
 </script>

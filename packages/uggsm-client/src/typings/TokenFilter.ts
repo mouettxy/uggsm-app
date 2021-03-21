@@ -82,7 +82,7 @@ export type Filter = {
   display: boolean
 } & TokenTypesValue
 
-export type VuexFilterListNamespaces = 'tests' | 'orders' | 'clients' | 'cashes' | 'calls'
+export type VuexFilterListNamespaces = 'tests' | 'orders' | 'clients' | 'cashes' | 'calls' | 'users'
 export type VuexFilterListItemEntry = {
   name: string
   filter: Filter[]

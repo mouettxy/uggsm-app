@@ -3,6 +3,7 @@ import { UserModel } from './../models/userModel'
 import { ControllerMethod } from '../interfaces/controller'
 import { api } from '../server'
 import BaseController from './base/BaseController'
+import { parsePaginationQuery } from '../services/pagination'
 
 enum Emits {
   USER_UPDATED = 'user updated',
@@ -14,6 +15,7 @@ enum Emits {
 
 export class UsersController extends BaseController implements IUserController {
   private model = UserModel
+
   private Emits = Emits
 
   public get: ControllerMethod = async (req, res, next) => {
@@ -28,7 +30,8 @@ export class UsersController extends BaseController implements IUserController {
 
   public getPaginated: ControllerMethod = async (req, res, next) => {
     try {
-      const { query, options } = this.parsePaginateRequest(req.query, this.model)
+      const { query, options } = parsePaginationQuery(req.body, this.model)
+
       // @ts-ignore
       const paginated = await this.model.paginate(query, options)
 

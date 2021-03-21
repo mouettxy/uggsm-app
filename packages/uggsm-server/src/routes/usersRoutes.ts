@@ -19,7 +19,7 @@ export class UsersRouter extends ExtendedRouter<IUserController> {
         path: 'paginated',
         description: 'Постраничная навигация',
         controllerMethod: 'getPaginated',
-        method: 'get',
+        method: 'post',
       },
       {
         path: ':id',

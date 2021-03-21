@@ -24,7 +24,7 @@ const generateFilters = (filters: VuexFilterListNamespaces[]) => {
   return returned
 }
 
-const filterList: VuexFilterListNamespaces[] = ['calls', 'cashes', 'clients', 'orders', 'tests']
+const filterList: VuexFilterListNamespaces[] = ['calls', 'cashes', 'clients', 'orders', 'users', 'tests']
 
 export const generatedFilters = generateFilters(filterList)
 
@@ -101,6 +101,33 @@ export const getDefaultTokenValue = (type: TokenPlainTypes, compare: TokenCompar
 }
 
 export const Filters: Record<string, Token[]> = {
+  users: [
+    {
+      value: 'role',
+      type: 'array',
+      name: 'Роль',
+      autocomplete: '/custom?m=User&f=role',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'credentials',
+      type: 'array',
+      name: 'Имя пользователя',
+      autocomplete: '/custom?m=User&f=credentials',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'username',
+      type: 'array',
+      name: 'Ник пользователя',
+      autocomplete: '/custom?m=User&f=username',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+  ],
+
   orders: [
     {
       value: 'id',

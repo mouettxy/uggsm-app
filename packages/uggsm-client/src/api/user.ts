@@ -23,12 +23,12 @@ export class UserAPI extends BaseAPI {
     }
   }
 
-  async getPaginated(query: any): AxiosResponseAPI<any> {
+  async getPaginated(data: any): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request<any>({
         url: `/paginated`,
-        params: query,
-        method: 'get',
+        method: 'post',
+        data,
       })
 
       return response
