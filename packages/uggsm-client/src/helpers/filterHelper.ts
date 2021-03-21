@@ -101,6 +101,67 @@ export const getDefaultTokenValue = (type: TokenPlainTypes, compare: TokenCompar
 }
 
 export const Filters: Record<string, Token[]> = {
+  clients: [
+    {
+      value: 'id',
+      type: 'number',
+      name: '№ Клиента',
+      compares: ['is', 'between', 'greater than', 'not is', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'createdAt',
+      type: 'date',
+      name: 'Дата создания',
+      compares: ['between', 'greater than', 'not greater than'],
+      disabled: false,
+    },
+    {
+      value: 'name',
+      type: 'array',
+      name: 'Имя клиента',
+      autocomplete: '/custom?m=Client&f=name',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'clientType',
+      type: 'array',
+      name: 'Тип клиента',
+      autocomplete: '/custom?m=Client&f=clientType',
+      compares: ['contains', 'not contains'],
+      disabled: false,
+    },
+    {
+      value: 'isProvider',
+      type: 'boolean',
+      name: 'Поставщик',
+      compares: ['is', 'not is'],
+      disabled: false,
+    },
+    {
+      value: 'isConflict',
+      type: 'boolean',
+      name: 'Конфликтный',
+      compares: ['is', 'not is'],
+      disabled: false,
+    },
+    {
+      value: 'allowedEmailNotifications',
+      type: 'boolean',
+      name: 'Разрешены почтовые уведомления',
+      compares: ['is', 'not is'],
+      disabled: false,
+    },
+    {
+      value: 'allowedNotifications',
+      type: 'boolean',
+      name: 'Разрешены уведомления',
+      compares: ['is', 'not is'],
+      disabled: false,
+    },
+  ],
+
   users: [
     {
       value: 'role',

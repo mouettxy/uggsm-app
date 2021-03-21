@@ -12,6 +12,7 @@ export class ClientRouter extends BaseRouter<IClientController> {
     this.expressRouter
       .get(this.basePath, this.controller.getAll)
       .get(`${this.basePath}/paginated`, this.controller.getPaginated)
+      .post(`${this.basePath}/paginated`, this.controller.getPaginatedNew)
       .get(`${this.basePath}/:id`, this.controller.getById)
       .get(`${this.basePath}/name/:name`, this.controller.getByName)
       .post(`${this.basePath}`, validateClient.client, this.controller.create)

@@ -4,6 +4,7 @@ export interface IClientController {
   getAll: ControllerMethod
   getById: ControllerMethod
   getPaginated: ControllerMethod
+  getPaginatedNew: ControllerMethod
   getByName: ControllerMethod
   getByCode: ControllerMethod
   create: ControllerMethod

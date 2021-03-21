@@ -22,6 +22,20 @@ export class ClientAPI extends BaseAPI {
     }
   }
 
+  async getPaginatedNew(data: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request<any>({
+        url: `/paginated`,
+        method: 'post',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async getByName(name: string): AxiosResponseAPI<Client> {
     try {
       const response = await this.api.request<Client>({
