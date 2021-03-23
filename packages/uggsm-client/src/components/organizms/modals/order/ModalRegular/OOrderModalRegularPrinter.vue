@@ -54,6 +54,13 @@
       :customer='order.customer ? order.customer.name : ""',
       :appearance='order.appearance'
     )
+
+    ug-print-volgograd-check(
+      :works='order.statusWork',
+      :order-id='orderId',
+      :customer-name='order.customerName'
+    )
+
   v-menu(
     v-model='printMenu',
     close-on-click,
@@ -87,16 +94,21 @@
         v-list-item(@click='$htmlToPaper("print-volgograd")')
           v-list-item-content
             v-list-item-title Заказ Волгоград
+        v-list-item(@click='$htmlToPaper("print-volgograd-check")')
+          v-list-item-content
+            v-list-item-title Товарный чек Волгоград
 </template>
 
 <script lang="ts">
 import { Order } from '@/typings/api/order'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import UgPrintVolgograd from '@/components/print/print-volgograd/print-volgograd.vue'
+import UgPrintVolgogradCheck from '@/components/print/print-volgograd-check/print-volgograd-check.vue'
 
 @Component({
   components: {
     UgPrintVolgograd,
+    UgPrintVolgogradCheck,
   },
 })
 export default class OOrderModalRegularPrinter extends Vue {
