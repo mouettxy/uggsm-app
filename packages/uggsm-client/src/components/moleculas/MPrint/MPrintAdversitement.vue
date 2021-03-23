@@ -4,12 +4,12 @@
     span Здравствуйте, {{ customerName }}!
   div(style='font-size: 14px;')
     h2 Оставьте 1 отзыв - получите бонус, 100 рублей на телефон.
-    p 1. Вам достаточно оставить один отзыв о нас, на выбор и сообщить об этом на почту:
+    p 1. Вам достаточно оставить один отзыв о нас, на выбор и сообщить об этом на {{ bonusType }}:
       strong &nbsp;ЯНДЕКС www.ya.ru/maps | ГУГЛ www.google.com/maps | 2GIS www.2gis.ru&nbsp;
-      span в поиске ввеcти taggsmru, перейти в раздел отзывы, написать Ваше мнение о нас, в конце отзывауказать цифру
+      span в поиске ввеcти {{ bonusTarget }}, перейти в раздел отзывы, написать Ваше мнение о нас, в конце отзыва указать цифру
       span(style='text-decoration: underline') &nbsp;{{ orderId }}&nbsp;
       span , чтобы идентифицировать Вас.
-    p 2. Получить бонус. На почту taggsmotziv@gmail.com необходимо написать: {{ orderId }}, ОТЗЫВ РАЗМЕСТИЛ(А) на ... (яндексе, google или 2gis) И НОМЕР МОБИЛЬНОГО ТЕЛЕФОНАДЛЯ ПЕРЕВОДА......
+    p 2. Получить бонус. На {{ bonusText }} необходимо написать: {{ orderId }}, ОТЗЫВ РАЗМЕСТИЛ(А) на ... (яндексе, google или 2gis) И НОМЕР МОБИЛЬНОГО ТЕЛЕФОНАДЛЯ ПЕРЕВОДА......
     p Деньги поступят на указанный номер телефона в течении 3 рабочих дней с момента опубликования отзыва. Для получения бонуса, использовать номер заказа можно только 1 раз, на любом из указанных онлайн сервисов (Яндексе, Google, 2Gis). Благодаря Вашим отзывам, мы сможем:
     p(style='margin: 0') — оперативно отреагировать на вашу личную просьбу или проблему;
     p(style='margin: 0') — показать объективные мнения о нашем сервисе другим посетителям;
@@ -47,6 +47,12 @@ export default class MPrintAdversitement extends Vue {
   @Prop({ type: [String, Number] }) declaredPrice!: string
 
   @Prop({ type: [String, Number] }) avance!: string
+
+  @Prop({ type: [String], default: 'почту taggsmotziv@gmail.com' }) bonusText!: string
+
+  @Prop({ type: [String], default: 'почту' }) bonusType!: string
+
+  @Prop({ type: [String], default: 'taggsmru' }) bonusTarget!: string
 
   get year() {
     return new Date().getFullYear()
