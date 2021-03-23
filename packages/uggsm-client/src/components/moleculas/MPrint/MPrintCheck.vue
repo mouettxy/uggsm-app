@@ -8,8 +8,8 @@
       td(style='text-align: right')
         p(style='margin: 0') ИП Гергишан Андрей Владимирович. ИНН: 262410115637
         p(style='margin: 0') ОГРНИП: 314231108300081 {{ address }}
-        p(style='margin: 0') График работы: понедельник-сбуббота:с 9 до 19 часов
-        p(style='margin: 0') Воскресенье:с 10 до 15 часов
+        p(style='margin: 0') График работы: понедельник-суббота: с 9 до 19 часов
+        p(style='margin: 0') Воскресенье: с 10 до 15 часов
   div(style='font-size: 16px; text-align: center')
     p(style='margin: 0; font-weight: bold') ТОВАРНЫЙ ЧЕК
     p(style='margin: 0;') {{ dateNow }} г.
