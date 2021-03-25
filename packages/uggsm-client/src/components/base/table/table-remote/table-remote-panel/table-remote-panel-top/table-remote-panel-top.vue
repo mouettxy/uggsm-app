@@ -13,7 +13,10 @@
           name-color='#dddddd',
           code-color='#cacaca'
         )
-      v-col.text-right(cols='4')
+      v-col(
+        cols='4',
+        :class='{ "text-right": includeOfficeField, "text-left": !includeOfficeField }'
+      )
         ug-table-remote-headers-switcher(
           v-model='headers',
           compact
