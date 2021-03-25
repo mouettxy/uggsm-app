@@ -202,6 +202,18 @@ export default {
       type: String,
       default: 'id',
     },
+
+    initialSortField: {
+      required: false,
+      type: String,
+      default: '',
+    },
+
+    initialSortDesc: {
+      required: false,
+      type: Boolean,
+      default: true,
+    },
   },
 
   data: function () {
@@ -233,6 +245,10 @@ export default {
     ...mapState({
       vuexCurrentFilter: (state) => state.filters.filterList,
     }),
+
+    itemInitialSortField() {
+      return this.initialSortField ? this.initialSortField : this.itemKeyField
+    },
 
     currentFilter() {
       return this.vuexCurrentFilter[this.filterName].current
@@ -347,7 +363,10 @@ export default {
     },
 
     init() {
-      this.options = this.generateOptions(1, this.resultsPerPage, this.itemKeyField)
+      this.options = this.generateOptions(1, this.resultsPerPage, {
+        by: this.itemInitialSortField,
+        desc: this.initialSortDesc,
+      })
       this.headers = this.generateHeaders(this.headersSchema, this.headersSchemaId)
 
       this.options = {

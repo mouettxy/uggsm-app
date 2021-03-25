@@ -5,12 +5,17 @@ import { Component, Vue } from 'vue-property-decorator'
 export class TableRemoteHelpers extends Vue {
   public search = ''
 
-  generateOptions(page: number, itemsOnPage: number, initialSortBy: string, modifyFields?: (options: any) => any) {
+  generateOptions(
+    page: number,
+    itemsOnPage: number,
+    initialSort: { by: string; desc: boolean },
+    modifyFields?: (options: any) => any
+  ) {
     let options = {
       page,
       itemsPerPage: itemsOnPage,
-      sortBy: [initialSortBy],
-      sortDesc: [true],
+      sortBy: [initialSort.by],
+      sortDesc: [initialSort.desc],
       mustSort: false,
       multiSort: true,
       search: '',
