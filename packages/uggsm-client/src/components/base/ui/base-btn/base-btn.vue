@@ -1,6 +1,7 @@
 <template lang="pug">
 v-btn.ug-base-btn(
   :type='type',
+  :to='to',
   :text='text',
   :small='small',
   :icon='!!icon && !label',
@@ -110,6 +111,12 @@ export default {
       required: false,
       type: [String, Number],
       default: '',
+    },
+
+    to: {
+      required: false,
+      type: [String, Object, Boolean],
+      default: undefined,
     },
   },
 

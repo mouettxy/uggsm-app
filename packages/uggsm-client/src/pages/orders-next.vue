@@ -22,6 +22,14 @@
     headers-id='orders-headers-id',
     filter-name='orders'
   )
+    template(#panel-top:inside)
+      v-col.px-1(cols='auto')
+        ug-base-btn.dark--text(
+          :to='{ name: "orders" }',
+          small,
+          label='Старая таблица',
+          color='warning'
+        )
     template(#bottom-panel)
       v-row.mr-2.mr-lg-0.mr-md-0(
         no-gutters,

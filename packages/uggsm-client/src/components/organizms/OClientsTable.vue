@@ -4,6 +4,12 @@
     :store='store',
     :display-office-switcher='false'
   )
+    template(#top-toolbar='{store}')
+      ug-base-btn.ml-4.dark--text(
+        :to='{ name: "clientsNext" }',
+        label='Новая таблица',
+        color='warning'
+      )
     template(#item.name='{value, item}')
       v-list-item
         v-list-item-content

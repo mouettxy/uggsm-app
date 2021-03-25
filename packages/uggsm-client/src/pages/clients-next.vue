@@ -20,6 +20,14 @@
     headers-id='clients-headers-id',
     filter-name='clients'
   )
+    template(#panel-top:inside)
+      v-col.px-1(cols='auto')
+        ug-base-btn.dark--text(
+          :to='{ name: "clients" }',
+          small,
+          label='Старая таблица',
+          color='warning'
+        )
     template(#item.name='{value, item}')
       v-list-item
         v-list-item-content

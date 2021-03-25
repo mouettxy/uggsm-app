@@ -24,6 +24,14 @@
     headers-id='calls-headers-id',
     filter-name='calls'
   )
+    template(#panel-top:inside)
+      v-col.px-1(cols='auto')
+        ug-base-btn.dark--text(
+          :to='{ name: "calls" }',
+          small,
+          label='Старая таблица',
+          color='warning'
+        )
     template(#item.answered='{value}')
       template(v-if='value === "Да"')
         span {{ value }}

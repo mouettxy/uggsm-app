@@ -10,6 +10,14 @@
     :filter-name='filterName',
     v-intersect.quiet='handleTopPanelIntersect'
   )
+    template(#panel-top:inside)
+      slot(name='panel-top:inside')
+    template(#panel-top:outside)
+      slot(name='panel-top:outside')
+    template(#panel-top:inside:mobile)
+      slot(name='panel-top:inside:mobile')
+    template(#panel-top:outside:mobile)
+      slot(name='panel-top:outside:mobile')
     template(#bottom-panel)
       slot(name='bottom-panel')
 

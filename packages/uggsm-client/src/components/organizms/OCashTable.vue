@@ -1,6 +1,12 @@
 <template lang="pug">
 .cash-table
   m-remote-table(:store='store')
+    template(#top-toolbar='{store}')
+      ug-base-btn.ml-4.dark--text(
+        :to='{ name: "cashNext" }',
+        label='Новая таблица',
+        color='warning'
+      )
     template(#main-toolbar)
       v-col.pr-1(
         cols='auto',

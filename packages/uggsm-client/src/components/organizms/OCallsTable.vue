@@ -4,6 +4,12 @@
     :store='store',
     :display-office-switcher='false'
   )
+    template(#top-toolbar='{store}')
+      ug-base-btn.ml-4.dark--text(
+        :to='{ name: "callsNext" }',
+        label='Новая таблица',
+        color='warning'
+      )
     template(#item.answered='{value}')
       template(v-if='value === "Да"')
         span {{ value }}

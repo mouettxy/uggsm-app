@@ -21,6 +21,14 @@
     headers-id='cash-headers-id',
     filter-name='cashes'
   )
+    template(#panel-top:inside)
+      v-col.px-1(cols='auto')
+        ug-base-btn.dark--text(
+          :to='{ name: "cash" }',
+          small,
+          label='Старая таблица',
+          color='warning'
+        )
     template(#pagination-left='{ items }')
       v-row(v-if='items')
         v-col.py-0(

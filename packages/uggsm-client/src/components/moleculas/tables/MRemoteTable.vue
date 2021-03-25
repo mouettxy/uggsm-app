@@ -10,6 +10,7 @@
       name='top-toolbar',
       :store='store'
     )
+      slot(name="top-toolbar" :store="store")
     v-col.top-toolbar__search(
       cols='auto',
       v-if='displaySearchField'

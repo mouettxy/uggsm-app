@@ -5,14 +5,14 @@
     :headers.sync='headersModel',
     :headers-id='headersId'
   )
-    template(
-      v-for='(_, slot) in $scopedSlots',
-      #[slot]='scope'
-    )
-      slot(
-        v-bind='scope',
-        :name='slot'
-      )
+    template(#panel-top:inside)
+      slot(name='panel-top:inside')
+    template(#panel-top:outside)
+      slot(name='panel-top:outside')
+    template(#panel-top:inside:mobile)
+      slot(name='panel-top:inside:mobile')
+    template(#panel-top:outside:mobile)
+      slot(name='panel-top:outside:mobile')
   .ug-table-remote-panel__delimeter
     .ug-table-remote-panel__delimeter--inner
   ug-table-remote-panel-bottom(
