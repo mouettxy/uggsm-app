@@ -41,7 +41,8 @@
                 v-on='on',
                 v-bind='attrs',
                 label='Новый',
-                icon='mdi-plus'
+                icon='mdi-plus',
+                block
               )
         v-col(
           cols='6',
@@ -55,7 +56,8 @@
                 v-on='on',
                 v-bind='attrs',
                 label='Гарантия',
-                icon='mdi-eye-plus'
+                icon='mdi-eye-plus',
+                block
               )
     template(#item.id='{value, item}')
       o-order-modal-regular(
