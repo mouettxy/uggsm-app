@@ -11,7 +11,7 @@ import { OfficeModel } from '../models'
 import { parsePaginateResponse } from '../utils/helpers'
 import { ControllerMethod } from '../interfaces/controller'
 import BaseController from './base/BaseController'
-import { reduce } from 'lodash'
+import { each, reduce } from 'lodash'
 
 export class CashController extends BaseController implements ICashController {
   private cash = CashModel
@@ -128,23 +128,36 @@ export class CashController extends BaseController implements ICashController {
 
       const firstCashEntry = await this.cash.findOne(query, 'id balance').sort({ id: -1 })
       const totalBalance = firstCashEntry.balance || 0
-      const incomeAndConsumption = reduce(
-        response.docs,
-        (a, e) => {
-          a.income += e.income
-          a.consumption -= e.consumption
 
-          return a
+      const aggregateCashes = await this.cash.aggregate([
+        {
+          $match: mongoose.Query.prototype.cast(this.cash, query),
         },
         {
-          income: 0,
-          consumption: 0,
-        }
-      )
+          $group: {
+            _id: null,
+            income: {
+              $sum: '$income',
+            },
+            consumption: {
+              $sum: '$consumption',
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            income: 1,
+            consumption: 1,
+          },
+        },
+      ])
+
+      const aggregateCashesData = aggregateCashes[0] || { income: 0, consumption: 0 }
 
       response.total = totalBalance
-      response.income = incomeAndConsumption.income
-      response.consumption = incomeAndConsumption.consumption
+      response.income = aggregateCashesData.income
+      response.consumption = aggregateCashesData.consumption
 
       this.success(res, response)
     } catch (error) {
