@@ -17,11 +17,9 @@
     :fetch-function='fetchFunction',
     socket-event='orders updated',
     item-key-field='trueId',
-    include-search-field,
+    initial-sort-field='createdAt',
     include-office-field,
-    include-middle-toolbar,
-    include-header,
-    headers-schema-id='orders-id',
+    headers-schema-id='orders-headers-id',
     filter-name='orders'
   )
     template(#bottom-panel)
@@ -122,14 +120,12 @@ export default {
         status: 'Статус',
         customer: 'Клиент',
         master: 'Мастер',
-        created: 'Создан',
+        createdAt: 'Создан',
         phoneBrand: 'Бренд',
         phoneModel: 'Устройство',
         declaredDefect: 'Неисправность',
         totalWorks: 'Сумма работ',
         password: 'Пароль',
-        notifications: 'Уведомления',
-        adversitement: 'Рекламная кампания',
       },
 
       filterTokens: Filters.orders,
@@ -177,7 +173,7 @@ export default {
           trueId: e.id,
           estimatedCloseAt: e.estimatedCloseAt,
           status: e.status,
-          created: createTime,
+          createdAt: createTime,
           master: e.master?.credentials || '',
           phoneModel: e.phoneModel,
           phoneBrand: e.phoneBrand,
