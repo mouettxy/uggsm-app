@@ -18,7 +18,7 @@
     socket-event='update cashes',
     item-key-field='id',
     include-office-field,
-    headers-schema-id='cash-headers-id',
+    headers-id='cash-headers-id',
     filter-name='cashes'
   )
     template(#pagination-left='{ items }')

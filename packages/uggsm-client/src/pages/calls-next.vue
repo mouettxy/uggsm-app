@@ -21,7 +21,7 @@
     include-office-field,
     include-middle-toolbar,
     include-header,
-    headers-schema-id='calls-headers-id',
+    headers-id='calls-headers-id',
     filter-name='calls'
   )
     template(#item.answered='{value}')

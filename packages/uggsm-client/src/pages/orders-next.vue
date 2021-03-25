@@ -19,7 +19,7 @@
     item-key-field='trueId',
     initial-sort-field='createdAt',
     include-office-field,
-    headers-schema-id='orders-headers-id',
+    headers-id='orders-headers-id',
     filter-name='orders'
   )
     template(#bottom-panel)

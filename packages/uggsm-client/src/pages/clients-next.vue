@@ -17,7 +17,7 @@
     :fetch-function='fetchFunction',
     socket-event='update clients',
     item-key-field='id',
-    headers-schema-id='clients-table-headers',
+    headers-id='clients-headers-id',
     filter-name='clients'
   )
     template(#item.name='{value, item}')
