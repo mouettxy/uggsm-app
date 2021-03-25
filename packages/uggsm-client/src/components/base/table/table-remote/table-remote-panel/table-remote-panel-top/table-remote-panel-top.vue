@@ -18,7 +18,8 @@
         :class='{ "text-right": includeOfficeField, "text-left": !includeOfficeField }'
       )
         ug-table-remote-headers-switcher(
-          v-model='headers',
+          v-model='headersModel',
+          :headers-id='headersId',
           compact
         )
       slot(name='panel-top:inside:mobile')
@@ -40,7 +41,10 @@
         span.text-h5 {{ $route.meta.header }}
 
       v-col.ml-auto.px-1(cols='auto')
-        ug-table-remote-headers-switcher(v-model='headers')
+        ug-table-remote-headers-switcher(
+          v-model='headersModel',
+          :headers-id='headersId'
+        )
       slot(name='panel-top:inside')
     slot(name='panel-top:outside')
 </template>
@@ -66,6 +70,12 @@ export default {
       required: false,
       type: Array,
       default: () => [],
+    },
+
+    headersId: {
+      required: false,
+      type: String,
+      default: '',
     },
 
     includeOfficeField: {

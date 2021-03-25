@@ -2,7 +2,8 @@
 .ug-table-remote-panel
   ug-table-remote-panel-top(
     :include-office-field='includeOfficeField',
-    :headers.sync='headersModel'
+    :headers.sync='headersModel',
+    :headers-id='headersId'
   )
     template(
       v-for='(_, slot) in $scopedSlots',
@@ -40,6 +41,12 @@ export default {
       required: false,
       type: Array,
       default: () => [],
+    },
+
+    headersId: {
+      required: false,
+      type: String,
+      default: '',
     },
 
     includeOfficeField: {

@@ -22,6 +22,7 @@ ug-responsive-menu(
         v-list-item-action
           v-switch(
             v-model='header.show',
+            @change='addToStorage',
             color='#272727'
           )
         v-list-item-title {{ header.text }}
@@ -30,6 +31,7 @@ ug-responsive-menu(
 <script>
 import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
+import { addToStorage, getFromStorage } from '@/api/helpers/storageManager'
 
 export default {
   name: 'ug-table-remote-headers-switcher',
@@ -51,6 +53,12 @@ export default {
       default: () => [],
     },
 
+    headersId: {
+      required: false,
+      type: String,
+      default: '',
+    },
+
     compact: {
       required: false,
       type: Boolean,
@@ -70,8 +78,36 @@ export default {
       },
 
       set: function (value) {
-        this.$emit('input', value)
+        this.$emit('update', value)
       },
+    },
+  },
+
+  mounted: function () {
+    const storageData = this.getFromStorage()
+
+    if (storageData) {
+      this.model = storageData
+    }
+  },
+
+  methods: {
+    getFromStorage() {
+      if (this.headersId) {
+        const storageData = getFromStorage(this.headersId)
+
+        if (storageData !== null) {
+          return storageData
+        }
+      }
+
+      return null
+    },
+
+    addToStorage() {
+      if (this.headersId) {
+        addToStorage(this.headersId, this.headers)
+      }
     },
   },
 }

@@ -5,6 +5,7 @@
     :search.sync='search',
     :include-office-field='includeOfficeField',
     :headers.sync='headers',
+    :headers-id='headersId',
     :filter-tokens='filterTokens',
     :filter-name='filterName',
     v-intersect.quiet='handleTopPanelIntersect'
@@ -157,7 +158,7 @@ export default {
       type: Object,
     },
 
-    headersSchemaId: {
+    headersId: {
       required: true,
       type: String,
     },
