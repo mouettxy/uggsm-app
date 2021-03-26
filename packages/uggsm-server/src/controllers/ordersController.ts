@@ -87,9 +87,10 @@ export class OrdersController extends BaseController implements IOrdersControlle
     try {
       const id = req.params.id
       let response = await this.model.findOne({ id })
-      response = response.toObject()
 
       if (response) {
+        response = response.toObject()
+
         const cash = await CashModel.find({ orderid: parseInt(id) })
 
         //@ts-ignore
@@ -98,7 +99,7 @@ export class OrdersController extends BaseController implements IOrdersControlle
         res.status(200)
         res.send(response)
       } else {
-        next(new ObjectNotFoundException(this.model.modelName, id))
+        next(new HttpException(400, `Заказ с ID №${id} не найден`))
       }
     } catch (error) {
       next(new HttpException(500, error.message))

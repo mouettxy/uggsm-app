@@ -8,8 +8,10 @@
     )
       ug-base-input(
         v-model='orderid',
+        :single-line='false',
         type='number',
         prefix='№',
+        placeholder='000000',
         label='Заявка'
       )
     v-col.order-modal-fields__section-item(
@@ -59,13 +61,13 @@
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
 import UgBaseInput from '@/components/base/ui/base-input/base-input.vue'
 
-import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator'
 import Responsive from '@/mixins/responsive'
 import { Order } from '@/typings/api/order'
 import { debounce, find, flatten, map } from 'lodash'
-import { ordersModule } from '@/store'
 import { groupedStatuses } from '@/api/helpers/enums'
 import { getCorrectTextColor } from '@/api/helpers'
+import OrderAPI from '@/api/order'
 
 @Component({
   components: {
@@ -74,21 +76,27 @@ import { getCorrectTextColor } from '@/api/helpers'
   },
 })
 export default class OOrderModalWarrantyFields extends Mixins(Responsive) {
-  public orderid: number | null = null
+  @Prop() isLoading!: boolean
+
+  public orderid: number | string | null = null
 
   public order: Order | null = null
 
   public defect = ''
 
-  public dGetOrder = debounce(this.getOrder, 200)
+  public timeout = 700
 
   @Watch('orderid')
   onOrderIdChange(value: number | null) {
+    this.isLoadingModel = true
+
     if (value) {
-      this.dGetOrder()
-    } else {
-      this.order = null
+      this.debouncedGetOrder()
+      return
     }
+
+    this.order = null
+    this.isLoadingModel = false
   }
 
   @Watch('order')
@@ -99,6 +107,18 @@ export default class OOrderModalWarrantyFields extends Mixins(Responsive) {
   @Watch('defect')
   onDefectChange(value: string) {
     this.$emit('defect-change', value)
+  }
+
+  get isLoadingModel() {
+    return this.isLoading
+  }
+
+  set isLoadingModel(value) {
+    this.$emit('update:is-loading', value)
+  }
+
+  get debouncedGetOrder() {
+    return debounce(this.getOrder, this.timeout)
   }
 
   get statusColor() {
@@ -114,9 +134,24 @@ export default class OOrderModalWarrantyFields extends Mixins(Responsive) {
 
   async getOrder() {
     if (this.orderid) {
-      const response = await ordersModule.getOrder(this.orderid)
+      const response = await OrderAPI.getById(this.orderid as string)
 
-      this.order = response
+      if (response.status !== 200) {
+        //@ts-ignore
+        this.$notification.removeAll()
+        //@ts-ignore
+        this.$notification.error(response.data.message || 'Не удалось получить заказ')
+        this.isLoadingModel = false
+        this.order = null
+        return
+      }
+
+      //@ts-ignore
+      this.$notification.removeAll()
+      this.$notification.success(`Заявка c ID №${this.orderid} найдена!`)
+
+      this.order = response.data
+      this.isLoadingModel = false
     }
   }
 }

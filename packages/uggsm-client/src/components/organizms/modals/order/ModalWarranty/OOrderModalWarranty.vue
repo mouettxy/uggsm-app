@@ -7,10 +7,15 @@
         :on='on',
         :attrs='attrs'
       )
+
     v-container.order-modal-content(
       v-if='modal',
       fluid
     )
+      v-progress-linear(
+        :active='isLoading',
+        indeterminate
+      )
       .order-modal-header.softgrey
         v-row.align-center(no-gutters)
           v-slide-y-transition(leave-absolute)
@@ -58,6 +63,7 @@
               ) Не открывалась по гарантии
       .order-modal-content__body
         o-order-modal-warranty-fields(
+          :is-loading.sync='isLoading',
           @order-fetch='onOrderFetch',
           @defect-change='onDefectChange'
         )
@@ -98,6 +104,8 @@ export default class OOrderModalWarranty extends Vue {
   public modal = false
 
   public order: Order | null = null
+
+  public isLoading = false
 
   public defect = ''
 

@@ -43,6 +43,7 @@ import { ordersModule } from '@/store'
 import { Order } from '@/typings/api/order'
 import { Socket } from 'vue-socket.io-extended'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import OrdersAPI from '@/api/order'
 
 @Component({
   components: {
@@ -72,19 +73,23 @@ export default class OOrderModalRegular extends Vue {
 
   async getOrder() {
     if (this.orderid && this.modal) {
-      this.order = await ordersModule.getOrder(this.orderid)
+      const response = await OrdersAPI.getById(this.orderid as string)
 
-      if (!this.order) {
-        this.$notification.error('Не удалось получить заказ')
+      if (response.status !== 200) {
+        //@ts-ignore
+        this.$notification.error(response.data.message || 'Не удалось получить заказ')
         this.modal = false
+        return
       }
+
+      this.order = response.data
     }
   }
 
   @Socket('update order')
   async onSocketUpdateOrder(model: number) {
     if (model === this.order?.id && this.modal) {
-      this.order = await ordersModule.getOrder(model)
+      this.getOrder()
     }
   }
 
