@@ -1,8 +1,5 @@
 <template lang="pug">
-v-main.layout-centered(
-  :class='{ "layout-centered--mobile": isMobile }',
-  app
-)
+.layout-centered
   ug-side-menu(
     :mobile='isMobile',
     :menu-items='items'
@@ -32,8 +29,5 @@ export default class LayoutDefault extends Responsive {
 
 <style lang="sass">
 .layout-centered
-  padding-left: 48px !important
-  &.layout-centered--mobile
-    padding-left: 0 !important
-    padding-top: 48px !important
+  height: 100%
 </style>

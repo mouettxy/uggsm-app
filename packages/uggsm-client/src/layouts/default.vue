@@ -1,8 +1,5 @@
 <template lang="pug">
-v-main.layout-default(
-  :class='{ "layout-default--mobile": isMobile }',
-  app
-)
+.layout-default
   ug-side-menu(
     :mobile='isMobile',
     :menu-items='items'
@@ -25,12 +22,3 @@ export default class LayoutDefault extends Responsive {
   public items = defaultMenu
 }
 </script>
-
-<style lang="sass">
-.layout-default
-  height: 100%
-  padding-left: 48px !important
-  &.layout-default--mobile
-    padding-left: 0 !important
-    padding-top: 48px !important
-</style>
