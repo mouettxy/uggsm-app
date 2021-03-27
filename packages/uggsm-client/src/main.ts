@@ -25,6 +25,9 @@ import '@/plugins/casl'
 import { tryUpdateRoleAbilities } from '@/plugins/casl'
 moment.locale('ru')
 
+import { requestNotificationAccess } from '@/services/notificationService'
+requestNotificationAccess()
+
 Vue.config.productionTip = false
 
 new Vue({

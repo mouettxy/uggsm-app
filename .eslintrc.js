@@ -47,7 +47,7 @@ module.exports = {
     'vue/no-unregistered-components': [
       'error',
       {
-        ignorePatterns: [],
+        ignorePatterns: ['v(\\-\\w+)+'],
       },
     ],
     'vue/component-definition-name-casing': ['error', 'kebab-case'],

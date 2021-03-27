@@ -1,4 +1,5 @@
 import { register } from 'register-service-worker'
+import { sendNotification, UPDATE_APP_EVENT, UPDATE_APP_INTERVAL } from './services/notificationService'
 
 if (process.env.NODE_ENV === 'production') {
   register(`${process.env.BASE_URL}service-worker.js`, {
@@ -8,10 +9,9 @@ if (process.env.NODE_ENV === 'production') {
     registered(registration) {
       console.log('Service worker has been registered.')
 
-      // Routinely check for app updates by testing for a new service worker.
       setInterval(() => {
         registration.update()
-      }, 1000 * 60 * 5) // hourly checks
+      }, UPDATE_APP_INTERVAL)
     },
     cached() {
       console.log('Content has been cached for offline use.')
@@ -22,10 +22,17 @@ if (process.env.NODE_ENV === 'production') {
     updated(registration) {
       console.log('New content is available; please refresh.')
 
-      // Add a custom event and dispatch it.
-      // Used to display of a 'refresh' banner following a service worker update.
-      // Set the event payload to the service worker registration object.
-      document.dispatchEvent(new CustomEvent('swUpdated', { detail: registration }))
+      document.dispatchEvent(new CustomEvent(UPDATE_APP_EVENT, { detail: registration }))
+
+      sendNotification('Доступно обновление!', {
+        body: 'У приложения UGGSM появилось обновление. Для установки нажмите на уведомление.',
+        icon: '/img/icons/android-chrome-192x192.png',
+        vibrate: [100, 50, 100],
+        data: {
+          dateOfArrival: Date.now(),
+          primaryKey: 1,
+        },
+      })
     },
     offline() {
       console.log('No internet connection found. App is running in offline mode.')

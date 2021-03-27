@@ -11,13 +11,6 @@ export default class Settings extends VuexModule {
 
   public search: any = null
 
-  public notifications: boolean | null = null
-
-  @Mutation
-  SET_NOTIFICATIONS(payload: boolean) {
-    this.notifications = payload
-  }
-
   @Mutation
   SET_OFFICE(payload: string) {
     this.office = payload
