@@ -50,6 +50,20 @@ export class OrderAPI extends BaseAPI {
     }
   }
 
+  async updateById(orderId: string | number, data: any): AxiosResponseAPI<Order> {
+    try {
+      const response = await this.api.request<Order>({
+        url: `/${orderId}`,
+        method: 'put',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async createOrder(officeCode: string, data: any): AxiosResponseAPI<Order> {
     try {
       const response = await this.api.request<Order>({

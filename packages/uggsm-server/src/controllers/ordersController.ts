@@ -165,42 +165,46 @@ export class OrdersController extends BaseController implements IOrdersControlle
   }
 
   public addSms: ControllerMethod = async (req, res, next) => {
-    if (!this.disableSmsClient) {
-      const type: 'order-created' | 'order-closed' | 'order-closed-without-work' | 'message' = req.body.type
-      const id = req.params.id
-      const model = req.body.model
-      const price = req.body.price
-      const phone = req.body.phone
-      const from = 'top-service'
-      delete req.body.type
+    const type: 'order-created' | 'order-closed' | 'order-closed-without-work' | 'message' = req.body.type
+    const model = req.body.model
+    const price = req.body.price
+    const phone = req.body.phone
+    const from = 'top-service'
+    const id = req.params.id as string
 
-      let message: MessageInput
-      if (type === 'order-created') {
-        message = {
-          from,
-          to: phone,
-          text: `Заказ на ремонт №${id} (${model}) создан`,
-        }
-      } else if (type === 'order-closed') {
-        message = {
-          from,
-          to: phone,
-          text: `Заказ №${id} (${model}) Готов! К оплате ${price} руб.`,
-        }
-      } else if (type === 'order-closed-without-work') {
-        message = {
-          from,
-          to: phone,
-          text: `Заказ №${id} (${model}) Готов без ремонта! ${price} руб.`,
-        }
-      } else {
-        message = {
-          from,
-          to: phone,
-          text: req.body.message,
-        }
+    const alternateId = req.body.alternateId || ''
+
+    //!FIXME WTF ?
+    delete req.body.type
+
+    let message: MessageInput
+    if (type === 'order-created') {
+      message = {
+        from,
+        to: phone,
+        text: `Заказ на ремонт №${alternateId || id} (${model}) создан`,
       }
+    } else if (type === 'order-closed') {
+      message = {
+        from,
+        to: phone,
+        text: `Заказ №${alternateId || id} (${model}) Готов! К оплате ${price} руб.`,
+      }
+    } else if (type === 'order-closed-without-work') {
+      message = {
+        from,
+        to: phone,
+        text: `Заказ №${alternateId || id} (${model}) Готов без ремонта! ${price} руб.`,
+      }
+    } else {
+      message = {
+        from,
+        to: phone,
+        text: req.body.message,
+      }
+    }
 
+    if (!this.disableSmsClient) {
       try {
         const sms = await this.smsClient.sendSms(message)
 
@@ -234,7 +238,16 @@ export class OrdersController extends BaseController implements IOrdersControlle
       }
     } else {
       res.status(200)
-      res.send()
+      res.send({
+        type,
+        model,
+        price,
+        phone,
+        from,
+        id,
+        alternateId,
+        message,
+      })
     }
   }
 
@@ -714,28 +727,8 @@ export class OrdersController extends BaseController implements IOrdersControlle
     const id: string = req.params.id
     const orderData = req.body
 
-    const order = await this.model.findById(id)
-    // @ts-ignore
-    const oldMaster = order.master ? order.master._id : ''
-    // @ts-ignore
-    const oldManager = order.manager ? order.manager._id : ''
-
-    if (oldMaster.toString() !== orderData.master) {
-      const newMaster = orderData.master
-
-      await this.model.setMaster(order.id, newMaster, orderData.userid)
-    }
-    if (oldManager.toString() !== orderData.manager) {
-      const newManager = orderData.manager
-
-      await this.model.setManager(order.id, newManager, orderData.userid)
-    }
-
-    delete orderData.master
-    delete orderData.manager
-
     try {
-      const response = await this.model.findByIdAndUpdate(id, req.body, { new: true })
+      const response = await this.model.findByIdAndUpdate(id, orderData, { new: true })
 
       if (response) {
         res.status(200)

@@ -1,15 +1,13 @@
 <template lang="pug">
 .ug-order-status__container
-  v-btn(
-    v-if='!$can("editOrderStatus", "Global")',
+  ug-base-chip(
+    v-if='!$can("editOrderStatus", "Global") || !editable',
     :style='{ color: accessibleColor(statusColor) }',
-    :color='statusColor',
-    small,
-    depressed
+    :color='statusColor'
   )
     span {{ status }}
   ug-responsive-menu.ug-order-status(
-    v-if='$can("editOrderStatus", "Global")',
+    v-if='$can("editOrderStatus", "Global") && editable',
     :menu-props='{ "close-on-content-click": false, "min-width": 200, "max-height": 300, bottom: true }'
   )
     template(v-slot:activator='{ on, attrs }')
@@ -71,6 +69,12 @@ export default {
       required: false,
       type: [String],
       default: 'mounted',
+    },
+
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true,
     },
 
     orderid: {

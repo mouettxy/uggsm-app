@@ -2,6 +2,7 @@
   <div class="ug-modal-content">
     <header class="ug-modal-content__header elevation-4">
       <slot name="header"></slot>
+      <v-progress-linear :active="loading" bottom absolute indeterminate></v-progress-linear>
     </header>
     <main class="ug-modal-content__main">
       <slot name="main"></slot>
@@ -17,8 +18,8 @@ export default {
   name: 'ug-modal-content',
 
   props: {
-    fullscreen: {
-      require: false,
+    loading: {
+      required: false,
       type: Boolean,
     },
   },
@@ -34,6 +35,7 @@ export default {
   flex-wrap: nowrap
 
   .ug-modal-content__header
+    position: relative
     display: flex
     flex-shrink: 0
     background: var(--v-table_lightgrey-base)

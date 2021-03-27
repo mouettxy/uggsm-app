@@ -56,7 +56,7 @@
           md='auto',
           lg='auto'
         ) 
-          o-order-modal-warranty
+          ug-modal-order-warranty
             template(#activator='{on, attrs}')
               ug-table-remote-btn.ml-2(
                 v-on='on',
@@ -105,6 +105,7 @@ import UgTableRemote from '@/components/base/table/table-remote/table-remote'
 import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time'
 import UgOrderStatus from '@/components/order/order-status/order-status'
 import UgModalOrderNew from '@/components/order/modal-order-new/modal-order-new'
+import UgModalOrderWarranty from '@/components/order/modal-order-warranty/modal-order-warranty'
 
 import OrderAPI from '@/api/order'
 import { mapState } from 'vuex'
@@ -120,6 +121,7 @@ export default {
     UgOrderEditTime,
     UgOrderStatus,
     UgModalOrderNew,
+    UgModalOrderWarranty,
   },
 
   data: function () {

@@ -24,6 +24,7 @@ export type SendSMSInput = {
   model: string
   price?: number
   message?: string
+  alternateId?: string
 }
 
 @Module({
