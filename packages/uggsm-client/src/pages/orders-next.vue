@@ -15,7 +15,7 @@
     :headers-schema='headersSchema',
     :filter-tokens='filterTokens',
     :fetch-function='fetchFunction',
-    socket-event='orders updated',
+    socket-event='update orders',
     item-key-field='trueId',
     initial-sort-field='createdAt',
     include-office-field,
@@ -41,7 +41,7 @@
           md='auto',
           lg='auto'
         ) 
-          o-order-modal-new
+          ug-modal-order-new
             template(#activator='{on, attrs}')
               ug-table-remote-btn(
                 v-on='on',
@@ -104,6 +104,7 @@
 import UgTableRemote from '@/components/base/table/table-remote/table-remote'
 import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time'
 import UgOrderStatus from '@/components/order/order-status/order-status'
+import UgModalOrderNew from '@/components/order/modal-order-new/modal-order-new'
 
 import OrderAPI from '@/api/order'
 import { mapState } from 'vuex'
@@ -118,6 +119,7 @@ export default {
     UgTableRemote,
     UgOrderEditTime,
     UgOrderStatus,
+    UgModalOrderNew,
   },
 
   data: function () {
