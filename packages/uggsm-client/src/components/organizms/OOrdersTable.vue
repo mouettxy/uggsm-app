@@ -11,7 +11,7 @@
       template(v-if='selectedOffice')
         template(v-if='$can("createOrder", "Global")')
           v-col(cols='auto')
-            o-order-modal-new
+            ug-modal-order-new
               template(#activator='{on, attrs}')
                 v-btn(
                   v-on='on',
@@ -149,6 +149,7 @@ import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-pick
 import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
 import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time.vue'
 import UgOrderStatus from '@/components/order/order-status/order-status.vue'
+import UgModalOrderNew from '@/components/order/modal-order-new/modal-order-new.vue'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, settingsModule } from '@/store'
@@ -165,6 +166,7 @@ import UserAPI from '@/api/user'
     UgSelectMany,
     UgOrderEditTime,
     UgOrderStatus,
+    UgModalOrderNew,
   },
 })
 export default class OOrdersTable extends Vue {
