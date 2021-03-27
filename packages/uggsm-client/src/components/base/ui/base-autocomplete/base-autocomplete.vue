@@ -6,7 +6,7 @@ v-autocomplete.ug-base-autocomplete(
   :prepend-inner-icon='icon',
   :menu-props='{ allowOverflow: true, bottom: true, maxHeight: 204 }',
   :label='label',
-  :items='items',
+  :items='prettifiedItems',
   :item-value='itemValue',
   :item-text='itemText',
   :hide-details='hideDetails',
@@ -28,6 +28,7 @@ v-autocomplete.ug-base-autocomplete(
 
 <script>
 import { VueMaskFilter } from 'v-mask'
+import { debounce } from 'lodash'
 
 export default {
   name: 'ug-base-autocomplete',
@@ -122,6 +123,7 @@ export default {
       items: [],
       query: '',
       allowItemsFetch: false,
+      timeout: 500,
     }
   },
 
@@ -136,12 +138,38 @@ export default {
       },
     },
 
+    debouncedGetItems() {
+      return debounce(this.getItems, this.timeout)
+    },
+
+    prettifiedItems() {
+      if (this.phone && this.items) {
+        const tempItems = []
+        this.items.forEach((e) => {
+          tempItems.push({
+            value: e.value,
+            text: VueMaskFilter(e.text, '+7 (###) ###-##-##'),
+          })
+        })
+
+        if (!this.disallowFreeType && this.query) {
+          tempItems.push({ value: this.query, text: VueMaskFilter(this.query, '+7 (###) ###-##-##') })
+        }
+
+        return tempItems
+      } else if (!this.disallowFreeType) {
+        return this.items
+      }
+
+      return this.items
+    },
+
     phoneMask() {
       if (this.phone) {
         return '+7 (###) ###-##-##'
-      } else {
-        return false
       }
+
+      return false
     },
   },
 
@@ -154,33 +182,16 @@ export default {
   methods: {
     async onChange() {
       if (this.query && this.allowItemsFetch) {
-        const items = await this.getItems()
-
-        this.items = items
-
-        if (this.phone && this.items) {
-          const tempItems = []
-          this.items.forEach((e) => {
-            tempItems.push({
-              value: e.value,
-              text: VueMaskFilter(e.text, '+7 (###) ###-##-##'),
-            })
-          })
-          this.items = tempItems
-        }
-
-        if (!this.disallowFreeType) {
-          this.items.push({ value: this.query, text: this.query })
-        }
+        await this.debouncedGetItems()
       }
     },
 
     async onAutocompleteFocus() {
       this.allowItemsFetch = true
-      this.items = await this.getItems()
+      await this.getItems()
     },
 
-    async getItems() {
+    async getItems(modifyItemsFn) {
       try {
         let params = {
           [this.querySearch]: this.query,
@@ -197,15 +208,23 @@ export default {
           params[this.querySearch] = this.replaceSearchWith
         }
 
+        //!FIXME: axios call in component
         const response = await this.$axios.get(`autocomplete${this.endpoint}`, { params })
 
-        if (response.status === 200) {
-          return response.data
-        } else {
-          return []
+        if (response.status !== 200) {
+          this.items = []
+          return
         }
+
+        let items = response.data
+
+        if (modifyItemsFn && typeof modifyItemsFn === 'function') {
+          items = modifyItemsFn(items)
+        }
+
+        this.items = items
       } catch (e) {
-        return []
+        this.items = []
       }
     },
 
