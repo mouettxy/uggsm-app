@@ -22,7 +22,7 @@
                   span Новый
         template(v-if='$can("createGuarantyOrder", "Global")')
           v-col(cols='auto')
-            o-order-modal-warranty
+            ug-modal-order-warranty
               template(#activator='{on, attrs}')
                 v-btn.ml-2(
                   v-on='on',
@@ -150,6 +150,7 @@ import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
 import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time.vue'
 import UgOrderStatus from '@/components/order/order-status/order-status.vue'
 import UgModalOrderNew from '@/components/order/modal-order-new/modal-order-new.vue'
+import UgModalOrderWarranty from '@/components/order/modal-order-warranty/modal-order-warranty.vue'
 
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { authModule, ordersModule, settingsModule } from '@/store'
@@ -167,6 +168,7 @@ import UserAPI from '@/api/user'
     UgOrderEditTime,
     UgOrderStatus,
     UgModalOrderNew,
+    UgModalOrderWarranty,
   },
 })
 export default class OOrdersTable extends Vue {

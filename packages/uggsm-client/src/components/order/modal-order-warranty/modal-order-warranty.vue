@@ -52,7 +52,7 @@ export default {
 
   data: () => ({
     modal: false,
-    isLoading: true,
+    isLoading: false,
     order: null,
     orderId: null,
     defect: '',
