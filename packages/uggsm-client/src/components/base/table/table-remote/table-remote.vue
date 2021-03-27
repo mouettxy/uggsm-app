@@ -82,6 +82,7 @@
       @update:page='debouncedUpdateTable',
       @update:items-per-page='debouncedUpdateTable',
       multi-sort,
+      mobile-breakpoint='0',
       hide-default-footer,
       fixed-header,
       dense
