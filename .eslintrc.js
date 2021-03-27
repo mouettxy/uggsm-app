@@ -28,6 +28,7 @@ module.exports = {
         semi: false,
         printWidth: 120,
         endOfLine: 'auto',
+        htmlWhitespaceSensitivity: 'ignore',
       },
     ],
     '@typescript-eslint/ban-ts-comment': 'off',
@@ -95,6 +96,7 @@ module.exports = {
 
   extends: [
     'eslint:recommended',
+    'plugin:prettier/recommended',
     'plugin:vue/recommended',
     '@vue/prettier',
     '@vue/prettier/@typescript-eslint',
