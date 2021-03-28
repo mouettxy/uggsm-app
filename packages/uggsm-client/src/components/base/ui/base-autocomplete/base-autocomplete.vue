@@ -157,8 +157,8 @@ export default {
         }
 
         return tempItems
-      } else if (!this.disallowFreeType) {
-        return this.items
+      } else if (!this.disallowFreeType && this.query) {
+        return [...this.items, { value: this.query, text: this.query }]
       }
 
       return this.items
