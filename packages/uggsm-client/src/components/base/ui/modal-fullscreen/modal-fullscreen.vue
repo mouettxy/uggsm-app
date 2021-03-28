@@ -11,7 +11,7 @@ v-dialog.ug-modal-fullscreen(
       :on='on',
       :attrs='attrs'
     )
-  v-card
+  v-card.ug-modal-fullscreen__card
     slot
     slot(name='content')
 </template>
@@ -40,3 +40,11 @@ export default {
   },
 }
 </script>
+
+<style lang="sass">
+.v-dialog.ug-modal-fullscreen
+  height: 100%
+
+.ug-modal-fullscreen__card
+  height: 100%
+</style>
