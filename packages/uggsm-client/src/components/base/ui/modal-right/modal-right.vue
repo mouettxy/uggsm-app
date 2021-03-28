@@ -88,7 +88,7 @@ export default {
   &-leave-active
     position: absolute
   &-enter-active, &-leave, &-leave-to
-    transition: all .5s
+    transition: all .3s
   &-enter, &-leave-to
     transform: translateX(110%)
 </style>
