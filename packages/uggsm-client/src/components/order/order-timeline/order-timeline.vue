@@ -1,6 +1,6 @@
 <template lang="pug">
 .ug-order-timeline
-  div(v-for='workflowItem in normalizedWorkflows')
+  .ug-order-timeline__container(v-for='workflowItem in normalizedWorkflows')
     .ug-order-timeline__time
       ug-order-timeline-line(:color='getFirstAviableColor(workflowItem.actions)')
       span {{ workflowItem.date }}
@@ -71,8 +71,13 @@ export default {
 
 <style lang="sass">
 .ug-order-timeline
-  .ug-order-timeline__time
+  .ug-order-timeline__container
     position: relative
+  .ug-order-timeline__time
+    position: sticky
+    background: var(--v-table_lightgrey-base)
+    z-index: 102
+    top: 0
     font-size: 1rem
     text-align: center
     padding: 6px
