@@ -66,10 +66,7 @@
                 block
               )
     template(#item.id='{value, item}')
-      o-order-modal-regular(
-        :orderid='item.trueId',
-        :new-order='false'
-      )
+      ug-modal-order(:order-id='item.trueId')
         template(#activator='{on, attrs}')
           v-btn(
             v-on='on',
@@ -106,6 +103,7 @@ import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time'
 import UgOrderStatus from '@/components/order/order-status/order-status'
 import UgModalOrderNew from '@/components/order/modal-order-new/modal-order-new'
 import UgModalOrderWarranty from '@/components/order/modal-order-warranty/modal-order-warranty'
+import UgModalOrder from '@/components/order/modal-order/modal-order'
 
 import OrderAPI from '@/api/order'
 import { mapState } from 'vuex'
@@ -122,6 +120,7 @@ export default {
     UgOrderStatus,
     UgModalOrderNew,
     UgModalOrderWarranty,
+    UgModalOrder,
   },
 
   data: function () {
