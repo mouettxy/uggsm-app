@@ -39,6 +39,12 @@ module.exports = {
     'no-unused-vars': 0,
     'trailing-comma': 0,
     'lines-between-class-members': ['error', 'always'],
+    'vue/valid-v-slot': [
+      'error',
+      {
+        allowModifiers: true,
+      },
+    ],
     'vue/new-line-between-multi-line-property': [
       'error',
       {
