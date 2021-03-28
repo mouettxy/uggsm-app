@@ -1,5 +1,13 @@
 export const findElements = (elements: Record<string, string>, root: string | null = null) => {
-  const rootElement = root ? document.querySelector(root) || document : document
+  let rootElement: any
+  if (!rootElement) {
+    rootElement = document
+  } else if (typeof rootElement === 'string') {
+    rootElement = document.querySelector(root as string) || document
+  } else {
+    rootElement = root
+  }
+
   const elementNames = Object.keys(elements)
   const resultingElements: Record<string, HTMLElement | Element | Document | null> = {}
 
