@@ -55,6 +55,15 @@ import moment from 'moment'
 export default class PageIndex extends Vue {
   public news = [
     {
+      date: moment('28.03.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      items: [
+        {
+          type: 'fix',
+          text: 'Исправлена ошибка не позволяющая корректно вводить свободные данные в поля автодополнения.',
+        },
+      ],
+    },
+    {
       date: moment('27.03.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       items: [
         {
