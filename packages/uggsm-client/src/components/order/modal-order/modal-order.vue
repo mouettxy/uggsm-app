@@ -9,15 +9,18 @@
       </template>
 
       <template #main>
-        <v-tabs>
+        <v-tabs v-model="currentTab">
           <v-tab v-for="tab in tabs" :key="tab.key">
             <span>{{ tab.title }}</span>
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="currentTab" class="ug-modal-order__tabs" touchless>
-          <v-tab-item v-for="tab in tabs" :key="tab.key">
-            <span>{{ tab.component }}</span>
-            <span>{{ order }}</span>
+          <v-tab-item v-for="tab in tabs" :key="tab.key" eager>
+            <div class="ug-modal-order__tab">
+              <keep-alive>
+                <component :is="tab.component" :order.sync="order"></component>
+              </keep-alive>
+            </div>
           </v-tab-item>
         </v-tabs-items>
       </template>
@@ -49,17 +52,32 @@ import UgBaseBtn from '@/components/base/ui/base-btn/base-btn.vue'
 
 import UgModalOrderSidebar from '@/components/order/modal-order/modal-order-sidebar/modal-order-sidebar'
 
+import UgModalOrderInfo from '@/components/order/modal-order/modal-order-info/modal-order-info'
+import UgModalOrderWork from '@/components/order/modal-order/modal-order-work/modal-order-work'
+import UgModalOrderCash from '@/components/order/modal-order/modal-order-cash/modal-order-cash'
+
 import { mapState } from 'vuex'
 import OrderAPI from '@/api/order'
 
 export default {
-  name: 'ug-modal-order-new',
+  name: 'ug-modal-order',
+
+  sockets: {
+    ['update order'](id) {
+      if (id === this.order?.id && this.modal) {
+        this.getOrder()
+      }
+    },
+  },
 
   components: {
     UgModalFullscreen,
     UgModalContent,
     UgBaseBtn,
     UgModalOrderSidebar,
+    UgModalOrderInfo,
+    UgModalOrderWork,
+    UgModalOrderCash,
   },
 
   props: {
@@ -89,7 +107,7 @@ export default {
       {
         key: 'cash',
         title: 'Платежи',
-        component: 'ug-modal-order-cash',
+        component: 'modal-order-cash',
       },
     ],
   }),
@@ -183,4 +201,6 @@ export default {
 .ug-modal-order__tabs
   height: calc(100% - 60px)
   overflow-y: scroll
+.ug-modal-order__tab
+  padding: 12px
 </style>
