@@ -40,7 +40,7 @@
           <ug-base-btn
             v-if="isMobile"
             class="ml-auto"
-            icon="mdi-comment-arrow-left"
+            icon="mdi-comment-arrow-right"
             color="dark"
             @click="isSidebarVisible = !isSidebarVisible"
           ></ug-base-btn>
