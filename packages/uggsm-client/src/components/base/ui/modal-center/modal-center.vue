@@ -1,7 +1,8 @@
 <template lang="pug">
 v-dialog.ug-modal-center(
   v-model='model',
-  :fullscreen='this.$vuetify.breakpoint.mobile',
+  :fullscreen='isMobile',
+  :eager='eager',
   :content-class='contentClass',
   width='50vw',
   transition='dialog-bottom-transition',
@@ -14,16 +15,21 @@ v-dialog.ug-modal-center(
       :on='on',
       :attrs='attrs'
     )
-  slot(:close='closeModal')
+  v-card.ug-modal-center__card
+    slot(:close='closeModal')
 </template>
 
 <script>
+import Responsive from '@/mixins/responsive'
+
 export default {
   name: 'ug-modal-center',
 
+  mixins: [Responsive],
+
   props: {
     value: {
-      required: true,
+      required: false,
       type: [Boolean],
     },
 
@@ -32,6 +38,11 @@ export default {
       type: [String],
 
       default: 'center-modal',
+    },
+
+    eager: {
+      required: false,
+      type: Boolean,
     },
   },
 
@@ -54,3 +65,8 @@ export default {
   },
 }
 </script>
+
+<style lang="sass">
+.ug-modal-center__card
+  height: 100%
+</style>
