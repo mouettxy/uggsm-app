@@ -120,6 +120,33 @@ export class OrderAPI extends BaseAPI {
     }
   }
 
+  async addCompletedWork(orderId: string, data: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request({
+        url: `/${orderId}/completed-work`,
+        method: 'put',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
+  async deleteCompletedWork(orderId: string | number, workId: string | number): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request({
+        url: `/${orderId}/completed-work/${workId}`,
+        method: 'delete',
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async generateReport(params: any): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request({
