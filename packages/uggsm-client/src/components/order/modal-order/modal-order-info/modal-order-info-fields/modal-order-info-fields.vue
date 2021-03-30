@@ -1,19 +1,21 @@
 <template>
-  <v-row>
+  <v-row class="ug-modal-order-info-fields">
     <v-col cols="12" lg="6" md="6">
       <ug-modal-client v-if="orderModel.customer && orderModel.customer.id" :clientid="orderModel.customer.id">
         <template #activator="{ on, attrs }">
-          <span v-bind="attrs" v-on="on">
-            <v-icon size="1.3rem" color="table_darkergrey">mdi-pencil</v-icon>
-            <span class="text-subtitle-1 table_darkergrey--text">{{ orderModel.customerName }}</span>
-          </span>
+          <ug-base-chip v-bind="attrs" v-on="on">
+            <v-icon size="1.3rem" color="dark">mdi-pencil</v-icon>
+            <span class="text-subtitle-1">{{ orderModel.customerName }}</span>
+          </ug-base-chip>
         </template>
       </ug-modal-client>
     </v-col>
     <v-col cols="12" lg="6" md="6">
-      <span class="text-subtitle-1 table_darkergrey--text">
-        {{ orderModel.customerPhone | VMask('+7 (###) ###-##-##') }}
-      </span>
+      <ug-base-chip class="text-subtitle-1 ug-modal-order-info-fields__customer-phone">
+        <a class="dark--text" :href="`tel:8${orderModel.customerPhone}`">
+          {{ orderModel.customerPhone | VMask('+7 (###) ###-##-##') }}
+        </a>
+      </ug-base-chip>
     </v-col>
     <v-col cols="12" lg="6" md="6">
       <ug-base-input
@@ -137,6 +139,7 @@ import UgModalClient from '@/components/client/modal-client/modal-client'
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete'
 import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch'
 import UgBaseInput from '@/components/base/ui/base-input/base-input'
+import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 
 export default {
   name: 'ug-modal-order-info-fields',
@@ -146,6 +149,7 @@ export default {
     UgBaseAutocomplete,
     UgBaseSwitch,
     UgBaseInput,
+    UgBaseChip,
   },
 
   props: {
@@ -206,4 +210,7 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="sass">
+.ug-modal-order-info-fields__customer-phone a
+  text-decoration: none !important
+</style>

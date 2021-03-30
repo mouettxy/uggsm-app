@@ -3,7 +3,7 @@
     <template #activator="{ on, attrs }">
       <slot name="activator" :on="on" :attrs="attrs"></slot>
     </template>
-    <ug-modal-content sidebar main-no-padding main-no-scroll>
+    <ug-modal-content v-if="modal" sidebar main-no-padding main-no-scroll>
       <template #header>
         <h5 class="text-h5">Заказ №{{ orderId }}</h5>
       </template>
@@ -14,7 +14,7 @@
             <span>{{ tab.title }}</span>
           </v-tab>
         </v-tabs>
-        <v-tabs-items v-model="currentTab" class="ug-modal-order__tabs" touchless>
+        <v-tabs-items v-model="currentTab" class="ug-modal-order__tabs ug-scrollbar" touchless>
           <v-tab-item v-for="tab in tabs" :key="tab.key" eager>
             <div class="ug-modal-order__tab">
               <keep-alive>
@@ -200,7 +200,8 @@ export default {
 <style lang="sass">
 .ug-modal-order__tabs
   height: calc(100% - 60px)
-  overflow-y: scroll
+  overflow-y: auto
+  margin-right: 8px
 .ug-modal-order__tab
   padding: 12px
 </style>

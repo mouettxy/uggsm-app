@@ -1,32 +1,40 @@
 <template>
-  <div v-if="order" class="ug-modal-order-work">
-    <v-row>
-      <v-col cols="12">
-        <ug-modal-order-work-add :order="order" :is-order-closed="isOrderClosed"></ug-modal-order-work-add>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-data-table
-          :items="order.statusWork"
-          :headers="tableWorksHeaders"
-          hide-default-footer
-          no-data-text="Нет закрытых работ"
-          mobile-breakpoint="0"
-          dense
-        >
-          <!-- eslint-disable-next-line -->
+  <div class="ug-modal-order-work">
+    <v-expand-transition>
+      <v-row v-if="!order" key="loading">
+        <v-col cols="12" lg="auto" md="auto">
+          <v-skeleton-loader type="button"></v-skeleton-loader>
+        </v-col>
+        <v-col cols="12">
+          <v-skeleton-loader type="table-row-divider@3"></v-skeleton-loader>
+        </v-col>
+      </v-row>
+      <v-row v-else key="loaded">
+        <v-col cols="12">
+          <ug-modal-order-work-add :order="order" :is-order-closed="isOrderClosed"></ug-modal-order-work-add>
+        </v-col>
+        <v-col cols="12">
+          <v-data-table
+            :items="order.statusWork"
+            :headers="tableWorksHeaders"
+            hide-default-footer
+            no-data-text="Нет закрытых работ"
+            mobile-breakpoint="0"
+            dense
+          >
+            <!-- eslint-disable-next-line -->
           <template #item.actions="{ item }">
-            <ug-base-btn
-              :disabled="isOrderClosed || !$can('deleteOrderWork', 'Global')"
-              icon="mdi-trash-can"
-              color="error"
-              @click="handleDeleteWork(item)"
-            ></ug-base-btn>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
+              <ug-base-btn
+                :disabled="isOrderClosed || !$can('deleteOrderWork', 'Global')"
+                icon="mdi-trash-can"
+                color="error"
+                @click="handleDeleteWork(item)"
+              ></ug-base-btn>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
+    </v-expand-transition>
   </div>
 </template>
 

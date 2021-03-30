@@ -4,7 +4,7 @@ v-dialog.ug-modal-right(
   :fullscreen='isMobile',
   :eager='eager',
   :content-class='`right-modal${isMobile ? " is-mobile" : ""}`',
-  transition='dialog-right-transition'
+  transition='ug-dialog-right-transition'
 )
   template(#activator='{on, attrs}')
     slot(
@@ -83,12 +83,4 @@ export default {
   .ug-modal-right__card
     height: 100%
     overflow-y: auto
-
-.dialog-right-transition
-  &-leave-active
-    position: absolute
-  &-enter-active, &-leave, &-leave-to
-    transition: all .3s
-  &-enter, &-leave-to
-    transform: translateX(110%)
 </style>

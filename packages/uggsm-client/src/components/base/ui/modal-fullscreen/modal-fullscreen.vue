@@ -1,7 +1,7 @@
 <template lang="pug">
 v-dialog.ug-modal-fullscreen(
   v-model='model',
-  transition='slide-y-transition',
+  transition='ug-dialog-bottom-transition',
   internal-activator,
   fullscreen
 )
@@ -13,7 +13,6 @@ v-dialog.ug-modal-fullscreen(
     )
   v-card.ug-modal-fullscreen__card
     slot
-    slot(name='content')
 </template>
 
 <script>

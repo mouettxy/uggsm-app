@@ -33,7 +33,14 @@
     <footer class="ug-modal-content__footer">
       <slot name="footer"></slot>
     </footer>
-    <transition v-if="sidebar" name="ug-modal-content__sidebar--animation">
+    <transition
+      v-if="sidebar"
+      name="ug-slide-right-transition"
+      appear-class="ug-slide-right-transition--appear"
+      appear-to-class="ug-slide-right-transition--appear-to"
+      :duration="5000"
+      appear
+    >
       <aside v-if="isSidebarVisible" class="ug-modal-content__sidebar elevation-4">
         <div class="ug-modal-content__sidebar-toolbar">
           <slot name="sidebar-toolbar"></slot>
@@ -45,7 +52,7 @@
             @click="isSidebarVisible = !isSidebarVisible"
           ></ug-base-btn>
         </div>
-        <div class="ug-modal-content__sidebar-content">
+        <div class="ug-modal-content__sidebar-content ug-scrollbar">
           <slot name="sidebar"></slot>
         </div>
       </aside>
@@ -129,7 +136,7 @@ export default {
     overflow: hidden !important
 
   &.ug-modal-content--sidebar
-    padding-right: 350px
+    padding-right: 400px
 
     &.ug-modal-content--mobile
       padding-right: 0px
@@ -164,7 +171,7 @@ export default {
       padding: 12px
       background: var(--v-table_lightgrey-base)
       height: 100%
-      width: 350px
+      width: 400px
 
       .ug-modal-content__sidebar-toolbar
         display: flex

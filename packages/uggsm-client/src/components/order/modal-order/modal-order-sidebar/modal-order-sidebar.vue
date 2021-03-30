@@ -1,17 +1,16 @@
 <template>
   <div class="modal-order-sidebar">
-    <v-fade-transition>
-      <ug-order-timeline v-if="workflows.length" :workflow="workflows">
+    <v-expand-transition>
+      <div v-if="!workflows.length">
+        <v-skeleton-loader v-for="i in 3" :key="i" type="list-item-avatar-two-line"></v-skeleton-loader>
+      </div>
+      <ug-order-timeline v-else :workflow="workflows">
         <!-- eslint-disable-next-line -->
       <template #custom.content-body="{ value }">
           <ug-order-workflow-audioplayer :call="getOrderCall(value)"></ug-order-workflow-audioplayer>
         </template>
       </ug-order-timeline>
-    </v-fade-transition>
-
-    <div v-if="!workflows.length">
-      <v-skeleton-loader v-for="i in 3" :key="i" boilerplate type="list-item-avatar-two-line"></v-skeleton-loader>
-    </div>
+    </v-expand-transition>
   </div>
 </template>
 

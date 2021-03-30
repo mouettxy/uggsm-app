@@ -6,3 +6,46 @@
 
 .w-100
   width: 100%
+
+.ug-scrollbar
+  &::-webkit-scrollbar-track
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3)
+    backround: var(--v-table_lightgrey-base)
+    border-radius: 4px
+  &::-webkit-scrollbar
+    width: 6px
+    backround: var(--v-table_lightgrey-base)
+  &::-webkit-scrollbar-thumb
+    border-radius: 4px
+    background-color: var(--v-table_darkgrey-base)
+
+.ug-dialog-bottom-transition
+  &-leave-active
+    position: absolute
+  &-enter-active, &-leave, &-leave-to
+    transition: all .25s
+  &-enter, &-leave-to
+    transform: translateY(100%)
+
+.ug-dialog-right-transition
+  &-leave-active
+    position: absolute
+  &-enter-active, &-leave, &-leave-to
+    transition: all .3s
+  &-enter, &-leave-to
+    transform: translateX(110%)
+
+.ug-slide-right-transition
+  &-leave-active
+    position: absolute
+  &-enter-active, &-leave, &-leave-to
+    transition: all .3s
+  &-enter, &-leave-to
+    transform: translateX(110%)
+
+.ug-slide-right-transition--appear
+  transform: translateX(110%)
+
+.ug-slide-right-transition--appear-to
+  transfrom: translateX(0)
+  
