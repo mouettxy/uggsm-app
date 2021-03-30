@@ -52,6 +52,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
+
+    menu: {
+      required: false,
+      type: Boolean,
+    },
   },
 
   data: function () {
@@ -66,6 +71,12 @@ export default {
         ...this.sheetProps,
         'content-class': [this.sheetProps['content-class'] || '', 'ug-responsive-menu-sheet'].join(' '),
       }
+    },
+  },
+
+  watch: {
+    model(value) {
+      this.$emit('update:menu', value)
     },
   },
 
