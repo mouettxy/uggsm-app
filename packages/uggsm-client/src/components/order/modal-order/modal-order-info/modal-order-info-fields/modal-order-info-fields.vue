@@ -1,5 +1,41 @@
 <template>
   <v-row class="ug-modal-order-info-fields">
+    <template v-if="isMobile">
+      <v-col cols="12" class="d-flex justify-space-between">
+        <v-tooltip v-if="order" bottom>
+          <template #activator="{ on, attrs }">
+            <ug-base-chip
+              class="d-inline-block"
+              :style="{ height: '32px' }"
+              v-bind="attrs"
+              small
+              color="primary"
+              v-on="on"
+            >
+              {{ order.office.code }}
+            </ug-base-chip>
+          </template>
+          <span>{{ order.office.name }}</span>
+        </v-tooltip>
+        <ug-order-edit-time
+          v-if="order"
+          class="d-inline-block"
+          :time="order.estimatedCloseAt"
+          :orderid="order.id"
+          :order-status="order.status"
+          path="estimatedCloseAt"
+          editable
+        ></ug-order-edit-time>
+      </v-col>
+      <v-col cols="12">
+        <ug-order-status
+          v-if="order"
+          :style="{ height: '32px' }"
+          :status="order.status"
+          :orderid="order.id"
+        ></ug-order-status>
+      </v-col>
+    </template>
     <v-col cols="12" lg="6" md="6">
       <ug-modal-client
         v-if="orderModel.customer && orderModel.customer.id"
@@ -144,6 +180,10 @@ import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-auto
 import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch'
 import UgBaseInput from '@/components/base/ui/base-input/base-input'
 import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+import UgOrderStatus from '@/components/order/order-status/order-status'
+import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time'
+
+import Responsive from '@/mixins/responsive'
 
 export default {
   name: 'ug-modal-order-info-fields',
@@ -154,7 +194,11 @@ export default {
     UgBaseSwitch,
     UgBaseInput,
     UgBaseChip,
+    UgOrderStatus,
+    UgOrderEditTime,
   },
+
+  mixins: [Responsive],
 
   props: {
     order: {

@@ -6,23 +6,38 @@
     <ug-modal-content v-if="modal" sidebar main-no-padding main-no-scroll>
       <template #header>
         <h5 class="text-h5">Заказ №{{ orderId }}</h5>
-        <v-tooltip v-if="order" bottom>
-          <template #activator="{ on, attrs }">
-            <ug-base-chip v-bind="attrs" small color="primary" v-on="on">
-              {{ order.office.code }}
-            </ug-base-chip>
-          </template>
-          <span>{{ order.office.name }}</span>
-        </v-tooltip>
-        <ug-order-status v-if="order" :status="order.status" :orderid="order.id"></ug-order-status>
-        <ug-order-edit-time
-          v-if="order"
-          :time="order.estimatedCloseAt"
-          :orderid="order.id"
-          :order-status="order.status"
-          path="estimatedCloseAt"
-          editable
-        ></ug-order-edit-time>
+        <template v-if="!isMobile">
+          <v-tooltip v-if="order" bottom>
+            <template #activator="{ on, attrs }">
+              <ug-base-chip
+                class="d-inline-block"
+                :style="{ height: '32px' }"
+                v-bind="attrs"
+                small
+                color="primary"
+                v-on="on"
+              >
+                {{ order.office.code }}
+              </ug-base-chip>
+            </template>
+            <span>{{ order.office.name }}</span>
+          </v-tooltip>
+          <ug-order-status
+            v-if="order"
+            :style="{ height: '32px' }"
+            :status="order.status"
+            :orderid="order.id"
+          ></ug-order-status>
+          <ug-order-edit-time
+            v-if="order"
+            class="d-inline-block"
+            :time="order.estimatedCloseAt"
+            :orderid="order.id"
+            :order-status="order.status"
+            path="estimatedCloseAt"
+            editable
+          ></ug-order-edit-time>
+        </template>
       </template>
 
       <template #main>
@@ -32,11 +47,9 @@
           </v-tab>
         </v-tabs>
         <v-tabs-items v-model="currentTab" class="ug-modal-order__tabs ug-scrollbar" touchless>
-          <v-tab-item v-for="tab in tabs" :key="tab.key" eager>
+          <v-tab-item v-for="tab in tabs" :key="tab.key">
             <div class="ug-modal-order__tab">
-              <keep-alive>
-                <component :is="tab.component" :order.sync="order"></component>
-              </keep-alive>
+              <component :is="tab.component" :order.sync="order"></component>
             </div>
           </v-tab-item>
         </v-tabs-items>
@@ -95,6 +108,7 @@ import UgModalOrderInfo from '@/components/order/modal-order/modal-order-info/mo
 import UgModalOrderWork from '@/components/order/modal-order/modal-order-work/modal-order-work'
 import UgModalOrderCash from '@/components/order/modal-order/modal-order-cash/modal-order-cash'
 
+import Responsive from '@/mixins/responsive'
 import { mapState } from 'vuex'
 import OrderAPI from '@/api/order'
 
@@ -124,6 +138,8 @@ export default {
     UgOrderStatus,
     UgOrderEditTime,
   },
+
+  mixins: [Responsive],
 
   props: {
     orderId: {
@@ -204,7 +220,10 @@ export default {
     },
 
     async updateOrder() {
-      const response = await OrderAPI.updateById(this.order._id, this.order)
+      const response = await OrderAPI.updateById(this.order._id, {
+        ...this.order,
+        userid: this.user.id,
+      })
 
       if (response.status !== 200) {
         this.$notification.error('Не удалось обновить заказ')
