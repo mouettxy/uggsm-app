@@ -178,7 +178,7 @@ export default {
         justify-content: space-between
 
       .ug-modal-content__sidebar-content
-        height: 100%
+        height: calc(100% - 36px)
         overflow-y: auto
 
   &:not(.ug-modal-content--sidebar) .ug-modal-content__header
