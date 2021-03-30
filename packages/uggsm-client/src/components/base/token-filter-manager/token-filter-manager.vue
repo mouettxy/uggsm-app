@@ -97,10 +97,18 @@
 </template>
 
 <script>
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+import UgBaseInput from '@/components/base/ui/base-input/base-input'
+
 import { mapActions, mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ug-token-filter-manager',
+
+  components: {
+    UgBaseBtn,
+    UgBaseInput,
+  },
 
   props: {
     filter: {

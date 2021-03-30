@@ -27,21 +27,33 @@ v-card
     ug-role-list(@loading='handleListLoading')
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import UgRoleAdd from '@/components/role/role-add/role-add'
+import UgRoleList from '@/components/role/role-list/role-list'
+import UgBtnToggle from '@/components/base/ui/btn-toggle/btn-toggle'
 
-@Component
-export default class UgRoleWidget extends Vue {
-  public showAddRole = false
+export default {
+  name: 'ug-role-widget',
 
-  public isLoading = false
+  components: {
+    UgRoleAdd,
+    UgRoleList,
+    UgBtnToggle,
+  },
 
-  handleRoleAddDeactivate() {
-    this.showAddRole = false
-  }
+  data: () => ({
+    showAddRole: false,
+    isLoading: false,
+  }),
 
-  handleListLoading(state: boolean) {
-    this.isLoading = state
-  }
+  methods: {
+    handleRoleAddDeactivate() {
+      this.showAddRole = false
+    },
+
+    handleListLoading(state) {
+      this.isLoading = state
+    },
+  },
 }
 </script>

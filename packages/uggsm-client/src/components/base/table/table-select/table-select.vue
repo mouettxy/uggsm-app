@@ -19,6 +19,8 @@ ug-responsive-menu.ug-table-select
 
 <script>
 import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
+import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+
 import { find } from 'lodash'
 
 export default {
@@ -26,6 +28,7 @@ export default {
 
   components: {
     UgResponsiveMenu,
+    UgBaseChip,
   },
 
   props: {

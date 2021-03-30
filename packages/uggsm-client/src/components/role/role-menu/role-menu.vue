@@ -1,8 +1,5 @@
 <template lang="pug">
-v-card.ug-role-menu(
-  width='278',
-  dark
-)
+v-card.ug-role-menu.w-100(dark)
   v-list(
     nav,
     dark
@@ -71,68 +68,82 @@ v-card.ug-role-menu(
                   v-list-item-title.secondary--text Скопировать ресурсы
 </template>
 
-<script lang="ts">
+<script>
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
 
 import { copyTextToClipboard } from '@/api/helpers'
 import RoleAPI from '@/api/role'
 import UserAPI from '@/api/user'
-import { Roles } from '@/typings/api/role'
 import { compact, find, includes, map } from 'lodash'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component({
+export default {
+  name: 'ug-role-menu',
+
   components: {
     UgBaseAutocomplete,
   },
-})
-export default class UgRoleMenu extends Vue {
-  @Prop() items!: Roles
 
-  @Prop() rolesToHide!: Array<string>
+  props: {
+    items: {
+      required: false,
+      type: Array,
+      default: () => [],
+    },
 
-  public user = ''
+    rolesToHide: {
+      required: false,
+      type: Array,
+      default: () => [],
+    },
+  },
 
-  public selectedItem = 0
+  data: () => ({
+    selectedItem: 0,
+    user: '',
+  }),
 
-  get roles() {
-    return compact(map(this.items, (e) => (!includes(this.rolesToHide, e.value) ? e : null)))
-  }
+  computed: {
+    roles() {
+      return compact(map(this.items, (e) => (!includes(this.rolesToHide, e.value) ? e : null)))
+    },
+  },
 
-  roleChange() {
-    if (this.items[this.selectedItem]) {
-      this.$emit('select', this.roles[this.selectedItem])
-    }
-  }
+  methods: {
+    roleChange() {
+      if (this.items[this.selectedItem]) {
+        this.$emit('select', this.roles[this.selectedItem])
+      }
+    },
 
-  async roleDelete(role: string) {
-    const apiResponse = await RoleAPI.delete(role)
-
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error(`Ошибка при удалении роли <${role}>`)
-    }
-
-    this.$notification.success(`Роль <${role}> успешно удалена`)
-  }
-
-  async roleAssign(role: string) {
-    if (this.user) {
-      const apiResponse = await UserAPI.update(this.user, { role })
+    async roleDelete(role) {
+      const apiResponse = await RoleAPI.delete(role)
 
       if (!(apiResponse.status === 200)) {
-        this.$notification.error('Ошибка сервера при назначении роли')
-        return
+        this.$notification.error(`Ошибка при удалении роли <${role}>`)
       }
 
-      this.$notification.success('Пользователю успешно назначена роль')
-    } else {
-      this.$notification.error('Не выбран пользователь')
-    }
-  }
+      this.$notification.success(`Роль <${role}> успешно удалена`)
+    },
 
-  roleCopyResources(role: string) {
-    copyTextToClipboard(JSON.stringify(find(this.items, { value: role })?.abilities))
-  }
+    async roleAssign(role) {
+      if (this.user) {
+        const apiResponse = await UserAPI.update(this.user, { role })
+
+        if (!(apiResponse.status === 200)) {
+          this.$notification.error('Ошибка сервера при назначении роли')
+          return
+        }
+
+        this.$notification.success('Пользователю успешно назначена роль')
+      } else {
+        this.$notification.error('Не выбран пользователь')
+      }
+    },
+
+    roleCopyResources(role) {
+      copyTextToClipboard(JSON.stringify(find(this.items, { value: role })?.abilities))
+    },
+  },
 }
 </script>
 

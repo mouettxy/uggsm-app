@@ -168,7 +168,7 @@ export default {
       {
         key: 'cash',
         title: 'Платежи',
-        component: 'modal-order-cash',
+        component: 'ug-modal-order-cash',
       },
     ],
   }),

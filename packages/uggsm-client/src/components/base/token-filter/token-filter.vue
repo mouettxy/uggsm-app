@@ -31,6 +31,8 @@ v-slide-x-transition.ug-token-filter(
 <script>
 import UgTokenFilterEntry from './token-filter-entry/token-filter-entry'
 import UgTokenFilterAdd from './token-filter-add/token-filter-add'
+import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -39,6 +41,7 @@ export default {
   components: {
     UgTokenFilterEntry,
     UgTokenFilterAdd,
+    UgBaseChip,
   },
 
   props: {

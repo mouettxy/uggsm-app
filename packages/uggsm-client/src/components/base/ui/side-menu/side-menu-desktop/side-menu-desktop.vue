@@ -14,12 +14,14 @@
 
 <script>
 import UgSideMenuItem from '../side-menu-item/side-menu-item'
+import UgSideMenuUserPanel from '@/components/base/ui/side-menu/side-menu-user-panel/side-menu-user-panel'
 
 export default {
   name: 'ug-side-menu-desktop',
 
   components: {
     UgSideMenuItem,
+    UgSideMenuUserPanel,
   },
 
   props: {

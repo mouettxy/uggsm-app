@@ -43,6 +43,8 @@
 <script>
 import UgSideMenuMobileAnimations from './side-menu-mobile.animations'
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+import UgSideMenuItem from '@/components/base/ui/side-menu/side-menu-item/side-menu-item'
+
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -50,6 +52,7 @@ export default {
 
   components: {
     UgBaseBtn,
+    UgSideMenuItem,
   },
 
   mixins: [UgSideMenuMobileAnimations],

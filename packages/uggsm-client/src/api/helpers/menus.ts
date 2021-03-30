@@ -40,34 +40,16 @@ export const defaultMenu = [
     linkName: 'orders',
     title: 'Заявки',
     icon: 'mdi-archive',
-    submenu: [
-      {
-        linkName: 'ordersNext',
-        title: '[Beta] Заказы',
-      },
-    ],
   },
   {
     linkName: 'clients',
     title: 'Клиенты',
     icon: 'mdi-account-group',
-    submenu: [
-      {
-        linkName: 'clientsNext',
-        title: '[Beta] Клиенты',
-      },
-    ],
   },
   {
     linkName: 'cash',
     title: 'Касса',
     icon: 'mdi-cash-register',
-    submenu: [
-      {
-        linkName: 'cashNext',
-        title: '[Beta] Касса',
-      },
-    ],
   },
   {
     linkName: 'users',
@@ -78,12 +60,6 @@ export const defaultMenu = [
     linkName: 'calls',
     title: 'Звонки',
     icon: 'mdi-phone',
-    submenu: [
-      {
-        linkName: 'callsNext',
-        title: '[Beta] Звонки',
-      },
-    ],
   },
   {
     linkName: 'reports',

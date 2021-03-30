@@ -142,6 +142,17 @@ ug-responsive-menu(:menu-props='menuProps')
 
 <script>
 import UgTokenFilterEditCompares from './token-filter-edit-compares/token-filter-edit-compares'
+import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch'
+import UgTagInput from '@/components/base/ui/tag-input/tag-input'
+import UgDatetimePicker2 from '@/components/base/ui/datetime-picker-2/datetime-picker-2'
+import UgBaseInput from '@/components/base/ui/base-input/base-input'
+import UgSelectMany from '@/components/base/ui/select-many/select-many'
+import UgTagAutocomplete from '@/components/base/ui/tag-autocomplete/tag-autocomplete'
+import UgBaseSelect from '@/components/base/ui/base-select/base-select'
+import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete'
+
 import { getDefaultTokenValue, prettifyTokenValue } from '@/helpers/filterHelper'
 
 export default {
@@ -149,6 +160,16 @@ export default {
 
   components: {
     UgTokenFilterEditCompares,
+    UgResponsiveMenu,
+    UgBaseBtn,
+    UgBaseSwitch,
+    UgTagInput,
+    UgDatetimePicker2,
+    UgBaseInput,
+    UgSelectMany,
+    UgTagAutocomplete,
+    UgBaseSelect,
+    UgBaseAutocomplete,
   },
 
   props: {

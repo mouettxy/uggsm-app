@@ -92,8 +92,9 @@ export default {
 
   props: {
     audio: {
-      required: true,
+      required: false,
       type: [String],
+      default: '',
     },
 
     title: {

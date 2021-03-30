@@ -24,9 +24,6 @@ v-card.ug-role-information(
       :role='role'
     )
   v-divider
-  //div(
-    :style='{ fontSize: "1.15rem" }',
-    v-md) {{ role.description }}
   v-expansion-panels.mt-2(accordion)
     v-expansion-panel(
       v-for='ability in role.abilities',
@@ -136,52 +133,68 @@ v-card.ug-role-information(
             )
 </template>
 
-<script lang="ts">
+<script>
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete.vue'
 import UgSelectMany from '@/components/base/ui/select-many/select-many.vue'
 import UgBaseSwitch from '@/components/base/ui/base-switch/base-switch.vue'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+import UgBaseInput from '@/components/base/ui/base-input/base-input'
+import UgTagInput from '@/components/base/ui/tag-input/tag-input'
+import UgTagAutocomplete from '@/components/base/ui/tag-autocomplete/tag-autocomplete'
+import UgBtnToggle from '@/components/base/ui/btn-toggle/btn-toggle'
 
 import RoleAPI from '@/api/role'
-import { Role, RoleAbility } from '@/typings/api/role'
-import { Component, Prop, Vue } from 'vue-property-decorator'
 import { normalizedMenus } from '@/api/helpers/menus'
 
-@Component({
+export default {
+  name: 'ug-role-information',
+
   components: {
     UgBaseAutocomplete,
+    UgBtnToggle,
     UgSelectMany,
     UgBaseSwitch,
+    UgBaseBtn,
+    UgBaseInput,
+    UgTagInput,
+    UgTagAutocomplete,
   },
-})
-export default class UgRoleInformation extends Vue {
-  @Prop() role!: Role
 
-  public showAddAbility = false
+  props: {
+    role: {
+      required: false,
+      type: Object,
+      default: () => ({}),
+    },
+  },
 
-  public accessLinksList = normalizedMenus
+  data: () => ({
+    showAddAbility: false,
+    accessLinksList: normalizedMenus,
+  }),
 
-  async handleUpdate(ability: RoleAbility) {
-    const apiResponse = await RoleAPI.updateAbility(this.role.value, ability.name, ability)
+  methods: {
+    async handleUpdate(ability) {
+      const apiResponse = await RoleAPI.updateAbility(this.role.value, ability.name, ability)
 
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error(`Ошибка при обновлении способности ${ability.description}`)
-      return
-    }
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error(`Ошибка при обновлении способности ${ability.description}`)
+        return
+      }
 
-    this.$notification.success(`Способность ${ability.description} успешно обновлена`)
-  }
+      this.$notification.success(`Способность ${ability.description} успешно обновлена`)
+    },
 
-  async handleDeleteAbility(ability: RoleAbility) {
-    const apiResponse = await RoleAPI.deleteAbility(this.role.value, ability.name)
+    async handleDeleteAbility(ability) {
+      const apiResponse = await RoleAPI.deleteAbility(this.role.value, ability.name)
 
-    if (!(apiResponse.status === 200)) {
-      this.$notification.error(`Ошибка при удалении способности ${ability.description}`)
-      return
-    }
+      if (!(apiResponse.status === 200)) {
+        this.$notification.error(`Ошибка при удалении способности ${ability.description}`)
+        return
+      }
 
-    this.$notification.success(`Способность ${ability.description} успешно удалена`)
-  }
+      this.$notification.success(`Способность ${ability.description} успешно удалена`)
+    },
+  },
 }
 </script>
-
-<style lang="sass"></style>

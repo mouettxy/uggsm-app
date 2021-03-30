@@ -32,6 +32,8 @@ import UgModalRight from '@/components/base/ui/modal-right/modal-right'
 import UgTableRemoteBtn from '@/components/base/table/table-remote/table-remote-btn/table-remote-btn'
 import UgTokenFilter from '@/components/base/token-filter/token-filter'
 import UgTokenFilterManager from '@/components/base/token-filter-manager/token-filter-manager'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+
 import Responsive from '@/mixins/responsive'
 
 export default {
@@ -42,6 +44,7 @@ export default {
     UgTableRemoteBtn,
     UgTokenFilter,
     UgTokenFilterManager,
+    UgBaseBtn,
   },
 
   mixins: [Responsive],

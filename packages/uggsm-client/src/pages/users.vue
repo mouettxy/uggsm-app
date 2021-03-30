@@ -36,12 +36,17 @@
 
 <script>
 import UgTableSelect from '@/components/base/table/table-select/table-select'
+import UgTableRemote from '@/components/base/table/table-remote/table-remote'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+
 import UserAPI from '@/api/user'
 import { Filters } from '@/helpers/filterHelper'
 
 export default {
   components: {
     UgTableSelect,
+    UgTableRemote,
+    UgBaseBtn,
   },
 
   data: () => ({

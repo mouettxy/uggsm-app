@@ -13,9 +13,14 @@
   ug-role-widget
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+<script>
+import UgRoleWidget from '@/components/role/role-widget'
 
-@Component
-export default class PageSettings extends Vue {}
+export default {
+  name: 'page-settings',
+
+  components: {
+    UgRoleWidget,
+  },
+}
 </script>

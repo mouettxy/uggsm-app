@@ -1,6 +1,6 @@
 <template lang="pug">
 .ug-workflow-audioplayer
-  template(v-if='call')
+  template(v-if='isCallValid')
     template(v-if='call.answered')
       template(v-if='$can("listenCalls", "Global")')
         ug-bottom-audioplayer(
@@ -25,16 +25,14 @@
           v-icon mdi-stop
           span Прослушивание недоступно
     template(v-else)
+      | {{ call }}
       ug-bottom-audioplayer(
         :title='call.manager',
         :subtitle='call.managerNumber + " -> " + call.clientNumber',
         :audio='call.record'
       )
         template(#activator='{on, attrs}')
-          .ug-workflow-audioplayer__item--red(
-            v-on='on',
-            v-bind='attrs'
-          )
+          .ug-workflow-audioplayer__item--red
             v-icon mdi-stop
             span Звонок на номер {{ call.managerNumber | VMask("+7 (###) ###-##-##") }} не отвечен
   template(v-else)
@@ -53,8 +51,19 @@ export default {
 
   props: {
     call: {
-      required: true,
+      required: false,
       type: [Object],
+      default: () => ({}),
+    },
+  },
+
+  computed: {
+    isCallValid() {
+      if (this.call && Object.keys(this.call).length) {
+        return true
+      }
+
+      return false
     },
   },
 }

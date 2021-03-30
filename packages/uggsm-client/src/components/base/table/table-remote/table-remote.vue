@@ -145,7 +145,7 @@ import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
 import UgTableRemotePagination from './table-remote-pagination/table-remote-pagination'
 import TableRemoteHelpers from './table-remote.helpers'
-import UgTabelRemotePanel from './table-remote-panel/table-remote-panel'
+import UgTableRemotePanel from './table-remote-panel/table-remote-panel'
 import Responsive from '@/mixins/responsive'
 import { mapState } from 'vuex'
 
@@ -153,7 +153,7 @@ export default {
   name: 'ug-table-remote',
 
   components: {
-    UgTabelRemotePanel,
+    UgTableRemotePanel,
     UgBaseChip,
     UgTableRemotePagination,
     UgResponsiveMenu,

@@ -10,8 +10,15 @@
 </template>
 
 <script>
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+
 export default {
   name: 'ug-btn-toggle',
+
+  components: {
+    UgBaseBtn,
+  },
+
   props: {
     value: {
       required: true,

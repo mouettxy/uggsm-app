@@ -58,6 +58,8 @@ ug-token-filter-edit(
 <script>
 import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
 import UgTokenFilterEdit from '../token-filter-edit/token-filter-edit'
+import UgResponsiveMenu from '@/components/base/ui/responsive-menu/responsive-menu'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
 import { sprintf } from 'sprintf-js'
 import { comparesTranslate, prettifyTokenValue } from '@/helpers/filterHelper'
@@ -68,6 +70,8 @@ export default {
   components: {
     UgTokenFilterEdit,
     UgBaseChip,
+    UgResponsiveMenu,
+    UgBaseBtn,
   },
 
   props: {

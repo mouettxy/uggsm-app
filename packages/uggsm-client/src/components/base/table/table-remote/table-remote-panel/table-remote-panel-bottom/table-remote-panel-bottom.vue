@@ -83,6 +83,8 @@ import Responsive from '@/mixins/responsive'
 import UgTableRemoteSearch from './../../table-remote-search/table-remote-search'
 import UgTableRemoteModalFilter from '@/components/base/table/table-remote-modal-filter/table-remote-modal-filter'
 import UgTableRemoteMenuFilter from '@/components/base/table/table-remote-menu-filter/table-remote-menu-filter'
+import UgTableRemoteBtn from '@/components/base/table/table-remote/table-remote-btn/table-remote-btn'
+
 import { mapActions } from 'vuex'
 
 export default {
@@ -92,6 +94,7 @@ export default {
     UgTableRemoteSearch,
     UgTableRemoteModalFilter,
     UgTableRemoteMenuFilter,
+    UgTableRemoteBtn,
   },
 
   mixins: [Responsive],
