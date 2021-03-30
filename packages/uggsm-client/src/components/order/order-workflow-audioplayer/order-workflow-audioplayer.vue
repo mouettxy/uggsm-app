@@ -39,7 +39,7 @@
     span.error--text Звонок не найден
 </template>
 
-<script lang="ts">
+<script>
 import UgBottomAudioplayer from '@/components/base/ui/bottom-audioplayer/bottom-audioplayer.vue'
 
 export default {

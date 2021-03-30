@@ -7,7 +7,6 @@ v-app
 
 <script>
 import UgNotificationAppUpdate from '@/components/notifications/notification-app-update/notification-app-update'
-import { settingsModule } from './store'
 import Responsive from '@/mixins/responsive'
 
 export default {
@@ -29,10 +28,6 @@ export default {
     header: function (header) {
       document.title = header
     },
-  },
-
-  mounted: function () {
-    settingsModule.setSearch({ search: '', type: this.$route.name })
   },
 }
 </script>

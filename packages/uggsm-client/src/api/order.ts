@@ -2,7 +2,6 @@ import BaseAPI from './BaseAPI'
 import { config } from '@/plugins/axios'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 import { Order } from '@/typings/api/order'
-import { SendSMSInput } from '@/store/orders'
 
 export class OrderAPI extends BaseAPI {
   constructor(config: Record<string, any>) {
@@ -106,7 +105,7 @@ export class OrderAPI extends BaseAPI {
     }
   }
 
-  async sendSms(orderId: string, data: SendSMSInput): AxiosResponseAPI<any> {
+  async sendSms(orderId: string, data: any): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request({
         url: `/${orderId}/sms`,
