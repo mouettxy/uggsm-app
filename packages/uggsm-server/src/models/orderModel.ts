@@ -413,14 +413,17 @@ export class Order {
     userid: string | number
   ) {
     const order = await this.findOne({ id })
+
     if (order.master) {
       const oldMaster = await UserModel.findById(order.master)
       const newMaster = await UserModel.findById(master)
+
       order.workflow = await this.setHelper(
         'workflow',
         order.workflow,
         'Смена мастера',
-        `Мастер изменён с "${oldMaster.credentials}" на "${newMaster.credentials}"`
+        `Мастер изменён с "${oldMaster.credentials}" на "${newMaster.credentials}"`,
+        parseInt(userid as string)
       )
     } else {
       const newMaster = await UserModel.findById(master)
