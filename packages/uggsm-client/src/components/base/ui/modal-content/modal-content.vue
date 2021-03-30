@@ -46,7 +46,6 @@
           <slot name="sidebar-toolbar"></slot>
           <ug-base-btn
             v-if="isMobile"
-            class="ml-auto"
             icon="mdi-comment-arrow-right"
             color="dark"
             @click="isSidebarVisible = !isSidebarVisible"
@@ -184,6 +183,7 @@ export default {
   &:not(.ug-modal-content--sidebar) .ug-modal-content__header
     position: relative
     display: flex
+    align-items: center
     flex-shrink: 0
     box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%) !important
     background: var(--v-table_lightgrey-base)
