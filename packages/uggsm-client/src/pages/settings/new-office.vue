@@ -85,9 +85,17 @@
 
 <script>
 import OfficeAPI from '@/api/office'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
+import UgBaseInput from '@/components/base/ui/base-input/base-input'
 
 export default {
   name: 'ug-settings-new-office',
+
+  components: {
+    UgBaseBtn,
+    UgBaseInput,
+  },
+
   layout: 'centered',
 
   data: function () {
