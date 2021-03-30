@@ -1,6 +1,6 @@
 <template>
   <div class="modal-order-sidebar">
-    <v-expand-transition>
+    <v-fade-transition hide-on-leave>
       <div v-if="!workflows.length">
         <v-skeleton-loader v-for="i in 3" :key="i" type="list-item-avatar-two-line"></v-skeleton-loader>
       </div>
@@ -10,7 +10,7 @@
           <ug-order-workflow-audioplayer :call="getOrderCall(value)"></ug-order-workflow-audioplayer>
         </template>
       </ug-order-timeline>
-    </v-expand-transition>
+    </v-fade-transition>
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="modal-order-info">
-    <v-slide-x-transition appear>
+    <v-fade-transition>
       <v-row v-if="hasMasterField">
         <v-col cols="12">
           <ug-base-alert class="mb-0" persistent type="error">
@@ -8,8 +8,8 @@
           </ug-base-alert>
         </v-col>
       </v-row>
-    </v-slide-x-transition>
-    <v-slide-x-transition appear>
+    </v-fade-transition>
+    <v-fade-transition>
       <v-row v-if="hasManagerField">
         <v-col cols="12">
           <ug-base-alert class="mb-0" persistent type="error">
@@ -17,8 +17,8 @@
           </ug-base-alert>
         </v-col>
       </v-row>
-    </v-slide-x-transition>
-    <v-expand-transition>
+    </v-fade-transition>
+    <v-fade-transition hide-on-leave>
       <v-row v-if="!modelLoaded" key="loading">
         <v-col cols="12" lg="6" md="6">
           <v-skeleton-loader min-height="36" type="list-item"></v-skeleton-loader>
@@ -60,7 +60,7 @@
       <div v-else key="loaded">
         <ug-modal-order-info-fields :order.sync="orderModel"></ug-modal-order-info-fields>
       </div>
-    </v-expand-transition>
+    </v-fade-transition>
   </div>
 </template>
 

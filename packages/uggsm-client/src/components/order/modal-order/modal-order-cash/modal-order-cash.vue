@@ -1,6 +1,6 @@
 <template>
   <div class="modal-order-cash">
-    <v-expand-transition>
+    <v-fade-transition hide-on-leave>
       <v-row v-if="!order" key="loading">
         <v-col cols="6" lg="auto" md="auto">
           <v-skeleton-loader type="button"></v-skeleton-loader>
@@ -62,7 +62,7 @@
           </v-data-table>
         </v-col>
       </v-row>
-    </v-expand-transition>
+    </v-fade-transition>
   </div>
 </template>
 
