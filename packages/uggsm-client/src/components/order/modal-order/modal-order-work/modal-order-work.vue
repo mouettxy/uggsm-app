@@ -23,13 +23,20 @@
             dense
           >
             <!-- eslint-disable-next-line -->
-          <template #item.actions="{ item }">
+            <template #item.actions="{ item }">
               <ug-base-btn
                 :disabled="isOrderClosed || !$can('deleteOrderWork', 'Global')"
                 icon="mdi-trash-can"
                 color="error"
                 @click="handleDeleteWork(item)"
               ></ug-base-btn>
+            </template>
+            <!-- eslint-disable-next-line -->
+            <template #body.append="">
+              <tr>
+                <td colspan="4" class="text-end text-medium">Итого:</td>
+                <td class="text-medium">{{ totalWorks }}</td>
+              </tr>
             </template>
           </v-data-table>
         </v-col>
@@ -43,6 +50,7 @@ import UgModalOrderWorkAdd from '@/components/order/modal-order/modal-order-work
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
 import OrderAPI from '@/api/order'
+import { reduce } from 'lodash'
 
 export default {
   name: 'ug-modal-order-work',
@@ -86,6 +94,21 @@ export default {
   }),
 
   computed: {
+    totalWorks() {
+      if (this.order) {
+        return reduce(
+          this.order.statusWork,
+          (a, e) => {
+            a += e.price
+            return a
+          },
+          0
+        )
+      }
+
+      return 0
+    },
+
     isOrderClosed() {
       if (this.$can('manage', 'all')) {
         return false
