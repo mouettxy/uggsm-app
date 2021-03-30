@@ -6,6 +6,23 @@
     <ug-modal-content v-if="modal" sidebar main-no-padding main-no-scroll>
       <template #header>
         <h5 class="text-h5">Заказ №{{ orderId }}</h5>
+        <v-tooltip v-if="order" bottom>
+          <template #activator="{ on, attrs }">
+            <ug-base-chip v-bind="attrs" small color="primary" v-on="on">
+              {{ order.office.code }}
+            </ug-base-chip>
+          </template>
+          <span>{{ order.office.name }}</span>
+        </v-tooltip>
+        <ug-order-status v-if="order" :status="order.status" :orderid="order.id"></ug-order-status>
+        <ug-order-edit-time
+          v-if="order"
+          :time="order.estimatedCloseAt"
+          :orderid="order.id"
+          :order-status="order.status"
+          path="estimatedCloseAt"
+          editable
+        ></ug-order-edit-time>
       </template>
 
       <template #main>
@@ -32,6 +49,24 @@
         ></ug-modal-order-sidebar>
       </template>
 
+      <template #sidebar-toolbar>
+        <ug-order-print :order="order">
+          <template #activator="{ on, attrs }">
+            <ug-base-btn v-bind="attrs" icon="mdi-printer" color="dark" v-on="on"></ug-base-btn>
+          </template>
+        </ug-order-print>
+        <ug-order-swap-office :order-id="orderId">
+          <template #activator="{ on, attrs }">
+            <ug-base-btn v-bind="attrs" icon="mdi-swap-horizontal-bold" color="dark" v-on="on"></ug-base-btn>
+          </template>
+        </ug-order-swap-office>
+        <ug-order-add-comment :order-id="orderId">
+          <template #activator="{ on, attrs }">
+            <ug-base-btn v-bind="attrs" icon="mdi-comment-plus" color="dark" v-on="on"></ug-base-btn>
+          </template>
+        </ug-order-add-comment>
+      </template>
+
       <template #footer>
         <ug-base-btn
           icon-left="mdi-content-save"
@@ -49,9 +84,13 @@
 import UgModalFullscreen from '@/components/base/ui/modal-fullscreen/modal-fullscreen'
 import UgModalContent from '@/components/base/ui/modal-content/modal-content'
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn.vue'
-
+import UgOrderAddComment from '@/components/order/order-add-comment/order-add-comment'
+import UgOrderPrint from '@/components/order/order-print/order-print'
+import UgOrderSwapOffice from '@/components/order/order-swap-office/order-swap-office'
+import UgBaseChip from '@/components/base/ui/base-chip/base-chip'
+import UgOrderStatus from '@/components/order/order-status/order-status'
 import UgModalOrderSidebar from '@/components/order/modal-order/modal-order-sidebar/modal-order-sidebar'
-
+import UgOrderEditTime from '@/components/order/order-edit-time/order-edit-time'
 import UgModalOrderInfo from '@/components/order/modal-order/modal-order-info/modal-order-info'
 import UgModalOrderWork from '@/components/order/modal-order/modal-order-work/modal-order-work'
 import UgModalOrderCash from '@/components/order/modal-order/modal-order-cash/modal-order-cash'
@@ -78,6 +117,12 @@ export default {
     UgModalOrderInfo,
     UgModalOrderWork,
     UgModalOrderCash,
+    UgOrderAddComment,
+    UgOrderPrint,
+    UgOrderSwapOffice,
+    UgBaseChip,
+    UgOrderStatus,
+    UgOrderEditTime,
   },
 
   props: {
@@ -147,47 +192,32 @@ export default {
     },
 
     checkOrderModel() {
-      /* if (!this.orderModel.orderType) {
-        this.$notification.error('Заполните поле "Тип Заказа"')
-        return false
-      } else if (!this.orderModel.customerName) {
-        this.$notification.error('Заполните поле "Имя клиента"')
-        return false
-      } else if (!this.orderModel.customerPhone) {
-        this.$notification.error('Заполните поле "Номер телефона"')
-        return false
-      } else if (!this.orderModel.declaredDefect) {
-        this.$notification.error('Заполните поле "Первичная неисправность"')
-        return false
-      } else if (!this.orderModel.phoneBrand) {
-        this.$notification.error('Заполните поле "Бренд телефона"')
-        return false
-      } else if (!this.orderModel.phoneModel) {
-        this.$notification.error('Заполните поле "Модель телефона"')
-        return false
-      } else if (!this.orderModel.appearance) {
-        this.$notification.error('Заполните поле "Внешний вид"')
-        return false
-      } else if (!this.orderModel.kit) {
-        this.$notification.error('Заполните поле "Комплектация"')
-        return false
-      } else if (!this.orderModel.master) {
+      if (!this.order.master) {
         this.$notification.error('Заполните поле "Мастер"')
         return false
-      } else if (!this.orderModel.manager) {
+      } else if (!this.order.manager) {
         this.$notification.error('Заполните поле "Менеджер"')
         return false
-      } */
+      }
 
       return true
     },
 
     async updateOrder() {
-      //
+      const response = await OrderAPI.updateById(this.order._id, this.order)
+
+      if (response.status !== 200) {
+        this.$notification.error('Не удалось обновить заказ')
+        return
+      }
+
+      this.$notification.success('Заказ успешно обновлён')
     },
 
     async handleUpdateClick() {
-      //
+      if (this.checkOrderModel()) {
+        this.updateOrder()
+      }
     },
 
     handleCloseClick() {
