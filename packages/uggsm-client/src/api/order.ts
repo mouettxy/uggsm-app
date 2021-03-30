@@ -134,6 +134,34 @@ export class OrderAPI extends BaseAPI {
     }
   }
 
+  async addOrderComment(orderId: string, data: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request({
+        url: `/${orderId}/master-comment`,
+        method: 'put',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
+  async setOffice(orderId: string, data: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request({
+        url: `/${orderId}/office`,
+        method: 'put',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async deleteCompletedWork(orderId: string | number, workId: string | number): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request({
