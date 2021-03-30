@@ -1,17 +1,17 @@
 <template lang="pug">
 .ug-order-status__container
-  ug-base-chip(
+  ug-base-chip.h-100(
     v-if='!$can("editOrderStatus", "Global") || !editable',
     :style='{ color: accessibleColor(statusColor) }',
     :color='statusColor'
   )
     span {{ status }}
-  ug-responsive-menu.ug-order-status(
+  ug-responsive-menu.ug-order-status.h-100(
     v-if='$can("editOrderStatus", "Global") && editable',
     :menu-props='{ "close-on-content-click": false, "min-width": 200, "max-height": 300, bottom: true }'
   )
     template(v-slot:activator='{ on, attrs }')
-      ug-base-btn(
+      ug-base-btn.h-100(
         v-on='on',
         v-bind='attrs',
         :style='{ color: accessibleColor(statusColor) }',
@@ -158,6 +158,9 @@ export default {
 </script>
 
 <style lang="sass">
+.ug-order-status__container
+  height: 28px
+
 .ug-order-status
   .ug-base-btn
     width: 100%
