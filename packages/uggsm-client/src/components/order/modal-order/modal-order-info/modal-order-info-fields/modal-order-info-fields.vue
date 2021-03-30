@@ -1,7 +1,11 @@
 <template>
   <v-row class="ug-modal-order-info-fields">
     <v-col cols="12" lg="6" md="6">
-      <ug-modal-client v-if="orderModel.customer && orderModel.customer.id" :clientid="orderModel.customer.id">
+      <ug-modal-client
+        v-if="orderModel.customer && orderModel.customer.id"
+        dont-disable-overflow
+        :clientid="orderModel.customer.id"
+      >
         <template #activator="{ on, attrs }">
           <ug-base-chip v-bind="attrs" v-on="on">
             <v-icon size="1.3rem" color="dark">mdi-pencil</v-icon>

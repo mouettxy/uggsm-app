@@ -1,7 +1,6 @@
 <template lang="pug">
 v-dialog.ug-modal-right(
   v-model='model',
-  :fullscreen='isMobile',
   :eager='eager',
   :content-class='`right-modal${isMobile ? " is-mobile" : ""}`',
   transition='ug-dialog-right-transition'
@@ -35,6 +34,11 @@ export default {
       required: false,
       type: Boolean,
     },
+
+    dontDisableOverflow: {
+      required: false,
+      type: Boolean,
+    },
   },
 
   computed: {
@@ -51,13 +55,21 @@ export default {
 
   watch: {
     model: {
-      immediate: true,
       handler: function (value) {
-        if (this.isMobile) {
-          if (!value) {
+        if (!this.dontDisableOverflow) {
+          if (this.isMobile) {
+            if (value) {
+              document.documentElement.classList.add('overflow-y-hidden')
+              return
+            }
             document.documentElement.classList.remove('overflow-y-hidden')
-          } else {
-            document.documentElement.classList.add('overflow-y-hidden')
+          }
+        } else {
+          // should fix strange vuetify behavior when on $smAndDown removes this class from docuementElement
+          if (!value) {
+            this.$nextTick(() => {
+              document.documentElement.classList.add('overflow-y-hidden')
+            })
           }
         }
       },

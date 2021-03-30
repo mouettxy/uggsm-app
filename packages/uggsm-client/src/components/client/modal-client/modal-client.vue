@@ -1,6 +1,9 @@
 <template lang="pug">
 .ug-client-modal
-  ug-modal-right(v-model='modal')
+  ug-modal-right(
+    v-model='modal',
+    dont-disable-overflow
+  )
     template(#activator='{on, attrs}')
       slot(
         name='activator',
@@ -72,6 +75,11 @@ export default {
     clientid: {
       required: true,
       type: [Number, String],
+    },
+
+    dontDisableOverflow: {
+      required: false,
+      type: Boolean,
     },
   },
 
