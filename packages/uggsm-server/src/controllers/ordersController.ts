@@ -727,12 +727,33 @@ export class OrdersController extends BaseController implements IOrdersControlle
     const id: string = req.params.id
     const orderData = req.body
 
+    const order = await this.model.findById(id)
+    // @ts-ignore
+    const oldMaster = order.master ? order.master._id : ''
+    // @ts-ignore
+    const oldManager = order.manager ? order.manager._id : ''
+
+    if (oldMaster.toString() !== orderData.master._id) {
+      const newMaster = orderData.master._id
+
+      await this.model.setMaster(order.id, newMaster, orderData.userid)
+    }
+    if (oldManager.toString() !== orderData.manager._id) {
+      const newManager = orderData.manager._id
+
+      await this.model.setManager(order.id, newManager, orderData.userid)
+    }
+
+    delete orderData.master
+    delete orderData.manager
+    delete orderData.workflow
+
     try {
       const response = await this.model.findByIdAndUpdate(id, orderData, { new: true })
 
       if (response) {
         res.status(200)
-        api.io.emit('updated order', response)
+        api.io.emit('update order', response.id)
         api.io.emit('update orders')
         res.send(response)
       } else {
