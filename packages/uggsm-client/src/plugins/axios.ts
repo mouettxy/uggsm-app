@@ -1,23 +1,7 @@
 import { authModule } from '@/store'
+import { config } from '@/api/helpers/axiosConfig'
 import Vue from 'vue'
 import axios from 'axios'
-
-const baseURL =
-  process.env.NODE_ENV === 'production'
-    ? process.env.VUE_APP_API_URL_PRODUCTION
-    : process.env.VUE_APP_API_URL_DEVELOPEMENT
-const baseURLVersion =
-  process.env.NODE_ENV === 'production'
-    ? process.env.VUE_APP_API_VERSION_PRODUCTION
-    : process.env.VUE_APP_API_VERSION_DEVELOPEMENT
-
-export const config = {
-  baseURL: `${baseURL}/${baseURLVersion}`,
-  validateStatus: (status: any) => {
-    return status < 500 // default
-  },
-  timeout: 3 * 1000,
-}
 
 const _axios = axios.create(config)
 

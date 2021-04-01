@@ -1,6 +1,6 @@
 import BaseAPI from './BaseAPI'
 import { Cash, CashInput } from '@/typings/api/cash'
-import { config } from '@/plugins/axios'
+import { config } from '@/api/helpers/axiosConfig'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 
 export class CashAPI extends BaseAPI {

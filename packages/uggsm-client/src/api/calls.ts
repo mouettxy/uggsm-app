@@ -1,5 +1,5 @@
 import BaseAPI from './BaseAPI'
-import { config } from '@/plugins/axios'
+import { config } from '@/api/helpers/axiosConfig'
 import { AxiosResponseAPI } from '@/typings/api/helpers'
 
 export class CallsAPI extends BaseAPI {
