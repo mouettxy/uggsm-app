@@ -7,7 +7,7 @@ ug-responsive-menu(
       v-on='on',
       v-bind='attrs'
     )
-      ug-base-chip(color='#d4d4d4')
+      ug-base-chip(color='table_darkgrey')
         v-icon(
           small,
           left
@@ -115,5 +115,5 @@ export default {
 
 <style lang="sass">
 .ug-table-remote-headers-switcher__list
-  background: #d4d4d4 !important
+  background: var(--v-table_lightgrey) !important
 </style>

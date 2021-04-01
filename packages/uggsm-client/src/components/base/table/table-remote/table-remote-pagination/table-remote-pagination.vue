@@ -5,7 +5,7 @@
   .ug-table-remote-pagination__content.d-flex.align-center
     v-icon(
       @click='handlePaginateBack',
-      color='dark'
+      color='table_darkergrey'
     ) mdi-chevron-left
     .ug-table-remote-pagination-delimeter
       .ug-table-remote-pagination-delimeter--inner
@@ -22,7 +22,7 @@
       .ug-table-remote-pagination-delimeter--inner
     v-icon(
       @click='handlePaginateForward',
-      color='dark'
+      color='table_darkergrey'
     ) mdi-chevron-right
 </template>
 
@@ -116,7 +116,8 @@ export default {
       color: var(--v-primary-base) !important
   input
     padding: 4px 12px
-    border: 1px solid var(--v-table_darkgrey-base)
+    border: 1px solid var(--v-table_darkergrey-base) !important
+    color: var(--v-table_darkergrey-base)
     border-radius: 8px
     &:focus
       outline: none
@@ -129,5 +130,5 @@ export default {
     margin: 0 8px
     .ug-table-remote-pagination-delimeter--inner
       height: inherit
-      background: var(--v-table_darkgrey-base)
+      background: var(--v-table_darkergrey-base)
 </style>

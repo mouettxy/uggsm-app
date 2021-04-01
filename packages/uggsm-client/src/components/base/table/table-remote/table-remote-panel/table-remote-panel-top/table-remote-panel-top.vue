@@ -10,8 +10,8 @@
         v-if='includeOfficeField'
       )
         ug-office-switcher(
-          name-color='#dddddd',
-          code-color='#cacaca'
+          name-color='table_lightgrey',
+          code-color='table_darkgrey'
         )
       v-col(
         cols='4',
@@ -34,8 +34,8 @@
         v-if='includeOfficeField'
       )
         ug-office-switcher(
-          name-color='#dddddd',
-          code-color='#cacaca'
+          name-color='table_darkgrey',
+          code-color='table_darkergrey'
         )
       v-col(cols='auto')
         span.text-h5 {{ $route.meta.header }}

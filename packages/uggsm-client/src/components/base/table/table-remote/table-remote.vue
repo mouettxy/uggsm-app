@@ -52,7 +52,7 @@
               )
                 ug-base-chip.ml-2(
                   small,
-                  color='#e0e0e0'
+                  color='table_darkergrey'
                 )
                   span {{ resultsPerPage }}
                   v-icon(right) mdi-chevron-down

@@ -29,7 +29,7 @@ const vuetifyOpts = {
     current: 'ru',
   },
   theme: {
-    dark: false,
+    dark: true,
     options: {
       customProperties: true,
     },
@@ -44,9 +44,14 @@ const vuetifyOpts = {
         warning: '#FB8C00',
         error: '#FF5252',
         dark: '#181818',
-        light: '#fff',
-        softgrey: '#F1F1F1',
+        light: '#5f5f5f',
+        softgrey: '#787878',
+
+        table_lightgrey: '#2b2b2b',
+        table_darkgrey: '#484848',
+        table_darkergrey: '#5c5c5c',
       },
+
       light: {
         primary: '#1859a1',
         accent: '#525252',
