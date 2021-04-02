@@ -33,14 +33,7 @@
     <footer class="ug-modal-content__footer">
       <slot name="footer"></slot>
     </footer>
-    <transition
-      v-if="sidebar"
-      name="ug-slide-right-transition"
-      appear-class="ug-slide-right-transition--appear"
-      appear-to-class="ug-slide-right-transition--appear-to"
-      :duration="5000"
-      appear
-    >
+    <transition v-if="sidebar" name="ug-slide-right-transition">
       <aside v-if="isSidebarVisible" class="ug-modal-content__sidebar elevation-4">
         <div class="ug-modal-content__sidebar-toolbar">
           <slot name="sidebar-toolbar"></slot>
@@ -111,7 +104,7 @@ export default {
     },
   },
 
-  created() {
+  mounted() {
     if (this.sidebar && this.isMobile) {
       this.isSidebarVisible = false
     }
@@ -127,6 +120,7 @@ export default {
   display: flex
   position: relative
   flex-flow: column nowrap
+  overflow-x: hidden
 
   .ug-modal-content__main--no-padding
     padding: 0 !important
