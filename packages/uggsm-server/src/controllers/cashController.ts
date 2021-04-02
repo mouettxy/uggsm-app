@@ -8,10 +8,8 @@ import { CannotFindOfficeException, ObjectNotFoundException } from '../exception
 import { HttpException } from '../exceptions'
 import { ICashController } from '../interfaces'
 import { OfficeModel } from '../models'
-import { parsePaginateResponse } from '../utils/helpers'
 import { ControllerMethod } from '../interfaces/controller'
 import BaseController from './base/BaseController'
-import { each, reduce } from 'lodash'
 
 export class CashController extends BaseController implements ICashController {
   private cash = CashModel
@@ -97,24 +95,7 @@ export class CashController extends BaseController implements ICashController {
     }
   }
 
-  public getPaginated = async (
-    request: express.Request,
-    response: express.Response,
-    next: NextFunction
-  ): Promise<void> => {
-    const { query, options } = parsePaginateResponse(request.query, true, this.cash)
-
-    try {
-      // @ts-ignore
-      const cash = await this.cash.paginate(query, options)
-      response.status(200)
-      response.send(cash)
-    } catch (error) {
-      next(new HttpException(500, error.message))
-    }
-  }
-
-  public getPaginatedNew: ControllerMethod = async (req, res, next) => {
+  public getPaginated: ControllerMethod = async (req, res, next) => {
     try {
       const { query, options } = parsePaginationQuery(req.body, this.cash, (query) => {
         return {

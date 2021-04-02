@@ -13,12 +13,6 @@ export class CallsRouter extends ExtendedRouter<ICallsController> {
         path: 'paginated',
         description: 'Получить все звонки',
         controllerMethod: 'getPaginated',
-        method: 'get',
-      },
-      {
-        path: 'paginated',
-        description: 'Получить все звонки',
-        controllerMethod: 'getPaginatedNew',
         method: 'post',
       },
       {

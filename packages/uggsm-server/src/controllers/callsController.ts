@@ -1,4 +1,3 @@
-import { parsePaginateResponse } from '../utils/helpers'
 import { ControllerMethod } from '../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
 import { OrderModel } from '../models'
@@ -15,20 +14,6 @@ export class CallsController extends BaseController implements ICallsController 
   private model = CallModel
 
   public getPaginated: ControllerMethod = async (req, res, next) => {
-    const { query, options } = parsePaginateResponse(req.query, false, this.model)
-
-    try {
-      // @ts-ignore
-      const response = await this.model.paginate(query, { ...options, populate: 'relatedOrder' })
-
-      res.status(200)
-      res.send(response)
-    } catch (error) {
-      this.criticalError(next)
-    }
-  }
-
-  public getPaginatedNew: ControllerMethod = async (req, res, next) => {
     try {
       const { query, options } = parsePaginationQuery(req.body, this.model)
 

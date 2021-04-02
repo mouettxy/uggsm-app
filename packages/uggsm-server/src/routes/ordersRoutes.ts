@@ -13,10 +13,9 @@ export class OrdersRouter extends BaseRouter<IOrdersController> {
       .get(this.basePath, this.controller.getAll)
       .get(`${this.basePath}/reports/report`, this.controller.generateReport)
       .get(`${this.basePath}/office/:code`, this.controller.getAllByOffice)
-      .get(`${this.basePath}/paginate/`, this.controller.getAllWithParams)
       .get(`${this.basePath}/:id`, this.controller.getById)
 
-      .post(`${this.basePath}/paginated/`, this.controller.getPaginatedFiltered)
+      .post(`${this.basePath}/paginated/`, this.controller.getPaginated)
       .post(this.basePath, validateOrder.order, this.controller.create)
       .post(`${this.basePath}/sms/callback`, this.controller.smsCallback)
       .post(`${this.basePath}/office/:code`, validateOrder.order, this.controller.createByOffice)

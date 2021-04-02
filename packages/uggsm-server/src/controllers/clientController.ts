@@ -1,6 +1,5 @@
 import { BaseController } from './base/BaseController'
 import { api } from '../server'
-import { parsePaginateResponse } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IClientController } from '../interfaces'
@@ -27,19 +26,6 @@ export class ClientController extends BaseController implements IClientControlle
   }
 
   public getPaginated: ControllerMethod = async (req, res, next) => {
-    const { query, options } = parsePaginateResponse(req.query, false, this.model)
-
-    try {
-      // @ts-ignore
-      const clients = await this.model.paginate(query, options)
-      res.status(200)
-      res.send(clients)
-    } catch (error) {
-      next(new HttpException(500, error.message))
-    }
-  }
-
-  public getPaginatedNew: ControllerMethod = async (req, res, next) => {
     try {
       const { query, options } = parsePaginationQuery(req.body, this.model)
 

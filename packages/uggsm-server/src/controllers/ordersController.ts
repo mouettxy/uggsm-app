@@ -1,10 +1,9 @@
 import { parsePaginationQuery } from './../services/pagination'
 import { BaseController } from './base/BaseController'
-import { order } from './../middlewares/validators/validateOrder'
 import { MessageInput, MessageItem } from '../services/sms/RedSmsClient'
 import { api } from '../server'
-import { generateOrderId, parsePaginateResponse } from '../utils/helpers'
-import { CannotFindOfficeException, ObjectNotFoundException } from '../exceptions'
+import { generateOrderId } from '../utils/helpers'
+import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IOrdersController } from '../interfaces'
 import { CashModel, OfficeModel, OrderModel } from '../models'
@@ -52,20 +51,7 @@ export class OrdersController extends BaseController implements IOrdersControlle
     }
   }
 
-  public getAllWithParams: ControllerMethod = async (req, res, next) => {
-    try {
-      const { query, options } = parsePaginateResponse(req.query, true, this.model)
-      // @ts-ignore
-      const response = await this.model.paginate(query, options)
-
-      res.status(200)
-      res.send(response)
-    } catch (error) {
-      next(new HttpException(500, error.message))
-    }
-  }
-
-  public getPaginatedFiltered: ControllerMethod = async (req, res, next) => {
+  public getPaginated: ControllerMethod = async (req, res, next) => {
     try {
       const { query, options } = parsePaginationQuery(req.body, this.model, (query) => {
         return {

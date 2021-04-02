@@ -8,21 +8,7 @@ export class ClientAPI extends BaseAPI {
     super(config)
   }
 
-  async getPaginated(params: any): AxiosResponseAPI<any> {
-    try {
-      const response = await this.api.request<any>({
-        url: `/paginated`,
-        method: 'get',
-        params,
-      })
-
-      return response
-    } catch (error) {
-      return error
-    }
-  }
-
-  async getPaginatedNew(data: any): AxiosResponseAPI<any> {
+  async getPaginated(data: any): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request<any>({
         url: `/paginated`,

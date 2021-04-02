@@ -1,10 +1,9 @@
 import { ControllerMethod } from './controller'
 
-export interface IClientController {
+export type IClientController = {
   getAll: ControllerMethod
   getById: ControllerMethod
   getPaginated: ControllerMethod
-  getPaginatedNew: ControllerMethod
   getByName: ControllerMethod
   getByCode: ControllerMethod
   create: ControllerMethod

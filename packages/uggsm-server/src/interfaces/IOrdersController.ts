@@ -10,7 +10,6 @@ export type IOrdersController = {
   setEstimatedCloseAt: ControllerMethod
   addSms: ControllerMethod
   generateReport: ControllerMethod
-  getAllWithParams: ControllerMethod
   addUsedDetail: ControllerMethod
   addMasterComment: ControllerMethod
   addManagerComment: ControllerMethod
@@ -24,5 +23,5 @@ export type IOrdersController = {
   createByOffice: ControllerMethod
   updateById: ControllerMethod
   deleteById: ControllerMethod
-  getPaginatedFiltered: ControllerMethod
+  getPaginated: ControllerMethod
 }

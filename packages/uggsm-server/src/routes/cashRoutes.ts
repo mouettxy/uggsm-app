@@ -10,8 +10,7 @@ export class CashRouter extends BaseRouter<ICashController> {
   public initializeRoutes() {
     this.expressRouter
       .get(this.basePath, this.controller.getAll)
-      .get(this.prefixed('paginated'), this.controller.getPaginated)
-      .post(this.prefixed('paginated'), this.controller.getPaginatedNew)
+      .post(this.prefixed('paginated'), this.controller.getPaginated)
       .get(this.prefixed('total-filtered'), this.controller.getTotalByFilter)
       .get(this.prefixed('balance/:office'), this.controller.getBalance)
       .get(this.prefixed(':code'), this.controller.getAllByOffice)

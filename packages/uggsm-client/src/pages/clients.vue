@@ -106,7 +106,7 @@ export default {
     },
 
     async fetchFunction(data) {
-      const response = await ClientAPI.getPaginatedNew(data)
+      const response = await ClientAPI.getPaginated(data)
 
       if (response.status !== 200) {
         this.$notification.error('Не удалось получить данные')

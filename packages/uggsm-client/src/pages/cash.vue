@@ -175,7 +175,7 @@ export default {
     },
 
     async fetchFunction(data) {
-      const response = await CashAPI.getPaginatedNew({
+      const response = await CashAPI.getPaginated({
         ...data,
         office: this.office._id,
       })
