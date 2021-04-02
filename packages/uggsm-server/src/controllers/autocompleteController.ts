@@ -6,6 +6,7 @@ import { IAutocompleteController } from '../interfaces'
 import { ClientModel, OfficeModel, OrderModel, RoleModel, UserModel } from '../models'
 import { api } from '../server'
 import { mongoose } from '@typegoose/typegoose'
+import util from 'util'
 
 export class AutocompleteController extends BaseController implements IAutocompleteController {
   private user = UserModel
@@ -33,12 +34,14 @@ export class AutocompleteController extends BaseController implements IAutocompl
       field: string
       value: string
       match: string
+      type: string
     } = {
       query: (req.query.q || '') as string,
       model: (req.query.m || '') as string,
       field: (req.query.f || '') as string,
       value: (req.query.v || '') as string,
       match: (req.query.match || '') as string,
+      type: (req.query.t || '') as string,
     }
 
     const getLookupFields = ({ field, value }: { field: string; value: string }) => {
@@ -96,6 +99,61 @@ export class AutocompleteController extends BaseController implements IAutocompl
       )
     }
 
+    const makeAggregation = (autocompleteInformation: {
+      query: string
+      model: string
+      field: string
+      value: string
+      match: string
+      type: string
+    }) => {
+      const lookupPart = getModelLookup(
+        autocompleteInformation.model,
+        getLookupFields({
+          field: autocompleteInformation.field,
+          value: autocompleteInformation.value,
+        })
+      )
+      const matchPart = [
+        {
+          $match: {
+            [autocompleteInformation.field]: new RegExp(autocompleteInformation.query || '', 'i') || '',
+            ...getCustomMatch(autocompleteInformation.match),
+          },
+        },
+        {
+          $group: {
+            _id: {
+              text: '$' + autocompleteInformation.field,
+              value: '$' + autocompleteInformation.value,
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            text: '$_id.text',
+            value: '$_id.value',
+          },
+        },
+        {
+          $limit: 20,
+        },
+      ]
+
+      if (autocompleteInformation.type === 'array') {
+        return [
+          ...lookupPart,
+          {
+            $unwind: `$${autocompleteInformation.field.split('.')[0]}`,
+          },
+          ...matchPart,
+        ]
+      }
+
+      return [...lookupPart, ...matchPart]
+    }
+
     const getCustomMatch = (match) => {
       if (!match) {
         return {}
@@ -120,40 +178,9 @@ export class AutocompleteController extends BaseController implements IAutocompl
       autocompleteInformation.value = autocompleteInformation.field
     }
 
-    const aggregation = [
-      ...getModelLookup(
-        autocompleteInformation.model,
-        getLookupFields({
-          field: autocompleteInformation.field,
-          value: autocompleteInformation.value,
-        })
-      ),
-      {
-        $match: {
-          [autocompleteInformation.field]: new RegExp(autocompleteInformation.query || '', 'i') || '',
-          ...getCustomMatch(autocompleteInformation.match),
-        },
-      },
-      {
-        $group: {
-          _id: {
-            text: '$' + autocompleteInformation.field,
-            value: '$' + autocompleteInformation.value,
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          text: '$_id.text',
-          value: '$_id.value',
-        },
-      },
-      {
-        $limit: 20,
-      },
-    ]
+    const aggregation = makeAggregation(autocompleteInformation)
 
+    console.log(util.inspect(aggregation, false, null, true /* enable colors */))
     const data = await mongoose.model(autocompleteInformation.model).aggregate(aggregation)
 
     this.success(res, data)
