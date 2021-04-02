@@ -4,6 +4,7 @@ v-autocomplete.ug-base-autocomplete(
   :search-input.sync='query',
   :return-object='returnObject',
   :prepend-inner-icon='icon',
+  :persistent-hint='persistentHint',
   :menu-props='{ allowOverflow: true, bottom: true, maxHeight: 204 }',
   :label='label',
   :items='prettifiedItems',
@@ -11,6 +12,7 @@ v-autocomplete.ug-base-autocomplete(
   :item-text='itemText',
   :hide-details='hideDetails',
   :disabled='disabled',
+  :hint='hint',
   @update:search-input='onChange',
   @focus.stop='onAutocompleteFocus',
   @blur.stop='onBlur',
@@ -97,6 +99,17 @@ export default {
     phone: {
       required: false,
       type: [Boolean],
+    },
+
+    persistentHint: {
+      required: false,
+      type: [Boolean],
+    },
+
+    hint: {
+      required: false,
+      type: [String],
+      default: '',
     },
 
     itemText: {
