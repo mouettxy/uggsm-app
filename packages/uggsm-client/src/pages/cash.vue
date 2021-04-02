@@ -17,6 +17,7 @@
     :fetch-function='fetchFunction',
     socket-event='update cashes',
     item-key-field='id',
+    initial-sort-field='createdAt',
     include-office-field,
     headers-id='cash-headers-id',
     filter-name='cashes'
@@ -76,11 +77,6 @@
                 icon='mdi-minus',
                 block
               )
-    template(#item.createdBy='{value, item}')
-      v-list-item
-        v-list-item-content
-          v-list-item-title {{ value }}
-          v-list-item-subtitle {{ item.createdAt }}
     template(#item.income='{value}')
       span.success--text {{ value }}
     template(#item.consumption='{value}')
@@ -134,6 +130,7 @@ export default {
       headersSchema: {
         id: '№',
         createdBy: 'Создал',
+        createdAt: 'Дата создания',
         comment: 'Комментарий',
         income: 'Приход',
         consumption: 'Расход',
