@@ -13,6 +13,29 @@ import mongooseSearch from 'mongoose-partial-search'
 import moment from 'moment'
 import { Call } from './callModel'
 
+export class UsedDetail {
+  @prop()
+  public id: number
+
+  @prop()
+  public userid: number
+
+  @prop()
+  public username: string
+
+  @prop({ default: '' })
+  public credentials: string
+
+  @prop()
+  public header: string
+
+  @prop()
+  public message: string
+
+  @prop()
+  public price: number
+}
+
 export class CompletedWork {
   @prop()
   public id: number
@@ -273,6 +296,9 @@ export class Order {
   @prop({ type: () => [Workflow], _id: false })
   public workflow: Workflow[]
 
+  @prop({ type: () => [UsedDetail], _id: false })
+  public usedDetails: UsedDetail[]
+
   // Warranty
 
   @prop({ default: false })
@@ -341,6 +367,18 @@ export class Order {
     const order = await this.findOne({ id })
     await this.addHelper('array', order.statusWork, work)
     await this.addHelper('workflow', order.workflow, work, 'Закрыта работа', work.createdBy)
+    return await order.save()
+  }
+
+  public static async addUsedDetail(
+    this: ReturnModelType<typeof Order>,
+    id: number | string,
+    work: UsedDetail & { createdBy: string }
+  ) {
+    const order = await this.findOne({ id })
+    await this.addHelper('array', order.usedDetails, work)
+    await this.addHelper('workflow', order.workflow, work, 'Использовалась запчасть', work.createdBy)
+
     return await order.save()
   }
 

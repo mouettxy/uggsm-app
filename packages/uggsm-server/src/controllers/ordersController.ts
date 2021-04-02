@@ -122,6 +122,24 @@ export class OrdersController extends BaseController implements IOrdersControlle
     }
   }
 
+  public addUsedDetail: ControllerMethod = async (req, res, next) => {
+    try {
+      const order = await this.model.addUsedDetail(req.params.id, req.body)
+
+      if (order) {
+        api.io.emit('update order', order.id)
+        api.io.emit('update orders')
+        this.success(res, order)
+        return
+      }
+
+      this.badRequest(next, 'Не удалось обработать данные')
+    } catch (e) {
+      console.log(e)
+      this.criticalError(next, e.message)
+    }
+  }
+
   public addCompletedWork: ControllerMethod = async (req, res, next) => {
     try {
       const order = await this.model.addCompletedWork(req.params.id, req.body)

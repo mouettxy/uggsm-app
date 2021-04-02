@@ -119,6 +119,9 @@ export default {
           } else if (e.header === 'Новое сообщение') {
             color = '#bcf5bc'
             icon = 'mdi-message-bulleted'
+          } else if (e.header === 'Использовалась запчасть') {
+            color = '#434bb5 '
+            icon = 'mdi-cog-transfer'
           } else if (e.header === 'Смена срока заказа') {
             color = '#4BB543'
             icon = 'mdi-clock-check'

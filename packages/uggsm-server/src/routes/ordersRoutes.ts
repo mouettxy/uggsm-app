@@ -23,6 +23,7 @@ export class OrdersRouter extends BaseRouter<IOrdersController> {
 
       .put(`${this.basePath}/:id/sms`, validateOrder.sms, this.controller.addSms)
       .put(`${this.basePath}/:id/estimated-close-time`, this.controller.setEstimatedCloseAt)
+      .put(`${this.basePath}/:id/used-detail`, validateOrder.usedDetail, this.controller.addUsedDetail)
       .put(`${this.basePath}/:id/completed-work`, validateOrder.completedWork, this.controller.addCompletedWork)
       .put(`${this.basePath}/:id/master-comment`, validateOrder.masterComment, this.controller.addMasterComment)
       .put(`${this.basePath}/:id/manager-comment`, validateOrder.managerComment, this.controller.addManagerComment)

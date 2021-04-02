@@ -133,6 +133,20 @@ export class OrderAPI extends BaseAPI {
     }
   }
 
+  async addUsedDetail(orderId: string, data: any): AxiosResponseAPI<any> {
+    try {
+      const response = await this.api.request({
+        url: `/${orderId}/used-detail`,
+        method: 'put',
+        data,
+      })
+
+      return response
+    } catch (error) {
+      return error
+    }
+  }
+
   async addOrderComment(orderId: string, data: any): AxiosResponseAPI<any> {
     try {
       const response = await this.api.request({

@@ -8,13 +8,13 @@ import { User } from './userModel'
 import mongooseSearch from 'mongoose-partial-search'
 
 @pre<Cash>('save', async function () {
-  if (this.orderid && this.client) {
-    if (!this.comment) {
-      const order = await OrderModel.findOne({ id: this.orderid })
-      const client = await ClientModel.findById(this.client)
+  if (this.comment) {
+    this.comment = `${this.comment}`
+  } else if (this.orderid && this.client) {
+    const order = await OrderModel.findOne({ id: this.orderid })
+    const client = await ClientModel.findById(this.client)
 
-      this.comment = `Оплата по заказу #${this.orderid} (${order.phoneModel}) (Клиент: ${client.name})`
-    }
+    this.comment = `Оплата по заказу #${this.orderid} (${order.phoneModel}) (Клиент: ${client.name})`
   } else if (this.orderid && !this.client) {
     const order = await OrderModel.findOne({ id: this.orderid })
 

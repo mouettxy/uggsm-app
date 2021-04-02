@@ -11,6 +11,7 @@ export type IOrdersController = {
   addSms: ControllerMethod
   generateReport: ControllerMethod
   getAllWithParams: ControllerMethod
+  addUsedDetail: ControllerMethod
   addMasterComment: ControllerMethod
   addManagerComment: ControllerMethod
   addWorkflow: ControllerMethod
