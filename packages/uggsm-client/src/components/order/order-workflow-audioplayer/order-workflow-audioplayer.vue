@@ -25,7 +25,6 @@
           v-icon mdi-stop
           span Прослушивание недоступно
     template(v-else)
-      | {{ call }}
       ug-bottom-audioplayer(
         :title='call.manager',
         :subtitle='call.managerNumber + " -> " + call.clientNumber',
