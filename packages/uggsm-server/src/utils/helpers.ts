@@ -1,4 +1,4 @@
-import { cloneDeep, last, trim, startsWith } from 'lodash'
+import { cloneDeep, last, trim, startsWith, each, uniqueId } from 'lodash'
 import { UserModel } from '../models'
 import { NextFunction } from 'connect'
 import express from 'express'
@@ -88,40 +88,51 @@ export function getAnonymousAnimal() {
 }
 
 export function extendArrayWithId(extend: any, data: any) {
-  let data_ = cloneDeep(data)
+  let result: any = {}
+  const lastId = (last(extend) as { id: number })?.id || 0
+
   if (extend.length === 0) {
-    data_ = {
+    result = {
       id: 1,
-      ...data_,
+      ...data,
     }
-  } else {
-    const lastIdInc = (last(extend) as any).id + 1
-    data_ = {
-      ...data_,
-      id: lastIdInc,
-    }
+    return result
   }
-  return data_
+
+  result = {
+    id: lastId + 1,
+    ...data,
+  }
+
+  return result
+}
+
+async function getUserCredentials(userId: number | null) {
+  const CANNOT_FIND_USER_TEXT = 'Не удалось найти пользователя'
+
+  if (!userId) {
+    return CANNOT_FIND_USER_TEXT
+  }
+
+  try {
+    const user = await UserModel.findOne({ id: userId })
+
+    if (!user) {
+      return CANNOT_FIND_USER_TEXT
+    }
+
+    return user.credentials
+  } catch (e) {
+    return CANNOT_FIND_USER_TEXT
+  }
 }
 
 export async function processWorkflowData(data: any) {
-  const data_ = cloneDeep(data)
-  if (data_.userid) {
-    try {
-      const user = await UserModel.findOne({ id: data_.userid })
-      if (user) {
-        data_.username = user.credentials
-      } else {
-        data_.username = getAnonymousAnimal()
-      }
-    } catch (e) {
-      data_.username = getAnonymousAnimal()
-    }
-  } else {
-    data_.username = getAnonymousAnimal()
-  }
+  const result: any = { ...data }
 
-  return data_
+  result.username = await getUserCredentials(data.userid)
+
+  return result
 }
 
 export const requiredFieldsHelper = (...args: string[]) => {
