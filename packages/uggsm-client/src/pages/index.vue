@@ -55,6 +55,19 @@ import moment from 'moment'
 export default class PageIndex extends Vue {
   public news = [
     {
+      date: moment('03.04.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
+      items: [
+        {
+          type: 'feat',
+          text: 'Добавлена возможность указывать используемые запчасти в заказе.',
+        },
+        {
+          type: 'fix',
+          text: 'Исправлена некорректная начальная сортировка кассы.',
+        },
+      ],
+    },
+    {
       date: moment('30.03.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
       items: [
         {
