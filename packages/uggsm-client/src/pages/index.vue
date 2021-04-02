@@ -124,7 +124,7 @@ export default class PageIndex extends Vue {
     },
     {
       date: moment('21.03.2021', 'DD.MM.YYYY').format('DD MMMM YYYY'),
-      breaking: true,
+      breaking: false,
       items: [
         {
           type: 'feature',
