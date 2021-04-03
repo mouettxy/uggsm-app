@@ -1,4 +1,9 @@
 import { createLogger, format, transports } from 'winston'
+import path from 'path'
+
+export const getLogsPath = (filename: string) => {
+  return process.env.NODE_ENV === 'production' ? '/var/logs/' : path.join(process.cwd(), `/logs/${filename}.log`)
+}
 
 const logger = createLogger({
   level: 'info',
@@ -6,14 +11,12 @@ const logger = createLogger({
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',
     }),
-    format.errors({ stack: true }),
-    format.splat(),
-    format.prettyPrint()
+    format.errors()
   ),
   defaultMeta: { service: 'uggsm' },
   transports: [
-    new transports.File({ filename: 'uggsm-error.log', level: 'error' }),
-    new transports.File({ filename: 'uggsm-combined.log' }),
+    new transports.File({ filename: getLogsPath('uggsm-error'), level: 'error' }),
+    new transports.File({ filename: getLogsPath('uggsm-combined'), level: 'info' }),
   ],
 })
 

@@ -12,24 +12,27 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 import 'winston-daily-rotate-file'
 import path from 'path'
+import { getLogsPath } from './services/logger'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
 type RouterType = IExtendedRouter<any> | Router
 class RestApi<T> {
   public expressApp: express.Application = express()
+
   public io: SocketIO.Server | null = null
+
   public server: any = null
 
   public routers: Record<keyof T, RouterType> | null = null
 
   constructor(routers: Record<keyof T, RouterType>) {
+    this.routers = routers
+
     connectToDatabase()
     this.initializeSocketIO()
     this.initializeMiddlewares()
-
-    this.routers = routers
-
+    this.initializeRouterLogging()
     this.initializeRouter()
     this.initializeErrorHandling()
   }
@@ -53,56 +56,56 @@ class RestApi<T> {
   }
 
   private initializeMiddlewares(): void {
-    // @ts-ignore
-    const transport = new winston.transports.DailyRotateFile({
-      filename: path.join(__dirname, 'uggsm-%DATE%.log'),
-      datePattern: 'YYYY-MM-DD-HH',
-      frequency: '24h',
-      zippedArchive: true,
-      maxSize: '100m',
-      maxFiles: '7d',
-    })
-
     this.expressApp.use(cors())
     this.expressApp.use(bodyParser.json())
     this.expressApp.use(cookieParser())
+  }
+
+  private initializeRouterLogging(): void {
+    // @ts-ignore
+    const transport = new winston.transports.DailyRotateFile({
+      filename: 'uggsm-%DATE%.log',
+      dirname: path.join(process.cwd(), '/logs'),
+      datePattern: 'YYYY-MM-DD-HH',
+      frequency: '24h',
+      zippedArchive: true,
+      maxSize: '250m',
+      maxFiles: '14d',
+    })
+
     this.expressApp.use(
       expressWinston.logger({
-        format: winston.format.combine(
-          winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss',
+        transports: [
+          new winston.transports.DailyRotateFile({
+            filename: getLogsPath('uggsm-%DATE%'),
+            datePattern: 'YYYY-MM-DD-HH',
+            frequency: '24h',
+            zippedArchive: true,
+            maxSize: '250m',
+            maxFiles: '14d',
           }),
-          winston.format.errors({ stack: true })
-        ),
-        transports: [transport],
-        msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}',
+        ],
+        format: winston.format.combine(winston.format.json()),
+        meta: true,
         expressFormat: true,
+        colorize: false,
       })
     )
   }
 
   private initializeErrorHandling(): void {
-    // @ts-ignore
-    const transport = new winston.transports.DailyRotateFile({
-      filename: path.join(__dirname, 'uggsm-error-%DATE%.log'),
-      datePattern: 'YYYY-MM-DD-HH',
-      frequency: '24h',
-      zippedArchive: true,
-      maxSize: '100m',
-      maxFiles: '7d',
-    })
-
     this.expressApp.use(
       expressWinston.errorLogger({
-        transports: [transport],
-        format: winston.format.combine(
-          winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss',
+        transports: [
+          new winston.transports.DailyRotateFile({
+            filename: getLogsPath('uggsm-error-%DATE%'),
+            datePattern: 'YYYY-MM-DD-HH',
+            frequency: '24h',
+            zippedArchive: true,
+            maxSize: '250m',
+            maxFiles: '14d',
           }),
-          winston.format.errors({ stack: true }),
-          winston.format.splat(),
-          winston.format.prettyPrint()
-        ),
+        ],
       })
     )
 
