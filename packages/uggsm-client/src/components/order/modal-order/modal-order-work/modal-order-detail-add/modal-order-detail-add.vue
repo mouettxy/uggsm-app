@@ -23,12 +23,34 @@
             <v-col cols="12">
               <ug-base-autocomplete
                 v-model="detailModel.header"
-                label="Название работы"
+                label="Название запчасти"
                 icon="mdi-hammer-screwdriver"
                 endpoint="/custom?m=Order&f=usedDetails.header&v=usedDetails.header&t=array"
                 hint="Запчасть или список запчастей через запятую"
                 persistent-hint
               ></ug-base-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <ug-base-textarea
+                v-model="detailModel.description"
+                label="Место покупки"
+                :validate="[(v) => !!v || 'Обязательное поле']"
+                icon="mdi-comment-search"
+                persistent-hint
+                hint="Доступна поддержка markdown разметки."
+              >
+                <template #message>
+                  Доступна поддержка markdown разметки.
+                  <ug-markdown-reference class="d-inline">
+                    <template #activator="{ on, attrs }">
+                      <span v-bind="attrs" class="text-underline cursor-pointer" v-on="on">
+                        Нажмите для просмотра справки
+                      </span>
+                    </template>
+                  </ug-markdown-reference>
+                  <span>.</span>
+                </template>
+              </ug-base-textarea>
             </v-col>
             <v-col cols="12">
               <ug-base-input
@@ -38,7 +60,7 @@
                 suffix="₽"
                 :rules="[(v) => v > 0 || 'Введите число без лишних знаков']"
                 type="number"
-                label="Цена работы"
+                label="Цена запчасти"
               ></ug-base-input>
             </v-col>
           </v-row>
@@ -58,6 +80,8 @@ import UgModalContent from '@/components/base/ui/modal-content/modal-content'
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 import UgBaseAutocomplete from '@/components/base/ui/base-autocomplete/base-autocomplete'
 import UgBaseInput from '@/components/base/ui/base-input/base-input'
+import UgBaseTextarea from '@/components/base/ui/base-textarea/base-textarea'
+import UgMarkdownReference from '@/components/base/markdown-reference/markdown-reference'
 
 import OrderAPI from '@/api/order'
 import CashAPI from '@/api/cash'
@@ -72,6 +96,8 @@ export default {
     UgBaseBtn,
     UgBaseAutocomplete,
     UgBaseInput,
+    UgBaseTextarea,
+    UgMarkdownReference,
   },
 
   props: {
@@ -93,6 +119,7 @@ export default {
       header: '',
       message: '',
       credentials: '',
+      description: '',
       price: 1000,
       userid: null,
       createdBy: null,
@@ -111,6 +138,10 @@ export default {
       }
 
       return `запчасть: ${this.detailModel.header}`
+    },
+
+    detailDescription() {
+      return this.detailModel.description
     },
   },
 

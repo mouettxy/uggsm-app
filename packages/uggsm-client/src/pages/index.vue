@@ -22,7 +22,7 @@
             small,
             label
           ) Важные изменения.
-        v-list
+        v-list.news-list
           template(v-for='child in item.items')
             template(v-if='child.link')
               v-list-item(:to='child.link')
@@ -499,3 +499,9 @@ export default class PageIndex extends Vue {
   public date = this.news[0].date
 }
 </script>
+
+<style lang="sass">
+.news-list
+  .v-list-item__title
+    white-space: pre-wrap !important
+</style>

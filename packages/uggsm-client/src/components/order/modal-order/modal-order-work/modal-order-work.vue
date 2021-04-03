@@ -19,7 +19,7 @@
         <v-col cols="12">
           <v-divider></v-divider>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" lg="6" md="6">
           <v-subheader>Закрытые работы</v-subheader>
           <v-data-table
             :items="order.statusWork"
@@ -48,20 +48,27 @@
             </template>
           </v-data-table>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" lg="6" md="6">
           <v-subheader>Используемые детали</v-subheader>
           <v-data-table
             :items="order.usedDetails"
             :headers="tableDetailsHeaders"
+            show-expand
             hide-default-footer
             no-data-text="Нет используемых деталей"
             mobile-breakpoint="0"
             dense
           >
             <!-- eslint-disable-next-line -->
+            <template #expanded-item="{ item }">
+              <td v-md colspan="5" class="ug-markdown-content table_lightgrey">
+                {{ item.description }}
+              </td>
+            </template>
+            <!-- eslint-disable-next-line -->
             <template #body.append="">
               <tr>
-                <td colspan="3" class="text-end text-medium">Итого:</td>
+                <td colspan="4" class="text-end text-medium">Итого:</td>
                 <td class="text-medium">{{ totalDetails }}</td>
               </tr>
             </template>

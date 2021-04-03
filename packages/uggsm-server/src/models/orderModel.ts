@@ -26,6 +26,9 @@ export class UsedDetail {
   @prop({ default: '' })
   public credentials: string
 
+  @prop({ default: '' })
+  public description: string
+
   @prop()
   public header: string
 

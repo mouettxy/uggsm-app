@@ -1,19 +1,25 @@
-<template lang="pug">
-v-textarea.ug-base-textare(
-  v-model='model',
-  :rules='validate',
-  :prepend-inner-icon='icon',
-  :label='label',
-  :hide-details='hideDetails ? "auto" : false',
-  :dense='dense',
-  :hint='hint',
-  validate-on-blur,
-  rows='2',
-  outlined,
-  no-resize,
-  clearable,
-  auto-grow
-)
+<template>
+  <v-textarea
+    v-model="model"
+    class="ug-base-textare"
+    :rules="validate"
+    :prepend-inner-icon="icon"
+    :label="label"
+    :hide-details="hideDetails ? 'auto' : false"
+    :dense="dense"
+    :hint="hint"
+    :persistent-hint="persistentHint"
+    validate-on-blur
+    rows="2"
+    outlined
+    no-resize
+    clearable
+    auto-grow
+  >
+    <template #message>
+      <slot name="message"></slot>
+    </template>
+  </v-textarea>
 </template>
 
 <script>
@@ -43,6 +49,11 @@ export default {
       required: false,
       type: [String],
       default: '',
+    },
+
+    persistentHint: {
+      required: false,
+      type: Boolean,
     },
 
     validate: {
