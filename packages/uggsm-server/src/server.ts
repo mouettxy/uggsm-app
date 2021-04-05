@@ -11,6 +11,7 @@ import {
   EmailSubscriptionRouter,
   CallsRouter,
   RolesRouter,
+  CallbackRouter,
 } from './routes'
 import { ClientRouter } from './routes/clientRoutes'
 import { validateEnv } from './utils'
@@ -31,6 +32,7 @@ const Routers = {
   emailSubscription: new EmailSubscriptionRouter(),
   calls: new CallsRouter(),
   roles: new RolesRouter(),
+  callback: new CallbackRouter(),
 }
 
 export const api = new RestApi<typeof Routers>(Routers)

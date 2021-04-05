@@ -1,6 +1,6 @@
 import { parsePaginationQuery } from './../services/pagination'
 import { BaseController } from './base/BaseController'
-import { MessageInput, MessageItem } from '../services/sms/RedSmsClient'
+import { MessageInput } from '../services/sms/RedSmsClient'
 import { api } from '../server'
 import { generateOrderId } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
@@ -252,42 +252,6 @@ export class OrdersController extends BaseController implements IOrdersControlle
         alternateId,
         message,
       })
-    }
-  }
-
-  public smsCallback: ControllerMethod = async (req, res, next) => {
-    try {
-      const message: MessageItem = req.body
-
-      let order = await this.model.findOne({
-        statusSms: {
-          $elemMatch: {
-            uuid: message.uuid,
-          },
-        },
-      })
-
-      if (order) {
-        order.statusSms = map(order.statusSms, (e) => {
-          if (e.uuid === message.uuid) {
-            return {
-              ...e,
-              sended: true,
-            }
-          }
-        })
-
-        order = await order.save()
-
-        if (order) {
-          res.status(200)
-          api.io.emit('verified order sms', message, order.id)
-          api.io.emit('update order', order.id)
-          res.send(order)
-        }
-      }
-    } catch (e) {
-      next(new HttpException(500, e.message))
     }
   }
 

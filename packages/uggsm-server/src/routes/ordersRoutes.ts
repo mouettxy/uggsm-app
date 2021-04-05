@@ -17,7 +17,6 @@ export class OrdersRouter extends BaseRouter<IOrdersController> {
 
       .post(`${this.basePath}/paginated/`, this.controller.getPaginated)
       .post(this.basePath, validateOrder.order, this.controller.create)
-      .post(`${this.basePath}/sms/callback`, this.controller.smsCallback)
       .post(`${this.basePath}/office/:code`, validateOrder.order, this.controller.createByOffice)
 
       .put(`${this.basePath}/:id/sms`, validateOrder.sms, this.controller.addSms)
