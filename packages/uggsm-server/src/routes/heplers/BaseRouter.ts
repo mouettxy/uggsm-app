@@ -5,7 +5,9 @@ import { Router } from '../../interfaces'
 import { each } from 'lodash'
 export class BaseRouter<T> implements Router {
   public expressRouter: express.Router = express.Router()
+
   public basePath = ''
+
   public controller: T | null = null
 
   constructor(Controller: new () => T | null, basePath: string, withoutAuthorization?: boolean) {
@@ -31,7 +33,9 @@ export class BaseRouter<T> implements Router {
 }
 export class ExtendedRouter<T> implements IExtendedRouter<T> {
   private setAuthMiddleware = true
+
   public routes: ExtendedRouterRouteEntry<T>[] = []
+
   public expressRouter: express.Router = express.Router()
 
   public basePath = ''
@@ -39,7 +43,7 @@ export class ExtendedRouter<T> implements IExtendedRouter<T> {
   public controller: T | null = null
 
   constructor(Controller: new () => T | null, basePath: string, setAuth = true) {
-    if (Controller && basePath) {
+    if (Controller) {
       this.basePath = basePath
       this.controller = new Controller()
       this.setAuthMiddleware = setAuth
