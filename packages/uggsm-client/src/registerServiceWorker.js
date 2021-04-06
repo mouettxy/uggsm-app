@@ -23,16 +23,6 @@ if (process.env.NODE_ENV === 'production') {
       console.log('New content is available; please refresh.')
 
       document.dispatchEvent(new CustomEvent(UPDATE_APP_EVENT, { detail: registration }))
-
-      sendNotification('Доступно обновление!', {
-        body: 'У приложения UGGSM появилось обновление. Для установки нажмите на уведомление.',
-        icon: '/img/icons/android-chrome-192x192.png',
-        vibrate: [100, 50, 100],
-        data: {
-          dateOfArrival: Date.now(),
-          primaryKey: 1,
-        },
-      })
     },
     offline() {
       console.log('No internet connection found. App is running in offline mode.')

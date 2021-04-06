@@ -128,4 +128,4 @@ export async function initCASL() {
   Vue.use(abilitiesPlugin, ability, { useGlobalProperties: true })
 }
 
-initCASL()
+export default initCASL

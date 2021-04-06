@@ -3,11 +3,25 @@ v-app
   v-main.ug-main(:class='{ "ug-main--mobile": isMobile }')
     ug-notification-app-update
     router-view
+    v-fab-transition(appear)
+      v-btn(
+        :style='{ bottom: "32px" }',
+        @click='callBugBattle',
+        small,
+        right,
+        fixed,
+        fab,
+        dark,
+        color='primary',
+        bottom
+      )
+        v-icon mdi-bug
 </template>
 
 <script>
 import UgNotificationAppUpdate from '@/components/notifications/notification-app-update/notification-app-update'
 import Responsive from '@/mixins/responsive'
+import BugBattle from '@/plugins/bugbattle'
 
 export default {
   name: 'app',
@@ -27,6 +41,12 @@ export default {
   watch: {
     header: function (header) {
       document.title = header
+    },
+  },
+
+  methods: {
+    callBugBattle() {
+      BugBattle.startBugReporting()
     },
   },
 }

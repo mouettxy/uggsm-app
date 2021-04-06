@@ -1,6 +1,6 @@
 <template>
   <v-snackbar v-model="notification" timeout="-1" top centered>
-    <span> Доступно обновление! </span>
+    <span>Доступно обновление!</span>
     <template #action="{ attrs }">
       <ug-base-btn v-bind="attrs" text color="#00f500" label="Обновить" @click.stop="handleClick"></ug-base-btn>
     </template>

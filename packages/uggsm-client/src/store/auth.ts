@@ -59,7 +59,7 @@ export default class Auth extends VuexModule {
     if (reason === 'rejected') {
       response = await AuthAPI.logout({ id: this.user?._id, token: null })
       if (router.currentRoute.name !== 'login') {
-        router.push({ name: 'login' }).catch((failure) => {
+        router.replace({ name: 'login' }).catch((failure) => {
           if (isNavigationFailure(failure, NavigationFailureType.redirected)) {
             Vue.prototype.$notification.warning(
               'Ваша сессия закончена. Войдите в аккаунт снова что бы обновить сессию.'

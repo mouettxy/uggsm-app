@@ -14,18 +14,6 @@ self.addEventListener('message', (e) => {
   }
 })
 
-self.addEventListener('notificationclick', function (e) {
-  let notification = e.notification
-  let action = e.action
-
-  if (action === 'close') {
-    notification.close()
-  } else {
-    clients.openWindow('https://app.uggsm.ru')
-    notification.close()
-  }
-})
-
 workbox.core.clientsClaim()
 
 self.__precacheManifest = [].concat(self.__precacheManifest || [])

@@ -12,5 +12,5 @@ export const config = {
   validateStatus: (status: any) => {
     return status < 500 // default
   },
-  timeout: 3 * 1000,
+  timeout: 15 * 1000,
 }

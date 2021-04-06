@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import './registerServiceWorker'
+import '@/plugins/bugbattle'
 
 import Vue from 'vue'
 import App from './App.vue'
@@ -19,25 +20,29 @@ import store from '@/store'
 import router from '@/router'
 
 import moment from 'moment'
-import '@/plugins/casl'
 
 import { tryUpdateRoleAbilities } from '@/plugins/casl'
 moment.locale('ru')
 
-import { requestNotificationAccess } from '@/services/notificationService'
-requestNotificationAccess()
-
 Vue.config.productionTip = false
 
-new Vue({
-  sockets: {
-    ['roles updated'](role: string) {
-      tryUpdateRoleAbilities(role)
-    },
-  },
+import InitCASL from '@/plugins/casl'
 
-  vuetify,
-  store,
-  router,
-  render: (h) => h(App),
-}).$mount('#app')
+const initApp = async () => {
+  await InitCASL()
+
+  new Vue({
+    sockets: {
+      ['roles updated'](role: string) {
+        tryUpdateRoleAbilities(role)
+      },
+    },
+
+    vuetify,
+    store,
+    router,
+    render: (h) => h(App),
+  }).$mount('#app')
+}
+
+initApp()
