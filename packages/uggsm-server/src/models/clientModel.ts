@@ -3,7 +3,6 @@ import { getModelForClass, prop, plugin, ReturnModelType, Ref, pre } from '@type
 import autopopulate from 'mongoose-autopopulate'
 import { AutoIncrement } from '../utils'
 import { extendArrayWithId } from '../utils/helpers'
-import { Adversitement } from '.'
 import mongoosePaginate from 'mongoose-paginate-v2'
 import mongooseSearch from 'mongoose-partial-search'
 
@@ -70,8 +69,8 @@ export class Client {
   @prop({ searchable: true })
   public email: string
 
-  @prop({ autopopulate: true, ref: 'Adversitement' })
-  public adversitement: Ref<Adversitement>
+  @prop()
+  public adversitement: string
 
   @prop({ searchable: true })
   public comment: string

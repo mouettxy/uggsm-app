@@ -5,7 +5,6 @@ import { AutoIncrement } from '../utils'
 import { filter, isEmpty } from 'lodash'
 import { Client, ClientModel } from './clientModel'
 import { processWorkflowData, extendArrayWithId } from '../utils/helpers'
-import { Adversitement } from './adversitementModel'
 import { User } from './userModel'
 import mongoosePaginate from 'mongoose-paginate-v2'
 import { statuses } from '../utils/enums'
@@ -272,8 +271,8 @@ export class Order {
   @prop()
   public closedAt: Date
 
-  @prop({ autopopulate: true, ref: 'Adversitement' })
-  public adversitement: Ref<Adversitement>
+  @prop()
+  public adversitement: string
 
   @prop({ enum: statuses })
   public status: string
