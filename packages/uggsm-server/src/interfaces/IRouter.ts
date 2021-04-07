@@ -26,6 +26,7 @@ export type ExtendedRouterRouteEntry<T> = {
   description: string
   controllerMethod: keyof T
   method: 'get' | 'post' | 'put' | 'delete'
+  validators?: Array<any>
 }
 
 export interface IExtendedRouter<T> {

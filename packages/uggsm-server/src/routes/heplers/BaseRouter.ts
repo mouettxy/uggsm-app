@@ -77,9 +77,17 @@ export class ExtendedRouter<T> implements IExtendedRouter<T> {
   build() {
     if (this.routes.length > 0) {
       each(this.routes, (e) => {
+        const routeArgs: Array<any> = [`${this.basePath}/${e.path}`]
+
+        if (e.validators) {
+          each(e.validators, (validator) => routeArgs.push(validator))
+        }
+
+        routeArgs.push(this.controller[e.controllerMethod])
+
         //FIXME: tsignore
         //@ts-ignore
-        this.expressRouter[e.method](`${this.basePath}/${e.path}`, this.controller[e.controllerMethod])
+        this.expressRouter[e.method](...routeArgs)
       })
     }
   }
