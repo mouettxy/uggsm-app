@@ -1,39 +1,142 @@
-import { IOrdersController } from 'src/interfaces'
 import { OrdersController } from '../controllers'
-import * as validateOrder from '../middlewares/validators/validateOrder'
-import BaseRouter from './heplers/BaseRouter'
+import { IOrdersController } from '../interfaces'
+import { ExtendedRouter } from './heplers/BaseRouter'
+import * as orderValidators from '../middlewares/validators/validateOrder'
 
-export class OrdersRouter extends BaseRouter<IOrdersController> {
+export class OrdersRouter extends ExtendedRouter<IOrdersController> {
   constructor() {
-    super(OrdersController, '/order')
+    super(OrdersController, '/order', true)
   }
 
-  initializeRoutes() {
-    this.expressRouter
-      .get(this.basePath, this.controller.getAll)
-      .get(`${this.basePath}/reports/report`, this.controller.generateReport)
-      .get(`${this.basePath}/office/:code`, this.controller.getAllByOffice)
-      .get(`${this.basePath}/:id`, this.controller.getById)
+  defineRoutes() {
+    this.addRoutes([
+      {
+        path: 'reports/report',
+        description: 'Сгенерировать отчёт',
+        controllerMethod: 'generateReport',
+        method: 'get',
+      },
+      {
+        path: ':id',
+        description: 'Получить заказ по ID',
+        controllerMethod: 'getById',
+        method: 'get',
+      },
+    ])
 
-      .post(`${this.basePath}/paginated/`, this.controller.getPaginated)
-      .post(this.basePath, validateOrder.order, this.controller.create)
-      .post(`${this.basePath}/office/:code`, validateOrder.order, this.controller.createByOffice)
+    this.addRoutes([
+      {
+        path: 'paginated',
+        description: 'Получить заказы с пагинацией',
+        controllerMethod: 'getPaginated',
+        method: 'post',
+      },
+      {
+        path: 'office/:code',
+        description: 'Создать заказ',
+        controllerMethod: 'createByOffice',
+        method: 'post',
+      },
+    ])
 
-      .put(`${this.basePath}/:id/sms`, validateOrder.sms, this.controller.addSms)
-      .put(`${this.basePath}/:id/estimated-close-time`, this.controller.setEstimatedCloseAt)
-      .put(`${this.basePath}/:id/used-detail`, validateOrder.usedDetail, this.controller.addUsedDetail)
-      .put(`${this.basePath}/:id/completed-work`, validateOrder.completedWork, this.controller.addCompletedWork)
-      .put(`${this.basePath}/:id/master-comment`, validateOrder.masterComment, this.controller.addMasterComment)
-      .put(`${this.basePath}/:id/manager-comment`, validateOrder.managerComment, this.controller.addManagerComment)
-      .put(`${this.basePath}/:id/workflow`, validateOrder.workflow, this.controller.addWorkflow)
-      .put(`${this.basePath}/:id/status`, validateOrder.status, this.controller.setStatus)
-      .put(`${this.basePath}/:id/payed`, validateOrder.payed, this.controller.setPayed)
-      .put(`${this.basePath}/:id/master`, validateOrder.master, this.controller.setMaster)
-      .put(`${this.basePath}/:id/manager`, validateOrder.manager, this.controller.setManager)
-      .put(`${this.basePath}/:id/office`, validateOrder.office, this.controller.setOffice)
-      .put(`${this.basePath}/:id`, this.controller.updateById)
+    this.addRoutes([
+      {
+        path: ':id/sms',
+        description: 'Добавить смс к заказу',
+        controllerMethod: 'addSms',
+        method: 'put',
+        validators: [orderValidators.sms],
+      },
+      {
+        path: ':id/estimated-close-time',
+        description: 'Установить ориентировочное время закрытия заказа',
+        controllerMethod: 'setEstimatedCloseAt',
+        method: 'put',
+      },
+      {
+        path: ':id/used-detail',
+        description: 'Добавить используемую запчасть',
+        controllerMethod: 'addUsedDetail',
+        method: 'put',
+        validators: [orderValidators.usedDetail],
+      },
+      {
+        path: ':id/completed-work',
+        description: 'Добавить выполненную работу',
+        controllerMethod: 'addCompletedWork',
+        method: 'put',
+        validators: [orderValidators.completedWork],
+      },
+      {
+        path: ':id/master-comment',
+        description: 'Добавить комментарий мастера',
+        controllerMethod: 'addMasterComment',
+        method: 'put',
+        validators: [orderValidators.masterComment],
+      },
+      {
+        path: ':id/manager-comment',
+        description: 'Добавить комментарий менеджера',
+        controllerMethod: 'addManagerComment',
+        method: 'put',
+        validators: [orderValidators.managerComment],
+      },
+      {
+        path: ':id/status',
+        description: 'Установить статус',
+        controllerMethod: 'setStatus',
+        method: 'put',
+        validators: [orderValidators.status],
+      },
+      {
+        path: ':id/payed',
+        description: 'Установить статус оплаты',
+        controllerMethod: 'setPayed',
+        method: 'put',
+        validators: [orderValidators.payed],
+      },
+      {
+        path: ':id/master',
+        description: 'Установить мастера',
+        controllerMethod: 'setMaster',
+        method: 'put',
+        validators: [orderValidators.master],
+      },
+      {
+        path: ':id/manager',
+        description: 'Установить менеджера',
+        controllerMethod: 'setManager',
+        method: 'put',
+        validators: [orderValidators.manager],
+      },
+      {
+        path: ':id/office',
+        description: 'Установить офис',
+        controllerMethod: 'setOffice',
+        method: 'put',
+        validators: [orderValidators.office],
+      },
+      {
+        path: ':id',
+        description: 'Обновить по ID',
+        controllerMethod: 'updateById',
+        method: 'put',
+      },
+    ])
 
-      .delete(`${this.basePath}/:id`, this.controller.deleteById)
-      .delete(`${this.basePath}/:id/completed-work/:workId`, this.controller.deleteCompletedWork)
+    this.addRoutes([
+      {
+        path: ':id',
+        description: 'Удалить заказ',
+        controllerMethod: 'deleteById',
+        method: 'delete',
+      },
+      {
+        path: ':id/completed-work/:workId',
+        description: 'Удалить добавленную работу',
+        controllerMethod: 'deleteCompletedWork',
+        method: 'delete',
+      },
+    ])
   }
 }

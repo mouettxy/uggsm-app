@@ -19,17 +19,6 @@ export class OrdersController extends BaseController implements IOrdersControlle
 
   private disableSmsClient = process.env.NODE_ENV !== 'production'
 
-  public getAll: ControllerMethod = async (req, res, next) => {
-    try {
-      const response = await this.model.find()
-
-      res.status(200)
-      res.send(response)
-    } catch (error) {
-      next(new HttpException(500, error.message))
-    }
-  }
-
   public getAllByOffice: ControllerMethod = async (req, res, next) => {
     try {
       const code = req.params.code
@@ -87,22 +76,6 @@ export class OrdersController extends BaseController implements IOrdersControlle
       } else {
         next(new HttpException(400, `Заказ с ID №${id} не найден`))
       }
-    } catch (error) {
-      next(new HttpException(500, error.message))
-    }
-  }
-
-  public create: ControllerMethod = async (req, res, next) => {
-    try {
-      let response = new this.model({
-        ...req.body,
-      })
-
-      response = await response.save()
-
-      res.status(200)
-      api.io.emit('created order', response)
-      res.send(response)
     } catch (error) {
       next(new HttpException(500, error.message))
     }
@@ -278,23 +251,6 @@ export class OrdersController extends BaseController implements IOrdersControlle
       if (order) {
         res.status(200)
         api.io.emit('added order manager comment', order.id)
-        api.io.emit('update order', order.id)
-        res.send(order)
-      } else {
-        throw new Error('Не удалось обработать данные')
-      }
-    } catch (e) {
-      next(new HttpException(500, e.message))
-    }
-  }
-
-  public addWorkflow: ControllerMethod = async (req, res, next) => {
-    try {
-      const order = await this.model.addWorkflow(req.params.id, req.body)
-
-      if (order) {
-        res.status(200)
-        api.io.emit('added order workflow', order.id)
         api.io.emit('update order', order.id)
         res.send(order)
       } else {
