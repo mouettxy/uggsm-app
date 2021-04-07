@@ -10,7 +10,7 @@ export class CallbackRouter extends ExtendedRouter<ICallbackController> {
   defineRoutes() {
     this.addRoutes([
       {
-        path: '/order/sms/callback',
+        path: 'order/sms/callback',
         description: 'REDSMS Sms Callback',
         controllerMethod: 'smsCallback',
         method: 'post',
