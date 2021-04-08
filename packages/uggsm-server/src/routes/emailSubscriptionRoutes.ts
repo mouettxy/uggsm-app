@@ -1,10 +1,10 @@
 import { IEmailSubscriptionController } from './../interfaces/IEmailSubscriptionController'
 import { EmailSubscriptionController } from '../controllers'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 
-export class EmailSubscriptionRouter extends ExtendedRouter<IEmailSubscriptionController> {
+export class EmailSubscriptionRouter extends Router<IEmailSubscriptionController> {
   constructor() {
-    super(EmailSubscriptionController, '/email-subscriptions', true)
+    super(EmailSubscriptionController, '/email-subscriptions', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

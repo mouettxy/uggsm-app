@@ -1,10 +1,10 @@
 import { CashController } from '../controllers/cashController'
 import { ICashController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 
-export class CashRouter extends ExtendedRouter<ICashController> {
+export class CashRouter extends Router<ICashController> {
   constructor() {
-    super(CashController, '/cash', true)
+    super(CashController, '/cash', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

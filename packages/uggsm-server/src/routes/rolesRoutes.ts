@@ -1,9 +1,10 @@
 import { RolesController } from '../controllers'
 import { IRolesController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
-export class RolesRouter extends ExtendedRouter<IRolesController> {
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
+
+export class RolesRouter extends Router<IRolesController> {
   constructor() {
-    super(RolesController, '/role', false)
+    super(RolesController, '/role', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

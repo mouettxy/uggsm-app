@@ -1,13 +1,38 @@
-import { IExtendedRouter, ExtendedRouterRouteEntry } from './../../interfaces/IRouter'
-import express from 'express'
-import { authenticationMiddleware } from '../../middlewares'
+import express, { Router as ExpressRouter } from 'express'
+import { authenticationMiddleware } from '../middlewares'
 import { each } from 'lodash'
-export class ExtendedRouter<T> implements IExtendedRouter<T> {
+
+export type RouteEntry<T> = {
+  path: string
+  description: string
+  controllerMethod: keyof T
+  method: 'get' | 'post' | 'put' | 'delete'
+  validators?: Array<any>
+}
+
+export interface RouterInterface<T> {
+  expressRouter: ExpressRouter
+  basePath: string
+  controller: T | null
+  routes: RouteEntry<T>[]
+
+  addRoute: (route: RouteEntry<T>) => void
+  addRoutes: (routes: RouteEntry<T>[]) => void
+  defineRoutes: () => void
+  build: () => void
+}
+
+export const AUTH_MIDDLEWARE = {
+  ENABLE: true,
+  DISABLE: false,
+}
+
+export class Router<T> implements RouterInterface<T> {
   private setAuthMiddleware = true
 
-  public routes: ExtendedRouterRouteEntry<T>[] = []
+  public routes: RouteEntry<T>[] = []
 
-  public expressRouter: express.Router = express.Router()
+  public expressRouter: ExpressRouter = express.Router()
 
   public basePath = ''
 
@@ -31,11 +56,11 @@ export class ExtendedRouter<T> implements IExtendedRouter<T> {
     }
   }
 
-  addRoute(route: ExtendedRouterRouteEntry<T>) {
+  addRoute(route: RouteEntry<T>) {
     this.routes.push(route)
   }
 
-  addRoutes(routes: ExtendedRouterRouteEntry<T>[]) {
+  addRoutes(routes: RouteEntry<T>[]) {
     each(routes, (e) => {
       this.routes.push(e)
     })
@@ -63,3 +88,5 @@ export class ExtendedRouter<T> implements IExtendedRouter<T> {
     }
   }
 }
+
+export default Router

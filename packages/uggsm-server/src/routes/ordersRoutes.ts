@@ -1,11 +1,11 @@
 import { OrdersController } from '../controllers'
 import { IOrdersController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as orderValidators from '../middlewares/validators/validateOrder'
 
-export class OrdersRouter extends ExtendedRouter<IOrdersController> {
+export class OrdersRouter extends Router<IOrdersController> {
   constructor() {
-    super(OrdersController, '/order', true)
+    super(OrdersController, '/order', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

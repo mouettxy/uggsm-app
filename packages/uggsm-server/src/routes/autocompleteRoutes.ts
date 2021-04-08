@@ -1,9 +1,10 @@
 import { AutocompleteController } from '../controllers'
 import { IAutocompleteController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
-export class AutocompleteRouter extends ExtendedRouter<IAutocompleteController> {
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
+
+export class AutocompleteRouter extends Router<IAutocompleteController> {
   constructor() {
-    super(AutocompleteController, '/autocomplete', false)
+    super(AutocompleteController, '/autocomplete', AUTH_MIDDLEWARE.DISABLE)
   }
 
   defineRoutes() {

@@ -1,10 +1,10 @@
 import { CallbackController } from '../controllers'
 import { ICallbackController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 
-export class CallbackRouter extends ExtendedRouter<ICallbackController> {
+export class CallbackRouter extends Router<ICallbackController> {
   constructor() {
-    super(CallbackController, '', false)
+    super(CallbackController, '', AUTH_MIDDLEWARE.DISABLE)
   }
 
   defineRoutes() {

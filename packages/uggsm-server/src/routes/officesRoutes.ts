@@ -1,11 +1,11 @@
 import { OfficeController } from '../controllers'
 import { IOfficeController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as officeValidator from '../middlewares/validators/validateOffice'
 
-export class OfficeRouter extends ExtendedRouter<IOfficeController> {
+export class OfficeRouter extends Router<IOfficeController> {
   constructor() {
-    super(OfficeController, '/office', true)
+    super(OfficeController, '/office', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

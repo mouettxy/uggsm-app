@@ -1,10 +1,10 @@
 import { ICallsController } from 'src/interfaces'
 import { CallsController } from '../controllers'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 
-export class CallsRouter extends ExtendedRouter<ICallsController> {
+export class CallsRouter extends Router<ICallsController> {
   constructor() {
-    super(CallsController, '/calls', false)
+    super(CallsController, '/calls', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

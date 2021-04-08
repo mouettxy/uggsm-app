@@ -1,11 +1,11 @@
 import { IClientController } from 'src/interfaces'
 import { ClientController } from '../controllers'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as clientValidator from '../middlewares/validators/validateClient'
 
-export class ClientRouter extends ExtendedRouter<IClientController> {
+export class ClientRouter extends Router<IClientController> {
   constructor() {
-    super(ClientController, '/client', true)
+    super(ClientController, '/client', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {

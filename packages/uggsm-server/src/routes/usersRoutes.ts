@@ -1,10 +1,10 @@
 import { UsersController } from '../controllers'
 import { IUserController } from '../interfaces'
-import { ExtendedRouter } from './heplers/BaseRouter'
+import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 
-export class UsersRouter extends ExtendedRouter<IUserController> {
+export class UsersRouter extends Router<IUserController> {
   constructor() {
-    super(UsersController, '/user', false)
+    super(UsersController, '/user', AUTH_MIDDLEWARE.ENABLE)
   }
 
   defineRoutes() {
