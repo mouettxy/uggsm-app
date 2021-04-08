@@ -15,6 +15,25 @@ export class CallbackRouter extends Router<ICallbackController> {
         controllerMethod: 'smsCallback',
         method: 'post',
       },
+
+      {
+        path: 'calls/callbacks/call-start',
+        description: 'moizvonki callback call-start',
+        controllerMethod: 'callStartCallback',
+        method: 'post',
+      },
+      {
+        path: 'calls/callbacks/call-answer',
+        description: 'moizvonki callback call-answer',
+        controllerMethod: 'callAnswerCallback',
+        method: 'post',
+      },
+      {
+        path: 'calls/callbacks/call-finish',
+        description: 'moizvonki callback call-finish',
+        controllerMethod: 'callFinishCallback',
+        method: 'post',
+      },
     ])
   }
 }

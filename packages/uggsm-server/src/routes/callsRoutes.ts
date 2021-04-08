@@ -15,24 +15,6 @@ export class CallsRouter extends Router<ICallsController> {
         controllerMethod: 'getPaginated',
         method: 'post',
       },
-      {
-        path: 'callbacks/call-start',
-        description: 'moizvonki callback call-start',
-        controllerMethod: 'callbackCallStart',
-        method: 'post',
-      },
-      {
-        path: 'callbacks/call-answer',
-        description: 'moizvonki callback call-answer',
-        controllerMethod: 'callbackCallAnswer',
-        method: 'post',
-      },
-      {
-        path: 'callbacks/call-finish',
-        description: 'moizvonki callback call-finish',
-        controllerMethod: 'callbackCallFinish',
-        method: 'post',
-      },
     ])
   }
 }
