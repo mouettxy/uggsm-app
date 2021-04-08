@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import express from 'express'
-import { IExtendedRouter, Router } from './interfaces'
+import { Router } from './base/Router'
 import { errorMiddleware } from './middlewares'
 import * as endpointValidationMiddleware from './middlewares/validators/validateEndpoint'
 import { connectToDatabase } from './utils'
@@ -16,7 +16,7 @@ import { getLogsPath } from './services/logger'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
-type RouterType = IExtendedRouter<any> | Router
+type RouterType = Router<any>
 class RestApi<T> {
   public expressApp: express.Application = express()
 

@@ -1,4 +1,4 @@
-import { ExtendedRouter } from './../routes/heplers/BaseRouter'
+import { Router } from '../base/Router'
 import { ControllerMethod } from './../interfaces/controller'
 import { BaseController } from './base/BaseController'
 import { compact, filter, flatten, isString, lowerCase, map, reduce } from 'lodash'
@@ -535,7 +535,7 @@ export class AutocompleteController extends BaseController implements IAutocompl
     const search = this._normalizeQuery(req.query.search as string)
 
     try {
-      const routes = map((api.routers.autocomplete as ExtendedRouter<any>).routes, (e) => ({
+      const routes = map((api.routers.autocomplete as Router<any>).routes, (e) => ({
         text: e.description,
         value: e.path,
       }))
