@@ -1,23 +1,36 @@
-import express from 'express'
-import { IAuthentificationController, Router } from '../interfaces'
+import { IAuthentificationController } from '../interfaces'
 import { AuthenticationController } from '../controllers'
-import { authenticationMiddleware } from '../middlewares'
-import * as validateUserLogin from '../middlewares/validators/validateUserLogin'
-import * as validateUser from '../middlewares/validators/validateUser'
+import { ExtendedRouter } from './heplers/BaseRouter'
+import * as userLoginValidator from '../middlewares/validators/validateUserLogin'
+import * as userValidator from '../middlewares/validators/validateUser'
 
-export class AuthenticationRouter implements Router {
-  public expressRouter: express.Router = express.Router()
-
+export class AuthenticationRouter extends ExtendedRouter<IAuthentificationController> {
   constructor() {
-    const authController = new AuthenticationController()
-    this.initializeRoutes(authController)
+    super(AuthenticationController, '/auth', false)
   }
 
-  public initializeRoutes(controller: IAuthentificationController): void {
-    const path = '/auth'
-
-    this.expressRouter.post(`${path}/register`, authenticationMiddleware, validateUser.user, controller.register)
-    this.expressRouter.post(`${path}/login`, validateUserLogin.userLogin, controller.login)
-    this.expressRouter.post(`${path}/logout`, controller.logout)
+  defineRoutes() {
+    this.addRoutes([
+      {
+        path: 'register',
+        description: 'Зарегистрировать пользователя',
+        controllerMethod: 'register',
+        method: 'post',
+        validators: [userValidator.user],
+      },
+      {
+        path: 'login',
+        description: 'Авторизовать пользователя',
+        controllerMethod: 'login',
+        method: 'get',
+        validators: [userLoginValidator.userLogin],
+      },
+      {
+        path: 'logout',
+        description: 'Деавторизовать пользователя',
+        controllerMethod: 'logout',
+        method: 'post',
+      },
+    ])
   }
 }

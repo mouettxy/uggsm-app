@@ -1,25 +1,4 @@
-import express from 'express'
-import {
-  IAdversitementController,
-  IAuthentificationController,
-  ICashController,
-  IOfficeController,
-  IOrdersController,
-} from '.'
-import { IAutocompleteController } from './IAutocompleteController'
-
-export interface Router {
-  expressRouter: express.Router
-  initializeRoutes: (
-    _:
-      | IAdversitementController
-      | IAuthentificationController
-      | ICashController
-      | IOfficeController
-      | IOrdersController
-      | IAutocompleteController
-  ) => void
-}
+import { Router } from 'express'
 
 export type ExtendedRouterRouteEntry<T> = {
   path: string
@@ -30,7 +9,7 @@ export type ExtendedRouterRouteEntry<T> = {
 }
 
 export interface IExtendedRouter<T> {
-  expressRouter: express.Router
+  expressRouter: Router
   basePath: string
   controller: T | null
   routes: ExtendedRouterRouteEntry<T>[]

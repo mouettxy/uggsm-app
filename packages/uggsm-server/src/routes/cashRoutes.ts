@@ -1,22 +1,44 @@
 import { CashController } from '../controllers/cashController'
 import { ICashController } from '../interfaces'
-import BaseRouter from './heplers/BaseRouter'
+import { ExtendedRouter } from './heplers/BaseRouter'
 
-export class CashRouter extends BaseRouter<ICashController> {
+export class CashRouter extends ExtendedRouter<ICashController> {
   constructor() {
-    super(CashController, '/cash')
+    super(CashController, '/cash', true)
   }
 
-  public initializeRoutes() {
-    this.expressRouter
-      .get(this.basePath, this.controller.getAll)
-      .post(this.prefixed('paginated'), this.controller.getPaginated)
-      .get(this.prefixed('total-filtered'), this.controller.getTotalByFilter)
-      .get(this.prefixed('balance/:office'), this.controller.getBalance)
-      .get(this.prefixed(':code'), this.controller.getAllByOffice)
-      .get(this.prefixed('order/:id'), this.controller.getByOrder)
-      .post(this.prefixed(':code'), this.controller.createByOffice)
-      .put(this.prefixed(':id'), this.controller.updateById)
-      .delete(this.prefixed(':id'), this.controller.deleteById)
+  defineRoutes() {
+    this.addRoutes([
+      {
+        path: 'paginated',
+        description: 'Получить кассу с пагинацией',
+        controllerMethod: 'getPaginated',
+        method: 'post',
+      },
+      {
+        path: 'order/:id',
+        description: 'Получить кассу по заказу',
+        controllerMethod: 'getByOrder',
+        method: 'get',
+      },
+      {
+        path: ':code',
+        description: 'Создать кассу по офису',
+        controllerMethod: 'createByOffice',
+        method: 'post',
+      },
+      {
+        path: ':id',
+        description: 'Обновить кассу по ID',
+        controllerMethod: 'updateById',
+        method: 'put',
+      },
+      {
+        path: ':id',
+        description: 'Удалить кассу по ID',
+        controllerMethod: 'deleteById',
+        method: 'delete',
+      },
+    ])
   }
 }
