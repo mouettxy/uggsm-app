@@ -50,8 +50,11 @@ const config: Config = {
 }
 class Deploy {
   private spinner = null
+
   public scope = ''
+
   public sshConnection: NodeSSH
+
   public queue: Promise<any>
 
   public commentsShortcuts: Record<string, string> = {
@@ -134,7 +137,13 @@ class Deploy {
     }
 
     this.chain(async () => {
-      await this.sshConnection.execCommand(command, { cwd })
+      try {
+        const response = await this.sshConnection.execCommand(command, { cwd })
+
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+      }
     })
 
     if (logAfter) {
@@ -150,10 +159,16 @@ class Deploy {
     }
 
     this.chain(async () => {
-      await this.sshConnection.putDirectory(origin, destination, {
-        recursive: true,
-        concurrency: 10,
-      })
+      try {
+        const response = await this.sshConnection.putDirectory(origin, destination, {
+          recursive: true,
+          concurrency: 10,
+        })
+
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+      }
     })
 
     if (logAfter) {
