@@ -6,6 +6,7 @@ import * as inquirer from 'inquirer'
 import { exec } from 'promisify-child-process'
 import ora from 'ora'
 import chalk from 'chalk'
+import path from 'path'
 
 dotenv.config()
 
@@ -31,14 +32,14 @@ export type Config = {
 
 const config: Config = {
   b: {
-    app: `${__dirname}/packages/uggsm-client/dist`,
-    appPckg: `${__dirname}/packages/uggsm-client/package.json`,
-    srv: `${__dirname}/packages/uggsm-server/dist`,
-    srvPckg: `${__dirname}/packages/uggsm-server/package.json`,
-    bckp: `${__dirname}/packages/uggsm-backup-system/dist`,
-    bckpPckg: `${__dirname}/packages/uggsm-backup-system/package.json`,
-    cli: `${__dirname}/packages/uggsm-cli/dist`,
-    cliPckg: `${__dirname}/packages/uggsm-cli/package.json`,
+    app: path.resolve(`${__dirname}/../packages/uggsm-client/dist`),
+    appPckg: path.resolve(`${__dirname}/../packages/uggsm-client/package.json`),
+    srv: path.resolve(`${__dirname}/../packages/uggsm-server/dist`),
+    srvPckg: path.resolve(`${__dirname}/../packages/uggsm-server/package.json`),
+    bckp: path.resolve(`${__dirname}/../packages/uggsm-backup-system/dist`),
+    bckpPckg: path.resolve(`${__dirname}/../packages/uggsm-backup-system/package.json`),
+    cli: path.resolve(`${__dirname}/../packages/uggsm-cli/dist`),
+    cliPckg: path.resolve(`${__dirname}/../packages/uggsm-cli/package.json`),
   },
   d: {
     srv: '/var/www/api',
@@ -48,6 +49,7 @@ const config: Config = {
     bckpPckg: '/var/uggsm-backup/package.json',
   },
 }
+
 class Deploy {
   private spinner = null
 
@@ -101,11 +103,11 @@ class Deploy {
 
         if (!this.spinner) {
           console.log(message)
-          this.spinner = ora(message).start()
+          this.spinner = ora().start(message)
         } else {
           this.spinner.stop()
           console.log(message)
-          this.spinner = ora(message).start()
+          this.spinner = ora().start(message)
         }
 
         resolve(message)
