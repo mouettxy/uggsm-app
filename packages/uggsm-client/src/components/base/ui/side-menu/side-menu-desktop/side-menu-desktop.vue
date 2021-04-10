@@ -1,20 +1,33 @@
-<template lang="pug">
-.ug-side-menu-wrapper.ug-side-menu-wrapper--desktop
-  .ug-side-menu.elevation-4.ug-side-menu--desktop
-    .ug-side-menu__items
-      ug-side-menu-item(
-        v-for='(menuItem, menuItemIndex) in menuItems',
-        :menu-item-index='menuItemIndex',
-        :menu-item='menuItem',
-        :key='menuItem.linkName'
-      )
+<template>
+  <div class="ug-side-menu-wrapper ug-side-menu-wrapper--desktop">
+    <div class="ug-side-menu elevation-4 ug-side-menu--desktop">
+      <div class="ug-side-menu__items">
+        <ug-side-menu-item
+          v-for="(menuItem, menuItemIndex) in menuItems"
+          :key="menuItem.linkName"
+          :menu-item-index="menuItemIndex"
+          :menu-item="menuItem"
+        ></ug-side-menu-item>
+      </div>
 
-    ug-side-menu-user-panel.ug-side-menu__user-panel
+      <div class="d-flex justify-center mb-1">
+        <ug-modal-user-feedback>
+          <template #activator="{ on, attrs }">
+            <ug-base-btn v-bind="attrs" icon="mdi-bullhorn" color="primary lighten-2" v-on="on"></ug-base-btn>
+          </template>
+        </ug-modal-user-feedback>
+      </div>
+
+      <ug-side-menu-user-panel class="ug-side-menu__user-panel"></ug-side-menu-user-panel>
+    </div>
+  </div>
 </template>
 
 <script>
 import UgSideMenuItem from '../side-menu-item/side-menu-item'
 import UgSideMenuUserPanel from '@/components/base/ui/side-menu/side-menu-user-panel/side-menu-user-panel'
+import UgModalUserFeedback from '@/components/base/modal-user-feedback/modal-user-feedback'
+import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 
 export default {
   name: 'ug-side-menu-desktop',
@@ -22,6 +35,8 @@ export default {
   components: {
     UgSideMenuItem,
     UgSideMenuUserPanel,
+    UgModalUserFeedback,
+    UgBaseBtn,
   },
 
   props: {

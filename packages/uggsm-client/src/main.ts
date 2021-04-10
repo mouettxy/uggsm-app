@@ -1,9 +1,11 @@
 import 'reflect-metadata'
 import './registerServiceWorker'
-import '@/plugins/bugbattle'
 
 import Vue from 'vue'
 import App from './App.vue'
+
+import { initSentry } from '@/plugins/sentry'
+initSentry()
 
 import '@/plugins/cookies'
 import '@/plugins/axios'
@@ -27,7 +29,6 @@ moment.locale('ru')
 Vue.config.productionTip = false
 
 import InitCASL from '@/plugins/casl'
-
 const initApp = async () => {
   await InitCASL()
 
