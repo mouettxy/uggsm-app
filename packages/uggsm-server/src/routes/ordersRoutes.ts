@@ -2,6 +2,18 @@ import { OrdersController } from '../controllers'
 import { IOrdersController } from '../interfaces'
 import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as orderValidators from '../middlewares/validators/validateOrder'
+import { AccessEntryAction } from '../models'
+import { collectAccessMiddleware } from '../middlewares'
+
+const collectAccessFactory = (action: AccessEntryAction): [AccessEntryAction, AccessEntryAction] => {
+  return [
+    {
+      id: 'Order',
+      value: 'Заказы',
+    },
+    action,
+  ]
+}
 
 export class OrdersRouter extends Router<IOrdersController> {
   constructor() {
@@ -36,6 +48,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         description: 'Создать заказ',
         controllerMethod: 'createByOffice',
         method: 'post',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'createByOffice',
+              value: 'Создал заказ',
+            })
+          ),
+        ],
       },
     ])
 
@@ -46,12 +66,28 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'addSms',
         method: 'put',
         validators: [orderValidators.sms],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'addSms',
+              value: 'Добавил смс к заказу',
+            })
+          ),
+        ],
       },
       {
         path: ':id/estimated-close-time',
         description: 'Установить ориентировочное время закрытия заказа',
         controllerMethod: 'setEstimatedCloseAt',
         method: 'put',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'setEstimatedCloseAt',
+              value: 'Установил ориентировочное время закрытия заказа',
+            })
+          ),
+        ],
       },
       {
         path: ':id/used-detail',
@@ -59,6 +95,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'addUsedDetail',
         method: 'put',
         validators: [orderValidators.usedDetail],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'addUsedDetail',
+              value: 'Добавил используемую запчасть',
+            })
+          ),
+        ],
       },
       {
         path: ':id/completed-work',
@@ -66,6 +110,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'addCompletedWork',
         method: 'put',
         validators: [orderValidators.completedWork],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'addCompletedWork',
+              value: 'Добавил выполненную работу',
+            })
+          ),
+        ],
       },
       {
         path: ':id/master-comment',
@@ -73,6 +125,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'addMasterComment',
         method: 'put',
         validators: [orderValidators.masterComment],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'addMasterComment',
+              value: 'Добавил комментарий мастера',
+            })
+          ),
+        ],
       },
       {
         path: ':id/manager-comment',
@@ -80,6 +140,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'addManagerComment',
         method: 'put',
         validators: [orderValidators.managerComment],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'addManagerComment',
+              value: 'Добавил комментарий менеджера',
+            })
+          ),
+        ],
       },
       {
         path: ':id/status',
@@ -87,6 +155,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'setStatus',
         method: 'put',
         validators: [orderValidators.status],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'setStatus',
+              value: 'Установил статус',
+            })
+          ),
+        ],
       },
       {
         path: ':id/payed',
@@ -94,6 +170,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'setPayed',
         method: 'put',
         validators: [orderValidators.payed],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'setPayed',
+              value: 'Установил статус оплаты',
+            })
+          ),
+        ],
       },
       {
         path: ':id/master',
@@ -101,6 +185,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'setMaster',
         method: 'put',
         validators: [orderValidators.master],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'setMaster',
+              value: 'Установил мастера',
+            })
+          ),
+        ],
       },
       {
         path: ':id/manager',
@@ -108,6 +200,14 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'setManager',
         method: 'put',
         validators: [orderValidators.manager],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'setManager',
+              value: 'Установил менеджера',
+            })
+          ),
+        ],
       },
       {
         path: ':id/office',
@@ -115,12 +215,28 @@ export class OrdersRouter extends Router<IOrdersController> {
         controllerMethod: 'setOffice',
         method: 'put',
         validators: [orderValidators.office],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'setOffice',
+              value: 'Установил офис',
+            })
+          ),
+        ],
       },
       {
         path: ':id',
         description: 'Обновить по ID',
         controllerMethod: 'updateById',
         method: 'put',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'updateById',
+              value: 'Обновил заказ',
+            })
+          ),
+        ],
       },
     ])
 
@@ -130,12 +246,28 @@ export class OrdersRouter extends Router<IOrdersController> {
         description: 'Удалить заказ',
         controllerMethod: 'deleteById',
         method: 'delete',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'deleteById',
+              value: 'Удалил заказ',
+            })
+          ),
+        ],
       },
       {
         path: ':id/completed-work/:workId',
         description: 'Удалить добавленную работу',
         controllerMethod: 'deleteCompletedWork',
         method: 'delete',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'deleteCompletedWork',
+              value: 'Удалил выполненную работу',
+            })
+          ),
+        ],
       },
     ])
   }

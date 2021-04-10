@@ -13,6 +13,8 @@ import expressWinston from 'express-winston'
 import 'winston-daily-rotate-file'
 import path from 'path'
 import { getLogsPath } from './tools/logger'
+import { express as expressUseragent } from 'express-useragent'
+import { mw as expressIp } from 'request-ip'
 
 expressWinston.requestWhitelist.push('body', 'params')
 
@@ -59,6 +61,8 @@ class RestApi<T> {
     this.expressApp.use(cors())
     this.expressApp.use(bodyParser.json())
     this.expressApp.use(cookieParser())
+    this.expressApp.use(expressUseragent())
+    this.expressApp.use(expressIp())
   }
 
   private initializeRouterLogging(): void {

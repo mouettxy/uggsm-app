@@ -16,7 +16,6 @@ export class CallsController extends BaseController implements ICallsController 
 
       this.success(res, paginated)
     } catch (error) {
-      console.log(error)
       this.criticalError(next, error)
     }
   }

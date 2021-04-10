@@ -2,7 +2,18 @@ import { OfficeController } from '../controllers'
 import { IOfficeController } from '../interfaces'
 import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as officeValidator from '../middlewares/validators/validateOffice'
+import { AccessEntryAction } from '../models'
+import { collectAccessMiddleware } from '../middlewares'
 
+const collectAccessFactory = (action: AccessEntryAction): [AccessEntryAction, AccessEntryAction] => {
+  return [
+    {
+      id: 'Office',
+      value: 'Офисы',
+    },
+    action,
+  ]
+}
 export class OfficeRouter extends Router<IOfficeController> {
   constructor() {
     super(OfficeController, '/office', AUTH_MIDDLEWARE.ENABLE)
@@ -28,6 +39,14 @@ export class OfficeRouter extends Router<IOfficeController> {
         controllerMethod: 'create',
         method: 'post',
         validators: [officeValidator.office],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'create',
+              value: 'Создал офис',
+            })
+          ),
+        ],
       },
       {
         path: ':id',
@@ -35,12 +54,28 @@ export class OfficeRouter extends Router<IOfficeController> {
         controllerMethod: 'updateById',
         method: 'put',
         validators: [officeValidator.office],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'updateById',
+              value: 'Обновил офис',
+            })
+          ),
+        ],
       },
       {
         path: ':id',
         description: 'Удалить офис по ID',
         controllerMethod: 'deleteById',
         method: 'delete',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'deleteById',
+              value: 'Удалил офис',
+            })
+          ),
+        ],
       },
     ])
   }

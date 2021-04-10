@@ -2,7 +2,18 @@ import { IClientController } from '../interfaces'
 import { ClientController } from '../controllers'
 import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as clientValidator from '../middlewares/validators/validateClient'
+import { AccessEntryAction } from '../models'
+import { collectAccessMiddleware } from '../middlewares'
 
+const collectAccessFactory = (action: AccessEntryAction): [AccessEntryAction, AccessEntryAction] => {
+  return [
+    {
+      id: 'Client',
+      value: 'Клиенты',
+    },
+    action,
+  ]
+}
 export class ClientRouter extends Router<IClientController> {
   constructor() {
     super(ClientController, '/client', AUTH_MIDDLEWARE.ENABLE)
@@ -40,6 +51,14 @@ export class ClientRouter extends Router<IClientController> {
         controllerMethod: 'create',
         method: 'post',
         validators: [clientValidator.client],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'create',
+              value: 'Создал клиента',
+            })
+          ),
+        ],
       },
       {
         path: ':id',
@@ -47,12 +66,28 @@ export class ClientRouter extends Router<IClientController> {
         controllerMethod: 'updateById',
         method: 'put',
         validators: [clientValidator.client],
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'updateById',
+              value: 'Обновил клиента',
+            })
+          ),
+        ],
       },
       {
         path: ':id',
         description: 'Удалить клиента по ID',
         controllerMethod: 'deleteById',
         method: 'delete',
+        middlewares: [
+          collectAccessMiddleware(
+            ...collectAccessFactory({
+              id: 'deleteById',
+              value: 'Удалил клиента',
+            })
+          ),
+        ],
       },
     ])
   }

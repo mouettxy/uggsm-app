@@ -8,6 +8,7 @@ export type RouteEntry<T> = {
   controllerMethod: keyof T
   method: 'get' | 'post' | 'put' | 'delete'
   validators?: Array<any>
+  middlewares?: Array<any>
 }
 
 export interface RouterInterface<T> {
@@ -74,6 +75,10 @@ export class Router<T> implements RouterInterface<T> {
     if (this.routes.length > 0) {
       each(this.routes, (e) => {
         const routeArgs: Array<any> = [`${this.basePath}/${e.path}`]
+
+        if (e.middlewares) {
+          each(e.middlewares, (middleware) => routeArgs.push(middleware))
+        }
 
         if (e.validators) {
           each(e.validators, (validator) => routeArgs.push(validator))
