@@ -68,6 +68,11 @@ export const defaultMenu = [
     submenu: reportsMenu,
   },
   {
+    linkName: 'access',
+    title: 'Доступ к ресурсам',
+    icon: 'mdi-database-clock',
+  },
+  {
     linkName: 'settings',
     title: 'Настройки',
     icon: 'mdi-cog',

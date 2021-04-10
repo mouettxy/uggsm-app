@@ -24,7 +24,7 @@ const generateFilters = (filters: VuexFilterListNamespaces[]) => {
   return returned
 }
 
-const filterList: VuexFilterListNamespaces[] = ['calls', 'cashes', 'clients', 'orders', 'users', 'tests']
+const filterList: VuexFilterListNamespaces[] = ['calls', 'cashes', 'clients', 'orders', 'users', 'tests', 'access']
 
 export const generatedFilters = generateFilters(filterList)
 
@@ -408,4 +408,6 @@ export const Filters: Record<string, Token[]> = {
       disabled: false,
     },
   ],
+
+  access: [],
 }
