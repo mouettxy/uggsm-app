@@ -6,7 +6,6 @@ import { IAutocompleteController } from '../interfaces'
 import { ClientModel, OfficeModel, OrderModel, RoleModel, UserModel } from '../models'
 import { api } from '../server'
 import { mongoose } from '@typegoose/typegoose'
-import util from 'util'
 
 export class AutocompleteController extends BaseController implements IAutocompleteController {
   private user = UserModel
@@ -180,7 +179,6 @@ export class AutocompleteController extends BaseController implements IAutocompl
 
     const aggregation = makeAggregation(autocompleteInformation)
 
-    console.log(util.inspect(aggregation, false, null, true /* enable colors */))
     const data = await mongoose.model(autocompleteInformation.model).aggregate(aggregation)
 
     this.success(res, data)

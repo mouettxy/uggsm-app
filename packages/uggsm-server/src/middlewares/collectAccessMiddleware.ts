@@ -54,7 +54,6 @@ export const collectAccessMiddleware = (resource, action) => async (
       userBrowser: req.useragent.browser,
     })
   } catch (error) {
-    console.log(error)
     next()
     return
   }

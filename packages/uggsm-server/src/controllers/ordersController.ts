@@ -94,7 +94,6 @@ export class OrdersController extends BaseController implements IOrdersControlle
 
       this.badRequest(next, 'Не удалось обработать данные')
     } catch (e) {
-      console.log(e)
       this.criticalError(next, e.message)
     }
   }

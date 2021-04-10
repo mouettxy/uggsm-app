@@ -12,7 +12,7 @@ export class AccessRouter extends Router<AccessControllerInterface> {
         path: 'paginated',
         description: 'Получает данные доступа с пагинацией',
         controllerMethod: 'getPaginated',
-        method: 'get',
+        method: 'post',
       },
       {
         path: '',
