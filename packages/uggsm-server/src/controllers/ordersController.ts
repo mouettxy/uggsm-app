@@ -1,5 +1,5 @@
 import { parsePaginationQuery } from './../services/pagination'
-import { BaseController } from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { MessageInput } from '../services/sms/RedSmsClient'
 import { api } from '../server'
 import { generateOrderId } from '../utils/helpers'

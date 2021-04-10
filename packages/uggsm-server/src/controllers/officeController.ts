@@ -5,8 +5,9 @@ import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'
 import { IOfficeController } from '../interfaces'
 import { OfficeModel } from '../models'
+import { BaseController } from '../base/Controller'
 
-export class OfficeController implements IOfficeController {
+export class OfficeController extends BaseController implements IOfficeController {
   private model = OfficeModel
 
   public getAll = async (request: express.Request, response: express.Response, next: NextFunction): Promise<void> => {

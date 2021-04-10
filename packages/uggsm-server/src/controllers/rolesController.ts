@@ -2,7 +2,7 @@ import { RoleModel } from '../models/roleModel'
 import { IRolesController } from '../interfaces/IRoleController'
 import { ControllerMethod } from '../interfaces/controller'
 import { api } from '../server'
-import BaseController from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { filter, find, findIndex, includes } from 'lodash'
 
 enum Emits {
@@ -34,6 +34,7 @@ type Role = {
 
 export class RolesController extends BaseController implements IRolesController {
   private model = RoleModel
+
   private static = {
     defaultAbilities: [
       {

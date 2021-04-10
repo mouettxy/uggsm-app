@@ -1,6 +1,6 @@
 import { Router } from '../base/Router'
 import { ControllerMethod } from './../interfaces/controller'
-import { BaseController } from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { compact, filter, flatten, isString, lowerCase, map, reduce } from 'lodash'
 import { IAutocompleteController } from '../interfaces'
 import { ClientModel, OfficeModel, OrderModel, RoleModel, UserModel } from '../models'

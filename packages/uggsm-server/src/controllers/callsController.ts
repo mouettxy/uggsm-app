@@ -1,7 +1,7 @@
 import { ControllerMethod } from '../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
 import { CallModel } from '../models/callModel'
-import BaseController from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { parsePaginationQuery } from '../services/pagination'
 
 export class CallsController extends BaseController implements ICallsController {

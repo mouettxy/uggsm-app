@@ -1,4 +1,4 @@
-import { BaseController } from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { api } from '../server'
 import { ObjectNotFoundException } from '../exceptions'
 import { HttpException } from '../exceptions'

@@ -1,5 +1,5 @@
 import { ControllerMethod } from './../interfaces/controller'
-import { BaseController } from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { api } from '../server'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'

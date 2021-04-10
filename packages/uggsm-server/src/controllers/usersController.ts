@@ -2,7 +2,7 @@ import { IUserController } from './../interfaces/IUserController'
 import { UserModel } from './../models/userModel'
 import { ControllerMethod } from '../interfaces/controller'
 import { api } from '../server'
-import BaseController from './base/BaseController'
+import { BaseController } from '../base/Controller'
 import { parsePaginationQuery } from '../services/pagination'
 
 enum Emits {

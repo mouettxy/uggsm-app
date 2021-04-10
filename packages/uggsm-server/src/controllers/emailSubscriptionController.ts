@@ -1,10 +1,11 @@
 import { ControllerMethod } from '../interfaces/controller'
 import { HttpException } from '../exceptions'
+import { BaseController } from '../base/Controller'
 import { IEmailSubscriptionController } from '../interfaces'
 import { EmailSubcriptionModel } from '../models'
 import { api } from '../server'
 
-export class EmailSubscriptionController implements IEmailSubscriptionController {
+export class EmailSubscriptionController extends BaseController implements IEmailSubscriptionController {
   private model = EmailSubcriptionModel
 
   public getAll: ControllerMethod = async (req, res, next) => {

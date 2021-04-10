@@ -9,7 +9,7 @@ import { HttpException } from '../exceptions'
 import { ICashController } from '../interfaces'
 import { OfficeModel } from '../models'
 import { ControllerMethod } from '../interfaces/controller'
-import BaseController from './base/BaseController'
+import { BaseController } from '../base/Controller'
 
 export class CashController extends BaseController implements ICashController {
   private cash = CashModel
