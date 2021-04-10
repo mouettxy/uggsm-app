@@ -1,5 +1,5 @@
 import { map } from 'lodash'
-import { MessageItem } from '../routes/RedSmsClient'
+import { MessageItem } from '../third-party/RedSmsClient'
 import { ControllerMethod } from '../interfaces/controller'
 import { ICallbackController } from '../interfaces'
 import { CallModel, OrderModel } from '../models'

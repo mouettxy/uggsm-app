@@ -1,6 +1,6 @@
 import { parsePaginationQuery } from '../helpers/pagination'
 import { BaseController } from '../base/Controller'
-import { MessageInput } from '../routes/RedSmsClient'
+import { MessageInput } from '../third-party/RedSmsClient'
 import { api } from '../server'
 import { generateOrderId } from '../utils/helpers'
 import { ObjectNotFoundException } from '../exceptions'
@@ -10,7 +10,7 @@ import { CashModel, OfficeModel, OrderModel } from '../models'
 import { filter, map, join, reduce } from 'lodash'
 import generateReport from '../helpers/reports'
 import { ControllerMethod } from '../interfaces/controller'
-import { RedSmsClient } from '../routes/RedSmsClient'
+import { RedSmsClient } from '../third-party/RedSmsClient'
 
 export class OrdersController extends BaseController implements IOrdersController {
   private model = OrderModel
