@@ -1,4 +1,4 @@
-import { IClientController } from 'src/interfaces'
+import { IClientController } from '../interfaces'
 import { ClientController } from '../controllers'
 import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 import * as clientValidator from '../middlewares/validators/validateClient'

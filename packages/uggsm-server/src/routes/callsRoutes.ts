@@ -1,4 +1,4 @@
-import { ICallsController } from 'src/interfaces'
+import { ICallsController } from '../interfaces'
 import { CallsController } from '../controllers'
 import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 

@@ -5,22 +5,7 @@
     "outDir": "dist",
     "module": "commonjs",
     "target": "es6",
-    "baseUrl": ".",
-    "paths": {
-      "@": ["src/*"],
-      "@base": ["src/base/*"],
-      "@controllers": ["csrc/ontrollers/*"],
-      "@exceptions": ["src/exceptions/*"],
-      "@helpers": ["src/helpers/*"],
-      "@interfaces": ["src/interfaces/*"],
-      "@middlewares": ["src/middlewares/*"],
-      "@models": ["src/models/*"],
-      "@routes": ["src/routes/*"],
-      "@services": ["src/services/*"],
-      "@third-party": ["src/third-party/*"],
-      "@tools": ["src/tools/*"],
-      "@utils": ["src/utils/*"]
-    },
+    "baseUrl": "src",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true

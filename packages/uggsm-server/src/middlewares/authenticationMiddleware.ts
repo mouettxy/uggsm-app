@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import { NextFunction } from 'connect'
 import jwt from 'jsonwebtoken'
-import { AuthTokenData } from 'src/interfaces'
+import { AuthTokenData } from '../interfaces'
 import { AuthenticationTokenMissingException, WrongAuthenticationTokenException } from '../exceptions'
 import { UserModel } from '../models'
 
