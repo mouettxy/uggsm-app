@@ -76,14 +76,18 @@ export type MessageSentResponse = {
 
 export class RedSmsClient {
   private login = 'function'
+
   private ts = 'aE4uTUfbC8EbE6PU'
+
   private apiKey = 'BgohNSjrcLjmVEokYMZmNWZO'
+
   private axiosConfig: AxiosRequestConfig = {
     baseURL: 'https://cp.redsms.ru/api/',
     validateStatus: (status) => {
       return status <= 500
     },
   }
+
   private secret: string
 
   public api: AxiosInstance

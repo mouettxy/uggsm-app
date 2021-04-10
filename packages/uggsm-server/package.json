@@ -8,7 +8,7 @@
     "lint": "eslint --fix ./src/**/*.ts",
     "dev": "nodemon --watch src -e ts,pug,env,css --exec ts-node ./src/server.ts",
     "build": "tsc && yarn workspace @uggsm/server copy:email",
-    "copy:email": "copyfiles src/services/mail/template/**/*.pug src/services/mail/template/**/*.css dist/services/mail/template -f"
+    "copy:email": "copyfiles src/tools/mail/template/**/*.pug src/tools/mail/template/**/*.css dist/tools/mail/template -f"
   },
   "husky": {},
   "author": "newfox79",

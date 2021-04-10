@@ -3,7 +3,7 @@ import { UserModel } from './../models/userModel'
 import { ControllerMethod } from '../interfaces/controller'
 import { api } from '../server'
 import { BaseController } from '../base/Controller'
-import { parsePaginationQuery } from '../services/pagination'
+import { parsePaginationQuery } from '../helpers/pagination'
 
 enum Emits {
   USER_UPDATED = 'user updated',

@@ -12,7 +12,7 @@ import winston from 'winston'
 import expressWinston from 'express-winston'
 import 'winston-daily-rotate-file'
 import path from 'path'
-import { getLogsPath } from './services/logger'
+import { getLogsPath } from './tools/logger'
 
 expressWinston.requestWhitelist.push('body', 'params')
 

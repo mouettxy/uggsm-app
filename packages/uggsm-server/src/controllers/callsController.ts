@@ -2,7 +2,7 @@ import { ControllerMethod } from '../interfaces/controller'
 import { ICallsController } from '../interfaces/ICallsController'
 import { CallModel } from '../models/callModel'
 import { BaseController } from '../base/Controller'
-import { parsePaginationQuery } from '../services/pagination'
+import { parsePaginationQuery } from '../helpers/pagination'
 
 export class CallsController extends BaseController implements ICallsController {
   private model = CallModel

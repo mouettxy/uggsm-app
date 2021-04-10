@@ -1,7 +1,6 @@
-import Agenda from 'agenda'
-import { EmailSubcriptionModel } from '../../models/emailSubscriptionModel'
+import { EmailSubcriptionModel } from '../models/emailSubscriptionModel'
 import { each } from 'lodash'
-import { sendDailyReport } from '../mail/dailyOrdersReport'
+import { sendDailyReport } from './mail/sendReports'
 import cron from 'node-cron'
 
 cron.schedule('0 20 * * *', async () => {

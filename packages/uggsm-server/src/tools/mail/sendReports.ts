@@ -1,7 +1,7 @@
 import { reduce } from 'lodash'
 import Email from 'email-templates'
 import path from 'path'
-import generateReport from '../reports'
+import generateReport from '../../helpers/reports'
 import moment from 'moment'
 import { OrderModel } from '../../models'
 import nodemailer from 'nodemailer'
@@ -26,8 +26,8 @@ export async function sendDailyReport(to: string) {
   const template = 'template'
   const dir =
     process.env.NODE_ENV === 'production'
-      ? path.resolve('services/mail/template')
-      : path.resolve('src/services/mail/template')
+      ? path.resolve('tools/mail/template')
+      : path.resolve('src/tools/mail/template')
   const opts = {
     message: {
       from: 'daily@uggsm.ru',

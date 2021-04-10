@@ -5,7 +5,7 @@ import { HttpException } from '../exceptions'
 import { IClientController } from '../interfaces'
 import { ClientModel, OrderModel } from '../models'
 import { ControllerMethod } from '../interfaces/controller'
-import { parsePaginationQuery } from '../services/pagination'
+import { parsePaginationQuery } from '../helpers/pagination'
 
 export class ClientController extends BaseController implements IClientController {
   private model = ClientModel

@@ -1,4 +1,4 @@
-import { parsePaginationQuery } from '../services/pagination'
+import { parsePaginationQuery } from '../helpers/pagination'
 import { mongoose } from '@typegoose/typegoose'
 import { api } from '../server'
 import { NextFunction } from 'connect'
