@@ -1,7 +1,7 @@
 <template>
   <v-row class="ug-modal-order-info-fields">
     <template v-if="isMobile">
-      <v-col cols="12" class="d-flex justify-space-between">
+      <v-col cols="12" class="d-flex" :style="{ gap: '4px' }">
         <v-tooltip v-if="order" bottom>
           <template #activator="{ on, attrs }">
             <ug-base-chip
@@ -17,9 +17,24 @@
           </template>
           <span>{{ order.office.name }}</span>
         </v-tooltip>
+        <v-tooltip v-if="order" bottom>
+          <template #activator="{ on, attrs }">
+            <ug-base-chip
+              class="d-inline-block"
+              :style="{ height: '32px' }"
+              v-bind="attrs"
+              small
+              color="secondary"
+              v-on="on"
+            >
+              {{ order.password }}
+            </ug-base-chip>
+          </template>
+          <span>Пароль {{ order.password }}</span>
+        </v-tooltip>
         <ug-order-edit-time
           v-if="order"
-          class="d-inline-block"
+          class="d-inline-block flex-grow-1 text-right"
           :time="order.estimatedCloseAt"
           :orderid="order.id"
           :order-status="order.status"
