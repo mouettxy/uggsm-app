@@ -651,18 +651,48 @@ export class OrdersController extends BaseController implements IOrdersControlle
     const id: string = req.params.id
     const orderData = req.body
 
-    const order = await this.model.findById(id)
-    // @ts-ignore
-    const oldMaster = order.master ? order.master._id : ''
-    // @ts-ignore
-    const oldManager = order.manager ? order.manager._id : ''
+    const order = (await this.model.findById(id)) as any
 
-    if (oldMaster.toString() !== orderData.master._id) {
+    const getMaster = (order: any) => {
+      const result = order.master?._id || order.master || ''
+
+      if (result) {
+        return result.toString()
+      }
+
+      return result
+    }
+
+    const getManager = (order: any) => {
+      const result = order.manager?._id || order.manager || null
+
+      if (result) {
+        return result.toString()
+      }
+
+      return result
+    }
+
+    const master = {
+      old: getMaster(order),
+      new: getMaster(orderData),
+      isChanged: false,
+    }
+    master.isChanged = master.old && master.new && master.old !== master.new
+
+    const manager = {
+      old: getManager(order),
+      new: getManager(orderData),
+      isChanged: false,
+    }
+    manager.isChanged = manager.old && manager.new && manager.old !== manager.new
+
+    if (master.isChanged) {
       const newMaster = orderData.master._id
 
       await this.model.setMaster(order.id, newMaster, orderData.userid)
     }
-    if (oldManager.toString() !== orderData.manager._id) {
+    if (manager.isChanged) {
       const newManager = orderData.manager._id
 
       await this.model.setManager(order.id, newManager, orderData.userid)
