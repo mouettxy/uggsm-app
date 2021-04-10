@@ -1,4 +1,3 @@
-export * from './IRouter'
 export * from './IAuthToken'
 export * from './IOrdersController'
 export * from './ICashController'
