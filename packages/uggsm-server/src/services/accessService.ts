@@ -10,7 +10,7 @@ export const accessServiceEmits = {
 
 export class AccessService extends BaseService {
   constructor() {
-    super(AccessModel)
+    super(AccessModel, accessServiceEmits)
   }
 }
 

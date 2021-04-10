@@ -13,8 +13,11 @@ export interface BaseServiceInterface {
 export class BaseService implements BaseServiceInterface {
   public model
 
-  constructor(model) {
+  public emits
+
+  constructor(model, emits) {
     this.model = model
+    this.emits = emits
   }
 
   public getPaginated = async (query, options) => {
@@ -53,6 +56,8 @@ export class BaseService implements BaseServiceInterface {
 
       await response.save()
 
+      this.emits.updatedAll()
+
       return response
     } catch (error) {
       throw new ServiceException(error)
@@ -63,6 +68,8 @@ export class BaseService implements BaseServiceInterface {
     try {
       const response = await this.model.findOneAndUpdate(query, data, { new: true })
 
+      this.emits.updatedAll()
+
       return response
     } catch (error) {
       throw new ServiceException(error)
@@ -72,6 +79,8 @@ export class BaseService implements BaseServiceInterface {
   public delete = async (query) => {
     try {
       const response = await this.model.findOneAndDelete(query)
+
+      this.emits.updatedAll()
 
       return response
     } catch (error) {
