@@ -22,7 +22,7 @@ export class AuthenticationRouter extends Router<IAuthentificationController> {
         path: 'login',
         description: 'Авторизовать пользователя',
         controllerMethod: 'login',
-        method: 'get',
+        method: 'post',
         validators: [userLoginValidator.userLogin],
       },
       {
