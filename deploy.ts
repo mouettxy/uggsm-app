@@ -32,14 +32,14 @@ export type Config = {
 
 const config: Config = {
   b: {
-    app: path.resolve(`${__dirname}/../packages/uggsm-client/dist`),
-    appPckg: path.resolve(`${__dirname}/../packages/uggsm-client/package.json`),
-    srv: path.resolve(`${__dirname}/../packages/uggsm-server/dist`),
-    srvPckg: path.resolve(`${__dirname}/../packages/uggsm-server/package.json`),
-    bckp: path.resolve(`${__dirname}/../packages/uggsm-backup-system/dist`),
-    bckpPckg: path.resolve(`${__dirname}/../packages/uggsm-backup-system/package.json`),
-    cli: path.resolve(`${__dirname}/../packages/uggsm-cli/dist`),
-    cliPckg: path.resolve(`${__dirname}/../packages/uggsm-cli/package.json`),
+    app: path.resolve(`${__dirname}/packages/uggsm-client/dist`),
+    appPckg: path.resolve(`${__dirname}/packages/uggsm-client/package.json`),
+    srv: path.resolve(`${__dirname}/packages/uggsm-server/dist`),
+    srvPckg: path.resolve(`${__dirname}/packages/uggsm-server/package.json`),
+    bckp: path.resolve(`${__dirname}/packages/uggsm-backup-system/dist`),
+    bckpPckg: path.resolve(`${__dirname}/packages/uggsm-backup-system/package.json`),
+    cli: path.resolve(`${__dirname}/packages/uggsm-cli/dist`),
+    cliPckg: path.resolve(`${__dirname}/packages/uggsm-cli/package.json`),
   },
   d: {
     srv: '/var/www/api',
@@ -162,6 +162,8 @@ class Deploy {
 
     this.chain(async () => {
       try {
+        console.log(origin, destination)
+
         const response = await this.sshConnection.putDirectory(origin, destination, {
           recursive: true,
           concurrency: 10,
