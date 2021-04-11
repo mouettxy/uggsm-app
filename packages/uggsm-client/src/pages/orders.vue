@@ -197,7 +197,7 @@ export default {
     async fetchFunction(data) {
       const response = await OrderAPI.getPaginated({
         ...data,
-        office: this.office._id,
+        office: this.office?._id,
       })
 
       if (response.status !== 200) {
