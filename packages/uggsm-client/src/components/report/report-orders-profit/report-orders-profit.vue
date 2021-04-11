@@ -10,13 +10,13 @@
           <ug-base-select v-model="search.office" :items="offices" label="Офис"></ug-base-select>
         </v-col>
         <v-col cols="12" md="3" lg="3">
-          <ug-base-select
+          <ug-select-many
             v-model="search.status"
             :items="['Закрыт', 'Готов']"
             multiple="multiple"
             label="Статус"
-            dense="dense"
-          ></ug-base-select>
+            dense
+          ></ug-select-many>
         </v-col>
         <v-col cols="12" md="2" lg="2">
           <v-row class="text-center">
@@ -110,6 +110,7 @@ import UgDatetimePicker from '@/components/base/ui/datetime-picker/datetime-pick
 import UgBaseSelect from '@/components/base/ui/base-select/base-select'
 import UgBaseBtn from '@/components/base/ui/base-btn/base-btn'
 import JsonExcel from 'vue-json-excel'
+import UgSelectMany from '@/components/base/ui/select-many/select-many'
 
 import OfficeAPI from '@/api/office'
 import OrderAPI from '@/api/order'
@@ -125,6 +126,7 @@ export default {
     JsonExcel,
     UgDatetimePicker,
     UgBaseSelect,
+    UgSelectMany,
     UgBaseBtn,
   },
 
@@ -201,7 +203,7 @@ export default {
 
       return this.officesRaw.map((e) => {
         return {
-          text: `${e.code}|${e.name}`,
+          text: `${e.code} | ${e.name}`,
           value: e.code,
         }
       })
@@ -315,7 +317,7 @@ export default {
       }
 
       if (!response.data.length) {
-        this.$notification.error('По заданному фильтру не удалось найти заявки')
+        this.$notification.warning('По заданному фильтру не удалось найти заявки')
         return
       }
 

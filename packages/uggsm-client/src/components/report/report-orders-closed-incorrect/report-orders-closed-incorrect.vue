@@ -31,6 +31,7 @@
           v-row
             v-col(cols='6')
               ug-base-btn(
+                :loading='isLoading',
                 @click='getReport',
                 label='Выбрать',
                 color='primary'
@@ -103,6 +104,7 @@ export default {
 
   data: function () {
     return {
+      isLoading: false,
       search: {
         date: [moment().format('DD.MM.YYYY'), moment().format('DD.MM.YYYY')],
         status: ['Закрыт'],
@@ -233,6 +235,8 @@ export default {
 
   methods: {
     async getReport() {
+      this.isLoading = true
+      this.report = null
       const search = cloneDeep(this.search)
       search.date[0] = moment(search.date[0], 'DD.MM.YYYY').startOf('day').toISOString()
       search.date[1] = moment(search.date[1], 'DD.MM.YYYY').endOf('day').toISOString()
@@ -245,11 +249,12 @@ export default {
       }
 
       if (!response.data.length) {
-        this.$notification.error('По заданному фильтру не удалось найти заявки')
+        this.$notification.warning('По заданному фильтру не удалось найти заявки')
         return
       }
 
       this.report = response.data
+      this.isLoading = false
     },
   },
 }
