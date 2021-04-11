@@ -117,6 +117,124 @@ export const aggregationsList = {
       },
     },
   ],
+  profit: (match) => [
+    {
+      $lookup: {
+        from: 'offices',
+        localField: 'office',
+        foreignField: '_id',
+        as: 'office',
+      },
+    },
+    {
+      $unwind: {
+        path: '$office',
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'master',
+        foreignField: '_id',
+        as: 'master',
+      },
+    },
+    {
+      $unwind: {
+        path: '$master',
+      },
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'manager',
+        foreignField: '_id',
+        as: 'manager',
+      },
+    },
+    {
+      $unwind: {
+        path: '$manager',
+      },
+    },
+    {
+      $lookup: {
+        from: 'cashes',
+        localField: 'id',
+        foreignField: 'orderid',
+        as: 'cash',
+      },
+    },
+    {
+      $match: match,
+    },
+    {
+      $unwind: {
+        path: '$statusWork',
+      },
+    },
+    {
+      $unwind: {
+        path: '$usedDetails',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        idString: {
+          $toString: '$id',
+        },
+      },
+    },
+    {
+      $project: {
+        master: '$statusWork.credentials',
+        manager: '$manager.credentials',
+        date: '$closedAt',
+        type: 'Исполнителю за работу в заказе',
+        product: {
+          $concat: ['Заказ №', '$idString', ' ', '$phoneModel', ' (', '$serialNumber', ') '],
+        },
+        works: {
+          work: { $concat: ['$statusWork.header', ' (', '$statusWork.message', ') '] },
+          total: '$statusWork.price',
+        },
+        details: {
+          detail: '$usedDetails.header',
+          total: '$usedDetails.price',
+        },
+        detailsPrice: '$usedDetails.price',
+        worksPrice: '$statusWork.price',
+      },
+    },
+    {
+      $group: {
+        _id: {
+          master: '$master',
+          type: '$type',
+          product: '$product',
+          date: '$date',
+        },
+        works: { $push: '$works' },
+        details: { $push: '$details' },
+        detailsPrice: { $sum: '$detailsPrice' },
+        worksPrice: { $sum: '$worksPrice' },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        master: '$_id.master',
+        type: '$_id.type',
+        date: '$_id.date',
+        product: '$_id.product',
+        works: 1,
+        details: 1,
+        worksPrice: 1,
+        detailsPrice: 1,
+      },
+    },
+  ],
   count: (match) => [
     {
       $lookup: {
@@ -511,6 +629,16 @@ export default async function (
         status: 'Закрыт',
       }
     )
+  } else if (params.type === 'profit') {
+    aggregate = aggregationsList.profit({
+      status: { $in: params.status },
+      'office.code': params.office,
+      closedAt: {
+        $gte: new Date(params.date[0]),
+        $lt: new Date(params.date[1]),
+      },
+      statusWork: { $gte: [] },
+    })
   } else {
     aggregate = aggregationsList.default({
       status: { $in: params.status },

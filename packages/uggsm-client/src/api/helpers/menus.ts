@@ -13,6 +13,10 @@ export const reportsMenu = [
     linkName: 'reportsOrdersCount',
     title: 'Создано',
   },
+  {
+    linkName: 'reportsOrdersProfit',
+    title: 'Прибыль',
+  },
 ]
 
 export const settingsMenu = [
