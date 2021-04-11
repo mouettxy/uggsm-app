@@ -19,8 +19,7 @@
     "types": ["webpack-env", "vuetify", "vue-cookies", "webpack"],
     "typeRoots": ["./src/typings", "./src/typings/api", "./src/typings/shims"],
     "paths": {
-      "@/*": ["src/*"],
-      "@casl/vue/patch": ["src/typings/shims/shims-casl.d.ts"]
+      "@/*": ["src/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
