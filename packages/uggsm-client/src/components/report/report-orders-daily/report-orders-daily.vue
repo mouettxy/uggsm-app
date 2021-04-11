@@ -67,6 +67,7 @@
         v-expansion-panels
           v-expansion-panel(
             v-for='reportClosedItem in report.closed',
+            v-if='$can("seeOffices", "Global", reportClosedItem.office.split("|")[1])',
             :key='reportClosedItem.office'
           )
             v-expansion-panel-header
@@ -149,10 +150,6 @@ export default {
       panels: [0, 1],
       tableNewHeaders: [
         {
-          text: '№',
-          value: 'id',
-        },
-        {
           text: 'Клиент',
           value: 'client',
         },
@@ -167,10 +164,6 @@ export default {
       ],
 
       tableClosedHeaders: [
-        {
-          text: '№',
-          value: 'id',
-        },
         {
           text: 'Клиент',
           value: 'client',

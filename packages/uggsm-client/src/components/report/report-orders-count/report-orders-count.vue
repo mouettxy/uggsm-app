@@ -55,6 +55,7 @@
         v-expansion-panels
           v-expansion-panel(
             v-for='report in report',
+            v-if='$can("seeOffices", "Global", report.office.split("|")[1])',
             :key='report.office'
           )
             v-expansion-panel-header
@@ -172,11 +173,13 @@ export default {
 
       if (response.status !== 200) {
         this.$notification.error('Не удалось сгенерировать отчёт')
+        this.isLoading = false
         return
       }
 
       if (!response.data.length) {
         this.$notification.warning('По заданному фильтру не удалось найти заявки')
+        this.isLoading = false
         return
       }
 
