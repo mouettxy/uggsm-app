@@ -265,7 +265,7 @@ export default {
       const report = this.report.map((e) => {
         const date = moment(e.date).format('DD.MM.YYYY')
         const works = e.works.map((e) => `${e.work} ${e.total} руб.`).join(' | ')
-        const details = e.details.map((e) => `${e.detail} ${e.total} руб.`).join(' | ')
+        const details = e.details.map((e) => (Object.keys(e).length ? `${e.detail} ${e.total} руб.` : '')).join(' | ')
         const total = e.worksPrice - e.detailsPrice
 
         return {
