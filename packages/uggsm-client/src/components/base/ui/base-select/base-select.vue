@@ -27,12 +27,14 @@ v-select.ug-base-select(
       :index='index'
     )
       template(v-if='typeof item === "string"')
-        span {{ item }}
+        span(v-if='index !== lastModelIndex') {{ item }},
+        span(v-else) {{ item }}
       template(v-else)
         span {{ item["text"] }}
 </template>
 
 <script>
+import { findLastIndex } from 'lodash'
 export default {
   name: 'ug-base-select',
 
@@ -136,6 +138,10 @@ export default {
           localStorage.setItem(this.cache, JSON.stringify(value))
         }
       },
+    },
+
+    lastModelIndex() {
+      return findLastIndex(this.model)
     },
   },
 
