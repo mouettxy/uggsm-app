@@ -4,32 +4,32 @@ import Router, { AUTH_MIDDLEWARE } from '../base/Router'
 
 export class CallbackRouter extends Router<ICallbackController> {
   constructor() {
-    super(CallbackController, '', AUTH_MIDDLEWARE.DISABLE)
+    super(CallbackController, '/callbacks', AUTH_MIDDLEWARE.DISABLE)
   }
 
   defineRoutes() {
     this.addRoutes([
       {
-        path: 'order/sms/callback',
+        path: 'sms',
         description: 'REDSMS Sms Callback',
         controllerMethod: 'smsCallback',
         method: 'post',
       },
 
       {
-        path: 'calls/callbacks/call-start',
+        path: 'call-start',
         description: 'moizvonki callback call-start',
         controllerMethod: 'callStartCallback',
         method: 'post',
       },
       {
-        path: 'calls/callbacks/call-answer',
+        path: 'call-answer',
         description: 'moizvonki callback call-answer',
         controllerMethod: 'callAnswerCallback',
         method: 'post',
       },
       {
-        path: 'calls/callbacks/call-finish',
+        path: 'call-finish',
         description: 'moizvonki callback call-finish',
         controllerMethod: 'callFinishCallback',
         method: 'post',
