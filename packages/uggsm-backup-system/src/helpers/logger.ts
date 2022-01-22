@@ -1,4 +1,5 @@
 import { createLogger, format, transports } from 'winston'
+import path from 'path'
 
 export const logger = createLogger({
   level: 'info',
@@ -12,8 +13,8 @@ export const logger = createLogger({
   ),
   defaultMeta: { service: 'backup-service' },
   transports: [
-    new transports.File({ filename: '/var/logs/uggsm-api/backups/error.log', level: 'error' }),
-    new transports.File({ filename: '/var/logs/uggsm-api/backups/combined.log' }),
+    new transports.File({ filename: path.join(process.env.SERVER_LOGS_PATH, 'error.log'), level: 'error' }),
+    new transports.File({ filename: path.join(process.env.SERVER_LOGS_PATH, 'error.log') }),
   ],
 })
 

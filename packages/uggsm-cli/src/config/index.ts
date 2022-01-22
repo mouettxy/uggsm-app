@@ -1,11 +1,14 @@
+import path from 'path'
+
 export const config = {
-  githubToken: 'cb558a31c39373bd7867eee0376d9e907f0d41a9',
+  githubToken: process.env.GITHUB_TOKEN,
+
   server: {
-    serverFolder: '/var/www/api',
-    serverFolderPackage: '/var/www/api/package.json',
-    clientFolder: '/var/www/app',
-    backupSystemFolder: '/var/uggsm-backup',
-    backupSystemFolderPackage: '/var/uggsm-backup/package.json',
+    serverFolder: process.env.DEPLOY_SERVER_PATH,
+    serverFolderPackage: path.join(process.env.DEPLOY_SERVER_PATH, 'package.json'),
+    clientFolder: process.env.DEPLOY_CLIENT_PATH,
+    backupSystemFolder: process.env.DEPLOY_BACKUP_PATH,
+    backupSystemFolderPackage: path.join(process.env.DEPLOY_BACKUP_PATH, 'package.json'),
   },
 }
 

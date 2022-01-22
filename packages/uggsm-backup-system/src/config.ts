@@ -1,5 +1,6 @@
 export default {
-  token: 'AgAEA7qiLiu5AAauda98-U40bkuwmvDfgr0vGcU',
+  token: process.env.YAPI_TOKEN,
+
   paths: {
     root: '/uggsm-backup-system',
     automatic: '/automatic-backups',

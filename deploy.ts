@@ -30,6 +30,8 @@ export type Config = {
   }
 }
 
+const __dirname = path.resolve()
+
 const config: Config = {
   b: {
     app: path.resolve(`${__dirname}/packages/uggsm-client/dist`),
@@ -42,11 +44,11 @@ const config: Config = {
     cliPckg: path.resolve(`${__dirname}/packages/uggsm-cli/package.json`),
   },
   d: {
-    srv: '/var/www/api',
-    srvPckg: '/var/www/api/package.json',
-    app: '/var/www/app',
-    bckp: '/var/uggsm-backup',
-    bckpPckg: '/var/uggsm-backup/package.json',
+    srv: process.env.SERVER_API_PATH,
+    srvPckg: process.env.SERVER_API_PATH_PACKAGE ,
+    app: process.env.SERVER_APP_PATH ,
+    bckp: process.env.SERVER_BACKUP_PATH,
+    bckpPckg: process.env.SERVER_BACKUP_PATH_PACKAGE,
   },
 }
 

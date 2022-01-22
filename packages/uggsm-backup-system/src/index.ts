@@ -221,8 +221,8 @@ if (argv.daemon) {
   console.log('restore from backup with file')
 } else if (argv.backup) {
   restoreDatabaseFromDump(false, {
-    username: 'admin',
-    password: 'qas87W5jfxD4GR6r',
+    username: process.env.SERVER_USER,
+    password: process.env.SERVER_PASSWORD,
   })
 } else if (argv.dump) {
   uploadDatabaseDump('none', true)

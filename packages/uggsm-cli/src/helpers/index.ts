@@ -42,7 +42,7 @@ export async function downloadFile(fileUrl: string, temp: any, token) {
 }
 
 export async function getFolderFrom(type: 'backup' | 'server' | 'client', temp: any, token: string) {
-  const archive: any = await downloadFile('https://github.com/newfox79/uggsm-app/archive/master.tar.gz', temp, token)
+  const archive: any = await downloadFile(process.env.REPO_ARCHIVE_URL, temp, token)
 
   const unzipped = await decompress(archive.path, {
     plugins: [decompressTargz()],

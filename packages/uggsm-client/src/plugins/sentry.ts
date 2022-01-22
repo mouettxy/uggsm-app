@@ -6,7 +6,7 @@ import axios from 'axios'
 
 // TODO: screenshot attachment
 
-const SENTRY_DSN = 'https://1d65590ad2a146da9db47161cc5d44d9@o566897.ingest.sentry.io/5710264'
+const SENTRY_DSN = process.env.SENTRY_DSN
 
 export function captureError(message: string, scope?: Sentry.Scope) {
   Sentry.captureException(new Error(message), scope)
@@ -22,7 +22,7 @@ export async function sendUserReport(report: { name: string; email: string; comm
 
   const response = await axios.request({
     method: 'post',
-    url: 'https://sentry.io/api/0/projects/uggsm/uggsm/user-feedback/',
+    url: process.env.SENTRY_FEEDBACK_URL,
     headers: {
       Authorization: `DSN ${SENTRY_DSN}`,
       'Content-Type': 'application/json',
